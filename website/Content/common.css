@@ -1,0 +1,63 @@
+﻿body
+{
+}
+
+.r { text-align:right !important; }
+.l { text-align:left !important; }
+.c { text-align:center !important; }
+.b { font-weight:bold !important; }
+
+td { border-top: solid 1px #dddddd; margin:0px; padding:.1em .6em; vertical-align:top; }
+
+.wac_Novice
+{
+  background-color: #d01616;
+  color: #eeeeee;
+}
+.wac_Support
+{
+  background-color: #FFA500;
+  color: black;
+}
+.wac_Field
+{
+  background-color: #008800;
+  color: #eeeeee;
+}
+.wac_None {
+    background-color: #ddd;
+    color: black;
+}
+.wacbdr_Novice
+{
+  border-color: #d01616;
+}
+.wacbdr_Support
+{
+  border-color: #FFA500;
+}
+.wacbdr_Field
+{
+  border-color: #008800;
+}
+
+.exp_NotRequired
+{
+    color:#666666;
+}
+
+.exp_Expired, .exp_NoEntry, .exp_Missing  
+{
+    color:Red;
+    border:solid 2px black;
+}
+
+.exp_NearExpiration
+{
+    bordeR:dashed 1px black;
+}
+
+.labelExtra {
+    font-weight: normal;
+    font-size: 95%;
+}

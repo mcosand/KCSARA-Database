@@ -1,0 +1,22 @@
+﻿<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" MasterPageFile="~/Views/Shared/Core.Master" %>
+<asp:Content ID="head" ContentPlaceHolderID="HeadContent" runat="server">
+  <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
+
+</asp:Content>
+<asp:Content ID="main" ContentPlaceHolderID="MainContent" runat="server">
+  <div class="content-main">
+    <a name="maincontent" id="A1"></a>
+        <%= ConditionalDiv(ViewData["alert"], "border:solid 2px black; padding:.3em; margin:1em")%>
+        <%= ConditionalDiv(ViewData["success"], "border:solid 2px #008800; color:#008800; padding:.3em; margin:1em;")%>
+        <%= ConditionalDiv(ViewData["warning"], "border:solid 2px orange; color:orange; padding:.3em; margin:1em")%>
+        <%= ConditionalDiv(ViewData["error"], "border:solid 2px red; color:red; padding:.3em; margin:1em")%>
+
+    <asp:ContentPlaceHolder ID="MainContent" runat="server" />
+  </div>
+</asp:Content>
+  <script language="C#" runat="server">
+    protected string ConditionalDiv(object innerHtml, string style)
+    {
+      return (innerHtml == null) ? "" : string.Format("<div style=\"{0}\">{1}</div>", style, innerHtml);
+    }
+  </script>

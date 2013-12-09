@@ -1,0 +1,31 @@
+﻿	.ac_results {
+		border: 1px solid gray;
+		background: white;
+		padding: 0;
+		margin: 0;
+		list-style: none;
+		position: absolute;
+		z-index: 10000;
+		display: none;
+	}
+	
+	.ac_results li {
+		padding: 2px 5px;
+		white-space: nowrap;
+		color: #101010;
+		text-align: left;
+		list-style-type:none;
+		background: inherit;
+	}
+	
+	li.ac_over {
+		cursor: pointer;
+		background-color: #0033CC;
+		color: #ffffff;
+	}
+	
+	.ac_match {
+		text-decoration: underline;
+		color: black;
+	}
+	

@@ -1,0 +1,33 @@
+<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" MasterPageFile="~/Views/Shared/Core.Master" %>
+<%@ Import Namespace="Kcsara.Database.Web.Controllers" %>
+<%@ Import Namespace="Kcsara.Database.Web" %>
+<asp:Content ID="head" ContentPlaceHolderID="HeadContent" runat="server">
+  <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
+  <link href="<%=this.ResolveUrl("~/Content/mobile.css") %>" rel="stylesheet" type="text/css"></link>
+
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="viewport" content="width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=1;"/>
+</asp:Content>
+
+<asp:Content ID="main" ContentPlaceHolderID="MainContent" runat="server">
+<div class="header-container"><div class="logo"><a href="<%= Url.Action("Index", "Home") %>">KCSARA Database</a></div>
+<div class="clear"></div>
+</div>
+<div class="poster-container-no-image">
+    <div class="poster-inner"> </div>
+</div>
+
+        <div class="content-main"><a name="maincontent" id="maincontent"></a>
+        <%= ConditionalDiv(ViewData["alert"], "border:solid 2px black; padding:.3em; margin:1em")%>
+        <%= ConditionalDiv(ViewData["success"], "border:solid 2px #008800; color:#008800; padding:.3em; margin:1em;")%>
+        <%= ConditionalDiv(ViewData["warning"], "border:solid 2px orange; color:orange; padding:.3em; margin:1em")%>
+        <%= ConditionalDiv(ViewData["error"], "border:solid 2px red; color:red; padding:.3em; margin:1em")%>
+      <asp:ContentPlaceHolder ID="MainContent" runat="server" />
+</div>
+</asp:Content>
+  <script language="C#" runat="server">
+    protected string ConditionalDiv(object innerHtml, string style)
+    {
+      return (innerHtml == null) ? "" : string.Format("<div style=\"{0}\">{1}</div>", style, innerHtml);
+    }
+  </script>

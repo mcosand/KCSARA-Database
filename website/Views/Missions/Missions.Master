@@ -1,0 +1,19 @@
+﻿<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" MasterPageFile="~/Views/Shared/Site.Master" %>
+<%@ Import Namespace="Kcsara.Database.Web.Controllers" %>
+<asp:Content ID="secondaryNav" ContentPlaceHolderID="secondaryNav" runat="server">
+<ul>
+<li><%= Html.ActionLink<MissionsController>(f => f.Details((Guid)ViewData["missionId"]), "Details") %></li>
+<li><%= Html.ActionLink<MissionsController>(f => f.Roster((Guid)ViewData["missionId"]), "Roster") %></li>
+<li><%= Html.ActionLink<MissionsController>(f => f.Subjects((Guid)ViewData["missionId"]), "Subjects") %></li>
+<li><%= Html.ActionLink<MissionsController>(f => f.Log((Guid)ViewData["missionId"]), "Log") %></li>
+<li><%= Html.ActionLink<MissionsController>(f => f.Geography((Guid)ViewData["missionId"]), "Geography") %></li>
+<li><%= Html.ActionLink<MissionsController>(f => f.Documents(ViewData["missionId"].ToString()), "Documents") %></li>
+</ul>
+</asp:Content>
+
+<asp:Content ContentPlaceHolderId="MainContent" ID="content1" runat="server">
+<asp:ContentPlaceHolder ID="MainContent" runat="server" />
+</asp:Content>
+<asp:Content ContentPlaceHolderId="HeadContent" ID="content2" runat="server">
+<asp:ContentPlaceHolder ID="HeadContent" runat="server" />
+</asp:Content>

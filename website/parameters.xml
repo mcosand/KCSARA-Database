@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<parameters>
+  <parameter name="MachineDecryptKey" description="Please provide the descryption key used for this site">
+    <parameterEntry kind="XmlFile" scope="\\web.config$" match="//machineKey/@decryptionKey" />
+  </parameter>
+  <parameter name="MachineValidationKey" description="Please provide the value for the validation of the machine key">
+    <parameterEntry kind="XmlFile" scope="\\web.config$" match="//machineKey/@validationKey" />
+  </parameter>
+
+  <parameter name="VisualSVNDrop" description="Please provide a path to the .htpasswd file managed by the VisualSVN Synchronizer">
+    <parameterEntry kind="XmlFile" scope="\\web.config$" match="//passwordSync/synchronizer[@type='Kcsara.Database.Web.Membership.Synchronizers.VisualSVN']/@option" />
+  </parameter>
+
+</parameters>

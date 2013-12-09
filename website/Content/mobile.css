@@ -1,0 +1,6 @@
+h2 { margin:.2em; padding:0px; }
+.poster-container-no-image, .poster-inner { min-height:10px; }
+.logo { width:100%; }
+.mobileSelect, .mobileSelect li { width:100%; margin:0px; padding:0px; }
+.mobileSelect li { list-style:none; background:inherit; margin-bottom:.7em; }
+.mobileSelect li a { font-size:160%; text-decoration:none;  }
