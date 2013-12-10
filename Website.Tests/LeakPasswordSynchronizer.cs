@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using log4net;
 
 namespace Kcsara.Database.Website.Tests
 {
@@ -12,7 +13,7 @@ namespace Kcsara.Database.Website.Tests
     {
         string passwordFile;
 
-        public LeakPasswordSynchronizer(string option)
+        public LeakPasswordSynchronizer(string option, ILog log)
         {
             if (string.IsNullOrWhiteSpace(option))
             {

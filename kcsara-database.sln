@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Website.Tests", "Website.Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpireNotify", "Tools\ExpireNotify\ExpireNotify.csproj", "{FAD0ED26-A017-4EB3-9D53-F6D0A6B72FA8}"
 EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "AuthDatabase", "AuthDatabase\AuthDatabase.sqlproj", "{2FAC81AA-26FF-44D2-82B2-F80C8187370C}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{316853AE-0DB7-406F-B49D-EB66C7D2729A}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config
@@ -152,6 +154,27 @@ Global
 		{FAD0ED26-A017-4EB3-9D53-F6D0A6B72FA8}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{FAD0ED26-A017-4EB3-9D53-F6D0A6B72FA8}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{FAD0ED26-A017-4EB3-9D53-F6D0A6B72FA8}.Release|x86.ActiveCfg = Release|Any CPU
+		{2FAC81AA-26FF-44D2-82B2-F80C8187370C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FAC81AA-26FF-44D2-82B2-F80C8187370C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FAC81AA-26FF-44D2-82B2-F80C8187370C}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{2FAC81AA-26FF-44D2-82B2-F80C8187370C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{2FAC81AA-26FF-44D2-82B2-F80C8187370C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{2FAC81AA-26FF-44D2-82B2-F80C8187370C}.Debug|Mixed Platforms.Deploy.0 = Debug|Any CPU
+		{2FAC81AA-26FF-44D2-82B2-F80C8187370C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2FAC81AA-26FF-44D2-82B2-F80C8187370C}.Deploy|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FAC81AA-26FF-44D2-82B2-F80C8187370C}.Deploy|Any CPU.Build.0 = Debug|Any CPU
+		{2FAC81AA-26FF-44D2-82B2-F80C8187370C}.Deploy|Any CPU.Deploy.0 = Debug|Any CPU
+		{2FAC81AA-26FF-44D2-82B2-F80C8187370C}.Deploy|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{2FAC81AA-26FF-44D2-82B2-F80C8187370C}.Deploy|Mixed Platforms.Build.0 = Debug|Any CPU
+		{2FAC81AA-26FF-44D2-82B2-F80C8187370C}.Deploy|Mixed Platforms.Deploy.0 = Debug|Any CPU
+		{2FAC81AA-26FF-44D2-82B2-F80C8187370C}.Deploy|x86.ActiveCfg = Debug|Any CPU
+		{2FAC81AA-26FF-44D2-82B2-F80C8187370C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FAC81AA-26FF-44D2-82B2-F80C8187370C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FAC81AA-26FF-44D2-82B2-F80C8187370C}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{2FAC81AA-26FF-44D2-82B2-F80C8187370C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{2FAC81AA-26FF-44D2-82B2-F80C8187370C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{2FAC81AA-26FF-44D2-82B2-F80C8187370C}.Release|Mixed Platforms.Deploy.0 = Release|Any CPU
+		{2FAC81AA-26FF-44D2-82B2-F80C8187370C}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
