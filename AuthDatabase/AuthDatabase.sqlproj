@@ -173,4 +173,7 @@
     <None Include="dbo\PostDeploy\SeedAdmin.sql" />
     <PostDeploy Include="dbo\PostDeploy\root.sql" />
   </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>copy /y "$(ProjectDir)$(OutputPath)$(TargetName)_create.sql" "$(SolutionDir)"</PostBuildEvent>
+  </PropertyGroup>
 </Project>
