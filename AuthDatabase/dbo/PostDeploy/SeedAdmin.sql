@@ -14,6 +14,10 @@ IF NOT EXISTS (SELECT 1 FROM [dbo].[aspnet_Applications] WHERE ApplicationName L
 
 IF NOT EXISTS (SELECT 1 FROM aspnet_Roles WHERE ApplicationId='F4266656-79F7-4723-9580-0A1AF8B13F0D' AND roleName LIKE 'cdb.admins')
   INSERT INTO aspnet_Roles (ApplicationId,RoleId,RoleName,LoweredRoleName) VALUES('F4266656-79F7-4723-9580-0A1AF8B13F0D',NEWID(),'cdb.admins','cdb.admins')
+IF NOT EXISTS (SELECT 1 FROM aspnet_Roles WHERE ApplicationId='F4266656-79F7-4723-9580-0A1AF8B13F0D' AND roleName LIKE 'cdb.users')
+  INSERT INTO aspnet_Roles (ApplicationId,RoleId,RoleName,LoweredRoleName) VALUES('F4266656-79F7-4723-9580-0A1AF8B13F0D',NEWID(),'cdb.users','cdb.users')
+IF NOT EXISTS (SELECT 1 FROM aspnet_Roles WHERE ApplicationId='F4266656-79F7-4723-9580-0A1AF8B13F0D' AND roleName LIKE 'site.accounts')
+  INSERT INTO aspnet_Roles (ApplicationId,RoleId,RoleName,LoweredRoleName) VALUES('F4266656-79F7-4723-9580-0A1AF8B13F0D',NEWID(),'site.accounts','site.accounts')
 
 DECLARE @userid UNIQUEIDENTIFIER
 DECLARE @RC bit
@@ -30,7 +34,13 @@ ELSE
 
 
 
-EXECUTE @RC = [dbo].[aspnet_UsersInRoles_IsUserInRole] 'Kcsar','admin','cdb.admins'
+EXECUTE @RC = [dbo].[aspnet_UsersInRoles_IsUserInRole] 'Kcsar','admin','site.accounts'
 IF (1 <> @RC)
-  EXECUTE [dbo].[aspnet_UsersInRoles_AddUsersToRoles] 'Kcsar','admin','cdb.admins',@now
+  EXECUTE [dbo].[aspnet_UsersInRoles_AddUsersToRoles] 'Kcsar','admin','site.accounts',@now
+
+IF NOT EXISTS (SELECT 1 FROM RolesInRoles rr JOIN aspnet_Roles c ON c.RoleId=rr.ChildRoleId JOIN aspnet_Roles p ON p.RoleId=rr.ParentRoleId WHERE c.RoleName LIKE 'cdb.admins' AND p.RoleName like 'cdb.users')
+  INSERT INTO RolesInRoles (ChildRoleId, ParentRoleId) VALUES((SELECT RoleId FROM aspnet_Roles WHERE ApplicationId='f4266656-79f7-4723-9580-0a1af8b13f0d' AND RoleName='cdb.admins'),(SELECT RoleId FROM aspnet_Roles WHERE ApplicationId='f4266656-79f7-4723-9580-0a1af8b13f0d' AND RoleName='cdb.users'))
+
+IF NOT EXISTS (SELECT 1 FROM RolesInRoles rr JOIN aspnet_Roles c ON c.RoleId=rr.ChildRoleId JOIN aspnet_Roles p ON p.RoleId=rr.ParentRoleId WHERE c.RoleName LIKE 'site.accounts' AND p.RoleName like 'cdb.admins')
+  INSERT INTO RolesInRoles (ChildRoleId, ParentRoleId) VALUES((SELECT RoleId FROM aspnet_Roles WHERE ApplicationId='f4266656-79f7-4723-9580-0a1af8b13f0d' AND RoleName='site.accounts'),(SELECT RoleId FROM aspnet_Roles WHERE ApplicationId='f4266656-79f7-4723-9580-0a1af8b13f0d' AND RoleName='cdb.admins'))
 

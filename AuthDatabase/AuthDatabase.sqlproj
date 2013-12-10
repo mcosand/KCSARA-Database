@@ -168,10 +168,12 @@
     <Build Include="Security\aspnet_Roles_FullAccess_1.sql" />
     <Build Include="Security\aspnet_Roles_ReportingAccess_1.sql" />
     <Build Include="Security\aspnet_WebEvent_FullAccess_1.sql" />
+    <None Include="dbo\PostDeploy\SeedSchema.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dbo\PostDeploy\SeedAdmin.sql" />
     <PostDeploy Include="dbo\PostDeploy\root.sql" />
+    <None Include="AuthDatabase.localdb.publish.xml" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>copy /y "$(ProjectDir)$(OutputPath)$(TargetName)_create.sql" "$(SolutionDir)"</PostBuildEvent>
