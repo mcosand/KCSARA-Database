@@ -1,9 +1,4 @@
-﻿IF fulltextserviceproperty(N'IsFulltextInstalled') = 1
-    EXECUTE sp_fulltext_database 'enable'
-
-
-GO
-PRINT N'Creating [aspnet_WebEvent_FullAccess]...';
+﻿PRINT N'Creating [aspnet_WebEvent_FullAccess]...';
 
 
 GO
