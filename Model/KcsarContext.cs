@@ -87,7 +87,7 @@ namespace Kcsar.Database.Model
         public IDbSet<SensitiveInfoAccess> SensitiveInfoLog { get; set; }
 
         public KcsarContext()
-            : base()
+            : base("DataStore")
         {
             this.AuditLog = this.Set<AuditLog>();
         }
