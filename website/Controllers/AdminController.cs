@@ -58,8 +58,13 @@
         string dataStore = setting.ConnectionString;
 
         result.AppendLine("Starting DataStore Migrations ...");
+        result.AppendLine(dataStore);
         Kcsar.Database.Model.Migrations.Migrator.UpdateDatabase(dataStore);
         result.AppendLine("Migrations complete.");
+
+        KcsarContext testContext = new KcsarContext();
+        result.AppendLine("Default Context connection string: " + testContext.Database.Connection.ConnectionString;
+        result.AppendFormat("Test Context returned {0} members\n", testContext.Members.Count());
 
         using (SqlConnection conn = new SqlConnection(authStore))
         {
