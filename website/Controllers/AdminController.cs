@@ -63,7 +63,7 @@
         result.AppendLine("Migrations complete.");
 
         KcsarContext testContext = new KcsarContext();
-        result.AppendLine("Default Context connection string: " + testContext.Database.Connection.ConnectionString;
+        result.AppendLine("Default Context connection string: " + testContext.Database.Connection.ConnectionString);
         result.AppendFormat("Test Context returned {0} members\n", testContext.Members.Count());
 
         using (SqlConnection conn = new SqlConnection(authStore))
