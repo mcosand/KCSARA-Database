@@ -31,7 +31,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Kcsara.Database.Web.XML</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -498,7 +499,6 @@
     <Content Include="Views\Map\Index.aspx" />
     <Content Include="Views\Account\Signup.aspx" />
     <Content Include="Views\Members\Awards.aspx" />
-    <Content Include="Views\Members\Copy of Apply.aspx" />
     <Content Include="Views\Members\Delete.aspx" />
     <Content Include="Views\Members\DeleteAddress.aspx" />
     <Content Include="Views\Members\DeleteMembership.aspx" />

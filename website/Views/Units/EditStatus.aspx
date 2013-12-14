@@ -19,10 +19,10 @@
     <% } %>
     
 
-<% if (false) { %>
+<%--<% if (false) { %>
 <script type="text/javascript">
 alert("*** CAUTION ***\nThis page is typically used to fix data entry errors.\n\nIf you are looking to add a new status type, please close this window and click 'Change Status' instead of 'Edit'.");
 </script>
-<% } %>
+<% } %>--%>
 
 </asp:Content>

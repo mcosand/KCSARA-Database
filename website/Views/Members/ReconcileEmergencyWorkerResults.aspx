@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<Kcsar.Web.Database.Model.ReconcileEmergencyWorkersViewModel>" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<Kcsara.Database.Web.Model.ReconcileEmergencyWorkersViewModel>" %>
 <%@ Import Namespace="Kcsara.Database.Web.Controllers" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
