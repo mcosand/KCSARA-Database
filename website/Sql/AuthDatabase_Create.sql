@@ -1766,11 +1766,12 @@ BEGIN
     DECLARE @DateActive datetime
     SELECT  @DateActive = DATEADD(minute,  -(@MinutesSinceLastInActive), @CurrentTimeUtc)
 
+    set transaction isolation level READ UNCOMMITTED
     DECLARE @NumOnline int
     SELECT  @NumOnline = COUNT(*)
-    FROM    dbo.aspnet_Users u(NOLOCK),
-            dbo.aspnet_Applications a(NOLOCK),
-            dbo.aspnet_Membership m(NOLOCK)
+    FROM    dbo.aspnet_Users u,
+            dbo.aspnet_Applications a,
+            dbo.aspnet_Membership m
     WHERE   u.ApplicationId = a.ApplicationId                  AND
             LastActivityDate > @DateActive                     AND
             a.LoweredApplicationName = LOWER(@ApplicationName) AND
