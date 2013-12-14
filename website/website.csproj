@@ -459,6 +459,8 @@
     <Content Include="Scripts\knockout.mapping-latest.debug.js" />
     <Content Include="Scripts\knockout.mapping-latest.js" />
     <Content Include="Scripts\ViewModels.js" />
+    <Content Include="Sql\AuthDatabase_Create.sql" />
+    <Content Include="Sql\AuthDatabase_Updates.sql" />
     <Content Include="Views\Account\ChangePassword.aspx" />
     <Content Include="Views\Account\ChangePasswordSuccess.aspx" />
     <Content Include="Views\Account\Index.aspx" />

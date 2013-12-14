@@ -11,7 +11,7 @@ namespace Kcsar.Membership
     /// &lt;profile inherits="Kcsar.Database.DatabaseUserProfile" defaultProvider="DatabaseProfileProvider"&gt;
     ///   &lt;providers&gt;
     ///     &lt;clear /&gt;
-    ///     &lt;add name="DatabaseProfileProvider" type="Kcsar.Database.DatabaseProfileProvider" connectionStringName="KcsarManagement"/&gt;
+    ///     &lt;add name="DatabaseProfileProvider" type="Kcsar.Database.DatabaseProfileProvider" connectionStringName="AuthStore"/&gt;
     ///   &lt;/providers&gt;
     /// &lt;/profile>
     /// </code>

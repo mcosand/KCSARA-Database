@@ -62,7 +62,7 @@
         {
             string username = "";
 
-            using (SqlConnection conn = new SqlConnection(Config.ConfigurationManager.ConnectionStrings["KcsarManagement"].ConnectionString))
+            using (SqlConnection conn = new SqlConnection(Config.ConfigurationManager.ConnectionStrings["AuthStore"].ConnectionString))
             {
                 conn.Open();
                 string query = string.Format("SELECT username FROM sso WHERE ticketId='{0}' AND expires > GETDATE()", t);
@@ -93,7 +93,7 @@
             Guid ticket = Guid.Empty;
             DateTime expires = DateTime.MinValue;
 
-            using (SqlConnection conn = new SqlConnection(Config.ConfigurationManager.ConnectionStrings["KcsarManagement"].ConnectionString))
+            using (SqlConnection conn = new SqlConnection(Config.ConfigurationManager.ConnectionStrings["AuthStore"].ConnectionString))
             {
                 conn.Open();
                 string query = string.Format("SELECT ticketId FROM sso WHERE siteId={0} AND username='{1}' AND expires > GETDATE()", p, User.Identity.Name);

@@ -103,6 +103,7 @@
     <Compile Include="Animal.cs" />
     <Compile Include="AnimalOwner.cs" />
     <Compile Include="AnimalMission.cs" />
+    <Compile Include="Migrations\Migrator.cs" />
     <Compile Include="MemberUnitDocument.cs" />
     <Compile Include="MemberMedical.cs" />
     <Compile Include="EmergencyContact.cs" />
