@@ -210,6 +210,7 @@
     <Content Include="Content\images\Trash.png" />
     <Content Include="Content\images\upload.gif" />
     <Content Include="Content\script\errorHandling.js" />
+    <Content Include="Content\nprogress.css" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\AdminController_Documents.cs" />
@@ -465,11 +466,13 @@
     <Content Include="Scripts\knockout-2.3.0.js" />
     <Content Include="Scripts\knockout.mapping-latest.debug.js" />
     <Content Include="Scripts\knockout.mapping-latest.js" />
+    <Content Include="Scripts\nprogress.js" />
     <Content Include="Scripts\ViewModels.js" />
     <Content Include="Sql\AuthDatabase_Create.sql" />
     <Content Include="Sql\AuthDatabase_Updates.sql" />
     <Content Include="Views\Account\ChangePassword.aspx" />
     <Content Include="Views\Account\ChangePasswordSuccess.aspx" />
+    <Content Include="Views\Account\InactiveMemberAccounts.aspx" />
     <Content Include="Views\Account\Index.aspx" />
     <Content Include="Views\Account\Login.aspx" />
     <Content Include="Views\Account\Mobile\Login.aspx" />

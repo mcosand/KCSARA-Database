@@ -24,6 +24,7 @@ namespace Kcsara.Database.Web
                 "~/Content/script/jquery.fileupload-process.js",
                 "~/Content/script/jquery.fileupload-ui.js",
                 "~/Content/script/jquery.fileupload-jquery-ui-kcsara.js",
+                "~/Scripts/nprogress.js",
 
                 "~/Scripts/ViewModels.js",
                 "~/Content/script/suggest.person.js",
@@ -59,7 +60,8 @@ namespace Kcsara.Database.Web
                 "~/Content/site.css",
                 "~/Content/common.css",
                 "~/Content/suggest.css",
-                "~/Content/jquery.fileupload-ui.css"
+                "~/Content/jquery.fileupload-ui.css",
+                "~/Content/nprogress.css"
                 ));
 
             bundles.Add(new StyleBundle("~/style/print").Include(
