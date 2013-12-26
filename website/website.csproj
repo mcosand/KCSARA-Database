@@ -165,10 +165,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="api\AdminController.cs" />
     <Compile Include="api\BaseApiController.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="api\AccountController.cs" />
+    <Compile Include="api\Models\Admin\ExecuteDatabaseScript.cs" />
     <Compile Include="api\Models\MemberUnitDocument.cs" />
     <Compile Include="api\Models\UnitDocument.cs" />
     <Compile Include="api\UnitsController.cs" />
@@ -482,6 +484,7 @@
     <Content Include="Views\Account\Settings.aspx" />
     <Content Include="Views\Account\Verify.aspx" />
     <Content Include="Views\Admin\Accounts.aspx" />
+    <Content Include="Views\Admin\Sql.aspx" />
     <Content Include="Views\Admin\CreateGroup.aspx" />
     <Content Include="Views\Admin\CreateUser.aspx" />
     <Content Include="Views\Admin\DeleteGroup.aspx" />

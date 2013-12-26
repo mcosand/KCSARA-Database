@@ -25,7 +25,7 @@ namespace Kcsara.Database.Web.Controllers
     bool IsUserOrLocal(HttpRequestBase request);
     bool IsRoleForPerson(string role, Guid personId);
     bool IsRoleForUnit(string role, Guid unitId);
-
+    
     void DeleteUser(string id);
   }
 

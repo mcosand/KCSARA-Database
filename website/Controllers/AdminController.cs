@@ -26,6 +26,14 @@
       return View();
     }
 
+    [HttpGet]
+    [Authorize(Roles="cdb.admins")]
+    public ActionResult Sql()
+    {
+      ViewBag.IsAccountAdmin = Permissions.InGroup("site.accounts");
+      return View();
+    }
+
     public ContentResult UpdateDatabase(string updateKey)
     {
       StringBuilder result = new StringBuilder("Starting database update ...\n");
@@ -66,12 +74,9 @@
         result.AppendLine("Default Context connection string: " + testContext.Database.Connection.ConnectionString);
         result.AppendFormat("Test Context returned {0} members\n", testContext.Members.Count());
 
-        using (SqlConnection conn = new SqlConnection(authStore))
+        using (SqlConnection conn = api.AdminController.CreateAndOpenConnection(authStore, result))
         {
           bool tableExists;
-
-          conn.InfoMessage += (object sender, SqlInfoMessageEventArgs e) => result.AppendLine(e.Message);
-          conn.Open();
 
           using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*)  FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo' AND  TABLE_NAME = 'aspnet_Applications'", conn))
           {
@@ -81,15 +86,14 @@
           {
             result.AppendLine("Creating authentication/authorization tables ...");
             result.AppendLine();
-            ExecuteSqlFile(conn, "AuthDatabase_Create.sql");
+            api.AdminController.ExecuteSqlFile(conn, GetSqlContent("Sql", "AuthDatabase_Create.sql"), result);
             result.AppendLine();
             result.AppendLine("!!!! Default Admin user was created. Login = admin/password !!!!");
           }
 
           result.AppendLine();
           result.AppendLine("Updating authentication/authorization tables ...");
-          ExecuteSqlFile(conn, "AuthDatabase_Updates.sql");
-
+          api.AdminController.ExecuteSqlFile(conn, GetSqlContent("Sql", "AuthDatabase_Update.sql"), result);          
         }
 
         result.AppendLine("Done");
@@ -101,24 +105,10 @@
       return Content(result.ToString(), "text/plain");
     }
 
-    private static void ExecuteSqlFile(SqlConnection conn, string file)
+    private string GetSqlContent(params string[] relativePath)
     {
-      string cmdText;
-      string[] commands;
-
-      cmdText = System.IO.File.ReadAllText(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Sql", file));
-      commands = Regex.Split(cmdText, "^GO\\r?\\n", RegexOptions.Multiline);
-      foreach (var command in commands)
-      {
-        if (string.IsNullOrWhiteSpace(command)) continue;
-
-        using (SqlCommand cmd = new SqlCommand(command, conn))
-        {
-          cmd.ExecuteNonQuery();
-        }
-      }
+      return System.IO.File.ReadAllText(System.IO.Path.Combine(new [] { AppDomain.CurrentDomain.BaseDirectory }.Union(relativePath).ToArray()));
     }
-
 
     [Authorize(Roles = "cdb.admins")]
     [AcceptVerbs(HttpVerbs.Get)]
