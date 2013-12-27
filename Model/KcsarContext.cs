@@ -386,7 +386,7 @@ namespace Kcsar.Database.Model
 
             Dictionary<Guid, TrainingCourse> courses = (from c in this.TrainingCourses select c).ToDictionary(x => x.Id);
 
-            foreach (Member m in members)
+            foreach (Member m in members.ToArray())
             {
                 foreach (ComputedTrainingAward award in (from a in this.ComputedTrainingAwards where a.Member.Id == m.Id select a))
                 {
@@ -394,7 +394,7 @@ namespace Kcsar.Database.Model
                 }
 
                 // Sort by expiry and completed dates to handle the case of re-taking a course that doesn't expire.
-                var direct = (from a in this.TrainingAward.Include("Course") where a.Member.Id == m.Id && a.Completed <= time select a)
+                var direct = (from a in this.TrainingAward.Include("Course").Include("Roster") where a.Member.Id == m.Id && a.Completed <= time select a)
                     .OrderBy(f => f.Course.Id).ThenByDescending(f => f.Expiry).ThenByDescending(f => f.Completed);
 
                 Dictionary<Guid, ComputedTrainingAward> awards = new Dictionary<Guid, ComputedTrainingAward>();
