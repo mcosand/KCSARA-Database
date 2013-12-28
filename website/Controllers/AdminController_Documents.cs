@@ -4,7 +4,6 @@
     using System.Linq;
     using System.Web.Mvc;
     using Kcsara.Database.Web.Model;
-    using System.Data.Objects.SqlClient;
 
     public partial class AdminController
     {

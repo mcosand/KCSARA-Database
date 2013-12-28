@@ -168,7 +168,7 @@ namespace Kcsara.Database.Web.Controllers
                         // This is supposed to be UpdateModel, not TryUpdate
                         UpdateModel(address, new[] { "Zip" });
                     }
-                    catch
+                    catch (Exception)
                     {
                         ModelState.AddModelError("Zip", "Can't locate address. ZIP is required");
                     }
@@ -290,7 +290,6 @@ namespace Kcsara.Database.Web.Controllers
 
             StringBuilder builder = new StringBuilder();
 
-            var c = 0;
             var d = 0;
 
             while (d < dbMembers.Count)

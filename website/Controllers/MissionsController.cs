@@ -1,15 +1,16 @@
 ﻿
 namespace Kcsara.Database.Web.Controllers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Configuration;
-    using System.Data.Entity;
-    using System.Globalization;
-    using System.Linq;
-    using System.Web.Mvc;
-    using Kcsar.Database.Model;
-    using Kcsara.Database.Web.Model;
+  using System;
+  using System.Collections.Generic;
+  using System.Configuration;
+  using System.Data.Entity;
+  using System.Data.Entity.SqlServer;
+  using System.Globalization;
+  using System.Linq;
+  using System.Web.Mvc;
+  using Kcsar.Database.Model;
+  using Kcsara.Database.Web.Model;
     //using Kcsara.Database.Web;
     //using Kcsar.Database.Geo;
     //using Kcsar.Database.Model;
@@ -918,7 +919,7 @@ namespace Kcsara.Database.Web.Controllers
                              Number = m.StateNumber,
                              StartTime = m.StartTime,
                              Persons = m.Roster.Select(f => f.Person.Id).Distinct().Count(),
-                             Hours = m.Roster.Sum(f => System.Data.Objects.SqlClient.SqlFunctions.DateDiff("minute", f.TimeIn, f.TimeOut)) / 60.0,
+                             Hours = m.Roster.Sum(f => SqlFunctions.DateDiff("minute", f.TimeIn, f.TimeOut)) / 60.0,
                              Miles = m.Roster.Sum(f => f.Miles),
                              IsActive = (m.StopTime == null || m.StopTime > recent)
                          }).OrderByDescending(f => f.StartTime).ToArray();
@@ -1049,7 +1050,7 @@ namespace Kcsara.Database.Web.Controllers
                              Number = m.StateNumber,
                              StartTime = m.StartTime,
                              Persons = m.Roster.Select(f => f.Person.Id).Distinct().Count(),
-                             Hours = m.Roster.Sum(f => System.Data.Objects.SqlClient.SqlFunctions.DateDiff("minute", f.TimeIn, f.TimeOut)) / 60.0,
+                             Hours = m.Roster.Sum(f => SqlFunctions.DateDiff("minute", f.TimeIn, f.TimeOut)) / 60.0,
                              Miles = m.Roster.Sum(f => f.Miles)
                          }).OrderByDescending(f => f.StartTime).ToArray();
             }
@@ -1359,7 +1360,7 @@ var results = (
                 ViewData["volHours"] = (from m in context.MissionRosters
                                         where m.Mission.StartTime > KcsarContext.MinEntryDate
                                         group m by m.Mission.StartTime.Year into g
-                                        select new { Year = g.Key, Hours = g.Sum(f => System.Data.Objects.SqlClient.SqlFunctions.DateDiff("minute", f.TimeIn, f.TimeOut)) / 60.0 }
+                                        select new { Year = g.Key, Hours = g.Sum(f => SqlFunctions.DateDiff("minute", f.TimeIn, f.TimeOut)) / 60.0 }
                                         ).ToDictionary(f => f.Year, f => f.Hours);
             }
 

@@ -11,7 +11,6 @@ namespace Kcsar.Database
         private float[] maxWidths = new float[50];
         private Graphics g;
         private Bitmap bmp;
-        private float zeroWidth;
         private int maxColumn = 0;
 
         public SheetAutoFitWrapper(ExcelFile file, ExcelSheet sheet)

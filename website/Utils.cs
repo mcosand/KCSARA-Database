@@ -60,7 +60,7 @@ namespace Kcsar
                 Type t = Type.GetType(typeName);
                 if (t == null)
                 {
-                    throw new ConfigurationException(string.Format("Can't load type '{0}' for config option {1}.", typeName, configName));
+                    throw new InvalidOperationException(string.Format("Can't load type '{0}' for config option {1}.", typeName, configName));
                 }
                 manager = (T)Activator.CreateInstance(Type.GetType(typeName));
             }

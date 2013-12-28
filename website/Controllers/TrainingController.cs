@@ -8,7 +8,6 @@ namespace Kcsara.Database.Web.Controllers
     using System.Collections.Generic;
     using System.Configuration;
     using System.Data.Entity.Infrastructure;
-    using System.Data.Objects.SqlClient;
     using System.Globalization;
     using System.IO;
     using System.Linq;

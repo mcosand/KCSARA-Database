@@ -57,13 +57,17 @@
           return Content("ConnectionString 'AuthStore' not set");
         }
         string authStore = setting.ConnectionString;
-
+        
         setting = ConfigurationManager.ConnectionStrings["DataStore"];
         if (setting == null || string.IsNullOrWhiteSpace(setting.ConnectionString))
         {
           return Content("ConnectionString 'DataStore' not set");
         }
         string dataStore = setting.ConnectionString;
+        if (!dataStore.ToLowerInvariant().Contains("multipleactiveresultsets=true"))
+        {
+          return Content("DataStore connection string should include MultipleActiveResultSets=true");
+        }
 
         result.AppendLine("Starting DataStore Migrations ...");
         result.AppendLine(dataStore);

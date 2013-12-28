@@ -13,7 +13,7 @@ namespace Kcsara.Database.Web.Controllers
     using Kcsara.Database.Web.Model;
     using System.Collections.Generic;
     using System.IO;
-    using System.Data;
+    using System.Data.Entity;
 
     public partial class TrainingController
     {
