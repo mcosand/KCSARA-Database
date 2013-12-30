@@ -91,3 +91,15 @@ IF NOT EXISTS (SELECT 1 FROM TrainingRosters WHERE Person_Id=@marc AND Training_
 IF NOT EXISTS (SELECT 1 FROM TrainingAwards WHERE Member_Id=@marc AND Course_Id=@helo)
   INSERT INTO TrainingAwards (Id, Completed, Expiry, LastChanged, Member_Id, Course_Id, Roster_Id)
 	  VALUES (NEWID(), '2013-10-19 22:00', '2015-10-19 22:00', GETDATE(), @marc, @helo, (SELECT id FROM TrainingRosters WHERE Person_Id=@marc AND Training_Id=@helo_class1))
+
+-- ========================  MISSIONS  ====================================
+DECLARE @mSnowLake UNIQUEIDENTIFIER = NEWID()
+IF EXISTS (SELECT 1 FROM Missions WHERE StartTime='2013-04-05 23:00')
+  SET @mSnowLake = (SELECT id FROM Missions WHERE StartTime='2013-04-05 23:00')
+ELSE
+  INSERT INTO Missions (Id,Title,County,StateNumber,MissionType,StartTime,StopTime,Location,ReportCompleted,LastChanged)
+	  VALUES (@mSnowLake, 'Snow Lake Lost Snowshoer', 'king', '13-0450', 'search,rescue', '2013-04-05 23:00', '2013-04-06 09:00', 'Alpental', 1, GETDATE())
+
+IF NOT EXISTS (SELECT 1 FROM MissionRosters WHERE Mission_Id=@mSnowLake AND Person_Id=@marc)
+  INSERT INTO MissionRosters (Id,InternalRole,TimeIn,[TimeOut],Miles,LastChanged,Mission_Id,Person_Id,Unit_Id)
+	  VALUES (NEWID(), 'Field', '2013-04-05 23:00', '2013-04-06 10:00', 60, GETDATE(), @mSnowLake, @marc, @mtnrsq)
