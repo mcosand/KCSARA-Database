@@ -32,10 +32,10 @@ namespace Kcsara.Database.Web.Controllers
   public class PermissionsProvider : IPermissions
   {
     private IPrincipal user;
-    private KcsarContext context;
+    private IKcsarContext context;
     public Guid UserId { get; private set; }
 
-    public PermissionsProvider(IPrincipal user, KcsarContext context)
+    public PermissionsProvider(IPrincipal user, IKcsarContext context)
     {
       this.user = user;
       this.context = context;

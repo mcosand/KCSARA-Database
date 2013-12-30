@@ -126,7 +126,7 @@ namespace Kcsar.Membership
                 using (var context = new KcsarContext())
                 {
                     member = (from m in context.Members where m.Id == id select m).FirstOrDefault();
-                 //   context.Detach(member);
+                 //   this.db.Detach(member);
                 }
                 if (member == null)
                 {

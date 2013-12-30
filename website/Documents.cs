@@ -35,7 +35,7 @@ using System.IO;
             return val;
         }
 
-        public static Document ProcessImage(System.IO.Stream source, KcsarContext ctx, string filename, Guid trainingId)
+        public static Document ProcessImage(System.IO.Stream source, IKcsarContext ctx, string filename, Guid trainingId)
         {
             Bitmap bitmap = (Bitmap)Image.FromStream(source);
 
@@ -59,7 +59,7 @@ using System.IO;
             return doc;
         }
 
-        public static void ReceiveDocuments(HttpFileCollectionBase files, KcsarContext ctx, Guid reference, string type)
+        public static void ReceiveDocuments(HttpFileCollectionBase files, IKcsarContext ctx, Guid reference, string type)
         {
             foreach (string file in files)
             {
@@ -68,7 +68,7 @@ using System.IO;
             }
         }
 
-        public static Document[] ReceiveDocument(Stream contentStream, string filename, int length, KcsarContext ctx, Guid reference, string type)
+        public static Document[] ReceiveDocument(Stream contentStream, string filename, int length, IKcsarContext ctx, Guid reference, string type)
         {
             List<Document> docs = new List<Document>();
             if (filename.ToLowerInvariant().EndsWith(".tif", StringComparison.OrdinalIgnoreCase))

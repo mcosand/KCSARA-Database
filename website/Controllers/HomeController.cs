@@ -14,8 +14,8 @@ namespace Kcsara.Database.Web.Controllers
 
   public class HomeController : BaseController
   {
-    public HomeController()
-      : base()
+    public HomeController(IKcsarContext db)
+      : base(db)
     {
       System.Data.Entity.Database.SetInitializer<MeshNodeEntities>(new System.Data.Entity.DropCreateDatabaseIfModelChanges<MeshNodeEntities>());
     }
@@ -41,15 +41,15 @@ namespace Kcsara.Database.Web.Controllers
       ExcelFile xl = ExcelService.Create(ExcelFileType.XLS);
       var goodList = xl.CreateSheet("Mission Ready");
 
-      string unitName = UnitsController.GenerateMissionReadySheets(context, null, xl, goodList);
+      string unitName = UnitsController.GenerateMissionReadySheets(this.db, null, xl, goodList);
 
       var dataSheet = xl.CreateSheet("Member Data");
 
-      var interestingCourses = (from c in context.TrainingCourses where c.WacRequired > 0 select c).OrderBy(x => x.DisplayName).ToList();
-      interestingCourses.AddRange(TrainingController.GetCoreCompetencyCourses(context));
+      var interestingCourses = (from c in this.db.TrainingCourses where c.WacRequired > 0 select c).OrderBy(x => x.DisplayName).ToList();
+      interestingCourses.AddRange(TrainingController.GetCoreCompetencyCourses(this.db));
 
 
-      IQueryable<Member> members = context.Members.Include("Addresses", "Memberships", "ComputedAwards.Course").Where(f => f.Memberships.Any(g => g.Status.IsActive && g.EndTime == null));
+      IQueryable<Member> members = this.db.Members.Include("Addresses", "Memberships", "ComputedAwards.Course").Where(f => f.Memberships.Any(g => g.Status.IsActive && g.EndTime == null));
       members = members.OrderBy(f => f.LastName).ThenBy(f => f.FirstName);
 
       // Set column header titles. A static list, followed by a list of "interesting" training courses
@@ -106,7 +106,7 @@ namespace Kcsara.Database.Web.Controllers
         }
         row++;
       }
-      //IQueryable<UnitMembership> memberships = context.UnitMemberships.Include("Person.Addresses", "Person.ContactNumbers").Include("Status");
+      //IQueryable<UnitMembership> memberships = this.db.UnitMemberships.Include("Person.Addresses", "Person.ContactNumbers").Include("Status");
       //memberships = memberships.Where(um => um.EndTime == null && um.Status.IsActive);
       //memberships = memberships.OrderBy(f => f.Person.LastName).ThenBy(f => f.Person.FirstName);
 
@@ -432,10 +432,7 @@ namespace Kcsara.Database.Web.Controllers
     {
       if (!Permissions.IsAdmin) return Data("bad username");
 
-      using (var ctx = GetContext())
-      {
-        return Data(ctx.xref_county_id.Where(f => f.ExternalSource == id).ToArray());
-      }
+      return Data(this.db.xref_county_id.Where(f => f.ExternalSource == id).ToArray());
     }
 
     /// <summary>
@@ -450,19 +447,16 @@ namespace Kcsara.Database.Web.Controllers
     {
       if (!Permissions.InGroup("cdb.admins")) throw new InvalidOperationException();
 
-      using (var ctx = GetContext())
+      var entry = this.db.xref_county_id.Where(f => f.personId == kcsaraId && f.ExternalSource == id).SingleOrDefault();
+
+      if (entry == null)
       {
-        var entry = ctx.xref_county_id.Where(f => f.personId == kcsaraId && f.ExternalSource == id).SingleOrDefault();
-
-        if (entry == null)
-        {
-          entry = new Kcsar.Database.Model.xref_county_id { personId = kcsaraId, ExternalSource = id };
-          ctx.xref_county_id.Add(entry);
-        }
-
-        entry.accessMemberID = externalId;
-        ctx.SaveChanges();
+        entry = new Kcsar.Database.Model.xref_county_id { personId = kcsaraId, ExternalSource = id };
+        this.db.xref_county_id.Add(entry);
       }
+
+      entry.accessMemberID = externalId;
+      this.db.SaveChanges();
 
       return new ContentResult { Content = "OK", ContentType = "text/plain" };
     }

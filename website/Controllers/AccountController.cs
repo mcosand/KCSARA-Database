@@ -27,7 +27,7 @@
       ViewData["Title"] = "New Member Application";
       ViewData.Add("hideMenu", true);
 
-      ViewBag.Units = context.Units.Where(f => f.NoApplicationsText != "never").OrderBy(f => f.LongName)
+      ViewBag.Units = this.db.Units.Where(f => f.NoApplicationsText != "never").OrderBy(f => f.LongName)
           .Select(f => new UnitApplicationInfoViewModel
           {
             Contact = f.Contacts.Where(g => g.Purpose == "applications" && g.Type == "email").Select(g => g.Value).FirstOrDefault(),
@@ -144,7 +144,7 @@
     [RequireHttps]
     public ActionResult Settings()
     {
-      ViewData["lstUnitFilter"] = new MultiSelectList((from u in context.Units select u), "Id", "DisplayName", this.UserSettings.UnitFilter);
+      ViewData["lstUnitFilter"] = new MultiSelectList((from u in this.db.Units select u), "Id", "DisplayName", this.UserSettings.UnitFilter);
       ViewData["coordDisplay"] = (int)this.UserSettings.CoordinateDisplay;
       return View();
     }
@@ -179,14 +179,6 @@
       return RedirectToAction("ClosePopup");
     }
 
-    // This constructor is used by the MVC framework to instantiate the controller using
-    // the default forms authentication and membership providers.
-
-    public AccountController()
-      : this(null, null)
-    {
-    }
-
     [Authorize]
     public ActionResult Index()
     {
@@ -195,14 +187,11 @@
       return View();
     }
 
-    // This constructor is not used by the MVC framework but is instead provided for ease
-    // of unit testing this type. See the comments at the end of this file for more
-    // information.
-
-    public AccountController(IFormsAuthentication formsAuth, System.Web.Security.MembershipProvider provider)
+    public AccountController(IKcsarContext db, IFormsAuthentication formsAuth, System.Web.Security.MembershipProvider provider)
+      : base(db)
     {
-      FormsAuth = formsAuth ?? new FormsAuthenticationWrapper();
-      Provider = provider ?? Membership.Provider;
+      Provider = provider;
+      FormsAuth = formsAuth;
     }
 
     public IFormsAuthentication FormsAuth

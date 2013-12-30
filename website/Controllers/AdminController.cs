@@ -20,6 +20,8 @@
 
   public partial class AdminController : BaseController
   {
+    public AdminController(IKcsarContext db) : base(db) { }
+
     [Authorize]
     public ActionResult Index()
     {
@@ -27,7 +29,7 @@
     }
 
     [HttpGet]
-    [Authorize(Roles="cdb.admins")]
+    [Authorize(Roles = "cdb.admins")]
     public ActionResult Sql()
     {
       ViewBag.IsAccountAdmin = Permissions.InGroup("site.accounts");
@@ -57,7 +59,7 @@
           return Content("ConnectionString 'AuthStore' not set");
         }
         string authStore = setting.ConnectionString;
-        
+
         setting = ConfigurationManager.ConnectionStrings["DataStore"];
         if (setting == null || string.IsNullOrWhiteSpace(setting.ConnectionString))
         {
@@ -97,7 +99,7 @@
 
           result.AppendLine();
           result.AppendLine("Updating authentication/authorization tables ...");
-          api.AdminController.ExecuteSqlFile(conn, GetSqlContent("Sql", "AuthDatabase_Update.sql"), result);          
+          api.AdminController.ExecuteSqlFile(conn, GetSqlContent("Sql", "AuthDatabase_Update.sql"), result);
         }
 
         result.AppendLine("Done");
@@ -111,7 +113,7 @@
 
     private string GetSqlContent(params string[] relativePath)
     {
-      return System.IO.File.ReadAllText(System.IO.Path.Combine(new [] { AppDomain.CurrentDomain.BaseDirectory }.Union(relativePath).ToArray()));
+      return System.IO.File.ReadAllText(System.IO.Path.Combine(new[] { AppDomain.CurrentDomain.BaseDirectory }.Union(relativePath).ToArray()));
     }
 
     [Authorize(Roles = "cdb.admins")]
@@ -173,14 +175,11 @@
       KcsarUserProfile profile = ProfileBase.Create(acct) as KcsarUserProfile;
       profile.LinkKey = id.ToString();
       profile.Save();
-      using (var ctx = GetContext())
+      Member m = this.db.Members.Where(x => x.Id == id).FirstOrDefault();
+      if (m != null && string.IsNullOrWhiteSpace(m.Username))
       {
-        Member m = ctx.Members.Where(x => x.Id == id).FirstOrDefault();
-        if (m != null && string.IsNullOrWhiteSpace(m.Username))
-        {
-          m.Username = acct;
-          ctx.SaveChanges();
-        }
+        m.Username = acct;
+        this.db.SaveChanges();
       }
       return new ContentResult { Content = "OK", ContentType = "text/plain" };
     }
@@ -364,27 +363,24 @@
     {
       var groups = Kcsar.Membership.RoleProvider.GetRoles().OrderBy(x => x.Name);
       List<GroupView> model = new List<GroupView>();
-      using (var ctx = GetContext())
-      {
-        Guid[] owners = groups.SelectMany(f => f.Owners).Distinct().ToArray();
-        var ownerDetails = (owners.Length > 0) ? context.Members.Where(GetSelectorPredicate<Member>(owners)).ToDictionary(f => f.Id, f => f) : new Dictionary<Guid, Member>();
+      Guid[] owners = groups.SelectMany(f => f.Owners).Distinct().ToArray();
+      var ownerDetails = (owners.Length > 0) ? this.db.Members.Where(GetSelectorPredicate<Member>(owners)).ToDictionary(f => f.Id, f => f) : new Dictionary<Guid, Member>();
 
-        foreach (var group in groups)
+      foreach (var group in groups)
+      {
+        GroupView view = new GroupView { Name = group.Name, EmailAddress = group.EmailAddress, Destinations = group.Destinations.ToArray() };
+        List<MemberSummaryRow> ownersView = new List<MemberSummaryRow>();
+        foreach (Guid owner in group.Owners)
         {
-          GroupView view = new GroupView { Name = group.Name, EmailAddress = group.EmailAddress, Destinations = group.Destinations.ToArray() };
-          List<MemberSummaryRow> ownersView = new List<MemberSummaryRow>();
-          foreach (Guid owner in group.Owners)
+          Member m = ownerDetails[owner];
+          ownersView.Add(new MemberSummaryRow
           {
-            Member m = ownerDetails[owner];
-            ownersView.Add(new MemberSummaryRow
-            {
-              Name = m.FullName,
-              Id = owner
-            });
-          }
-          view.Owners = ownersView.ToArray();
-          model.Add(view);
+            Name = m.FullName,
+            Id = owner
+          });
         }
+        view.Owners = ownersView.ToArray();
+        model.Add(view);
       }
       ViewData["IsAdmin"] = User.IsInRole("site.accounts");
       ViewData["UserId"] = Permissions.UserId;
@@ -743,47 +739,44 @@
       string msgs = string.Empty;
       doit = doit ?? false;
 
-      using (var ctx = GetContext())
+      //SarUnit withUnit = string.IsNullOrWhiteSpace(unit) ? null : UnitsController.ResolveUnit(ctx.Units, unit);
+
+      var query = (from m in this.db.UnitMemberships where m.Status.IsActive && m.EndTime == null select m);
+      if (!string.IsNullOrWhiteSpace(unit))
       {
-        //SarUnit withUnit = string.IsNullOrWhiteSpace(unit) ? null : UnitsController.ResolveUnit(ctx.Units, unit);
+        Guid unitId = UnitsController.ResolveUnit(this.db.Units, unit).Id;
+        query = query.Where(f => f.Unit.Id == unitId);
+      }
+      List<string> desiredUsers = query.Select(f => f.Person.Username ?? ("*" + f.Person.FirstName + " " + f.Person.LastName)).ToList();
+      List<string> usersToRemove = new List<string>();
+      List<string> forceKeep = new List<string>();
 
-        var query = (from m in ctx.UnitMemberships where m.Status.IsActive && m.EndTime == null select m);
-        if (!string.IsNullOrWhiteSpace(unit))
+      foreach (string user in Roles.GetUsersInRole(group))
+      {
+        if (desiredUsers.Contains(user))
         {
-          Guid unitId = UnitsController.ResolveUnit(ctx.Units, unit).Id;
-          query = query.Where(f => f.Unit.Id == unitId);
+          desiredUsers.Remove(user);
         }
-        List<string> desiredUsers = query.Select(f => f.Person.Username ?? ("*" + f.Person.FirstName + " " + f.Person.LastName)).ToList();
-        List<string> usersToRemove = new List<string>();
-        List<string> forceKeep = new List<string>();
-
-        foreach (string user in Roles.GetUsersInRole(group))
+        else if (keep != null && keep.Contains(user))
         {
-          if (desiredUsers.Contains(user))
-          {
-            desiredUsers.Remove(user);
-          }
-          else if (keep != null && keep.Contains(user))
-          {
-            forceKeep.Add(user);
-          }
-          else
-          {
-            usersToRemove.Add(user);
-          }
+          forceKeep.Add(user);
         }
-        if (desiredUsers.Count > 1)
+        else
         {
-          msgs += string.Join("\n", desiredUsers.Where(f => f[0] != '*').Select(f => "add " + f).ToArray());
-          msgs += string.Join("\n", desiredUsers.Where(f => f[0] == '*').Select(f => "No username for active member " + f.Substring(1)).ToArray());
-          if (doit.Value && desiredUsers.Count(f => f[0] != '*') > 0) Roles.AddUsersToRole(desiredUsers.Where(f => f[0] != '*').ToArray(), group);
+          usersToRemove.Add(user);
         }
-        msgs += string.Join("\n", forceKeep.Select(f => "keeping " + f).ToArray());
-        if (usersToRemove.Count > 1)
-        {
-          msgs += string.Join("\n", usersToRemove.Select(f => "remove " + f).ToArray());
-          if (doit.Value) Roles.RemoveUsersFromRole(usersToRemove.ToArray(), group);
-        }
+      }
+      if (desiredUsers.Count > 1)
+      {
+        msgs += string.Join("\n", desiredUsers.Where(f => f[0] != '*').Select(f => "add " + f).ToArray());
+        msgs += string.Join("\n", desiredUsers.Where(f => f[0] == '*').Select(f => "No username for active member " + f.Substring(1)).ToArray());
+        if (doit.Value && desiredUsers.Count(f => f[0] != '*') > 0) Roles.AddUsersToRole(desiredUsers.Where(f => f[0] != '*').ToArray(), group);
+      }
+      msgs += string.Join("\n", forceKeep.Select(f => "keeping " + f).ToArray());
+      if (usersToRemove.Count > 1)
+      {
+        msgs += string.Join("\n", usersToRemove.Select(f => "remove " + f).ToArray());
+        if (doit.Value) Roles.RemoveUsersFromRole(usersToRemove.ToArray(), group);
       }
       return new ContentResult { Content = msgs, ContentType = "text/plain" };
     }
@@ -922,7 +915,7 @@
     public ActionResult DisconnectedPhotos()
     {
       string storePath = Server.MapPath(MembersController.PhotosStoreRelativePath);
-      var photoFiles = (from m in context.Members where m.PhotoFile != "" && m.PhotoFile != null select m.PhotoFile.ToLower()).ToList();
+      var photoFiles = (from m in this.db.Members where m.PhotoFile != "" && m.PhotoFile != null select m.PhotoFile.ToLower()).ToList();
 
       List<string> existingFiles = System.IO.Directory.GetFiles(storePath).Select(f => f.Substring(storePath.Length)).ToList();
       for (int i = 0; i < existingFiles.Count; i++)
@@ -948,7 +941,7 @@
     {
       Kcsar.Database.Model.UnitMembership lastUm = null;
 
-      foreach (Kcsar.Database.Model.UnitMembership um in (from u in context.UnitMemberships.Include("Person").Include("Unit") select u).OrderBy(f => f.Person.Id).ThenBy(f => f.Unit.Id).ThenBy(f => f.Activated))
+      foreach (Kcsar.Database.Model.UnitMembership um in (from u in this.db.UnitMemberships.Include("Person").Include("Unit") select u).OrderBy(f => f.Person.Id).ThenBy(f => f.Unit.Id).ThenBy(f => f.Activated))
       {
         if (lastUm != null && um.Person.Id == lastUm.Person.Id && um.Unit.Id == lastUm.Unit.Id)
         {
@@ -956,7 +949,7 @@
         }
         lastUm = um;
       }
-      context.SaveChanges();
+      this.db.SaveChanges();
 
       return new ContentResult { Content = "OK" };
     }
@@ -967,7 +960,7 @@
 
       string data = "<table>";
       int pageSize = 40;
-      foreach (var addr in (from a in context.PersonAddress.Include("Person") where a.Quality == 0 select a).OrderBy(f => f.Person.LastName).ThenBy(f => f.Person.FirstName).Skip(id.Value * pageSize).Take(pageSize))
+      foreach (var addr in (from a in this.db.PersonAddress.Include("Person") where a.Quality == 0 select a).OrderBy(f => f.Person.LastName).ThenBy(f => f.Person.FirstName).Skip(id.Value * pageSize).Take(pageSize))
       {
         string oldAddr = addr.Street + "<br/>" + addr.City + " " + addr.State + " " + addr.Zip;
 
@@ -982,7 +975,7 @@
                                 HttpUtility.HtmlEncode(string.Format("[{0}][{1}][{2}][{3}]", addr.Street, addr.City, addr.State, addr.Zip)))
                             );
       }
-      context.SaveChanges();
+      this.db.SaveChanges();
       return new ContentResult { Content = data + "</table>", ContentType = "text/html" };
     }
 
@@ -995,24 +988,21 @@
     {
       string results = string.Empty;
       var profiles = Membership.GetAllUsers().Cast<MembershipUser>().Select(f => ProfileBase.Create(f.UserName) as KcsarUserProfile);
-      using (var ctx = GetContext())
+      foreach (KcsarUserProfile profile in profiles)
       {
-        foreach (KcsarUserProfile profile in profiles)
+        if (string.IsNullOrEmpty(profile.LinkKey)) continue;
+        Guid key = new Guid(profile.LinkKey);
+        var member = (from m in this.db.Members where m.Id == key select m).FirstOrDefault();
+        if (!string.IsNullOrEmpty(member.Username) && member.Username != profile.UserName)
         {
-          if (string.IsNullOrEmpty(profile.LinkKey)) continue;
-          Guid key = new Guid(profile.LinkKey);
-          var member = (from m in ctx.Members where m.Id == key select m).FirstOrDefault();
-          if (!string.IsNullOrEmpty(member.Username) && member.Username != profile.UserName)
-          {
-            results += string.Format("{0} {1}\n", member.Username, member.ReverseName);
-          }
-          if (member.Username != profile.UserName)
-          {
-            member.Username = profile.UserName;
-          }
+          results += string.Format("{0} {1}\n", member.Username, member.ReverseName);
         }
-        ctx.SaveChanges();
+        if (member.Username != profile.UserName)
+        {
+          member.Username = profile.UserName;
+        }
       }
+      this.db.SaveChanges();
       return new ContentResult { Content = "OK\n\n" + results, ContentType = "text/plain" };
     }
 
@@ -1034,38 +1024,34 @@
       }
       string result = "";
 
-      using (var ctx = GetContext())
+      SarUnit unit = UnitsController.ResolveUnit(this.db.Units, id);
+      if (string.IsNullOrEmpty(group))
       {
-        SarUnit unit = UnitsController.ResolveUnit(ctx.Units, id);
-        if (string.IsNullOrEmpty(group))
+        group = UnitNameAsGroupName(unit.DisplayName) + ".members";
+      }
+
+      var unitMembers = (from m in this.db.UnitMemberships
+                         where m.Unit.Id == unit.Id && m.EndTime == null && m.Status.GetsAccount
+                         select m.Person).OrderBy(f => f.LastName).ThenBy(f => f.FirstName).Distinct().ToArray();
+
+      var usersInGroup = Roles.GetUsersInRole(group).ToList();
+
+      foreach (var member in unitMembers)
+      {
+        if (usersInGroup.Contains(member.Username))
         {
-          group = UnitNameAsGroupName(unit.DisplayName) + ".members";
+          result += string.Format("{0} in group as {1}<br/>", member.FullName, member.Username);
+          usersInGroup.Remove(member.Username);
         }
-
-        var unitMembers = (from m in ctx.UnitMemberships
-                           where m.Unit.Id == unit.Id && m.EndTime == null && m.Status.GetsAccount
-                           select m.Person).OrderBy(f => f.LastName).ThenBy(f => f.FirstName).Distinct().ToArray();
-
-        var usersInGroup = Roles.GetUsersInRole(group).ToList();
-
-        foreach (var member in unitMembers)
+        else
         {
-          if (usersInGroup.Contains(member.Username))
-          {
-            result += string.Format("{0} in group as {1}<br/>", member.FullName, member.Username);
-            usersInGroup.Remove(member.Username);
-          }
-          else
-          {
-            result += string.Format("## {0} not in group. Should add {1}<br/>", member.FullName, member.Username);
-          }
+          result += string.Format("## {0} not in group. Should add {1}<br/>", member.FullName, member.Username);
         }
+      }
 
-        foreach (string username in usersInGroup)
-        {
-          result += string.Format("## suggest remove {0}<br/>", username);
-        }
-
+      foreach (string username in usersInGroup)
+      {
+        result += string.Format("## suggest remove {0}<br/>", username);
       }
 
       //if (commit.HasValue && commit.Value)
@@ -1120,39 +1106,36 @@
     {
       string results = string.Empty;
 
-      using (var ctx = GetContext())
+      var map = this.db.Members.Include("ContactNumbers").ToDictionary(f => f.Id, f => f.ContactNumbers.Where(g => g.Type == "email").OrderBy(g => g.Priority).Select(g => g.Value).FirstOrDefault());
+
+      foreach (MembershipUser user in Membership.GetAllUsers())
       {
-        var map = ctx.Members.Include("ContactNumbers").ToDictionary(f => f.Id, f => f.ContactNumbers.Where(g => g.Type == "email").OrderBy(g => g.Priority).Select(g => g.Value).FirstOrDefault());
+        var view = GetAccountView(user);
 
-        foreach (MembershipUser user in Membership.GetAllUsers())
+        if (string.IsNullOrWhiteSpace(view.LinkKey))
         {
-          var view = GetAccountView(user);
+          results += user.UserName + " is not linked to database\n";
+          continue;
+        }
 
-          if (string.IsNullOrWhiteSpace(view.LinkKey))
-          {
-            results += user.UserName + " is not linked to database\n";
-            continue;
-          }
+        Guid id = new Guid(view.LinkKey);
+        if (!map.ContainsKey(id))
+        {
+          results += user.UserName + " has invalid database id: " + view.LinkKey + "\n";
+          continue;
+        }
 
-          Guid id = new Guid(view.LinkKey);
-          if (!map.ContainsKey(id))
-          {
-            results += user.UserName + " has invalid database id: " + view.LinkKey + "\n";
-            continue;
-          }
+        if (string.IsNullOrWhiteSpace(map[id]))
+        {
+          results += user.UserName + " has no email address in database\n";
+          continue;
+        }
 
-          if (string.IsNullOrWhiteSpace(map[id]))
-          {
-            results += user.UserName + " has no email address in database\n";
-            continue;
-          }
-
-          if (view.Email != map[id])
-          {
-            results += string.Format("{0} changing email from '{1}' to '{2}'\n", user.UserName, user.Email, map[id]);
-            user.Email = map[id];
-            Membership.UpdateUser(user);
-          }
+        if (view.Email != map[id])
+        {
+          results += string.Format("{0} changing email from '{1}' to '{2}'\n", user.UserName, user.Email, map[id]);
+          user.Email = map[id];
+          Membership.UpdateUser(user);
         }
       }
 
@@ -1172,12 +1155,10 @@
     public DataActionResult GetInactiveMembersWithAccounts()
     {
       Member[] model;
-      using (var db = this.GetContext())
-      {
-        model = db.Members
-            .Where(f => f.Username != null && !f.Memberships.Any(g => g.EndTime == null && g.Status.IsActive == true))
-            .ToArray();
-      }
+      model = this.db.Members
+          .Where(f => f.Username != null && !f.Memberships.Any(g => g.EndTime == null && g.Status.IsActive == true))
+          .ToArray();
+
       return Data(model);
     }
 

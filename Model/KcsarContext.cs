@@ -47,6 +47,17 @@
     IDbSet<TrainingExpirationSummary> TrainingExpirationSummaries { get; set; }
     IDbSet<CurrentMemberIds> CurrentMemberIds { get; set; }
     IDbSet<xref_county_id> xref_county_id { get; set; }
+
+    void RecalculateTrainingAwards();
+    void RecalculateTrainingAwards(Guid memberId);
+    void RecalculateTrainingAwards(IEnumerable<Member> members);
+
+    AuditLog[] GetLog(DateTime since);
+    Func<UnitMembership, bool> GetActiveMembershipFilter(Guid? unit, DateTime time);
+    IQueryable<Member> GetActiveMembers(Guid? unit, DateTime time, params string[] includes);
+    int SaveChanges();
+
+    DbEntityEntry<TEntity> Entry<TEntity>(TEntity entity) where TEntity : class;
   }
 
   public class KcsarContext : DbContext, IKcsarContext
