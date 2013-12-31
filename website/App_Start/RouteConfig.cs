@@ -17,12 +17,6 @@ namespace Kcsara.Database.Web
 
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
-            routes.MapHttpRoute(
-                "DefaultApi",
-                "api/{controller}/{action}/{id}",
-                new { action = RouteParameter.Optional, id = RouteParameter.Optional }
-            );
-
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",

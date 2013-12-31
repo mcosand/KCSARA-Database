@@ -6,10 +6,16 @@
   using System.Text;
   using System.Text.RegularExpressions;
   using System.Web.Http;
+  using Kcsar.Database.Model;
+  using log4net;
 
   [ModelValidationFilter]
   public class AdminController : BaseApiController
   {
+    public AdminController(IKcsarContext db, ILog log)
+      : base(db, log)
+    { }
+
     [HttpPost]
     [Authorize(Roles="cdb.admins")]
     public string Sql(Models.Admin.ExecuteDatabaseScript model)

@@ -14,11 +14,16 @@ namespace Kcsara.Database.Web.api
   using System.Web.Http;
   using System.Web.Profile;
   using Model = Kcsar.Database.Model;
+  using log4net;
 
   [ModelValidationFilter]
   public class AccountController : BaseApiController
   {
     public const string APPLICANT_ROLE = "cdb.applicants";
+
+    public AccountController(IKcsarContext db, ILog log)
+      : base(db, log)
+    { }
 
     /// <summary>
     /// 

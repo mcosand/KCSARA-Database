@@ -47,6 +47,7 @@
     IDbSet<TrainingExpirationSummary> TrainingExpirationSummaries { get; set; }
     IDbSet<CurrentMemberIds> CurrentMemberIds { get; set; }
     IDbSet<xref_county_id> xref_county_id { get; set; }
+    IDbSet<SensitiveInfoAccess> SensitiveInfoLog { get; set; }
 
     void RecalculateTrainingAwards();
     void RecalculateTrainingAwards(Guid memberId);

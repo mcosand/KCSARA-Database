@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.Security;
 using Kcsar.Database.Model;
+using Kcsara.Database.Web.api;
 using Kcsara.Database.Web.Controllers;
+using log4net;
 using Ninject;
 using Ninject.Web.Common;
 
@@ -15,6 +18,16 @@ namespace Kcsara.Database.Web
 
   public class MvcApplication : NinjectHttpApplication
   {
+    static IKernel myKernel;
+    static MvcApplication()
+    {
+      myKernel = new StandardKernel();
+      myKernel.Bind<IKcsarContext>().To<KcsarContext>();
+      myKernel.Bind<ILog>().ToMethod(context => LogManager.GetLogger("Default"));
+      myKernel.Bind<IFormsAuthentication>().To<FormsAuthenticationWrapper>();
+      myKernel.Bind<MembershipProvider>().ToMethod(context => System.Web.Security.Membership.Provider);
+    }
+
     protected void Session_Start(Object sender, EventArgs e)
     {
       decimal result;
@@ -30,22 +43,19 @@ namespace Kcsara.Database.Web
     {
       base.OnApplicationStarted();
 
-      AreaRegistration.RegisterAllAreas();
+      WebApiConfig.Register(GlobalConfiguration.Configuration, myKernel); 
+
+     // AreaRegistration.RegisterAllAreas();
 
       FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
       RouteConfig.RegisterRoutes(RouteTable.Routes);
       BundleConfig.RegisterBundles(BundleTable.Bundles);
-
       Kcsar.Database.Model.Document.StorageRoot = Server.MapPath("~/content/auth/documents/");
     }
 
     protected override Ninject.IKernel CreateKernel()
-    {
-      IKernel kernel = new StandardKernel();
-      kernel.Bind<IKcsarContext>().To<KcsarContext>();
-      kernel.Bind<IFormsAuthentication>().To<FormsAuthenticationWrapper>();
-      kernel.Bind<MembershipProvider>().ToMethod(context => System.Web.Security.Membership.Provider);
-      return kernel;
+    {      
+      return MvcApplication.myKernel;
     }
   }
 }
