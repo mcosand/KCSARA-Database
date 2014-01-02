@@ -1,6 +1,6 @@
 ﻿
 
-namespace Kcsara.Database.Web.Controllers
+namespace Kcsara.Database.Services
 {
   using System;
   using System.Collections.Generic;
@@ -12,30 +12,13 @@ namespace Kcsara.Database.Web.Controllers
   using Kcsar.Membership;
   using Kcsar.Database.Model;
 
-  public interface IPermissions
-  {
-    Guid UserId { get; }
-    bool IsSelf(Guid id);
-    bool IsAdmin { get; }
-    bool IsAuthenticated { get; }
-    bool IsUser { get; }
-    bool InGroup(params string[] group);
-    bool IsMembershipForPerson(Guid id);
-    bool IsMembershipForUnit(Guid id);
-    bool IsUserOrLocal(HttpRequestBase request);
-    bool IsRoleForPerson(string role, Guid personId);
-    bool IsRoleForUnit(string role, Guid unitId);
-    
-    void DeleteUser(string id);
-  }
-
-  public class PermissionsProvider : IPermissions
+  public class AuthService : IAuthService
   {
     private IPrincipal user;
     private IKcsarContext context;
     public Guid UserId { get; private set; }
 
-    public PermissionsProvider(IPrincipal user, IKcsarContext context)
+    public AuthService(IPrincipal user, IKcsarContext context)
     {
       this.user = user;
       this.context = context;
@@ -73,7 +56,7 @@ namespace Kcsara.Database.Web.Controllers
 
     public bool IsAdmin
     {
-      get { return this.InGroup("cdb.admins"); }
+      get { return this.IsInRole("cdb.admins"); }
     }
 
     public bool IsAuthenticated
@@ -83,10 +66,10 @@ namespace Kcsara.Database.Web.Controllers
 
     public bool IsUser
     {
-      get { return this.InGroup("cdb.users"); }
+      get { return this.IsInRole("cdb.users"); }
     }
 
-    public bool InGroup(params string[] group)
+    public bool IsInRole(params string[] group)
     {
       if (this.user == null) return false;
 
@@ -112,7 +95,7 @@ namespace Kcsara.Database.Web.Controllers
 
       foreach (UnitMembership um in member.GetActiveUnits())
       {
-        if (this.InGroup(um.Unit.DisplayName.Replace(" ", "").ToLowerInvariant() + "." + role))
+        if (this.IsInRole(um.Unit.DisplayName.Replace(" ", "").ToLowerInvariant() + "." + role))
         {
           return true;
         }
@@ -123,7 +106,7 @@ namespace Kcsara.Database.Web.Controllers
     public bool IsRoleForUnit(string role, Guid unitId)
     {
       string unitName = (from u in context.Units where u.Id == unitId select u.DisplayName).FirstOrDefault();
-      return this.InGroup(unitName.Replace(" ", "").ToLowerInvariant() + "." + role);
+      return this.IsInRole(unitName.Replace(" ", "").ToLowerInvariant() + "." + role);
     }
 
     public bool IsMembershipForUnit(Guid id)
@@ -136,7 +119,7 @@ namespace Kcsara.Database.Web.Controllers
       List<SarUnit> list = new List<SarUnit>();
       foreach (SarUnit u in (from unit in context.Units select unit))
       {
-        if (this.InGroup(u.DisplayName.Replace(" ", "").ToLowerInvariant() + ".membership"))
+        if (this.IsInRole(u.DisplayName.Replace(" ", "").ToLowerInvariant() + ".membership"))
         {
           list.Add(u);
         }

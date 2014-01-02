@@ -445,7 +445,7 @@ namespace Kcsara.Database.Web.Controllers
     [HttpPost]
     public ContentResult UpdateExternalKey(Guid kcsaraId, int externalId, string id)
     {
-      if (!Permissions.InGroup("cdb.admins")) throw new InvalidOperationException();
+      if (!Permissions.IsInRole("cdb.admins")) throw new InvalidOperationException();
 
       var entry = this.db.xref_county_id.Where(f => f.personId == kcsaraId && f.ExternalSource == id).SingleOrDefault();
 

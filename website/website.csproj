@@ -245,7 +245,7 @@
     <Compile Include="Controllers\MissionsController.cs" />
     <Compile Include="Controllers\MissionsController_Documents.cs" />
     <Compile Include="Controllers\MissionsController_Geography.cs" />
-    <Compile Include="Controllers\PermissionsProvider.cs" />
+    <Compile Include="Services\AuthService.cs" />
     <Compile Include="Controllers\SarEventController.cs" />
     <Compile Include="Controllers\TrainingController.cs" />
     <Compile Include="Controllers\TrainingController_Documents.cs" />
@@ -326,6 +326,7 @@
     <Compile Include="Services\ExcelService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceAuthModule.cs" />
+    <Compile Include="Services\IAuthService.cs" />
     <Compile Include="Services\SheetAutoFitWrapper.cs" />
     <Compile Include="SettingsProvider.cs" />
     <Compile Include="Utils.cs" />

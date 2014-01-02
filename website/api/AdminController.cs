@@ -33,7 +33,7 @@
         return "UpdateKey is not correct";
       }
 
-      if (model.Store == "AuthStore" && !Permissions.InGroup("site.accounts"))
+      if (model.Store == "AuthStore" && !Permissions.IsInRole("site.accounts"))
       {
         return "No permission";
       }

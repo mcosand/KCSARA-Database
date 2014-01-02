@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using Kcsara.Database.Services;
 
 namespace Kcsara.Database.Web.api
 {
@@ -19,13 +20,19 @@ namespace Kcsara.Database.Web.api
     //}
 
     public BaseApiController(IKcsarContext db, ILog log)
+      : this(db, null, log)
+    {
+    }
+
+    public BaseApiController(IKcsarContext db, IAuthService auth, ILog log)
       : base()
     {
       this.db = db;
       this.log = log;
+      this.Permissions = auth;
     }
 
-    public Kcsara.Database.Web.Controllers.IPermissions Permissions = null;
+    public IAuthService Permissions = null;
 
 
     public const string ModelRootNodeName = "_root";

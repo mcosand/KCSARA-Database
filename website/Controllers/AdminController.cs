@@ -32,7 +32,7 @@
     [Authorize(Roles = "cdb.admins")]
     public ActionResult Sql()
     {
-      ViewBag.IsAccountAdmin = Permissions.InGroup("site.accounts");
+      ViewBag.IsAccountAdmin = Permissions.IsInRole("site.accounts");
       return View();
     }
 
@@ -120,7 +120,7 @@
     [AcceptVerbs(HttpVerbs.Get)]
     public ActionResult Accounts()
     {
-      ViewData["canedit"] = Permissions.InGroup("site.accounts");
+      ViewData["canedit"] = Permissions.IsInRole("site.accounts");
       return View(GetAccountsInGroup(null, false));
     }
 

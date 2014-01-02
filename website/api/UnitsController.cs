@@ -18,6 +18,7 @@ namespace Kcsara.Database.Web.api
   using System.Web.Helpers;
   using Model = Kcsar.Database.Model;
   using log4net;
+  using Kcsara.Database.Services;
 
   [ModelValidationFilter]
   public class UnitsController : BaseApiController
@@ -77,7 +78,7 @@ namespace Kcsara.Database.Web.api
       db.UnitApplicants.Add(application);
     }
 
-    internal static bool CanEditApplication(Kcsara.Database.Web.Controllers.IPermissions perms, Guid memberId, Guid unitId)
+    internal static bool CanEditApplication(IAuthService perms, Guid memberId, Guid unitId)
     {
       return perms.IsAdmin || perms.IsSelf(memberId) || perms.IsRoleForUnit("applications", unitId);
     }
@@ -193,7 +194,7 @@ namespace Kcsara.Database.Web.api
       return "OK";
     }
 
-    internal static bool CanEditDocuments(Kcsara.Database.Web.Controllers.IPermissions perms, Guid unitId)
+    internal static bool CanEditDocuments(IAuthService perms, Guid unitId)
     {
       return perms.IsAdmin || perms.IsRoleForUnit("documents", unitId);
     }

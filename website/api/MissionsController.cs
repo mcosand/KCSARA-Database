@@ -8,19 +8,20 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using log4net;
+using Kcsara.Database.Services;
 
 namespace Kcsara.Database.Web.api
 {
   public class MissionsController : BaseApiController
   {
-    public MissionsController(IKcsarContext db, ILog log)
-      : base(db, log)
+    public MissionsController(IKcsarContext db, IAuthService auth, ILog log)
+      : base(db, auth, log)
     { }
 
     [HttpGet]
+    [Authorize(Roles="cdb.users")]
     public IEnumerable<MemberDetailView> GetResponderEmails(Guid id, Guid? unitId)
     {
-      if (!User.IsInRole("cdb.users")) ThrowAuthError();
       string unit = null;
 
       var q = db.MissionRosters.Where(f => f.Mission.Id == id);

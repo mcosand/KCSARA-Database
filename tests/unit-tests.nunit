@@ -1,0 +1,6 @@
+﻿<NUnitProject>
+  <Settings activeconfig="Default" />
+  <Config name="Default" binpathtype="Auto">
+    <assembly path="Website.UnitTests\bin\Debug\Internal.Website.UnitTests.dll" />
+  </Config>
+</NUnitProject>

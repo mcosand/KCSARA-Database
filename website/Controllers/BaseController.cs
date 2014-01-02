@@ -19,13 +19,14 @@
   using System.Web;
   using System.Web.Mvc;
   using System.Web.Security;
+  using Kcsara.Database.Services;
 
   public class BaseController : Controller
   {
     public Func<string, bool> UserInRole;
     public Func<string, object> GetSessionValue;
     public Action<string, object> SetSessionValue;
-    public IPermissions Permissions = null;
+    public IAuthService Permissions = null;
 
     protected readonly IKcsarContext db;
 
@@ -47,7 +48,7 @@
     protected override void Initialize(System.Web.Routing.RequestContext requestContext)
     {
       base.Initialize(requestContext);
-      Permissions = new PermissionsProvider(User, this.db);
+      Permissions = new AuthService(User, this.db);
       Document.StorageRoot = requestContext.HttpContext.Request.MapPath("~/Content/auth/documents/");
     }
 

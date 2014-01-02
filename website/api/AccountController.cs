@@ -2,7 +2,7 @@
 namespace Kcsara.Database.Web.api
 {
   using Kcsar.Database.Model;
-  using Kcsar.Membership;
+  using SarMembership = Kcsar.Membership;
   using Kcsara.Database.Web.api.Models;
   using Kcsara.Database.Web.Services;
   using System;
@@ -15,15 +15,19 @@ namespace Kcsara.Database.Web.api
   using System.Web.Profile;
   using Model = Kcsar.Database.Model;
   using log4net;
+  using System.Web.Security;
 
   [ModelValidationFilter]
   public class AccountController : BaseApiController
   {
     public const string APPLICANT_ROLE = "cdb.applicants";
+    readonly MembershipProvider membership;
 
-    public AccountController(IKcsarContext db, ILog log)
+    public AccountController(IKcsarContext db, ILog log, MembershipProvider membership)
       : base(db, log)
-    { }
+    {
+      this.membership = membership;
+    }
 
     /// <summary>
     /// 
@@ -40,7 +44,7 @@ namespace Kcsara.Database.Web.api
       if (!Regex.IsMatch(id, @"^[a-zA-Z0-9\.\-_]+$"))
         return "Can only contain numbers, letters, and the characters '.', '-', and '_'";
 
-      var existing = System.Web.Security.Membership.GetUser(id);
+      var existing = membership.GetUser(id, false);
       return (existing == null) ? "Available" : "Not Available";
     }
 
@@ -76,7 +80,7 @@ namespace Kcsara.Database.Web.api
         return "Username must be less than 200 characters";
       if (!Regex.IsMatch(data.Username, @"^[a-zA-Z0-9\.\-_]+$"))
         return "Username can only contain numbers, letters, and the characters '.', '-', and '_'";
-      if (System.Web.Security.Membership.GetUser(data.Username) != null)
+      if (membership.GetUser(data.Username, false) != null)
         return "Username is already taken";
 
 
@@ -88,13 +92,13 @@ namespace Kcsara.Database.Web.api
         return "Password must be less than 64 characters";
 
 
-      var user = System.Web.Security.Membership.CreateUser(data.Username, data.Password, data.Email);
+      MembershipCreateStatus status;
+      var user = membership.CreateUser(data.Username, data.Password, data.Email, null, null, false, null, out status);
+      if (status != MembershipCreateStatus.Success)
+        return "Could not create user";
 
       try
       {
-        user.IsApproved = false;
-        System.Web.Security.Membership.UpdateUser(user);
-
         System.Web.Security.FormsAuthenticationTicket ticket = new System.Web.Security.FormsAuthenticationTicket(data.Username, false, 5);
         Thread.CurrentPrincipal = new System.Web.Security.RolePrincipal(new System.Web.Security.FormsIdentity(ticket));
 
@@ -124,7 +128,7 @@ namespace Kcsara.Database.Web.api
           UnitsController.RegisterApplication(db, unitId, newMember);
         }
 
-        KcsarUserProfile profile = ProfileBase.Create(data.Username) as KcsarUserProfile;
+        SarMembership.KcsarUserProfile profile = ProfileBase.Create(data.Username) as SarMembership.KcsarUserProfile;
         if (profile != null)
         {
           profile.FirstName = data.Firstname;
@@ -151,8 +155,8 @@ namespace Kcsara.Database.Web.api
       }
       catch (Exception ex)
       {
-        log.Error(ex.ToString());
-        System.Web.Security.Membership.DeleteUser(data.Username);
+        log.Error(ex.ToString());        
+        membership.DeleteUser(data.Username, true);
         return "An error occured while creating your user account";
       }
 
@@ -165,11 +169,11 @@ namespace Kcsara.Database.Web.api
       if (data == null || string.IsNullOrWhiteSpace(data.Username) || string.IsNullOrWhiteSpace(data.Key))
         return false;
 
-      var user = System.Web.Security.Membership.GetUser(data.Username);
+      var user = membership.GetUser(data.Username, false);
       if (user != null && data.Key.Equals((user.ProviderUserKey ?? "").ToString(), StringComparison.OrdinalIgnoreCase))
       {
         user.IsApproved = true;
-        System.Web.Security.Membership.UpdateUser(user);
+        membership.UpdateUser(user);
 
         return true;
       }
@@ -207,7 +211,7 @@ namespace Kcsara.Database.Web.api
     {
       foreach (var name in id)
       {
-        Permissions.DeleteUser(name);
+        membership.DeleteUser(name, true);
         var member = db.Members.Single(f => f.Username == name);
         member.Username = "-" + member.Username;
       }

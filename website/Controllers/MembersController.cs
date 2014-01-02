@@ -59,7 +59,7 @@ namespace Kcsara.Database.Web.Controllers
 
       ViewData["CanEditSelf"] = Permissions.IsSelf(id) || Permissions.IsMembershipForPerson(id) || Permissions.IsAdmin;
       ViewData["CanEditMember"] = Permissions.IsAdmin || Permissions.IsMembershipForPerson(id);
-      ViewData["CanEditPhoto"] = Permissions.IsAdmin || Permissions.IsMembershipForPerson(id) || Permissions.InGroup(new[] { "cdb.photos" });
+      ViewData["CanEditPhoto"] = Permissions.IsAdmin || Permissions.IsMembershipForPerson(id) || Permissions.IsInRole(new[] { "cdb.photos" });
       ViewData["CanEditAdmin"] = Permissions.IsAdmin;
 
       ViewData["CanPrintBadge"] = User.IsInRole("cdb.badges");
@@ -99,7 +99,7 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize]
     public ActionResult NewEsarTrainee(DateTime? date, string last)
     {
-      if (!Permissions.IsAdmin && !Permissions.InGroup("esar.trainingdirectors")) return this.CreateLoginRedirect();
+      if (!Permissions.IsAdmin && !Permissions.IsInRole("esar.trainingdirectors")) return this.CreateLoginRedirect();
 
       if (date.HasValue)
       {
@@ -119,7 +119,7 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize]
     public ActionResult NewEsarTrainee(FormCollection fields)
     {
-      if (!Permissions.IsAdmin && !Permissions.InGroup("esar.trainingdirectors")) return this.CreateLoginRedirect();
+      if (!Permissions.IsAdmin && !Permissions.IsInRole("esar.trainingdirectors")) return this.CreateLoginRedirect();
 
       Member m = NewEsarTrainee_Internal(fields);
       if (ModelState.IsValid)
@@ -546,7 +546,7 @@ namespace Kcsara.Database.Web.Controllers
         try
         {
           Guid g = new Guid(s);
-          if (Permissions.IsAdmin || Permissions.IsMembershipForPerson(g) || Permissions.InGroup(new[] { "cdb.photos" }))
+          if (Permissions.IsAdmin || Permissions.IsMembershipForPerson(g) || Permissions.IsInRole(new[] { "cdb.photos" }))
           {
             ids.Add(g);
           }
@@ -637,7 +637,7 @@ namespace Kcsara.Database.Web.Controllers
         foreach (Member m in members)
         {
           // Permissions check
-          if (!(Permissions.IsAdmin || Permissions.InGroup(new[] { "cdb.photos" }) || Permissions.IsMembershipForPerson(m.Id))) return this.CreateLoginRedirect();
+          if (!(Permissions.IsAdmin || Permissions.IsInRole(new[] { "cdb.photos" }) || Permissions.IsMembershipForPerson(m.Id))) return this.CreateLoginRedirect();
 
           string storePath = Server.MapPath(MembersController.PhotosStoreRelativePath);
 
