@@ -17,7 +17,7 @@ namespace Kcsara.Database.Web
                 "~/Content/script/date.js",
                 "~/Content/script/jquery.tablesorter.js",
                 "~/Content/script/timepicker.js",
-                "~/Scripts/knockout-2.3.0.js",
+                "~/Scripts/knockout-3.0.0.js",
                 "~/Scripts/knockout.mapping-latest.js",
                 "~/Content/script/jquery.iframe-transport.js",
                 "~/Content/script/jquery.fileupload.js",
@@ -25,6 +25,7 @@ namespace Kcsara.Database.Web
                 "~/Content/script/jquery.fileupload-ui.js",
                 "~/Content/script/jquery.fileupload-jquery-ui-kcsara.js",
                 "~/Scripts/nprogress.js",
+                "~/Scripts/modernizr-*",
 
                 "~/Scripts/ViewModels.js",
                 "~/Content/script/suggest.person.js",

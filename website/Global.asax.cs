@@ -43,7 +43,7 @@ namespace Kcsara.Database.Web
     {
       base.OnApplicationStarted();
 
-      WebApiConfig.Register(GlobalConfiguration.Configuration, myKernel); 
+      GlobalConfiguration.Configure(config => WebApiConfig.Register(config, myKernel));
 
      // AreaRegistration.RegisterAllAreas();
 

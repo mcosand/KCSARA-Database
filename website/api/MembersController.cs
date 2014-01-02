@@ -235,7 +235,7 @@ namespace Kcsara.Database.Web.api
         {
           if (showSensitive)
           {
-            var contact = Json.Decode<Kcsar.Database.Model.EmergencyContactData>(EncryptionService.Unprotect(EncryptionService.MEMBER_SENSITIVE, f.EncryptedData));
+            var contact = JsonConvert.DeserializeObject<Kcsar.Database.Model.EmergencyContactData>(EncryptionService.Unprotect(EncryptionService.MEMBER_SENSITIVE, f.EncryptedData));
             return new EmergencyContact
             {
               IsSensitive = true,
@@ -326,7 +326,7 @@ namespace Kcsara.Database.Web.api
           member.EmergencyContacts.Add(memberContact);
         }
 
-        memberContact.EncryptedData = EncryptionService.Protect(EncryptionService.MEMBER_SENSITIVE, Json.Encode(cData));
+        memberContact.EncryptedData = EncryptionService.Protect(EncryptionService.MEMBER_SENSITIVE, JsonConvert.SerializeObject(cData));
       }
 
       foreach (var leftover in existingContacts.Values)

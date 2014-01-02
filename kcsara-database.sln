@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "Model\Model.csproj", "{EAE01EC9-F91D-4B72-A648-6AC96E688CCE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model.Tests", "Model.Tests\Model.Tests.csproj", "{D0C7F83A-E33D-478D-A508-139D55F8D79B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model.Tests", "tests\Model.Tests\Model.Tests.csproj", "{D0C7F83A-E33D-478D-A508-139D55F8D79B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3055FA77-BE93-4823-8D7D-9E8911894E9C}"
 	ProjectSection(SolutionItems) = preProject
@@ -23,7 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{AEC88F4A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecalculateAwards", "tools\RecalculateAwards\RecalculateAwards.csproj", "{15EDE6E7-A4D7-491B-AF30-AC245C7EC6F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Website.Tests", "Website.Tests\Website.Tests.csproj", "{A892AFE4-95DA-4861-9935-B520C23440CA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Website.UI.Tests", "tests\Website.UI.Tests\Website.UI.Tests.csproj", "{A892AFE4-95DA-4861-9935-B520C23440CA}"
 	ProjectSection(ProjectDependencies) = postProject
 		{08C9837D-088B-4942-B656-EBBAC783F850} = {08C9837D-088B-4942-B656-EBBAC783F850}
 	EndProjectSection
@@ -34,8 +34,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{316853
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config
 		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F67F8451-20E4-4277-8BA4-6EBD663BCEA3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -160,6 +161,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{A892AFE4-95DA-4861-9935-B520C23440CA} = {F67F8451-20E4-4277-8BA4-6EBD663BCEA3}
+		{D0C7F83A-E33D-478D-A508-139D55F8D79B} = {F67F8451-20E4-4277-8BA4-6EBD663BCEA3}
 		{15EDE6E7-A4D7-491B-AF30-AC245C7EC6F1} = {AEC88F4A-AE57-4855-A44B-82D7A6BE0B32}
 		{FAD0ED26-A017-4EB3-9D53-F6D0A6B72FA8} = {AEC88F4A-AE57-4855-A44B-82D7A6BE0B32}
 	EndGlobalSection
