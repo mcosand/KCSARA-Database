@@ -1,0 +1,133 @@
+﻿<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+  <meta name="viewport" content="width=device-width" />
+  <%= Styles.Render("~/Content/bootstrap")%>
+  <title><asp:ContentPlaceHolder ID="TitleContent" runat="server" /></title>
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+  <style type="text/css">
+  body {
+  padding-top: 50px;
+}
+
+  .navbar-lightbtn {
+  position: relative;
+  float: right;
+  font-size:14px;
+  padding: 6px 8px;
+  margin-top: 8px;
+  margin-right: 10px;
+  margin-bottom: 8px;
+  margin-left: 10px;
+  background-color: transparent;
+  background-image: none;
+  border: 1px solid;
+  border-radius: 4px;
+}
+  .navbar-inverse .navbar-lightbtn {
+  border-color: #333333;
+  color: #fff;
+}
+  .navbar-inverse .navbar-lightbtn:hover,
+.navbar-inverse .navbar-lightbtn:focus {
+  background-color: #333333;
+}
+    </style>
+</head>
+<body>
+  <div>
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" data-bind="visible:$data.ShowBack != undefined && $data.ShowBack(), click:nullableInvoke($data.ShowBack)" class="navbar-lightbtn navbar-nav pull-left"><span class="glyphicon glyphicon-chevron-left"></span></button>
+          <button type="button" class="navbar-toggle" data-bind="visible:$data.Menu != undefined" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">KCSARA Respond</a>
+        </div>
+        <div class="collapse navbar-collapse">
+          <ul class="nav navbar-nav" data-bind="visible:$data.Menu != undefined, if: $data.Menu != undefined">
+            <!-- ko foreach:$data.Menu -->
+            <li><a data-bind="attr:{href: target}, text:title"></a></li>
+            <!-- /ko -->
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+    <asp:ContentPlaceHolder ID="MainContent" runat="server">
+    </asp:ContentPlaceHolder>
+  </div>
+  <%= Scripts.Render("~/script/response") %>
+  <script type="text/javascript">
+    var errorUrl = '<%= Url.RouteUrl("DefaultApi", new { httproute="", Controller = "telemetry", Action="error" }) %>';
+
+    function mapMoment(item, fields) {
+      var items = $.makeArray(item);
+      if (fields == undefined) {
+        fields = ['T'];
+      }
+      for (var j in items) {
+        for (var i in fields) {
+          if (items[j][fields[i]] != undefined) {
+            tmp = new moment(items[j][fields[i]]);
+            items[j][fields[i]] = tmp;
+          }
+        }
+      }
+      return item;
+    }
+    function nullableInvoke(method, a, b, c) {
+      var tmp = ko.unwrap(method);
+      if (tmp != null) tmp(a, b, c);
+    }
+    function createMomentObservable(required) {
+      var obs = ko.computed({
+        read: function () {
+          return obs.moment().isValid() ? obs.moment().format() : null;
+        },
+        owner: this,
+        deferEvaluation: true
+      });
+      obs.moment = ko.observable(moment(new Date()));
+      obs.format = ko.observable('YYYY-MM-DD HH:mm');
+      obs.errors = ko.observableArray([]);
+      obs.invalidInput = ko.observable(null);
+      obs.invalid = ko.computed(function () {
+        return this.errors().length > 0
+      }, obs);
+      obs.formatted = ko.computed({
+        read: function () {
+          var a = obs.moment();
+          var b = obs.format();
+          return a.isValid() ? a.format(b) : obs.invalidInput();
+        },
+        write: function (value) {
+          var tmp = moment(value);
+          obs.invalidInput((tmp.isValid() || value == '') ? null : value);
+          obs.moment(moment(value));
+        },
+        owner: this
+      });
+      obs.validate = function () {
+        obs.errors([]);
+        if (obs.invalidInput() != null) obs.errors.push('Invalid date');
+        else if (obs() == null && required) obs.errors.push('Required');
+      }
+      return obs;
+    }
+  </script>
+  <asp:ContentPlaceHolder ID="ScriptContent" runat="server" />
+</body>
+</html>

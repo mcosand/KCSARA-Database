@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.Security;
 using Kcsar.Database.Model;
+using Kcsara.Database.Services;
 using Kcsara.Database.Web.api;
 using Kcsara.Database.Web.Controllers;
 using log4net;
@@ -25,6 +27,7 @@ namespace Kcsara.Database.Web
       myKernel.Bind<IKcsarContext>().To<KcsarContext>();
       myKernel.Bind<ILog>().ToMethod(context => LogManager.GetLogger("Default"));
       myKernel.Bind<IFormsAuthentication>().To<FormsAuthenticationWrapper>();
+      myKernel.Bind<IAuthService>().ToMethod(context => new AuthService(HttpContext.Current.User, context.Kernel.Get<IKcsarContext>())).InRequestScope();
       myKernel.Bind<MembershipProvider>().ToMethod(context => System.Web.Security.Membership.Provider);
     }
 
@@ -45,7 +48,7 @@ namespace Kcsara.Database.Web
 
       GlobalConfiguration.Configure(config => WebApiConfig.Register(config, myKernel));
 
-     // AreaRegistration.RegisterAllAreas();
+      AreaRegistration.RegisterAllAreas();
 
       FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
       RouteConfig.RegisterRoutes(RouteTable.Routes);

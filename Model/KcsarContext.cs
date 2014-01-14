@@ -75,7 +75,6 @@
     public IDbSet<PersonAddress> PersonAddress { get; set; }
     public IDbSet<PersonContact> PersonContact { get; set; }
     public IDbSet<MemberUnitDocument> MemberUnitDocuments { get; set; }
-    //       public IDbSet<PersonSubscription> PersonSubscription { get; set; }
     public IDbSet<Subject> Subjects { get; set; }
     public IDbSet<SubjectGroup> SubjectGroups { get; set; }
     public IDbSet<SubjectGroupLink> SubjectGroupLinks { get; set; }
@@ -112,6 +111,7 @@
     {
       base.OnModelCreating(modelBuilder);
       modelBuilder.Entity<Mission>().HasOptional(f => f.Details).WithRequired(f => f.Mission);
+      modelBuilder.Entity<Mission>().HasOptional(f => f.ResponseStatus).WithRequired(f => f.Mission).WillCascadeOnDelete(true);
       modelBuilder.Entity<Member>().HasOptional(f => f.MedicalInfo).WithRequired(f => f.Member);
     }
 

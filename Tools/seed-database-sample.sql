@@ -103,3 +103,22 @@ ELSE
 IF NOT EXISTS (SELECT 1 FROM MissionRosters WHERE Mission_Id=@mSnowLake AND Person_Id=@marc)
   INSERT INTO MissionRosters (Id,InternalRole,TimeIn,[TimeOut],Miles,LastChanged,Mission_Id,Person_Id,Unit_Id)
 	  VALUES (NEWID(), 'Field', '2013-04-05 23:00', '2013-04-06 10:00', 60, GETDATE(), @mSnowLake, @marc, @mtnrsq)
+
+DELETE FROM Missions WHERE Title LIKE '%/[recent/]' ESCAPE '/'
+
+DECLARE @recent1 UNIQUEIDENTIFIER = NEWID()
+INSERT INTO Missions (Id,Title,County,StateNumber,MissionType,StartTime,StopTime,Location,ReportCompleted,LastChanged)
+  VALUES (@recent1, 'Snow Lake Hiker [recent]', 'king', '14-0050', 'rescue', DATEADD(day, -3, GETDATE()), null, 'Alpental', 1, GETDATE())
+
+DECLARE @recent2 UNIQUEIDENTIFIER = NEWID()
+INSERT INTO Missions (Id,Title,County,StateNumber,MissionType,StartTime,StopTime,Location,ReportCompleted,LastChanged)
+  VALUES (@recent2, 'Annette Lake Hasty [recent]', 'king', '14-0083', 'rescue', DATEADD(minute, -94, GETDATE()), null, 'Annette Lake Trailhead', 0, GETDATE())
+INSERT INTO MissionResponseStatus (Id, CallForPeriod, LastChanged)
+  VALUES (@recent2, DATEADD(minute, -90, GETDATE()), GETDATE())
+
+DECLARE @recent3 UNIQUEIDENTIFIER = NEWID()
+INSERT INTO Missions (Id,Title,County,StateNumber,MissionType,StartTime,StopTime,Location,ReportCompleted,LastChanged)
+  VALUES (@recent3, 'Evidence Search [recent]', 'king', '14-ES-017', 'evidence', DATEADD(minute, 3600, GETDATE()), null, 'Some urban place', 0, GETDATE())
+INSERT INTO MissionResponseStatus (Id, CallForPeriod, LastChanged)
+  VALUES (@recent3, DATEADD(minute, 3600, GETDATE()), GETDATE())
+

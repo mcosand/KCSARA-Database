@@ -102,6 +102,9 @@
     <Reference Include="prince">
       <HintPath>..\packages\prince.dll</HintPath>
     </Reference>
+    <Reference Include="RouteDebugger">
+      <HintPath>..\packages\routedebugger.2.1.4.0\lib\net40\RouteDebugger.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -216,11 +219,24 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Areas\Missions\api\Models\CreateMission.cs" />
+    <Compile Include="Areas\Missions\api\Models\MissionResponseStatus.cs" />
+    <Compile Include="Areas\Missions\api\ResponseApiController.cs" />
+    <Compile Include="Areas\Missions\Controllers\ResponseController.cs" />
+    <Compile Include="Areas\Missions\MissionsAreaRegistration.cs" />
     <Compile Include="BlockRenderer.cs" />
     <Compile Include="CapturingResponseFilter.cs" />
     <Content Include="App_Readme\Elmah.txt" />
+    <Content Include="Areas\Missions\Views\Response\Create.aspx" />
+    <Content Include="Areas\Missions\Views\Response\Info.aspx" />
+    <Content Include="Areas\Missions\Views\Response\Dashboard.aspx" />
+    <Content Include="Areas\Missions\Views\Response\Index.aspx" />
     <Content Include="Content\auth\animals\none.jpg" />
     <Content Include="Content\auth\members\none.jpg" />
+    <Content Include="Content\bootstrap-theme.css" />
+    <Content Include="Content\bootstrap-theme.min.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\images\maps\base-e.png" />
     <Content Include="Content\images\maps\clue-e.png" />
     <Content Include="Content\images\maps\found-e.png" />
@@ -467,11 +483,17 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="favicon.ico" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\auth\Web.config" />
     <Content Include="Content\missionready-template.xls" />
     <Content Include="Content\esartraining-template.xls" />
     <Content Include="Content\roster-template.xls" />
+    <Content Include="Areas\Missions\Views\Web.config" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Areas\Missions\Views\Response\Response.Master" />
     <None Include="Properties\PublishProfiles\Local IIS.pubxml" />
     <None Include="parameters.xml" />
     <Content Include="help\images\new-member-1.jpg" />
@@ -480,6 +502,8 @@
     <Content Include="help\images\new-member-4.png" />
     <Content Include="help\index.html" />
     <Content Include="help\new-member.html" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\html5.js" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -491,6 +515,10 @@
     <Content Include="Scripts\knockout.mapping-latest.debug.js" />
     <Content Include="Scripts\knockout.mapping-latest.js" />
     <Content Include="Scripts\modernizr-2.7.1.js" />
+    <Content Include="Scripts\moment-with-langs.js" />
+    <Content Include="Scripts\moment-with-langs.min.js" />
+    <Content Include="Scripts\moment.js" />
+    <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\nprogress.js" />
     <Content Include="Scripts\ViewModels.js" />
     <Content Include="Sql\AuthDatabase_Create.sql" />
@@ -650,7 +678,8 @@
     <None Include="Web.Production.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
+    <Folder Include="Areas\Missions\Models\" />
+    <Folder Include="Areas\Missions\Views\Shared\" />
     <Folder Include="Content\auth\documents\" />
   </ItemGroup>
   <ItemGroup>

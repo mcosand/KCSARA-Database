@@ -2,6 +2,7 @@
 {
   using System.Web.Http;
   using System.Web.Http.Controllers;
+  using Kcsara.Database.Web.Areas.Missions.api;
   using Newtonsoft.Json.Converters;
   using Ninject;
 
@@ -14,6 +15,12 @@
     public static void Register(HttpConfiguration config, IKernel kernel)
     {
       config.DependencyResolver = new NinjectResolver(kernel);
+
+      config.Routes.MapHttpRoute(
+        ResponseApiController.RouteName,
+        "api/Missions/Response/{action}/{id}",
+        new { controller = "ResponseApi", action = RouteParameter.Optional, id = RouteParameter.Optional }
+      );
 
       config.Routes.MapHttpRoute(
           "DefaultApi",
