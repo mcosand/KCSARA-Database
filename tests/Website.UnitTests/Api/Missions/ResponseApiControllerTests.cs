@@ -32,6 +32,16 @@
     [Test]
     public void GetCurrentStatus()
     {
+      var dataMock = GetBasicResponseData();
+
+      var controller = new ResponseApiController(dataMock.Object, new AlwaysYesAuth(), new ConsoleLogger());
+
+      MissionResponseStatus[] result = controller.GetCurrentStatus();
+      Assert.AreEqual(2, result.Length, "expected count");
+    }
+
+    public static Mock<M.IKcsarContext> GetBasicResponseData()
+    {
       var missions = new InMemoryDbSet<M.Mission>() {
         new M.Mission { Title = "old", Location="f", StartTime=DateTime.Now.AddDays(-10), Roster = new List<M.MissionRoster>()},
         new M.Mission
@@ -52,11 +62,7 @@
 
       var dataMock = new Mock<M.IKcsarContext>();
       dataMock.SetupGet(f => f.Missions).Returns(missions);
-
-      var controller = new ResponseApiController(dataMock.Object, new AlwaysYesAuth(), new ConsoleLogger());
-
-      MissionResponseStatus[] result = controller.GetCurrentStatus();
-      Assert.AreEqual(2, result.Length, "expected count");
+      return dataMock;
     }
 
     [Test]

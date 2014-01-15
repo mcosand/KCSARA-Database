@@ -20,24 +20,32 @@
   using System.Web.Mvc;
   using System.Web.Security;
   using Kcsara.Database.Services;
+  using log4net;
 
   public class BaseController : Controller
   {
     public Func<string, bool> UserInRole;
     public Func<string, object> GetSessionValue;
     public Action<string, object> SetSessionValue;
-    public IAuthService Permissions = null;
+    protected IAuthService Permissions { get; private set; }
 
+    protected readonly ILog log;
     protected readonly IKcsarContext db;
 
-    public BaseController(IKcsarContext db)
+    public BaseController(IKcsarContext db, IAuthService auth, ILog log)
       : base()
     {
       this.db = db;
-
+      this.Permissions = auth;
+      this.log = log;
       UserInRole = (f => User.IsInRole(f));
       GetSessionValue = (f => Session[f]);
       SetSessionValue = ((f, v) => Session[f] = v);
+    }
+
+    public BaseController(IKcsarContext db)
+      : this(db, null, LogManager.GetLogger("website"))
+    {
     }
 
     protected string GetDateFormat()
@@ -48,7 +56,7 @@
     protected override void Initialize(System.Web.Routing.RequestContext requestContext)
     {
       base.Initialize(requestContext);
-      Permissions = new AuthService(User, this.db);
+      if (this.Permissions == null) Permissions = new AuthService(User, this.db);
       Document.StorageRoot = requestContext.HttpContext.Request.MapPath("~/Content/auth/documents/");
     }
 

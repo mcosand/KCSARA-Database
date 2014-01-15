@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Kcsar.Database.Model;
+using Kcsara.Database.Services;
 using Kcsara.Database.Web.Areas.Missions.api;
 using Kcsara.Database.Web.Controllers;
 using log4net;
@@ -12,11 +13,9 @@ namespace Kcsara.Database.Web.Areas.Missions.Controllers
 {
   public class ResponseController : BaseController
   {
-    protected readonly ILog log;
-    public ResponseController(IKcsarContext db, ILog log)
-      : base(db)
+    public ResponseController(IKcsarContext db, IAuthService auth, ILog log)
+      : base(db, auth, log)
     {
-      this.log = log;
     }
 
     [Authorize]

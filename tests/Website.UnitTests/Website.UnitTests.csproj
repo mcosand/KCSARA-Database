@@ -109,6 +109,7 @@
     <Compile Include="Api\Missions\ResponseApiControllerTests.cs" />
     <Compile Include="Api\Models\MissionResponseStatusTests.cs" />
     <Compile Include="ConsoleLogger.cs" />
+    <Compile Include="Controllers\Missions\ResponseControllerTests.cs" />
     <Compile Include="InMemoryDbSet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
