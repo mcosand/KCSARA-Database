@@ -1,4 +1,7 @@
-﻿using Kcsar.Database.Model;
+﻿/*
+ * Copyright 2012-2014 Matthew Cosand
+ */
+using Kcsar.Database.Model;
 using Kcsara.Database.Web.Model;
 using log4net;
 using Newtonsoft.Json;

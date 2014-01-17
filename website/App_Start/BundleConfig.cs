@@ -1,4 +1,7 @@
-﻿using System.Web;
+﻿/*
+ * Copyright 2012-2014 Matthew Cosand
+ */
+using System.Web;
 using System.Web.Optimization;
 
 namespace Kcsara.Database.Web

@@ -1,4 +1,7 @@
-﻿namespace Kcsara.Database.Geo
+﻿/*
+ * Copyright 2010-2014 Matthew Cosand
+ */
+namespace Kcsara.Database.Geo
 {
     using System;
     using System.Data.SqlTypes;

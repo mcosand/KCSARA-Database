@@ -1,4 +1,7 @@
-﻿namespace Kcsara.Database.Web.Model
+﻿/*
+ * Copyright 2012-2014 Matthew Cosand
+ */
+namespace Kcsara.Database.Web.Model
 {
     using System.Runtime.Serialization;
 

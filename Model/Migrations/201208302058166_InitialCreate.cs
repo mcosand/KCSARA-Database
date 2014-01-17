@@ -1,3 +1,6 @@
+﻿/*
+ * Copyright 2012-2014 Matthew Cosand
+ */
 namespace Kcsar.Database.Model.Migrations
 {
     using System;

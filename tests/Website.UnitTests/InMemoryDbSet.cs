@@ -1,11 +1,14 @@
-﻿using System;
+﻿/*
+ * Copyright 2013-2014 Matthew Cosand
+ * Adapted from https://gist.github.com/troufster/913659
+ */
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 
 namespace Internal.Website
 {
-  // From https://gist.github.com/troufster/913659
   public class InMemoryDbSet<T> : IDbSet<T> where T : class
   {
 

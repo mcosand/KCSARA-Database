@@ -1,4 +1,7 @@
-﻿namespace Kcsara.Database.Web.api
+﻿/*
+ * Copyright 2013-2014 Matthew Cosand
+ */
+namespace Kcsara.Database.Web.api
 {
   using System;
   using System.Configuration;

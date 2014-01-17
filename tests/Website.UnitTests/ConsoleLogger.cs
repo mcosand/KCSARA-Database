@@ -1,4 +1,7 @@
-﻿namespace Internal.Website
+﻿/*
+ * Copyright 2013-2014 Matthew Cosand
+ */
+namespace Internal.Website
 {
   using System;
   using System.Collections.Generic;

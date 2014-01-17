@@ -1,4 +1,7 @@
-﻿using System.Web.Http.Filters;
+﻿/*
+ * Copyright 2012-2014 Matthew Cosand
+ */
+using System.Web.Http.Filters;
 using System.Net.Http;
 using System.Net;
 using log4net;

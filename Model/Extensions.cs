@@ -1,4 +1,7 @@
-﻿namespace System.Linq
+﻿/*
+ * Copyright 2011-2014 Matthew Cosand
+ */
+namespace System.Linq
 {
   using System;
   using System.Collections.Generic;

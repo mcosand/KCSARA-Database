@@ -1,4 +1,7 @@
-﻿using ArtOfTest.WebAii.Controls.HtmlControls;
+﻿/*
+ * Copyright 2012-2014 Matthew Cosand
+ */
+using ArtOfTest.WebAii.Controls.HtmlControls;
 using ArtOfTest.WebAii.Core;
 using System;
 using System.Collections.Generic;

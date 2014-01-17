@@ -1,4 +1,7 @@
-﻿namespace Kcsara.Database.Web
+﻿/*
+ * Copyright 2008-2014 Matthew Cosand
+ */
+namespace Kcsara.Database.Web
 {
     using System;
     using System.Collections.Generic;

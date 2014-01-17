@@ -1,4 +1,7 @@
-﻿namespace Kcsara.Database.Web {
+﻿/*
+ * Copyright 2012-2014 Matthew Cosand
+ */
+namespace Kcsara.Database.Web {
     using System;
     using System.Runtime.Serialization.Json;
     using System.Web.Mvc;

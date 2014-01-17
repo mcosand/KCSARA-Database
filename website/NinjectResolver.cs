@@ -1,4 +1,8 @@
-﻿namespace Kcsara.Database.Web
+﻿/*
+ * Copyright 2013-2014 Matthew Cosand
+ * Adapted from http://www.strathweb.com/2012/05/using-ninject-with-the-latest-asp-net-web-api-source/ by Filip W.
+ */
+namespace Kcsara.Database.Web
 {
   using System.Web.Http.Dependencies;
   using Ninject;

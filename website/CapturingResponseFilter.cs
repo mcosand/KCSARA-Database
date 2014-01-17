@@ -1,4 +1,7 @@
-﻿using System.IO;
+﻿/*
+ * Copyright 2009-2014 Matthew Cosand
+ */
+using System.IO;
 using System.Text;
 
 namespace MvcContrib.UI

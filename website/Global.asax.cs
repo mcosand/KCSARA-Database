@@ -1,4 +1,7 @@
-﻿using System;
+﻿/*
+ * Copyright 2008-2014 Matthew Cosand
+ */
+using System;
 using System.Security.Principal;
 using System.Threading;
 using System.Web.Http;

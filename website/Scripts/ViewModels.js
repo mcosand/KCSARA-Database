@@ -1,3 +1,6 @@
+/*
+ * Copyright 2012-2014 Matthew Cosand
+ */
 function buildKOMapping(viewType) {
     return {
         create: function (options) {
