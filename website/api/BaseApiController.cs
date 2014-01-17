@@ -20,7 +20,7 @@ namespace Kcsara.Database.Web.api
     //}
 
     public BaseApiController(IKcsarContext db, ILog log)
-      : this(db, null, log)
+      : this(db, Ninject.ResolutionExtensions.Get<IAuthService>(MvcApplication.myKernel), log)
     {
     }
 

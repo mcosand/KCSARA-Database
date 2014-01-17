@@ -11,13 +11,16 @@ namespace Kcsara.Database.Web.Controllers
   using Kcsara.Database.Geo;
   using System.IO;
   using System.Data.Entity.Spatial;
+  using Kcsara.Database.Services;
 
   public class HomeController : BaseController
   {
-    public HomeController(IKcsarContext db)
-      : base(db)
+    private readonly IReportsService reports;
+    public HomeController(IKcsarContext db, IReportsService reports, IAppSettings settings)
+      : base(db, settings)
     {
       System.Data.Entity.Database.SetInitializer<MeshNodeEntities>(new System.Data.Entity.DropCreateDatabaseIfModelChanges<MeshNodeEntities>());
+      this.reports = reports;
     }
 
     public ActionResult Index()
@@ -37,85 +40,9 @@ namespace Kcsara.Database.Web.Controllers
     public ActionResult CountyReport()
     {
       if (!Permissions.IsUserOrLocal(Request)) return this.CreateLoginRedirect();
+      var result = this.reports.GetMembershipReport();
 
-      ExcelFile xl = ExcelService.Create(ExcelFileType.XLS);
-      var goodList = xl.CreateSheet("Mission Ready");
-
-      string unitName = UnitsController.GenerateMissionReadySheets(this.db, null, xl, goodList);
-
-      var dataSheet = xl.CreateSheet("Member Data");
-
-      var interestingCourses = (from c in this.db.TrainingCourses where c.WacRequired > 0 select c).OrderBy(x => x.DisplayName).ToList();
-      interestingCourses.AddRange(TrainingController.GetCoreCompetencyCourses(this.db));
-
-
-      IQueryable<Member> members = this.db.Members.Include("Addresses", "Memberships", "ComputedAwards.Course").Where(f => f.Memberships.Any(g => g.Status.IsActive && g.EndTime == null));
-      members = members.OrderBy(f => f.LastName).ThenBy(f => f.FirstName);
-
-      // Set column header titles. A static list, followed by a list of "interesting" training courses
-      var columns = new[] { "DEM", "Lastname", "Firstname", "WAC Card", "Street", "City", "State", "ZIP", "Phone", "Email", "HAM", "Units" }.Union(interestingCourses.Select(f => f.DisplayName)).ToArray();
-      for (int i = 0; i < columns.Length; i++)
-      {
-        dataSheet.CellAt(0, i).SetValue(columns[i]);
-        dataSheet.CellAt(0, i).SetBold(true);
-      }
-
-      int row = 1;
-      foreach (var m in members)
-      {
-        int col = 0;
-        dataSheet.CellAt(row, col++).SetValue(m.DEM);
-        dataSheet.CellAt(row, col++).SetValue(m.LastName);
-        dataSheet.CellAt(row, col++).SetValue(m.FirstName);
-        dataSheet.CellAt(row, col++).SetValue(m.WacLevel.ToString());
-
-        var address = m.Addresses.OrderBy(f => f.InternalType).FirstOrDefault();
-        if (address != null)
-        {
-          dataSheet.CellAt(row, col++).SetValue(address.Street);
-          dataSheet.CellAt(row, col++).SetValue(address.City);
-          dataSheet.CellAt(row, col++).SetValue(address.State);
-          dataSheet.CellAt(row, col++).SetValue(address.Zip);
-        }
-        else
-        {
-          col += 4;
-        }
-
-        Action<Member, string> doContact = (member, type) =>
-        {
-          var phone = m.ContactNumbers.Where(f => f.Type == type).OrderBy(f => f.Priority).FirstOrDefault();
-          if (phone != null)
-          {
-            dataSheet.CellAt(row, col).SetValue(phone.Value);
-          }
-          col++;
-        };
-        doContact(m, "phone");
-        doContact(m, "email");
-        doContact(m, "hamcall");
-
-        dataSheet.CellAt(row, col++).SetValue(string.Join(" ",
-            m.Memberships.Where(f => f.Status.IsActive && f.EndTime == null).Select(f => f.Unit.DisplayName).OrderBy(f => f)
-          ));
-
-        var trainingStatus = CompositeTrainingStatus.Compute(m, interestingCourses, DateTime.Now);
-        for (int i = 0; i < interestingCourses.Count; i++)
-        {
-          dataSheet.CellAt(row, col++).SetValue(trainingStatus.Expirations[interestingCourses[i].Id].ToString());
-        }
-        row++;
-      }
-      //IQueryable<UnitMembership> memberships = this.db.UnitMemberships.Include("Person.Addresses", "Person.ContactNumbers").Include("Status");
-      //memberships = memberships.Where(um => um.EndTime == null && um.Status.IsActive);
-      //memberships = memberships.OrderBy(f => f.Person.LastName).ThenBy(f => f.Person.FirstName);
-
-
-
-      MemoryStream ms = new MemoryStream();
-      xl.Save(ms);
-      ms.Seek(0, SeekOrigin.Begin);
-      return this.File(ms, "application/vnd.ms-excel", string.Format("{0}-Report-{1:yyMMdd}.xls", unitName, DateTime.Now));
+      return this.File(result, "application/vnd.ms-excel", string.Format("{0}-Report-{1:yyMMdd}.xls", this.settings.GroupName, DateTime.Now));
     }
 
 

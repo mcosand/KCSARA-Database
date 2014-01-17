@@ -318,28 +318,6 @@ namespace Kcsara.Database.Web.Controllers
     //    return View();
     //}
 
-    public static IList<TrainingCourse> GetCoreCompetencyCourses(IKcsarContext context)
-    {
-      var courses = new[] {
-                "Clues",
-                "Crime",
-                "FA",
-                "Fitness",
-                "GPS.P", "GPS.W",
-                "Helicopter",
-                "Legal",
-                "Management",
-                "Nav.P", "Nav.W",
-                "Radio",
-                "Rescue.P", "Rescue.W",
-                "Safety.P", "Safety.W",
-                "Search.P", "Search.W",
-                "Survival.P", "Survival.W"
-            }.Select(f => "Core/" + f).ToArray();
-
-      return (from c in context.TrainingCourses where courses.Contains(c.DisplayName) select c).OrderBy(f => f.DisplayName).ToList();
-    }
-
     [Authorize(Roles = "cdb.users")]
     public ActionResult CoreCompReport(Guid? id)
     {
@@ -357,7 +335,7 @@ namespace Kcsara.Database.Web.Controllers
       memberships = memberships.Where(um => um.EndTime == null && um.Status.IsActive);
       var members = memberships.Select(f => f.Person).Distinct().OrderBy(f => f.LastName).ThenBy(f => f.FirstName);
 
-      var courses = GetCoreCompetencyCourses(this.db);
+      var courses = this.db.GetCoreCompetencyCourses();
 
       var file = ExcelService.Create(ExcelFileType.XLS);
       var sheet = file.CreateSheet(unitShort);

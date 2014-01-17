@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Security.Principal;
+using System.Threading;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.Security;
 using Kcsar.Database.Model;
+using Kcsara.Database.Services;
 using Kcsara.Database.Web.api;
 using Kcsara.Database.Web.Controllers;
 using log4net;
@@ -18,7 +21,8 @@ namespace Kcsara.Database.Web
 
   public class MvcApplication : NinjectHttpApplication
   {
-    static IKernel myKernel;
+    // This is static until legacy code learns to ask for dependencies in constructors
+    public static IKernel myKernel;
     static MvcApplication()
     {
       myKernel = new StandardKernel();
@@ -26,6 +30,10 @@ namespace Kcsara.Database.Web
       myKernel.Bind<ILog>().ToMethod(context => LogManager.GetLogger("Default"));
       myKernel.Bind<IFormsAuthentication>().To<FormsAuthenticationWrapper>();
       myKernel.Bind<MembershipProvider>().ToMethod(context => System.Web.Security.Membership.Provider);
+      myKernel.Bind<IAuthService>().To<AuthService>();
+      myKernel.Bind<IPrincipal>().ToMethod(f => Thread.CurrentPrincipal);
+      myKernel.Bind<IAppSettings>().To<AppSettings>();
+      myKernel.Bind<IReportsService>().To<ReportsService>();
     }
 
     protected void Session_Start(Object sender, EventArgs e)

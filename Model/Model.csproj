@@ -104,6 +104,7 @@
     <Compile Include="Animal.cs" />
     <Compile Include="AnimalOwner.cs" />
     <Compile Include="AnimalMission.cs" />
+    <Compile Include="IKcsarContext.cs" />
     <Compile Include="Migrations\Migrator.cs" />
     <Compile Include="MemberUnitDocument.cs" />
     <Compile Include="MemberMedical.cs" />

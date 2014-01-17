@@ -27,13 +27,19 @@
     public Func<string, object> GetSessionValue;
     public Action<string, object> SetSessionValue;
     public IAuthService Permissions = null;
-
+    protected readonly IAppSettings settings;
     protected readonly IKcsarContext db;
-
+    
     public BaseController(IKcsarContext db)
+      : this(db, Ninject.ResolutionExtensions.Get<IAppSettings>(MvcApplication.myKernel))
+    {
+    }
+
+    public BaseController(IKcsarContext db, IAppSettings settings)
       : base()
     {
       this.db = db;
+      this.settings = settings;
 
       UserInRole = (f => User.IsInRole(f));
       GetSessionValue = (f => Session[f]);

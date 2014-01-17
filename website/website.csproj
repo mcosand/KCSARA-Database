@@ -212,6 +212,7 @@
     <Compile Include="api\TrainingRecordsController.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="AppSettings.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -245,6 +246,7 @@
     <Compile Include="Controllers\MissionsController.cs" />
     <Compile Include="Controllers\MissionsController_Documents.cs" />
     <Compile Include="Controllers\MissionsController_Geography.cs" />
+    <Compile Include="IAppSettings.cs" />
     <Compile Include="Services\AuthService.cs" />
     <Compile Include="Controllers\SarEventController.cs" />
     <Compile Include="Controllers\TrainingController.cs" />
@@ -327,6 +329,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceAuthModule.cs" />
     <Compile Include="Services\IAuthService.cs" />
+    <Compile Include="Services\IReportsService.cs" />
+    <Compile Include="Services\ReportsService.cs" />
     <Compile Include="Services\SheetAutoFitWrapper.cs" />
     <Compile Include="SettingsProvider.cs" />
     <Compile Include="Utils.cs" />
@@ -463,13 +467,9 @@
     <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tooltip.min.css" />
-    <Content Include="EmailTemplates\new-account-verification.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\auth\Web.config" />
-    <Content Include="Content\missionready-template.xls" />
     <Content Include="Content\esartraining-template.xls" />
     <Content Include="Content\roster-template.xls" />
     <None Include="Properties\PublishProfiles\Local IIS.pubxml" />
@@ -495,6 +495,7 @@
     <Content Include="Scripts\ViewModels.js" />
     <Content Include="Sql\AuthDatabase_Create.sql" />
     <Content Include="Sql\AuthDatabase_Update.sql" />
+    <Content Include="Templates\Email\new-account-verification.html" />
     <Content Include="Views\Account\ChangePassword.aspx" />
     <Content Include="Views\Account\ChangePasswordSuccess.aspx" />
     <Content Include="Views\Account\InactiveMemberAccounts.aspx" />
@@ -647,6 +648,7 @@
     <Content Include="Views\Training\Trainings.Master" />
     <None Include="Properties\PublishProfiles\Production.pubxml" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+    <Content Include="Templates\Report\missionready-template.xls" />
     <None Include="Web.Production.config" />
   </ItemGroup>
   <ItemGroup>
