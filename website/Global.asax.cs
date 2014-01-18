@@ -10,6 +10,7 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.Security;
 using Kcsar.Database.Model;
+using Kcsara.Database.Extensions;
 using Kcsara.Database.Services;
 using Kcsara.Database.Web.api;
 using Kcsara.Database.Web.Controllers;
@@ -37,6 +38,8 @@ namespace Kcsara.Database.Web
       myKernel.Bind<IPrincipal>().ToMethod(f => Thread.CurrentPrincipal);
       myKernel.Bind<IAppSettings>().To<AppSettings>();
       myKernel.Bind<IReportsService>().To<ReportsService>();
+      myKernel.Bind<IExtensionProvider>().To<ExtensionProvider>().InSingletonScope();
+      myKernel.Get<IExtensionProvider>().Initialize();
     }
 
     protected void Session_Start(Object sender, EventArgs e)

@@ -4,13 +4,13 @@
 namespace Kcsara.Database.Services
 {
   using System;
-  using System.Collections.Generic;
   using System.Drawing;
   using System.IO;
   using System.Linq;
-  using System.Web;
   using Kcsar.Database;
   using Kcsar.Database.Model;
+  using Kcsara.Database.Extensions;
+  using Kcsara.Database.Services.Reports;
   using Kcsara.Database.Web;
 
   /// <summary>
@@ -20,14 +20,16 @@ namespace Kcsara.Database.Services
   {
     private readonly IKcsarContext db;
     private readonly IAppSettings settings;
+    private readonly IExtensionProvider extensions;
 
     /// <summary>
     /// 
     /// </summary>
     /// <param name="db"></param>
     /// <param name="settings"></param>
-    public ReportsService(IKcsarContext db, IAppSettings settings)
+    public ReportsService(IExtensionProvider extensions, IKcsarContext db, IAppSettings settings)
     {
+      this.extensions = extensions;
       this.db = db;
       this.settings = settings;
     }
@@ -145,15 +147,17 @@ namespace Kcsara.Database.Services
     /// <param name="unit"></param>
     /// <param name="xl"></param>
     /// <param name="goodList"></param>
-    public void GenerateMissionReadySheets(SarUnit unit, ExcelFile xl, ExcelSheet goodList)
+    private void GenerateMissionReadySheets(SarUnit unit, ExcelFile xl, ExcelSheet goodList)
     {
+      IMissionReadyPlugin extension = null;
+
       string longName = this.settings.GroupFullName ?? this.settings.GroupName;
       IQueryable<UnitMembership> memberships = this.db.UnitMemberships.Include("Person.ComputedAwards.Course").Include("Status");
       if (unit != null)
       {
         memberships = memberships.Where(um => um.Unit.Id == unit.Id);
         longName = unit.LongName;
-
+        extension = this.extensions.For<IMissionReadyPlugin>(unit.Id);
       }
       memberships = memberships.Where(um => um.EndTime == null && um.Status.IsActive);
       memberships = memberships.OrderBy(f => f.Person.LastName).ThenBy(f => f.Person.FirstName);
@@ -163,7 +167,33 @@ namespace Kcsara.Database.Services
 
       var courses = (from c in this.db.TrainingCourses where c.WacRequired > 0 select c).OrderBy(x => x.DisplayName).ToList();
 
-      int headerIdx = 4;
+      int headerIdx = 0;
+      Action<string> appendHeader = head =>
+        {
+          var cell = goodList.CellAt(0, headerIdx++);
+          cell.SetValue(head);
+          cell.SetBold(true);
+          cell.SetTextWrap(true);
+        };
+
+      Action<MissionReadyColumns> insertExtensionHeaders = group =>
+      {
+        if (extension == null) return;
+        foreach (var value in extension.GetHeadersAfter(group))
+        {
+          appendHeader(value);
+        }
+      };
+
+
+      insertExtensionHeaders(MissionReadyColumns.Start);
+      appendHeader("DEM");
+      insertExtensionHeaders(MissionReadyColumns.WorkerNumber);
+      appendHeader("Lastname");
+      appendHeader("Firstname");
+      insertExtensionHeaders(MissionReadyColumns.Name);
+      appendHeader("Card Type");
+      insertExtensionHeaders(MissionReadyColumns.WorkerType);
       foreach (var course in courses)
       {
         var cell = goodList.CellAt(0, headerIdx++);
@@ -171,9 +201,9 @@ namespace Kcsara.Database.Services
 
         cell.SetBold(true);
         cell.SetTextWrap(true);
-        //cell.Style.HorizontalAlignment = HorizontalAlignmentStyle.Center;
-        //cell.Style.VerticalAlignment = VerticalAlignmentStyle.Bottom;
       }
+      insertExtensionHeaders(MissionReadyColumns.Courses);
+      
 
       ExcelSheet badList = xl.CopySheet(goodList.Name, "Non-Mission Members");
       ExcelSheet nonFieldList = xl.CopySheet(goodList.Name, "Admin Members");
@@ -213,9 +243,21 @@ namespace Kcsara.Database.Services
               idx = wrap.Sheet.NumRows + 1;
               c = 0;
 
+              Action<MissionReadyColumns> insertExtensionColumns = group =>
+              {
+                if (extension == null) return;
+                foreach (var value in extension.GetColumnsAfter(group, member))
+                {
+                  wrap.SetCellValue(value, idx, c++);
+                }
+              };
+
+              insertExtensionColumns(MissionReadyColumns.Start);
               wrap.SetCellValue(string.Format("{0:0000}", member.DEM), idx, c++);
+              insertExtensionColumns(MissionReadyColumns.WorkerNumber);
               wrap.SetCellValue(member.LastName, idx, c++);
               wrap.SetCellValue(member.FirstName, idx, c++);
+              insertExtensionColumns(MissionReadyColumns.Name);
               ExcelCell cell = wrap.Sheet.CellAt(idx, c);
               switch (member.WacLevel)
               {
@@ -232,6 +274,8 @@ namespace Kcsara.Database.Services
                   break;
               }
               wrap.SetCellValue(member.WacLevel.ToString(), idx, c++);
+              insertExtensionColumns(MissionReadyColumns.WorkerType);
+
               foreach (var course in courses)
               {
                 TrainingStatus stat = stats.Expirations[course.Id];
@@ -250,10 +294,13 @@ namespace Kcsara.Database.Services
 
                 c++;
               }
+              insertExtensionColumns(MissionReadyColumns.Courses);
+
               if (wrap == bad)
               {
                 wrap.Sheet.CellAt(idx, c).SetValue(member.ContactNumbers.Where(f => f.Type == "email").OrderBy(f => f.Priority).Select(f => f.Value).FirstOrDefault());
               }
+              insertExtensionColumns(MissionReadyColumns.End);
               idx++;
             }
             admin.Sheet.AutoFitAll();
