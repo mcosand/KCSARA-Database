@@ -3,18 +3,51 @@
  */
 namespace ESAR.Extensions
 {
+  using System;
   using System.Collections.Generic;
+  using System.Linq;
+  using Kcsar.Database.Model;
   using Kcsara.Database.Services.Reports;
 
   public class MissionReadyExtension : IMissionReadyPlugin
   {
-    public IEnumerable<string> GetColumnsAfter(MissionReadyColumns column, Kcsar.Database.Model.Member member)
+    private readonly SarUnit unit;
+
+    public MissionReadyExtension(SarUnit unit)
+    {
+      this.unit = unit;
+    }
+
+    public IEnumerable<string> GetColumnsAfter(MissionReadyColumns column, Member member)
     {
       if (column == MissionReadyColumns.WorkerType)
       {
-        return new[] { "foo" };
+        var courses = member.ComputedAwards.Where(f =>
+          f.Course.Unit != null && f.Course.Unit.Id == this.unit.Id 
+          && (f.Expiry == null || f.Expiry > DateTime.Now))
+          .Select(f => f.Course.DisplayName)
+          .ToArray();
+        
+        var ranks = new[] { "OL", "FL", "TL" };
+        foreach (var rank in ranks)
+        {
+          if (courses.Any(f => f == this.unit.DisplayName + " " + rank))
+          {
+            return new [] { rank };
+          }
+        }
+        
+        if (member.WacLevel == WacLevel.Field)
+        {
+          return new[] { "TM" };
+        }
+
+        return new[] { string.Empty };
       }
-      return new string[0];
+      else
+      {
+        return new string[0];
+      }
     }
 
     public IEnumerable<string> GetHeadersAfter(MissionReadyColumns column)

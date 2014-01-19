@@ -53,15 +53,15 @@ namespace Kcsara.Database.Web
       }
     }
 
-    public T For<T>(object key)
+    public T For<T>(SarUnit unit)
     {
       Dictionary<Type, Type> unitExtentions;
-      if (this.extensions.TryGetValue(key, out unitExtentions))
+      if (this.extensions.TryGetValue(unit.Id, out unitExtentions))
       {
         Type implementationType;
         if (unitExtentions.TryGetValue(typeof(T), out implementationType))
         {
-          return (T)this.kernel.Get(implementationType);
+          return (T)this.kernel.Get(implementationType, new Ninject.Parameters.ConstructorArgument("unit", unit));
         }
       }
       return default(T);

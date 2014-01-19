@@ -157,7 +157,7 @@ namespace Kcsara.Database.Services
       {
         memberships = memberships.Where(um => um.Unit.Id == unit.Id);
         longName = unit.LongName;
-        extension = this.extensions.For<IMissionReadyPlugin>(unit.Id);
+        extension = this.extensions.For<IMissionReadyPlugin>(unit);
       }
       memberships = memberships.Where(um => um.EndTime == null && um.Status.IsActive);
       memberships = memberships.OrderBy(f => f.Person.LastName).ThenBy(f => f.Person.FirstName);
