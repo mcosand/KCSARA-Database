@@ -13,15 +13,16 @@ namespace Kcsara.Database.Web.Areas.Missions.Controllers
 {
   public class ResponseController : BaseController
   {
-    public ResponseController(IKcsarContext db, IAuthService auth, ILog log, IAppSettings appSettings)
-      : base(db, auth, log, appSettings)
+    protected ControllerArgs args;
+    public ResponseController(ControllerArgs args) : base (args)
     {
+      this.args = args;
     }
 
     [Authorize]
     public ActionResult Index()
     {
-      var responseApi = new ResponseApiController(this.db, this.Permissions, log);
+      var responseApi = new ResponseApiController(this.args);
       ViewBag.Data = responseApi.GetCurrentStatus();
       return View();
     }

@@ -35,23 +35,18 @@ namespace Kcsara.Database.Web.Controllers
     protected readonly IAppSettings settings;
     protected readonly IKcsarContext db;
     protected readonly ILog log;
-    
+
     public BaseController(IKcsarContext db)
-      : this(db, null, LogManager.GetLogger("website"), Ninject.ResolutionExtensions.Get<IAppSettings>(MvcApplication.myKernel))
+      : this(new ControllerArgs(db, null, LogManager.GetLogger("website"), Ninject.ResolutionExtensions.Get<IAppSettings>(MvcApplication.myKernel)))
     {
     }
     
-    public BaseController(
-      IKcsarContext db,
-      IAuthService permissions,
-      ILog log,
-      IAppSettings appSettings
-      )
+    public BaseController(ControllerArgs args)
     {
-      this.db = db;
-      this.settings = appSettings;
-      this.log = log;
-      this.Permissions = permissions;
+      this.db = args.db;
+      this.settings = args.appSettings;
+      this.log = args.log;
+      this.Permissions = args.permissions;
 
       UserInRole = (f => User.IsInRole(f));
       GetSessionValue = (f => Session[f]);

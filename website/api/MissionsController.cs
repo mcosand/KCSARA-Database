@@ -17,8 +17,8 @@ namespace Kcsara.Database.Web.api
 {
   public class MissionsController : BaseApiController
   {
-    public MissionsController(IKcsarContext db, IAuthService auth, ILog log)
-      : base(db, auth, log)
+    public MissionsController(Kcsara.Database.Web.Controllers.ControllerArgs args)
+      : base(args)
     { }
 
     [HttpGet]

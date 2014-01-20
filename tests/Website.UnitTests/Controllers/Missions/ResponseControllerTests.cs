@@ -10,6 +10,7 @@ using Kcsara.Database.Web.Areas.Missions.Controllers;
 using NUnit.Framework;
 using Moq;
 using Kcsara.Database.Services;
+using Kcsara.Database.Web.Controllers;
 
 namespace Internal.Website
 {
@@ -55,7 +56,7 @@ namespace Internal.Website
     private T TestSimpleView<T>(Func<ResponseController, ActionResult> method, IAuthService auth) where T : ActionResult
     {
       var mockData = ResponseApiControllerTests.GetBasicResponseData();
-      var controller = new ResponseController(mockData.Object, auth, new ConsoleLogger(), null);
+      var controller = new ResponseController(new ControllerArgs(mockData.Object, auth, new ConsoleLogger(), null));
       var result = method(controller);
       Assert.IsNotNull(result, "not null");
       Assert.IsInstanceOf<T>(result, "return type");

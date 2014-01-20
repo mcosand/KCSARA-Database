@@ -20,8 +20,7 @@ namespace Kcsara.Database.Web.Controllers
   public class HomeController : BaseController
   {
     private readonly IReportsService reports;
-    public HomeController(IKcsarContext db, IReportsService reports, IAuthService permissions, ILog log, IAppSettings settings)
-      : base(db, permissions, log, settings)
+    public HomeController(IReportsService reports, ControllerArgs args) : base(args)
     {
       System.Data.Entity.Database.SetInitializer<MeshNodeEntities>(new System.Data.Entity.DropCreateDatabaseIfModelChanges<MeshNodeEntities>());
       this.reports = reports;

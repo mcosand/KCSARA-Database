@@ -254,6 +254,7 @@
     <Compile Include="Controllers\AdminController_Documents.cs" />
     <Compile Include="Controllers\AnimalsController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\ControllerArgs.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\IEventController.cs" />
     <Compile Include="Controllers\LogController.cs" />

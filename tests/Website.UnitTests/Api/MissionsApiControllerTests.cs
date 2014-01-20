@@ -13,6 +13,7 @@ using Kcsar.Database.Model;
 using Kcsara.Database.Services;
 using System.Reflection;
 using System.Web.Http;
+using Kcsara.Database.Web.Controllers;
 
 namespace Internal.Website.Api
 {
@@ -27,7 +28,7 @@ namespace Internal.Website.Api
       var dataMock = new Mock<IKcsarContext>();
       dataMock.SetupGet(f => f.MissionRosters).Returns(responders);
 
-      var controller = new MissionsController(dataMock.Object, new AlwaysYesAuth(), new ConsoleLogger());
+      var controller = new MissionsController(new ControllerArgs(dataMock.Object, new AlwaysYesAuth(), new ConsoleLogger(), null));
 
       var result = controller.GetResponderEmails(Guid.NewGuid(), null);
       Assert.IsEmpty(result);

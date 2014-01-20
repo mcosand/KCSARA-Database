@@ -12,27 +12,23 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using Kcsara.Database.Services;
+using Kcsara.Database.Web.Controllers;
 
 namespace Kcsara.Database.Web.api
 {
   public abstract class BaseApiController : ApiController, IDisposable
   {
-    //static BaseApiController()
-    //{
-    //    GlobalConfiguration.Configuration.Filters.Add(new ExceptionFilter());
-    //}
-
     public BaseApiController(IKcsarContext db, ILog log)
-      : this(db, Ninject.ResolutionExtensions.Get<IAuthService>(MvcApplication.myKernel), log)
+      : this(new ControllerArgs(db, Ninject.ResolutionExtensions.Get<IAuthService>(MvcApplication.myKernel), log, null))
     {
     }
 
-    public BaseApiController(IKcsarContext db, IAuthService auth, ILog log)
+    public BaseApiController(ControllerArgs args)
       : base()
     {
-      this.db = db;
-      this.log = log;
-      this.Permissions = auth;
+      this.db = args.db;
+      this.log = args.log;
+      this.Permissions = args.permissions;
     }
 
     public IAuthService Permissions = null;

@@ -18,8 +18,8 @@ namespace Kcsara.Database.Web.Areas.Missions.api
   {
     public static readonly string RouteName = "api_MissionsResponse";
     
-    public ResponseApiController(M.IKcsarContext db, IAuthService auth, ILog log)
-      : base(db, auth, log)
+    public ResponseApiController(Kcsara.Database.Web.Controllers.ControllerArgs args)
+      : base(args)
     { }
 
     [HttpGet]
