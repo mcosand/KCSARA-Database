@@ -37,7 +37,11 @@ namespace ESAR.Extensions
           }
         }
         
-        if (member.WacLevel == WacLevel.Field)
+        if (member.WacLevel == WacLevel.Field 
+          || (member.WacLevel == WacLevel.Novice && member.Memberships.Any(
+            f => f.Status.StatusName == "Active"
+              && f.Unit.Id == unit.Id
+              && (f.EndTime == null || f.EndTime > DateTime.Now))))
         {
           return new[] { "TM" };
         }
