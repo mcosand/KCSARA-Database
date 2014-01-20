@@ -1,4 +1,7 @@
-﻿using Kcsara.Database.Web.Membership;
+﻿/*
+ * Copyright 2012-2014 Matthew Cosand
+ */
+using Kcsara.Database.Web.Membership;
 using System;
 using System.Collections.Generic;
 using System.IO;

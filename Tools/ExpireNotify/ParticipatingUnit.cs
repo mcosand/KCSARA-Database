@@ -1,4 +1,7 @@
-﻿namespace ExpireNotify
+﻿/*
+ * Copyright 2012-2014 Matthew Cosand
+ */
+namespace ExpireNotify
 {
     using System;
 

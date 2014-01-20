@@ -1,4 +1,7 @@
-﻿
+﻿/*
+ * Copyright 2008-2014 Matthew Cosand
+ */
+
 using System;
 namespace Kcsar.Database.Model
 {

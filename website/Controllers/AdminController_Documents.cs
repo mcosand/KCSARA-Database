@@ -1,4 +1,7 @@
-﻿namespace Kcsara.Database.Web.Controllers
+﻿/*
+ * Copyright 2011-2014 Matthew Cosand
+ */
+namespace Kcsara.Database.Web.Controllers
 {
   using System;
   using System.Linq;

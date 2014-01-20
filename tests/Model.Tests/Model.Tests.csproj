@@ -7,8 +7,8 @@
     <ProjectGuid>{D0C7F83A-E33D-478D-A508-139D55F8D79B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Kcsara.Database.Model.Tests</RootNamespace>
-    <AssemblyName>Internal.Kcsara.Database.Model.Tests</AssemblyName>
+    <RootNamespace>Internal.Database.Model</RootNamespace>
+    <AssemblyName>Kcsara.Database.Model.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -56,9 +56,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnimalMissionTests.cs" />
+    <Compile Include="AnimalTests.cs" />
     <Compile Include="ClassTests.cs" />
+    <Compile Include="AnimalOwnerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SetupTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Model\Model.csproj">

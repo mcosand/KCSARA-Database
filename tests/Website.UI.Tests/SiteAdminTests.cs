@@ -1,4 +1,7 @@
-﻿using NUnit.Framework;
+﻿/*
+ * Copyright 2012-2014 Matthew Cosand
+ */
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;

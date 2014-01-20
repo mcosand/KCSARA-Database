@@ -13,8 +13,8 @@ namespace Kcsara.Database.Web.Areas.Missions.Controllers
 {
   public class ResponseController : BaseController
   {
-    public ResponseController(IKcsarContext db, IAuthService auth, ILog log)
-      : base(db, auth, log)
+    public ResponseController(IKcsarContext db, IAuthService auth, ILog log, IAppSettings appSettings)
+      : base(db, auth, log, appSettings)
     {
     }
 

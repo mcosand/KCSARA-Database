@@ -1,4 +1,7 @@
-﻿
+﻿/*
+ * Copyright 2009-2014 Matthew Cosand
+ */
+
 namespace Kcsar.Database.Model
 {
   using System;

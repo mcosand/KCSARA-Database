@@ -1,4 +1,7 @@
-﻿
+﻿/*
+ * Copyright 2013-2014 Matthew Cosand
+ */
+
 namespace Kcsara.Database.Web.api
 {
   using Kcsar.Database.Model;
@@ -144,7 +147,7 @@ namespace Kcsara.Database.Web.api
         System.Web.Security.Roles.AddUserToRole(data.Username, APPLICANT_ROLE);
 
         string mailSubject = string.Format("{0} account verification", ConfigurationManager.AppSettings["dbNameShort"] ?? "KCSARA");
-        string mailTemplate = File.ReadAllText(Path.Combine(Path.GetDirectoryName(new Uri(typeof(AccountController).Assembly.CodeBase).LocalPath), "EmailTemplates", "new-account-verification.html"));
+        string mailTemplate = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Templates", "Email", "new-account-verification.html"));
         string mailBody = mailTemplate
             .Replace("%Username%", data.Username)
             .Replace("%VerifyLink%", new Uri(this.Request.RequestUri, Url.Route("Default", new { httproute = "", controller = "Account", action = "Verify", id = data.Username })).AbsoluteUri + "?key=" + user.ProviderUserKey.ToString())

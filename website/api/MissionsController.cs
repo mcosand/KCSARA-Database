@@ -1,4 +1,7 @@
-﻿using Kcsar.Database.Model;
+﻿/*
+ * Copyright 2013-2014 Matthew Cosand
+ */
+using Kcsar.Database.Model;
 using Kcsara.Database.Web.Model;
 using Kcsara.Database.Web.Models;
 using System;

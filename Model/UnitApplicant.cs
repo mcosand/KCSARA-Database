@@ -1,4 +1,7 @@
-﻿namespace Kcsar.Database.Model
+﻿/*
+ * Copyright 2013-2014 Matthew Cosand
+ */
+namespace Kcsar.Database.Model
 {
     using System;
     using System.Collections.Generic;
@@ -8,9 +11,9 @@
     public class UnitApplicant : ModelObject
     {
         [ReportedReference]
-        public Member Applicant { get; set; }
+        public virtual Member Applicant { get; set; }
         [ReportedReference]
-        public SarUnit Unit { get; set; }
+        public virtual SarUnit Unit { get; set; }
         public DateTime Started { get; set; }
         public string Data { get; set; }
         public bool IsActive { get; set; }

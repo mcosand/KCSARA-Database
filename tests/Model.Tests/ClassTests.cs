@@ -1,4 +1,7 @@
-﻿using System;
+﻿/*
+ * Copyright 2012-2014 Matthew Cosand
+ */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -7,7 +10,7 @@ using System.Threading.Tasks;
 using Kcsar.Database.Model;
 using NUnit.Framework;
 
-namespace Kcsar.Database.Model.Tests
+namespace Internal.Database.Model
 {
     [TestFixture]
     public class ClassTests

@@ -1,4 +1,7 @@
-﻿namespace Kcsara.Database.Web.Membership.Synchronizers
+﻿/*
+ * Copyright 2012-2014 Matthew Cosand
+ */
+namespace Kcsara.Database.Web.Membership.Synchronizers
 {
     using log4net;
 using System;

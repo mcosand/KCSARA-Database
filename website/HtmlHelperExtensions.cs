@@ -1,4 +1,7 @@
-﻿namespace System.Web.Mvc
+﻿/*
+ * Copyright 2008-2014 Matthew Cosand
+ */
+namespace System.Web.Mvc
 {
     using System.Collections.Generic;
     using System.Linq.Expressions;

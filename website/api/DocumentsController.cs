@@ -1,4 +1,7 @@
-﻿using System;
+﻿/*
+ * Copyright 2012-2014 Matthew Cosand
+ */
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;

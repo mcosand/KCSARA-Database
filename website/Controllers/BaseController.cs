@@ -1,4 +1,7 @@
-﻿namespace Kcsara.Database.Web.Controllers
+﻿/*
+ * Copyright 2008-2014 Matthew Cosand
+ */
+namespace Kcsara.Database.Web.Controllers
 {
   using Kcsar.Database.Model;
   using Kcsar.Membership;
@@ -27,25 +30,32 @@
     public Func<string, bool> UserInRole;
     public Func<string, object> GetSessionValue;
     public Action<string, object> SetSessionValue;
-    protected IAuthService Permissions { get; private set; }
 
-    protected readonly ILog log;
+    public IAuthService Permissions = null;
+    protected readonly IAppSettings settings;
     protected readonly IKcsarContext db;
-
-    public BaseController(IKcsarContext db, IAuthService auth, ILog log)
-      : base()
+    protected readonly ILog log;
+    
+    public BaseController(IKcsarContext db)
+      : this(db, null, LogManager.GetLogger("website"), Ninject.ResolutionExtensions.Get<IAppSettings>(MvcApplication.myKernel))
+    {
+    }
+    
+    public BaseController(
+      IKcsarContext db,
+      IAuthService permissions,
+      ILog log,
+      IAppSettings appSettings
+      )
     {
       this.db = db;
-      this.Permissions = auth;
+      this.settings = appSettings;
       this.log = log;
+      this.Permissions = permissions;
+
       UserInRole = (f => User.IsInRole(f));
       GetSessionValue = (f => Session[f]);
       SetSessionValue = ((f, v) => Session[f] = v);
-    }
-
-    public BaseController(IKcsarContext db)
-      : this(db, null, LogManager.GetLogger("website"))
-    {
     }
 
     protected string GetDateFormat()

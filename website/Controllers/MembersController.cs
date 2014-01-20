@@ -1,4 +1,7 @@
-﻿
+﻿/*
+ * Copyright 2008-2014 Matthew Cosand
+ */
+
 namespace Kcsara.Database.Web.Controllers
 {
   using Kcsar.Database;

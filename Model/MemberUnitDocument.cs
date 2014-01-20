@@ -1,4 +1,7 @@
-﻿
+﻿/*
+ * Copyright 2013-2014 Matthew Cosand
+ */
+
 namespace Kcsar.Database.Model
 {
     using System;
@@ -10,11 +13,11 @@ namespace Kcsar.Database.Model
     {
         [Required]
         [ReportedReference]
-        public Member Member { get; set; }
+        public virtual Member Member { get; set; }
 
         [Required]
         [ReportedReference]
-        public UnitDocument Document { get; set; }
+        public virtual UnitDocument Document { get; set; }
 
         public DateTime? MemberAction { get; set; }
         

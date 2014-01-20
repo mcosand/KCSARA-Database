@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿/*
+ * Copyright 2012-2014 Matthew Cosand
+ */
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;

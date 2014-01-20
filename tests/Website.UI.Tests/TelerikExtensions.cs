@@ -1,4 +1,7 @@
-﻿namespace Kcsara.Database.Website.Tests
+﻿/*
+ * Copyright 2012-2014 Matthew Cosand
+ */
+namespace Kcsara.Database.Website.Tests
 {
     using System;
     using System.Threading;

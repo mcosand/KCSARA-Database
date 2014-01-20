@@ -1,4 +1,7 @@
-﻿using System;
+﻿/*
+ * Copyright 2013-2014 Matthew Cosand
+ */
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;

@@ -104,11 +104,15 @@
     <Compile Include="Animal.cs" />
     <Compile Include="AnimalOwner.cs" />
     <Compile Include="AnimalMission.cs" />
+
     <Compile Include="Migrations\201401040710175_ResponseStatus.cs" />
     <Compile Include="Migrations\201401040710175_ResponseStatus.Designer.cs">
       <DependentUpon>201401040710175_ResponseStatus.cs</DependentUpon>
     </Compile>
     <Compile Include="MissionResponseStatus.cs" />
+
+    <Compile Include="IKcsarContext.cs" />
+
     <Compile Include="Migrations\Migrator.cs" />
     <Compile Include="MemberUnitDocument.cs" />
     <Compile Include="MemberMedical.cs" />

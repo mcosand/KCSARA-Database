@@ -1,4 +1,7 @@
-﻿namespace Kcsar.Database.Model
+﻿/*
+ * Copyright 2012-2014 Matthew Cosand
+ */
+namespace Kcsar.Database.Model
 {
     using System;
     using System.ComponentModel.DataAnnotations;

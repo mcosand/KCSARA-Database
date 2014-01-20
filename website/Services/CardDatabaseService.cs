@@ -1,4 +1,7 @@
-﻿using iTextSharp.text;
+﻿/*
+ * Copyright 2013-2014 Matthew Cosand
+ */
+using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Kcsar.Database.Model;
 using System;

@@ -1,4 +1,7 @@
-﻿using Kcsar.Database.Model;
+﻿/*
+ * Copyright 2012-2014 Matthew Cosand
+ */
+using Kcsar.Database.Model;
 using Kcsara.Database.Web.Model;
 using log4net;
 using Newtonsoft.Json;
@@ -20,7 +23,7 @@ namespace Kcsara.Database.Web.api
     //}
 
     public BaseApiController(IKcsarContext db, ILog log)
-      : this(db, null, log)
+      : this(db, Ninject.ResolutionExtensions.Get<IAuthService>(MvcApplication.myKernel), log)
     {
     }
 

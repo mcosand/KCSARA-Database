@@ -1,4 +1,9 @@
-﻿using System;
+/*
+ * Copyright 2008-2014 Matthew Cosand
+ */
+using System;
+using System.Security.Principal;
+using System.Threading;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
@@ -6,6 +11,7 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.Security;
 using Kcsar.Database.Model;
+using Kcsara.Database.Extensions;
 using Kcsara.Database.Services;
 using Kcsara.Database.Web.api;
 using Kcsara.Database.Web.Controllers;
@@ -20,7 +26,8 @@ namespace Kcsara.Database.Web
 
   public class MvcApplication : NinjectHttpApplication
   {
-    static IKernel myKernel;
+    // This is static until legacy code learns to ask for dependencies in constructors
+    public static IKernel myKernel;
     static MvcApplication()
     {
       myKernel = new StandardKernel();
@@ -29,6 +36,11 @@ namespace Kcsara.Database.Web
       myKernel.Bind<IFormsAuthentication>().To<FormsAuthenticationWrapper>();
       myKernel.Bind<IAuthService>().ToMethod(context => new AuthService(HttpContext.Current.User, context.Kernel.Get<IKcsarContext>())).InRequestScope();
       myKernel.Bind<MembershipProvider>().ToMethod(context => System.Web.Security.Membership.Provider);
+      myKernel.Bind<IPrincipal>().ToMethod(f => Thread.CurrentPrincipal);
+      myKernel.Bind<IAppSettings>().To<AppSettings>();
+      myKernel.Bind<IReportsService>().To<ReportsService>();
+      myKernel.Bind<IExtensionProvider>().To<ExtensionProvider>().InSingletonScope();
+      myKernel.Get<IExtensionProvider>().Initialize();
     }
 
     protected void Session_Start(Object sender, EventArgs e)

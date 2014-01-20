@@ -1,4 +1,7 @@
-﻿
+﻿/*
+ * Copyright 2008-2014 Matthew Cosand
+ */
+
 namespace Kcsara.Database.Web.Controllers
 {
   using Kcsar.Database;
@@ -13,11 +16,17 @@ namespace Kcsara.Database.Web.Controllers
   using System.Text;
   using System.Web.Mvc;
   using System.Xml;
+  using Kcsara.Database.Services;
 
   /// <summary>Views related to SAR units.</summary>
   public class UnitsController : BaseController
   {
-    public UnitsController(IKcsarContext db) : base(db) { }
+    private readonly IReportsService reports;
+
+    public UnitsController(IReportsService reports, IKcsarContext db) : base(db)
+    {
+      this.reports = reports;
+    }
 
     /// <summary>Get a list of existing units.</summary>
     /// <returns>ViewModel</returns>
@@ -99,147 +108,11 @@ namespace Kcsara.Database.Web.Controllers
     {
       if (!Permissions.IsUserOrLocal(Request)) return this.CreateLoginRedirect();
 
-      // The method almost supports id=null as downloading the KCSARA roster
+      SarUnit unit = (from u in this.db.Units where u.Id == id select u).FirstOrDefault();
 
-      ExcelFile xl;
-      using (FileStream fs = new FileStream(Server.MapPath(Url.Content("~/Content/missionready-template.xls")), FileMode.Open, FileAccess.Read))
-      {
-        xl = ExcelService.Read(fs, ExcelFileType.XLS);
-      }
+      Stream result = this.reports.GetMissionReadyList(unit);
 
-      var goodList = xl.GetSheet(0);
-
-      string unitName = GenerateMissionReadySheets(this.db, id, xl, goodList);
-
-      MemoryStream ms = new MemoryStream();
-      xl.Save(ms);
-      ms.Seek(0, SeekOrigin.Begin);
-      return this.File(ms, "application/vnd.ms-excel", string.Format("{0}-missionready-{1:yyMMdd}.xls", unitName, DateTime.Now));
-    }
-
-    public static string GenerateMissionReadySheets(IKcsarContext context, Guid? id, ExcelFile xl, ExcelSheet goodList)
-    {
-      string unitShort = ConfigurationManager.AppSettings["dbNameShort"] ?? "KCSARA";
-      IQueryable<UnitMembership> memberships = context.UnitMemberships.Include("Person.ComputedAwards.Course").Include("Status");
-      string unitLong = Strings.GroupName;
-      if (id.HasValue)
-      {
-        memberships = memberships.Where(um => um.Unit.Id == id.Value);
-        SarUnit sarUnit = (from u in context.Units where u.Id == id.Value select u).First();
-        unitShort = sarUnit.DisplayName;
-        unitLong = sarUnit.LongName;
-
-      }
-      memberships = memberships.Where(um => um.EndTime == null && um.Status.IsActive);
-      memberships = memberships.OrderBy(f => f.Person.LastName).ThenBy(f => f.Person.FirstName);
-
-      goodList.Header = unitLong + " Mission Active Roster";
-      goodList.Footer = DateTime.Now.ToShortDateString();
-
-      var courses = (from c in context.TrainingCourses where c.WacRequired > 0 select c).OrderBy(x => x.DisplayName).ToList();
-
-      int headerIdx = 4;
-      foreach (var course in courses)
-      {
-        var cell = goodList.CellAt(0, headerIdx++);
-        cell.SetValue(course.DisplayName);
-
-        cell.SetBold(true);
-        cell.SetTextWrap(true);
-        //cell.Style.HorizontalAlignment = HorizontalAlignmentStyle.Center;
-        //cell.Style.VerticalAlignment = VerticalAlignmentStyle.Bottom;
-      }
-
-      ExcelSheet badList = xl.CopySheet(goodList.Name, "Non-Mission Members");
-      ExcelSheet nonFieldList = xl.CopySheet(goodList.Name, "Admin Members");
-
-      using (SheetAutoFitWrapper good = new SheetAutoFitWrapper(xl, goodList))
-      {
-        using (SheetAutoFitWrapper bad = new SheetAutoFitWrapper(xl, badList))
-        {
-          using (SheetAutoFitWrapper admin = new SheetAutoFitWrapper(xl, nonFieldList))
-          {
-            int idx = 1;
-            int c = 0;
-            Guid lastId = Guid.Empty;
-
-            foreach (UnitMembership membership in memberships)
-            {
-              Member member = membership.Person;
-              if (member.Id == lastId)
-              {
-                continue;
-              }
-              lastId = member.Id;
-
-              CompositeTrainingStatus stats = CompositeTrainingStatus.Compute(member, courses, DateTime.Now);
-
-              SheetAutoFitWrapper wrap = bad;
-              // If the person isn't supposed to keep up a WAC card, then they're administrative...
-              if (membership.Status.WacLevel == WacLevel.None)
-              {
-                wrap = admin;
-              }
-              // If they're current on training and have a DEM card, they're good...
-              else if (stats.IsGood && member.WacLevel != WacLevel.None)
-              {
-                wrap = good;
-              }
-              idx = wrap.Sheet.NumRows + 1;
-              c = 0;
-
-              wrap.SetCellValue(string.Format("{0:0000}", member.DEM), idx, c++);
-              wrap.SetCellValue(member.LastName, idx, c++);
-              wrap.SetCellValue(member.FirstName, idx, c++);
-              ExcelCell cell = wrap.Sheet.CellAt(idx, c);
-              switch (member.WacLevel)
-              {
-                case WacLevel.Field:
-                  cell.SetFillColor(Color.Green);
-                  cell.SetFontColor(Color.White);
-                  break;
-                case WacLevel.Novice:
-                  cell.SetFillColor(Color.Red);
-                  cell.SetFontColor(Color.White);
-                  break;
-                case WacLevel.Support:
-                  cell.SetFillColor(Color.Orange);
-                  break;
-              }
-              wrap.SetCellValue(member.WacLevel.ToString(), idx, c++);
-              foreach (var course in courses)
-              {
-
-
-                TrainingStatus stat = stats.Expirations[course.Id];
-
-                if ((stat.Status & ExpirationFlags.Okay) != ExpirationFlags.Okay)
-                {
-                  wrap.Sheet.CellAt(idx, c).SetFillColor(Color.Pink);
-                  wrap.Sheet.CellAt(idx, c).SetBorderColor(Color.Red);
-                }
-
-                wrap.SetCellValue(stat.ToString(), idx, c);
-                if (stat.Expires.HasValue)
-                {
-                  wrap.Sheet.CellAt(idx, c).SetValue(stat.Expires.Value.Date.ToString("yyyy-MM-dd"));
-                }
-
-                c++;
-              }
-              if (wrap == bad)
-              {
-                wrap.Sheet.CellAt(idx, c).SetValue(member.ContactNumbers.Where(f => f.Type == "email").OrderBy(f => f.Priority).Select(f => f.Value).FirstOrDefault());
-              }
-              idx++;
-            }
-            admin.Sheet.AutoFitAll();
-            good.Sheet.AutoFitAll();
-            bad.Sheet.AutoFitAll();
-          }
-        }
-      }
-      return unitShort;
+      return this.File(result, "application/vnd.ms-excel", string.Format("{0}-missionready-{1:yyMMdd}.xls", unit.DisplayName, DateTime.Now));
     }
 
     [Authorize]
