@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Kcsar.Database.Model;
 using NUnit.Framework;
 
-namespace Kcsar.Database.Model.Tests
+namespace Internal.Database.Model
 {
     [TestFixture]
     public class SetupTests

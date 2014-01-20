@@ -18,7 +18,7 @@ namespace Kcsar.Database.Model
         public string Title { get; set; }
 
         [ReportedReference]
-        public SarUnit Unit { get; set; }
+        public virtual SarUnit Unit { get; set; }
 
         [Required]
         public int Order { get; set; }

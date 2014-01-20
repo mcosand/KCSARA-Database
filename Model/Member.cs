@@ -31,7 +31,7 @@ namespace Kcsar.Database.Model
         public DateTime? SheriffApp { get; set; }
         public int? ExternalKey1 { get; set; }
         public MemberStatus Status { get; set; }
-        public MemberMedical MedicalInfo { get; set; }
+        public virtual MemberMedical MedicalInfo { get; set; }
         
         public virtual ICollection<MissionLog> MissionLogs { get; set; }
         public virtual ICollection<MissionRoster> MissionRosters { get; set; }

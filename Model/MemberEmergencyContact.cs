@@ -11,7 +11,7 @@ namespace Kcsar.Database.Model
 {
     public class MemberEmergencyContact : ModelObject
     {
-        public Member Member { get; set; }
+        public virtual Member Member { get; set; }
         public string EncryptedData { get; set; }
 
         public override string GetReportHtml()

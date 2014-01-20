@@ -11,7 +11,7 @@ namespace Kcsar.Database.Model
 {
     public class MemberMedical : ModelObject
     {
-        public Member Member { get; set; }
+        public virtual Member Member { get; set; }
         public string EncryptedAllergies { get; set; }
         public string EncryptedMedications { get; set; }
         public string EncryptedDisclosures { get; set; }

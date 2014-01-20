@@ -11,9 +11,9 @@ namespace Kcsar.Database.Model
     public class UnitApplicant : ModelObject
     {
         [ReportedReference]
-        public Member Applicant { get; set; }
+        public virtual Member Applicant { get; set; }
         [ReportedReference]
-        public SarUnit Unit { get; set; }
+        public virtual SarUnit Unit { get; set; }
         public DateTime Started { get; set; }
         public string Data { get; set; }
         public bool IsActive { get; set; }

@@ -21,7 +21,7 @@ namespace Kcsar.Database.Model
         public Guid Id { get; set; }
         public string Actor { get; set; }
         public DateTime Timestamp { get; set; }
-        public Member Owner { get; set; }
+        public virtual Member Owner { get; set; }
         public string Action { get; set; }
         public string Reason { get; set; }
     }
