@@ -5,6 +5,7 @@ namespace Kcsara.Database.Web
 {
   using System;
   using System.Collections.Generic;
+  using System.Data.Entity;
   using System.IO;
   using System.Linq;
   using System.Reflection;
@@ -32,7 +33,23 @@ namespace Kcsara.Database.Web
     {
       var extensionTypes = ExtensionList.GetExtensionInterfaces();
 
-      foreach (var unit in this.db.Units)
+      IDbSet<SarUnit> units = this.db.Units;
+      int unitCount = 0;
+      try
+      {
+        unitCount = units.Local.Count;
+      }
+      catch (InvalidOperationException)
+      {
+        this.log.Error("Can't initialize database, does it need to be set up?");
+      }
+
+      if (unitCount == 0)
+      {
+        return;
+      }
+
+      foreach (var unit in units)
       {
         string assemblyName = string.Format("{0}.Extensions", unit.DisplayName);
         if (!File.Exists(Path.Combine(Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath), assemblyName + ".dll")))
