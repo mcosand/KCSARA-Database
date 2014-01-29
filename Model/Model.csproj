@@ -104,15 +104,18 @@
     <Compile Include="Animal.cs" />
     <Compile Include="AnimalOwner.cs" />
     <Compile Include="AnimalMission.cs" />
-
     <Compile Include="Migrations\201401040710175_ResponseStatus.cs" />
     <Compile Include="Migrations\201401040710175_ResponseStatus.Designer.cs">
       <DependentUpon>201401040710175_ResponseStatus.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201401211611430_MissionResponders.cs" />
+    <Compile Include="Migrations\201401211611430_MissionResponders.Designer.cs">
+      <DependentUpon>201401211611430_MissionResponders.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MissionResponder.cs" />
+    <Compile Include="MissionRespondingUnit.cs" />
     <Compile Include="MissionResponseStatus.cs" />
-
     <Compile Include="IKcsarContext.cs" />
-
     <Compile Include="Migrations\Migrator.cs" />
     <Compile Include="MemberUnitDocument.cs" />
     <Compile Include="MemberMedical.cs" />
@@ -232,6 +235,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201401040710175_ResponseStatus.resx">
       <DependentUpon>201401040710175_ResponseStatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201401211611430_MissionResponders.resx">
+      <DependentUpon>201401211611430_MissionResponders.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

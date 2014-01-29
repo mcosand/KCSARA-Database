@@ -100,7 +100,21 @@
   <% if ((bool)ViewData["IsUser"]) {  %>
   <div style="clear: both">
   <h2>Mission Response:</h2>
-  <% Html.RenderPartial("RosterOfEvents", new RosterRowsContext { Type = RosterType.Mission, Rows = m.MissionRosters.Cast<IRosterEntry>() }); %>
+  <table id="missionList" border="0" cellpadding="0" class="data-table">
+    <thead>
+      <tr><th>DEM</th><th>Start Time</th><th>Title</th><th>Unit</th><th>Hours</th><th>Miles</th></tr>
+   </thead>
+   <tbody data-bind="foreach: Rows">
+     <tr>
+       <td data-bind="text:Mission.StateNumber"></td>
+       <td data-bind="text:Mission.StartTime.format('YY-MM-dd HH:mm')"></td>
+       <td data-bind="text:Mission.Title"></td>
+       <td></td>
+       <td data-bind="text:Hours"></td>
+       <td data-bind="text:Miles"></td>
+     </tr>
+   </tbody>
+  </table>
   </div>
     <% } %>
 
@@ -110,16 +124,28 @@
   </div>
 
   <script type="text/javascript">
-      $(document).ready(function () {
-<%--
-          jQuery.tmplcmd.linkReplace = {
-          prefix: "_.push($1.join('$2'))"
-          };
-
-          var ct = <%= ViewData["ContactInfo"] %>;
-          $('#contactTemplate').render(ct).appendTo("#contactSlab");
-     --%>     
-      });
+    var MissionListModel = function () {
+      var self = this;
+      this.Rows = ko.observableArray();
+      this.IsLoading = ko.observable(false);
+      this.Reload = function () {
+        self.IsLoading(true);
+        $.getJSON("<%= Url.RouteUrl(Kcsara.Database.Web.Areas.Missions.api.RosterApiController.RouteName, new { httproute = "", action = "GetMemberResponses", id = Model.Id }) %>")
+                        .done(function (data) {
+                          $.each(data, function (i,x) {
+                            x.Mission.StartTime = new moment(x.Mission.StartTime);
+                          });
+                          //mapMoment(data, ['StartTime']);
+                          self.Rows(data);
+                        })
+                        .always(function () { self.IsLoading(false); });
+      }
+    }
+    $(document).ready(function () {
+      var model = new MissionListModel();
+      ko.applyBindings(model, $('#missionList')[0]);
+      model.Reload();
+    });
   </script>
 
 </asp:Content>

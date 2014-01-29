@@ -89,7 +89,7 @@ namespace Internal.Website.Api.Models
 
     private MissionResponseStatus Convert(M.Mission mission)
     {
-      var result = MissionResponseStatus.FromDatabase.Compile().Invoke(mission);
+      var result = MissionResponseStatus.FromData(mission);
       return result;      
     }
   }

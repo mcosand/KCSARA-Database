@@ -41,9 +41,16 @@ namespace Internal.Website
     [Test]
     public void Info()
     {
-      Guid mission = Guid.Empty;
-      var result = TestSimpleView<ViewResult>(f => f.Info(mission));
+      var mockAuth = new Mock<IAuthService>();
+      mockAuth.Setup(f => f.IsInRole(It.IsAny<string>())).Returns(true);
+      var mockData = ResponseApiControllerTests.GetBasicResponseData();
+      var controller = new ResponseController(new ControllerArgs(mockData.Object, mockAuth.Object, new ConsoleLogger(), null));
+
+      var result = (ViewResult)controller.Info(mockData.Object.Missions.First().Id);
       //TODO: checks
+      Assert.IsNotNull(result, "not null");
+      
+
     }
 
     private T TestSimpleView<T>(Func<ResponseController, ActionResult> method) where T : ActionResult

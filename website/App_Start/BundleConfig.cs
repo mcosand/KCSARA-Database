@@ -39,7 +39,8 @@ namespace Kcsara.Database.Web
         "~/Scripts/jquery-{version}.js",
         "~/Scripts/bootstrap.js",
         "~/Scripts/moment.js",
-        "~/Scripts/knockout-{version}.js"
+        "~/Scripts/knockout-{version}.js",
+        "~/Scripts/knockout-sar201401.js"
         ));
       //bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
       //            "~/Content/script/jquery-1.*"));

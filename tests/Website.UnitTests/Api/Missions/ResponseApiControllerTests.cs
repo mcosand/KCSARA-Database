@@ -6,6 +6,7 @@
   using System.Net.Http;
   using System.Web.Http;
   using System.Web.Http.Controllers;
+  using Internal.Database.Model;
   using Kcsara.Database.Web.api.Models;
   using Kcsara.Database.Web.Areas.Missions;
   using Kcsara.Database.Web.Areas.Missions.api;
@@ -38,31 +39,36 @@
       var controller = new ResponseApiController(new ControllerArgs(dataMock.Object, new AlwaysYesAuth(), new ConsoleLogger(), null));
 
       MissionResponseStatus[] result = controller.GetCurrentStatus();
-      Assert.AreEqual(2, result.Length, "expected count");
+      Assert.AreEqual(dataMock.Object.Missions.Count(), result.Length, "expected count");
     }
 
     public static Mock<M.IKcsarContext> GetBasicResponseData()
     {
-      var missions = new InMemoryDbSet<M.Mission>() {
-        new M.Mission { Title = "old", Location="f", StartTime=DateTime.Now.AddDays(-10), Roster = new List<M.MissionRoster>()},
-        new M.Mission
-        {
-          Title = "First",
-          Location = "Nowhere",
-          StartTime = DateTime.Now.AddHours(-15)
-        },
-        new M.Mission{
-          Title = "Third",
-          Location = "nowhere",
-          StartTime = DateTime.Now.AddHours(1),
-          ResponseStatus = new M.MissionResponseStatus {
-            CallForPeriod = DateTime.Now.AddHours(1),
-          }
-        }
-      };
+      var missions = new InMemoryDbSet<M.Mission>(); // {
+      //  new M.Mission { Title = "old", Location="f", StartTime=DateTime.Now.AddDays(-10), Roster = new List<M.MissionRoster>()},
+      //  new M.Mission
+      //  {
+      //    Title = "First",
+      //    Location = "Nowhere",
+      //    StartTime = DateTime.Now.AddHours(-15)
+      //  },
+      //  new M.Mission{
+      //    Title = "Third",
+      //    Location = "nowhere",
+      //    StartTime = DateTime.Now.AddHours(1),
+      //    ResponseStatus = new M.MissionResponseStatus {
+      //      CallForPeriod = DateTime.Now.AddHours(1),
+      //    }
+      //  }
+      //};
 
       var dataMock = new Mock<M.IKcsarContext>();
       dataMock.SetupGet(f => f.Missions).Returns(missions);
+      dataMock.SetupGet(f => f.UnitMemberships).Returns(new InMemoryDbSet<M.UnitMembership>());
+      dataMock.SetupGet(f => f.UnitStatusTypes).Returns(new InMemoryDbSet<M.UnitStatus>());
+      dataMock.SetupGet(f => f.Members).Returns(new InMemoryDbSet<M.Member>());
+      dataMock.SetupGet(f => f.Units).Returns(new InMemoryDbSet<M.SarUnit>());
+      MockMissions.Create(dataMock.Object);
       return dataMock;
     }
 
@@ -100,10 +106,10 @@
       
       dataMock.VerifyAll();
       Assert.AreEqual(1, missions.Count(), "length");
-      Assert.AreEqual(missions.Single().Id, result.MissionId, "mission id");
+      Assert.AreEqual(missions.Single().Id, result.Mission.Id, "mission id");
       Assert.IsTrue(result.ShouldCall, "should call");
       Assert.IsTrue(result.ShouldStage, "should stage");
-      Assert.AreEqual(missions.Single().Title, result.Title, "title");
+      Assert.AreEqual(missions.Single().Title, result.Mission.Title, "title");
     }
 
     [Test]

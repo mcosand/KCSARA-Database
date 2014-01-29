@@ -72,7 +72,7 @@ namespace Kcsara.Database.Web.Controllers
       ViewData["HideMenu"] = Permissions.IsUser ? null : new object();
 
       Member member = (from m in this.db.Members.Include("Memberships.Unit").Include("Memberships.Status")
-              .Include("Addresses").Include("MissionRosters").Include("MissionRosters.Mission").Include("MissionRosters.Unit")
+              .Include("Addresses")
               .Include("TrainingRosters").Include("TrainingRosters.Training").Include("Animals").Include("Animals.Animal")
                        where m.Id == id
                        select m).FirstOrDefault();
@@ -1475,12 +1475,12 @@ namespace Kcsara.Database.Web.Controllers
 
       var courses = (from c in this.db.TrainingCourses where c.Unit.Id == esar && c.Categories.Contains("leadership") select c);
 
-      var responses = this.db.MissionRosters.WhereIn(f => f.Person.Id, m).Where(f => f.InternalRole == "field" || f.InternalRole == "ol").Where(f => f.TimeIn != null && f.TimeOut != null).OrderBy(f => f.Person.LastName).ThenBy(f => f.Person.FirstName).ThenBy(f => f.Person.Id).ThenBy(f => f.TimeIn);
+      var responses = this.db.Missions.SelectMany(f => f.Responders).WhereIn(f => f.MemberId.Value, m).Where(f => f.Role == "field" || f.Role == "ol").OrderBy(f => f.Member.LastName).ThenBy(f => f.Member.FirstName).ThenBy(f => f.MemberId).ThenBy(f => f.Mission.StartTime);
 
       Guid lastId = Guid.Empty;
       Dictionary<DateTime, int> hours = new Dictionary<DateTime, int>();
       Dictionary<DateTime, Tuple<int, string>> promotes = new Dictionary<DateTime, Tuple<int, string>>();
-      double hoursSum = 0;
+      decimal hoursSum = 0;
       TimeSpan offset = TimeSpan.FromSeconds(0);
       DateTime lastTime = DateTime.MinValue;
       int recordRow = 0;
@@ -1488,7 +1488,7 @@ namespace Kcsara.Database.Web.Controllers
       foreach (var row in responses)
       {
         //Guid personId = (Guid)row.PersonReference.EntityKey.EntityKeyValues.First().Value;
-        Guid personId = row.Person.Id;
+        Guid personId = row.MemberId.Value;
         if (personId != lastId)
         {
           if (lastId != Guid.Empty)
@@ -1505,19 +1505,19 @@ namespace Kcsara.Database.Web.Controllers
           promotes = new Dictionary<DateTime, Tuple<int, string>>();
           if (relative.HasValue && relative.Value)
           {
-            offset = (row.TimeIn ?? row.Mission.StartTime) - new DateTime(1900, 1, 1);
+            offset = (row.Mission.StartTime) - new DateTime(1900, 1, 1);
           }
           lastTime = DateTime.MinValue;
         }
 
-        if (recordRow < records.Count && records[recordRow].Completed < row.TimeIn.Value)
+        if (recordRow < records.Count && records[recordRow].Completed < row.Mission.StartTime)
         {
           promotes.Add(records[recordRow].Completed - offset, new Tuple<int, string>((int)hoursSum, records[recordRow].Course.DisplayName));
           recordRow++;
         }
 
 
-        DateTime x = row.TimeIn.Value - offset;
+        DateTime x = row.Mission.StartTime - offset;
         hoursSum += row.Hours.Value;
         if (x == lastTime)
         {
@@ -1641,7 +1641,7 @@ namespace Kcsara.Database.Web.Controllers
             }
 
             DateTime missionCutoff = DateTime.Today.AddYears(-2);
-            int missions = this.db.MissionRosters.Where(f => f.Person.Id == m.Id && f.TimeIn > missionCutoff && f.InternalRole != "Responder").Count();
+            int missions = this.db.Missions.Where(f => f.StartTime > missionCutoff).SelectMany(f => f.Responders).Where(f => f.MemberId == m.Id && f.Role != "Responder").Count();
 
             if (missions == 0)
             {
@@ -1837,7 +1837,7 @@ namespace Kcsara.Database.Web.Controllers
                       UnitStatus = member.Memberships.Where(g => g.Unit.DisplayName == f).OrderByDescending(g => g.Activated).First().Status.StatusName,
                       IsOldNovice = (wacRank == "Novice" && member.WacLevel == WacLevel.Novice && member.WacLevelDate.AddYears(1) < now),
                       TrainingCurrent = trainingStatus.IsGood,
-                      MissionCount = this.db.MissionRosters.Where(g => g.Person.Id == member.Id && g.Mission.StartTime > eighteenMonths).Select(g => g.Mission.Id).Distinct().Count(),
+                      MissionCount = this.db.Missions.Where(g => g.StartTime > eighteenMonths && g.Responders.Any(h => h.MemberId == member.Id)).Select(g => g.Id).Distinct().Count(),
                       TrainingCount = this.db.TrainingRosters.Where(g => g.Person.Id == member.Id && g.Training.StartTime > eighteenMonths).Select(g => g.Training.Id).Distinct().Count()
                     }));
           }
@@ -1859,7 +1859,7 @@ namespace Kcsara.Database.Web.Controllers
               WacLevel = WacLevel.None.ToString(),
               UnitStatus = member.Memberships.Where(g => g.Unit.DisplayName == f).OrderByDescending(g => g.Activated).First().Status.StatusName,
               TrainingCurrent = null,
-              MissionCount = this.db.MissionRosters.Where(g => g.Person.Id == member.Id && g.Mission.StartTime > eighteenMonths).Select(g => g.Mission.Id).Distinct().Count(),
+              MissionCount = this.db.Missions.Where(g => g.StartTime > eighteenMonths && g.Responders.Any(h => h.MemberId == member.Id)).Select(g => g.Id).Distinct().Count(),
               TrainingCount = this.db.TrainingRosters.Where(g => g.Person.Id == member.Id && g.Training.StartTime > eighteenMonths).Select(g => g.Training.Id).Distinct().Count()
             }));
       }

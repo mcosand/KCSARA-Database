@@ -50,10 +50,14 @@ namespace Kcsar.Database.Model
     protected IDbSet<AuditLog> AuditLog { get; set; }
     public IDbSet<SensitiveInfoAccess> SensitiveInfoLog { get; set; }
 
-    public KcsarContext()
-      : base("DataStore")
+    public KcsarContext(string connectionString) : base(connectionString)
     {
       this.AuditLog = this.Set<AuditLog>();
+    }
+
+    public KcsarContext()
+      : this("DataStore")
+    {
     }
 
     public static readonly DateTime MinEntryDate = new DateTime(1945, 1, 1);
@@ -65,8 +69,15 @@ namespace Kcsar.Database.Model
     {
       base.OnModelCreating(modelBuilder);
       modelBuilder.Entity<Mission>().HasOptional(f => f.Details).WithRequired(f => f.Mission);
-      modelBuilder.Entity<Mission>().HasOptional(f => f.ResponseStatus).WithRequired(f => f.Mission).WillCascadeOnDelete(true);
+      modelBuilder.Entity<Mission>().HasOptional(f => f.ResponseStatus).WithRequired(f => f.Mission)
+        .WillCascadeOnDelete(true);
       modelBuilder.Entity<Member>().HasOptional(f => f.MedicalInfo).WithRequired(f => f.Member);
+      modelBuilder.Entity<MissionRespondingUnit>().HasMany(f => f.Responders).WithRequired(f => f.RespondingUnit)
+        .HasForeignKey(f => f.RespondingUnitId).WillCascadeOnDelete(true);
+      modelBuilder.Entity<Mission>().HasMany(f => f.Responders).WithRequired(f => f.Mission)
+        .HasForeignKey(f => f.MissionId).WillCascadeOnDelete(false);
+      modelBuilder.Entity<SarUnit>().HasMany(f => f.MissionResponses).WithRequired(f => f.Unit)
+        .HasForeignKey(f => f.UnitId).WillCascadeOnDelete(true);
     }
 
     public Func<UnitMembership, bool> GetActiveMembershipFilter(Guid? unit, DateTime time)
@@ -95,7 +106,7 @@ namespace Kcsar.Database.Model
     {
       List<RuleViolation> errors = new List<RuleViolation>();
 
-      KcsarContext comparisonContext = new KcsarContext();
+      KcsarContext comparisonContext = new KcsarContext(this.Database.Connection.ConnectionString);
 
       List<AuditLog> changes = new List<AuditLog>();
 
@@ -414,21 +425,21 @@ namespace Kcsar.Database.Model
               string missionType = match.Groups[2].Value;
               int monthSpan = int.Parse(match.Groups[3].Value);
 
-              var missions = (from r in this.MissionRosters where r.Person.Id == m.Id && r.TimeIn < time select r);
+              var missions = (from r in this.Missions.SelectMany(f => f.Responders) where r.MemberId == m.Id && r.Mission.StartTime < time select r);
               if (missionType != "%")
               {
                 missions = missions.Where(x => x.Mission.MissionType.Contains(missionType));
               }
-              missions = missions.OrderByDescending(x => x.TimeIn);
+              missions = missions.OrderByDescending(x => x.Mission.StartTime);
 
-              double sum = 0;
+              decimal sum = 0;
               DateTime startDate = DateTime.Now;
-              foreach (MissionRoster roster in missions)
+              foreach (MissionResponder response in missions)
               {
-                if (roster.TimeIn.HasValue && (roster.InternalRole != MissionRoster.ROLE_IN_TOWN && roster.InternalRole != MissionRoster.ROLE_NO_ROLE))
+                if (response.Role != MissionRoster.ROLE_IN_TOWN && response.Role != MissionRoster.ROLE_NO_ROLE)
                 {
-                  startDate = roster.TimeIn.Value;
-                  sum += roster.Hours ?? 0.0;
+                  startDate = response.Mission.StartTime;
+                  sum += response.Hours ?? (decimal)0;
 
                   if (sum > requiredHours)
                   {

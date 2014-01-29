@@ -27,20 +27,23 @@ namespace Kcsara.Database.Services
       this.context = context;
 
       UserId = Guid.Empty;
-      if (user != null)
+      if (user != null && user.Identity.IsAuthenticated)
       {
         UserId = UsernameToMemberKey(user.Identity.Name) ?? UserId;
       }
     }
 
-    public static Guid? UsernameToMemberKey(string name)
+    private Guid? UsernameToMemberKey(string name)
     {
       KcsarUserProfile profile = ProfileBase.Create(name) as KcsarUserProfile;
       if (profile.UsesLink)
       {
         return new Guid(profile.LinkKey);
       }
-      return null;
+      else
+      {
+        return this.context.Members.Where(f => f.Username == name).Select(f => f.Id).SingleOrDefault();
+      }
     }
 
     public bool IsUserOrLocal(HttpRequestBase request)

@@ -1,23 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
-using Kcsara.Database.Web.api;
-using M = Kcsar.Database.Model;
-using Kcsara.Database.Web.api.Models;
-using Kcsara.Database.Services;
-using log4net;
-using System.Text;
-
+﻿/*
+ * Copyright 2014 Matthew Cosand
+ */
 namespace Kcsara.Database.Web.Areas.Missions.api
 {
+  using System;
+  using System.Linq;
+  using System.Net;
+  using System.Net.Http;
+  using System.Text;
+  using System.Web.Http;
+  using Kcsara.Database.Web.api;
+  using Kcsara.Database.Web.api.Models;
+  using M = Kcsar.Database.Model;
+
   [ModelValidationFilter]
   public class ResponseApiController : BaseApiController
   {
     public static readonly string RouteName = "api_MissionsResponse";
-    
+
     public ResponseApiController(Kcsara.Database.Web.Controllers.ControllerArgs args)
       : base(args)
     { }
@@ -30,10 +30,20 @@ namespace Kcsara.Database.Web.Areas.Missions.api
       var result = this.db.Missions
         .Where(f => f.StartTime > window || f.Roster.Any(g => g.TimeIn > window) || (f.ResponseStatus != null && f.ResponseStatus.CallForPeriod > window))
         .OrderBy(f => f.StartTime)
-        .Select(MissionResponseStatus.FromDatabase)
+        .AsEnumerable()
+        .Select(f => MissionResponseStatus.FromData(f))
         .ToArray();
 
       return result;
+    }
+
+    [HttpGet]
+    [Authorize]
+    public MissionResponseInfo GetMissionInfo(Guid id)
+    {
+      var mission = this.GetObjectOrNotFound(() => this.db.Missions.SingleOrDefault(f => f.Id == id));
+
+      return MissionResponseInfo.FromData(mission);
     }
 
     [HttpPost]
@@ -62,10 +72,7 @@ namespace Kcsara.Database.Web.Areas.Missions.api
       db.Missions.Add(m);
       db.SaveChanges();
 
-      var result = db.Missions
-        .Where(f => f.Id == m.Id)
-        .Select(MissionResponseStatus.FromDatabase)
-        .Single();
+      var result = MissionResponseStatus.FromData(m);
 
       return result;
     }

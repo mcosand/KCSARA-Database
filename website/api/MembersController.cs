@@ -29,6 +29,11 @@ namespace Kcsara.Database.Web.api
       : base(db, log)
     { }
 
+    public MembersController(Controllers.ControllerArgs args)
+      : base(args)
+    {
+    }
+
     /// <summary>
     /// 
     /// </summary>
@@ -339,6 +344,14 @@ namespace Kcsara.Database.Web.api
       db.SaveChanges();
 
       return "OK";
+    }
+
+    [HttpGet]
+    [Authorize]
+    public NameIdPair[] GetActiveUnits(Guid id)
+    {
+      return this.db.UnitMemberships.Where(f => f.Person.Id == id && (f.EndTime == null || f.EndTime > DateTime.Now) && f.Status.IsActive)
+        .Select(f => new NameIdPair { Id = f.Unit.Id, Name = f.Unit.DisplayName }).ToArray();
     }
   }
 }

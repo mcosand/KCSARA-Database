@@ -60,7 +60,12 @@
     <Compile Include="AnimalTests.cs" />
     <Compile Include="ClassTests.cs" />
     <Compile Include="AnimalOwnerTests.cs" />
+    <Compile Include="Setup\ContextGenerator.cs" />
+    <Compile Include="InMemoryDbSet.cs" />
+    <Compile Include="Setup\MissionResponse.cs" />
+    <Compile Include="MockMission.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Setup\ModelTroubleshooter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Model\Model.csproj">

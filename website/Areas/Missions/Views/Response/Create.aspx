@@ -2,7 +2,7 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
   <div class="container" style="padding-top:10px">
-    <% if (ViewBag.IsMissionEditor == null) { %><div class="alert alert-warning alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><strong>You are not a mission editor!</strong> You are viewing this form
+    <% if (ViewBag.IsMissionEditor != true) { %><div class="alert alert-warning alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><strong>You are not a mission editor!</strong> You are viewing this form
       because others may not currently have access to this site. Your actions will be logged, and careless use of this form may lead to disciplinary action.</div><% } %>
     <form class="form-horizontal" role="form" data-bind="with:Mission">
       <div class="form-group" data-bind="css:{'has-error': Title.invalid}">
@@ -44,24 +44,9 @@
       var self = this;
       this.Mission = {};
 
-      this.Mission.Title = ko.observable();
-      this.Mission.Title.hasFocus = ko.observable(false);
-      this.Mission.Title.errors = ko.observableArray([]);
-      this.Mission.Title.invalid = ko.computed(function () { return this.Mission.Title.errors().length > 0; }, this);
-      this.Mission.Title.validate = function () {
-        self.Mission.Title.errors([]);
-        if (self.Mission.Title() == '' || self.Mission.Title() == null) self.Mission.Title.errors.push('Required');
-      }
+      this.Mission.Title = requiredObservable();
 
-      this.Mission.Location = ko.observable();
-      this.Mission.Location.hasFocus = ko.observable(false);
-      this.Mission.Location.errors = ko.observableArray([]);
-      this.Mission.Location.visitedFlag = ko.observable(false);
-      this.Mission.Location.invalid = ko.computed(function () { return this.Mission.Location.errors().length > 0 }, this);
-      this.Mission.Location.validate = function () {
-        self.Mission.Location.errors([]);
-        if (self.Mission.Location() == '' || self.Mission.Location() == null) self.Mission.Location.errors.push('Required');
-      }
+      this.Mission.Location = requiredObservable();
 
       this.Mission.Started = createMomentObservable(true);
       

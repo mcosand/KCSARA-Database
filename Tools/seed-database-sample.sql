@@ -73,6 +73,54 @@ IF NOT EXISTS (SELECT 1 FROM TrainingAwards WHERE Member_Id=@marc AND Course_Id=
   INSERT INTO TrainingAwards (Id, Completed, Expiry, metadata, LastChanged, Member_Id, Course_Id)
     VALUES (NEWID(), '2013-06-23', '2015-06-23', 'license #1234566', GETDATE(), @marc, @emt)
 
+
+
+-- ================  VOLUNTEER ACCOUNTS / MEMBERSHIPS  ===============
+DECLARE @userid UNIQUEIDENTIFIER
+DECLARE @RC bit
+
+DECLARE @usersnow DATETIME = GETUTCDATE()
+
+IF NOT EXISTS (SELECT 1 FROM aspnet_Users WHERE username='marc' AND ApplicationId='F4266656-79F7-4723-9580-0A1AF8B13F0D')
+BEGIN
+  -- Seed admin account with password 'password'
+	SET @userid = NEWID()
+	execute [dbo].[aspnet_Membership_CreateUser] 'Kcsar','marc','+taapl3jPAcYr8P/gF4hGPz/7XQ=','obW1Z+SoySqNDfoTqRItCA==','marc@test.kcesar.org',null,null,1,@usersnow,@usersnow,1,1,@userid OUTPUT
+END
+ELSE
+  SET @userid = (SELECT UserId FROM aspnet_Users WHERE username='marc' AND ApplicationId='F4266656-79F7-4723-9580-0A1AF8B13F0D')
+
+EXECUTE @RC = [dbo].[aspnet_UsersInRoles_IsUserInRole] 'Kcsar','marc','cdb.admins'
+IF (1 <> @RC)
+  EXECUTE [dbo].[aspnet_UsersInRoles_AddUsersToRoles] 'Kcsar','marc','cdb.admins',@usersnow
+
+IF NOT EXISTS (SELECT 1 FROM aspnet_Users WHERE username='bernard' AND ApplicationId='F4266656-79F7-4723-9580-0A1AF8B13F0D')
+BEGIN
+  -- Seed admin account with password 'password'
+	SET @userid = NEWID()
+	execute [dbo].[aspnet_Membership_CreateUser] 'Kcsar','bernard','+taapl3jPAcYr8P/gF4hGPz/7XQ=','obW1Z+SoySqNDfoTqRItCA==','bernard@test.kcesar.org',null,null,1,@usersnow,@usersnow,1,1,@userid OUTPUT
+END
+ELSE
+  SET @userid = (SELECT UserId FROM aspnet_Users WHERE username='bernard' AND ApplicationId='F4266656-79F7-4723-9580-0A1AF8B13F0D')
+
+EXECUTE @RC = [dbo].[aspnet_UsersInRoles_IsUserInRole] 'Kcsar','bernard','cdb.users'
+IF (1 <> @RC)
+  EXECUTE [dbo].[aspnet_UsersInRoles_AddUsersToRoles] 'Kcsar','bernard','cdb.users',@usersnow
+
+IF NOT EXISTS (SELECT 1 FROM aspnet_Users WHERE username='virgil' AND ApplicationId='F4266656-79F7-4723-9580-0A1AF8B13F0D')
+BEGIN
+  -- Seed admin account with password 'password'
+	SET @userid = NEWID()
+	execute [dbo].[aspnet_Membership_CreateUser] 'Kcsar','virgil','+taapl3jPAcYr8P/gF4hGPz/7XQ=','obW1Z+SoySqNDfoTqRItCA==','virgil@test.kcesar.org',null,null,1,@usersnow,@usersnow,1,1,@userid OUTPUT
+END
+ELSE
+  SET @userid = (SELECT UserId FROM aspnet_Users WHERE username='virgil' AND ApplicationId='F4266656-79F7-4723-9580-0A1AF8B13F0D')
+
+EXECUTE @RC = [dbo].[aspnet_UsersInRoles_IsUserInRole] 'Kcsar','virgil','cdb.users'
+IF (1 <> @RC)
+  EXECUTE [dbo].[aspnet_UsersInRoles_AddUsersToRoles] 'Kcsar','virgil','cdb.users',@usersnow
+
+
 -- ===================== TRAINING ROSTERS  ===============================
 DECLARE @helo_class1 UNIQUEIDENTIFIER = NEWID()
 IF EXISTS (SELECT 1 FROM Trainings WHERE Title='Helicopter' AND StartTime='2013-10-19 19:00')

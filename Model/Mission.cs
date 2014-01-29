@@ -28,6 +28,8 @@ namespace Kcsar.Database.Model
 
     public virtual ICollection<MissionLog> Log { get; set; }
     public virtual ICollection<MissionRoster> Roster { get; set; }
+    public virtual ICollection<MissionResponder> Responders { get; set; }
+    public virtual ICollection<MissionRespondingUnit> RespondingUnits { get; set; }
 
     public virtual MissionDetails Details { get; set; }
     public virtual ICollection<SubjectGroup> SubjectGroups { get; set; }
@@ -40,6 +42,15 @@ namespace Kcsar.Database.Model
     {
       this.StartTime = DateTime.Now.Date;
       this.County = "King";
+
+      this.Followups = new List<Mission>();
+      this.Log = new List<MissionLog>();
+      this.Roster = new List<MissionRoster>();
+      this.Responders = new List<MissionResponder>();
+      this.RespondingUnits = new List<MissionRespondingUnit>();
+      this.SubjectGroups = new List<SubjectGroup>();
+      this.MissionGeography = new List<MissionGeography>();
+
     }
 
     public override string ToString()

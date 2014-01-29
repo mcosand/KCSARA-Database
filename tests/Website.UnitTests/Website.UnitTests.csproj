@@ -110,7 +110,6 @@
     <Compile Include="Api\Models\MissionResponseStatusTests.cs" />
     <Compile Include="ConsoleLogger.cs" />
     <Compile Include="Controllers\Missions\ResponseControllerTests.cs" />
-    <Compile Include="InMemoryDbSet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -129,6 +128,10 @@
     <ProjectReference Include="..\..\website\website.csproj">
       <Project>{08c9837d-088b-4942-b656-ebbac783f850}</Project>
       <Name>website</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Model.Tests\Model.Tests.csproj">
+      <Project>{d0c7f83a-e33d-478d-a508-139d55f8d79b}</Project>
+      <Name>Model.Tests</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

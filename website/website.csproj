@@ -193,6 +193,7 @@
     <Compile Include="api\AccountController.cs" />
     <Compile Include="api\Models\Admin\ExecuteDatabaseScript.cs" />
     <Compile Include="api\Models\MemberUnitDocument.cs" />
+    <Compile Include="api\Models\Person.cs" />
     <Compile Include="api\Models\UnitDocument.cs" />
     <Compile Include="api\UnitsController.cs" />
     <Compile Include="api\MembersController.cs" />
@@ -220,6 +221,12 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Areas\Missions\api\Models\Mission.cs" />
+    <Compile Include="Areas\Missions\api\Models\MissionResponse.cs" />
+    <Compile Include="Areas\Missions\api\Models\MissionResponseInfo.cs" />
+    <Compile Include="Areas\Missions\api\Models\Responder.cs" />
+    <Compile Include="Areas\Missions\api\Models\RespondingUnit.cs" />
+    <Compile Include="Areas\Missions\api\RosterApiController.cs" />
     <Compile Include="Areas\Missions\api\Models\CreateMission.cs" />
     <Compile Include="Areas\Missions\api\Models\MissionResponseStatus.cs" />
     <Compile Include="Areas\Missions\api\ResponseApiController.cs" />
@@ -228,6 +235,7 @@
     <Compile Include="BlockRenderer.cs" />
     <Compile Include="CapturingResponseFilter.cs" />
     <Content Include="App_Readme\Elmah.txt" />
+    <Content Include="Areas\Missions\Scripts\Response\InfoPage.js" />
     <Content Include="Areas\Missions\Views\Response\Create.aspx" />
     <Content Include="Areas\Missions\Views\Response\Info.aspx" />
     <Content Include="Areas\Missions\Views\Response\Dashboard.aspx" />
@@ -512,6 +520,7 @@
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\jquery-ui-1.10.3.js" />
     <Content Include="Scripts\jquery-ui-1.10.3.min.js" />
+    <Content Include="Scripts\knockout-sar201401.js" />
     <Content Include="Scripts\knockout-3.0.0.debug.js" />
     <Content Include="Scripts\knockout-3.0.0.js" />
     <Content Include="Scripts\knockout.mapping-latest.debug.js" />

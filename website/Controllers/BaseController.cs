@@ -3,11 +3,6 @@
  */
 namespace Kcsara.Database.Web.Controllers
 {
-  using Kcsar.Database.Model;
-  using Kcsar.Membership;
-  using Kcsara.Database.Web.Model;
-  using Kcsara.Database.Web.Services;
-  using MvcContrib.UI;
   using System;
   using System.Collections.Generic;
   using System.Configuration;
@@ -22,8 +17,13 @@ namespace Kcsara.Database.Web.Controllers
   using System.Web;
   using System.Web.Mvc;
   using System.Web.Security;
+  using Kcsar.Database.Model;
+  using Kcsar.Membership;
   using Kcsara.Database.Services;
+  using Kcsara.Database.Web.Model;
+  using Kcsara.Database.Web.Services;
   using log4net;
+  using MvcContrib.UI;
 
   public class BaseController : Controller
   {

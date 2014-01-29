@@ -19,7 +19,9 @@ namespace Kcsara.Database.Web.api
   public abstract class BaseApiController : ApiController, IDisposable
   {
     public BaseApiController(IKcsarContext db, ILog log)
-      : this(new ControllerArgs(db, Ninject.ResolutionExtensions.Get<IAuthService>(MvcApplication.myKernel), log, null))
+      : this(
+      new ControllerArgs(db, Ninject.ResolutionExtensions.Get<IAuthService>(MvcApplication.myKernel), log, null)
+      )
     {
     }
 

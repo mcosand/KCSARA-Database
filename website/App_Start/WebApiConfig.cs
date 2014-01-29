@@ -24,6 +24,11 @@ namespace Kcsara.Database.Web.api
         "api/Missions/Response/{action}/{id}",
         new { controller = "ResponseApi", action = RouteParameter.Optional, id = RouteParameter.Optional }
       );
+      config.Routes.MapHttpRoute(
+        RosterApiController.RouteName,
+        "api/Missions/Roster/{action}/{id}",
+        new { controller = "RosterApi", action = RouteParameter.Optional, id = RouteParameter.Optional }
+      );
 
       config.Routes.MapHttpRoute(
           "DefaultApi",

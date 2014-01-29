@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using Kcsar.Database.Model;
-using Kcsara.Database.Services;
+using Kcsara.Database.Web.api.Models;
 using Kcsara.Database.Web.Areas.Missions.api;
 using Kcsara.Database.Web.Controllers;
-using log4net;
+using A = Kcsara.Database.Web.api;
 
 namespace Kcsara.Database.Web.Areas.Missions.Controllers
 {
@@ -24,6 +20,8 @@ namespace Kcsara.Database.Web.Areas.Missions.Controllers
     {
       var responseApi = new ResponseApiController(this.args);
       ViewBag.Data = responseApi.GetCurrentStatus();
+      AddMyUnits();
+      
       return View();
     }
 
@@ -34,17 +32,30 @@ namespace Kcsara.Database.Web.Areas.Missions.Controllers
       return View();
     }
 
+    [Authorize]
     public ActionResult Info(Guid id)
     {
-      ViewBag.Data = new { Title = "Foo Mission" };
+      var responseApi = new ResponseApiController(this.args);
+      ViewBag.Data = responseApi.GetMissionInfo(id);
+      ViewBag.MissionId = id;
+      AddMyUnits();
+      
       return View();
     }
 
     [Authorize]
     public ActionResult Dashboard()
     {
+      AddMyUnits();
+
       return View();
     }
 
+    private void AddMyUnits()
+    {
+      var members = new A.MembersController(this.args);
+      Guid? userId = this.Permissions.UserId;
+      ViewBag.MyUnits = userId.HasValue ? members.GetActiveUnits(this.Permissions.UserId) : new NameIdPair[0];
+    }
   }
 }

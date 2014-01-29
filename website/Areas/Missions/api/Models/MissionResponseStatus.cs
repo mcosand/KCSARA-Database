@@ -1,23 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity.SqlServer;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Web;
-using M = Kcsar.Database.Model;
-
+﻿/*
+ * Copyright 2014 Matthew Cosand
+ */
 namespace Kcsara.Database.Web.api.Models
 {
+  using System;
+  using System.Linq;
+  using M = Kcsar.Database.Model;
+
   public class MissionResponseStatus
   {
-    public Guid MissionId { get; set; }
-    public string Number { get; set; }
-    public string Title { get; set; }
-    public DateTime Started { get; set; }
+    public Mission Mission { get; set; }
 
     public bool ActiveResponse { get; set; }
     public DateTime? NextStart { get; set; }
     public DateTime? StopStaging { get; set; }
+    public RespondingUnit[] ActiveUnits { get; set; }
 
     public bool ShouldStage
     {
@@ -36,16 +33,19 @@ namespace Kcsara.Database.Web.api.Models
       }
     }
 
-    public static readonly Expression<Func<M.Mission, MissionResponseStatus>> FromDatabase =
-      m => new MissionResponseStatus
-      {
-        MissionId = m.Id,
-        Number = m.StateNumber,
-        Title = m.Title,
-        Started = m.StartTime,
-        ActiveResponse = m.ResponseStatus != null,
-        NextStart = m.ResponseStatus != null ? m.ResponseStatus.CallForPeriod : (DateTime?)null,
-        StopStaging = m.ResponseStatus != null ? m.ResponseStatus.StopStaging : null
-      };
+    public virtual MissionResponseStatus LoadData(M.Mission m)
+    {
+      this.Mission = Mission.FromDatabase(m);
+      this.ActiveResponse = m.ResponseStatus != null;
+      this.NextStart = m.ResponseStatus != null ? m.ResponseStatus.CallForPeriod : (DateTime?)null;
+      this.StopStaging = m.ResponseStatus != null ? m.ResponseStatus.StopStaging : null;
+      this.ActiveUnits = m.RespondingUnits.Where(f => f.IsActive).AsEnumerable().Select(f => RespondingUnit.FromDatabase(f)).ToArray();
+      return this;
+    }
+
+    public static MissionResponseStatus FromData(M.Mission m)
+    {
+      return (MissionResponseStatus)new MissionResponseStatus().LoadData(m);
+    }
   }
 }

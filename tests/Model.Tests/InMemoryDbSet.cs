@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 
-namespace Internal.Website
+namespace Internal.Database.Model
 {
   public class InMemoryDbSet<T> : IDbSet<T> where T : class
   {
