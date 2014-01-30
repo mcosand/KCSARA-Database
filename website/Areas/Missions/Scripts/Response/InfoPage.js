@@ -30,7 +30,7 @@ var EditResponseModel = function(myUnits){
     if (geo.coords.accuracy > 1000) {
       self.Location.GeoReason(' - Not Accurate');
     }
-    if (self.Location.GeoReason() != null) {
+    else if (self.Location.GeoReason() != null) {
       self.Location.GeoReason(null);
       self.Location.Type('geo');
     }

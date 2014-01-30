@@ -18,6 +18,7 @@ namespace Internal.Database.Model.Setup
     public void MissionResponseData()
     {
       var db = ContextGenerator.CreateContext();
+      db.Database.Log = Console.Write;
       MockMissions.Create(db);
       Console.WriteLine(db.SaveChanges());
     }

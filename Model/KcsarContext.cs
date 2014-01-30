@@ -301,28 +301,31 @@ namespace Kcsar.Database.Model
 
     private IModelObject GetOriginalVersion(KcsarContext context, ObjectStateEntry entry)
     {
-      object original;
-      if (entry.EntityKey == null || !(entry.Entity is IModelObject))
-      {
-        // We don't know how to report objects that aren't IModelObjects
-        return null;
-      }
+      return null;
+      // TODO: replace this method
 
-      // Try to get the original version of the deleted object.
-      EntityKey key = new EntityKey(entry.EntityKey.EntityContainerName + "." + entry.EntityKey.EntitySetName, "Id", ((IModelObject)entry.Entity).Id);
-      ((IObjectContextAdapter)context).ObjectContext.TryGetObjectByKey(key, out original);
+      //object original;
+      //if (entry.EntityKey == null || !(entry.Entity is IModelObject))
+      //{
+      //  // We don't know how to report objects that aren't IModelObjects
+      //  return null;
+      //}
 
-      foreach (var property in original.GetType().GetProperties())
-      {
-        foreach (ReportedReferenceAttribute attrib in property.GetCustomAttributes(typeof(ReportedReferenceAttribute), true))
-        {
-          var reference = context.Entry(original).Reference(property.Name);
-          if (!reference.IsLoaded) reference.Load();
-        }
-      }
+      //// Try to get the original version of the deleted object.
+      //EntityKey key = new EntityKey(entry.EntityKey.EntityContainerName + "." + entry.EntityKey.EntitySetName, "Id", ((IModelObject)entry.Entity).Id);
+      //((IObjectContextAdapter)context).ObjectContext.TryGetObjectByKey(key, out original);
 
-      // Now that we have the object before it (and its associations) was deleted, we can report on what it was...
-      return original as IModelObject;
+      //foreach (var property in original.GetType().GetProperties())
+      //{
+      //  foreach (ReportedReferenceAttribute attrib in property.GetCustomAttributes(typeof(ReportedReferenceAttribute), true))
+      //  {
+      //    var reference = context.Entry(original).Reference(property.Name);
+      //    if (!reference.IsLoaded) reference.Load();
+      //  }
+      //}
+
+      //// Now that we have the object before it (and its associations) was deleted, we can report on what it was...
+      //return original as IModelObject;
     }
 
     #region Computed Training

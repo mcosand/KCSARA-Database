@@ -56,15 +56,19 @@ function createMomentObservable(required) {
   return obs;
 }
 
+function validationFactory(obs, validation) {
+  return function () {
+    obs.errors([]);
+    validation(obs);
+  };
+}
+
 function validatingObservable(validation) {
   obs = ko.observable();
   obs.hasFocus = ko.observable(false);
   obs.errors = ko.observableArray([]);
-  obs.invalid = ko.computed(function () { return obs.errors().length > 0; });
-  obs.validate = function () {
-    obs.errors([]);
-    validation(obs);
-  }
+  obs.invalid = ko.computed(function () { return this.errors().length > 0; }, obs);
+  obs.validate = validationFactory(obs, validation);
   return obs;
 }
 requiredObservable = function () {

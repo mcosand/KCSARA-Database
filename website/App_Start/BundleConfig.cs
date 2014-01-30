@@ -37,6 +37,7 @@ namespace Kcsara.Database.Web
 
       bundles.Add(new ScriptBundle("~/script/response").Include(
         "~/Scripts/jquery-{version}.js",
+        "~/Content/script/errorHandling.js",
         "~/Scripts/bootstrap.js",
         "~/Scripts/moment.js",
         "~/Scripts/knockout-{version}.js",

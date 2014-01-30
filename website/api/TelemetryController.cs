@@ -1,19 +1,13 @@
 ﻿/*
  * Copyright 2012-2014 Matthew Cosand
  */
-using Kcsar.Database.Model;
-using Kcsara.Database.Web.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
-using log4net;
-
 namespace Kcsara.Database.Web.api
 {
+  using System.Web.Http;
+  using Kcsar.Database.Model;
+  using Kcsara.Database.Web.Model;
+  using log4net;
+
   /// <summary>Provides telemetry back to server. Not for general use.</summary>
   public class TelemetryController : BaseApiController
   {
