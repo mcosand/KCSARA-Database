@@ -1,4 +1,6 @@
 ﻿<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" %>
+<%@ Import Namespace="Kcsar.Database.Model" %>
+<%@ Import Namespace="Kcsara.Database.Web" %>
 
 <!DOCTYPE html>
 
@@ -69,8 +71,15 @@
     <asp:ContentPlaceHolder ID="MainContent" runat="server">
     </asp:ContentPlaceHolder>
   </div>
-  <script type="text/javascript">var errorUrl = '<%= Url.RouteUrl("DefaultApi", new { httproute="", Controller = "telemetry", Action="error" }) %>';</script>
-  <%= Scripts.Render("~/script/response") %>
-  <asp:ContentPlaceHolder ID="ScriptContent" runat="server" />
+  <script type="text/javascript">
+    var errorUrl = '<%= Url.RouteUrl("DefaultApi", new { httproute="", Controller = "telemetry", Action="error" }) %>';
+    enumResponderStatus = <%: Html.EnumToNamedJson(typeof(ResponderStatus)) %>;
+    enumMissionRole = <%: Html.EnumToNamedJson(typeof(MissionRole)) %>;
+    apiRoot = '<%= Url.Content("~/api") %>';
+  </script>
+<%= Scripts.Render("~/script/response") %>
+<script src="<%= Url.Content("~/signalr/hubs") %>"></script>
+<script type="text/javascript">$.connection.hub.logging = true; $.connection.hub.start();</script>
+<asp:ContentPlaceHolder ID="ScriptContent" runat="server" />
 </body>
 </html>

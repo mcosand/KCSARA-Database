@@ -18,7 +18,7 @@ namespace Kcsara.Database.Web.Areas.Missions.Controllers
     [Authorize]
     public ActionResult Index()
     {
-      var responseApi = new ResponseApiController(this.args);
+      var responseApi = new ResponseApiController(null, this.args);
       ViewBag.Data = responseApi.GetCurrentStatus();
       AddMyUnits();
       
@@ -35,7 +35,7 @@ namespace Kcsara.Database.Web.Areas.Missions.Controllers
     [Authorize]
     public ActionResult Info(Guid id)
     {
-      var responseApi = new ResponseApiController(this.args);
+      var responseApi = new ResponseApiController(null, this.args);
       ViewBag.Data = responseApi.GetMissionInfo(id);
       ViewBag.MissionId = id;
       AddMyUnits();

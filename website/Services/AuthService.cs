@@ -7,24 +7,28 @@ namespace Kcsara.Database.Services
 {
   using System;
   using System.Collections.Generic;
+  using System.Data.SqlClient;
   using System.Linq;
-  using System.Web;
-  using System.Web.Security;
   using System.Security.Principal;
+  using System.Web;
   using System.Web.Profile;
-  using Kcsar.Membership;
+  using System.Web.Security;
   using Kcsar.Database.Model;
+  using Kcsar.Membership;
+  using log4net;
 
   public class AuthService : IAuthService
   {
     private IPrincipal user;
     private IKcsarContext context;
+    private readonly ILog log;
     public Guid UserId { get; private set; }
 
-    public AuthService(IPrincipal user, IKcsarContext context)
+    public AuthService(IPrincipal user, IKcsarContext context, ILog log)
     {
       this.user = user;
       this.context = context;
+      this.log = log;
 
       UserId = Guid.Empty;
       if (user != null && user.Identity.IsAuthenticated)
@@ -36,14 +40,22 @@ namespace Kcsara.Database.Services
     private Guid? UsernameToMemberKey(string name)
     {
       KcsarUserProfile profile = ProfileBase.Create(name) as KcsarUserProfile;
-      if (profile.UsesLink)
+      try
       {
-        return new Guid(profile.LinkKey);
+        if (profile.UsesLink)
+        {
+          return new Guid(profile.LinkKey);
+        }
+        else
+        {
+          return this.context.Members.Where(f => f.Username == name).Select(f => f.Id).SingleOrDefault();
+        }
       }
-      else
+      catch (SqlException ex)
       {
-        return this.context.Members.Where(f => f.Username == name).Select(f => f.Id).SingleOrDefault();
+        this.log.Warn("Exception setting up auth service", ex);
       }
+      return null;
     }
 
     public bool IsUserOrLocal(HttpRequestBase request)

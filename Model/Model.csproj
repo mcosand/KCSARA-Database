@@ -104,6 +104,11 @@
     <Compile Include="Animal.cs" />
     <Compile Include="AnimalOwner.cs" />
     <Compile Include="AnimalMission.cs" />
+    <Compile Include="Migrations\201401311612093_MissionResponders2.cs" />
+    <Compile Include="Migrations\201401311612093_MissionResponders2.Designer.cs">
+      <DependentUpon>201401311612093_MissionResponders2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MissionResponderTimeline.cs" />
     <Compile Include="Migrations\201401040710175_ResponseStatus.cs" />
     <Compile Include="Migrations\201401040710175_ResponseStatus.Designer.cs">
       <DependentUpon>201401040710175_ResponseStatus.cs</DependentUpon>
@@ -238,6 +243,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201401211611430_MissionResponders.resx">
       <DependentUpon>201401211611430_MissionResponders.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201401311612093_MissionResponders2.resx">
+      <DependentUpon>201401311612093_MissionResponders2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -25,7 +25,7 @@
       var dataMock = new Mock<M.IKcsarContext>();
       dataMock.SetupGet(f => f.Missions).Returns(missions);
 
-      var controller = new ResponseApiController(new ControllerArgs(dataMock.Object, new AlwaysYesAuth(), new ConsoleLogger(), null));
+      var controller = new ResponseApiController(null, new ControllerArgs(dataMock.Object, new AlwaysYesAuth(), new ConsoleLogger(), null));
 
       MissionResponseStatus[] result = controller.GetCurrentStatus();
       Assert.IsEmpty(result);
@@ -36,7 +36,7 @@
     {
       var dataMock = GetBasicResponseData();
 
-      var controller = new ResponseApiController(new ControllerArgs(dataMock.Object, new AlwaysYesAuth(), new ConsoleLogger(), null));
+      var controller = new ResponseApiController(null, new ControllerArgs(dataMock.Object, new AlwaysYesAuth(), new ConsoleLogger(), null));
 
       MissionResponseStatus[] result = controller.GetCurrentStatus();
       Assert.AreEqual(dataMock.Object.Missions.Count(), result.Length, "expected count");
@@ -91,7 +91,7 @@
       //Mock<HttpRequestContext> mockContext = new Mock<HttpRequestContext>(MockBehavior.Strict);
       //mockContext.SetupGet(f => f.Url).Returns(urlHelper.Object);
       
-      var controller = new ResponseApiController(new ControllerArgs(dataMock.Object, new AlwaysYesAuth(), new ConsoleLogger(), null));
+      var controller = new ResponseApiController(null, new ControllerArgs(dataMock.Object, new AlwaysYesAuth(), new ConsoleLogger(), null));
       //controller.RequestContext = mockContext.Object;
       //controller.Request = new HttpRequestMessage(HttpMethod.Post, "http://test/api/foo");
 
@@ -115,7 +115,7 @@
     [Test]
     public void Create_TooEarly()
     {
-      var controller = new ResponseApiController(new ControllerArgs(null, new AlwaysYesAuth(), new ConsoleLogger(), null));
+      var controller = new ResponseApiController(null, new ControllerArgs(null, new AlwaysYesAuth(), new ConsoleLogger(), null));
       CreateMission args = new CreateMission
       {
         Title = "Test Mission",

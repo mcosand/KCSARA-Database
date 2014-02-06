@@ -34,7 +34,7 @@ namespace Kcsara.Database.Web
       myKernel.Bind<IKcsarContext>().To<KcsarContext>();
       myKernel.Bind<ILog>().ToMethod(context => LogManager.GetLogger("Default"));
       myKernel.Bind<IFormsAuthentication>().To<FormsAuthenticationWrapper>();
-      myKernel.Bind<IAuthService>().ToMethod(context => new AuthService(HttpContext.Current.User, context.Kernel.Get<IKcsarContext>())).InRequestScope();
+      myKernel.Bind<IAuthService>().ToMethod(context => new AuthService(HttpContext.Current.User, context.Kernel.Get<IKcsarContext>(), context.Kernel.Get<ILog>())).InRequestScope();
       myKernel.Bind<MembershipProvider>().ToMethod(context => System.Web.Security.Membership.Provider);
       myKernel.Bind<IPrincipal>().ToMethod(f => Thread.CurrentPrincipal);
       myKernel.Bind<IAppSettings>().To<AppSettings>();

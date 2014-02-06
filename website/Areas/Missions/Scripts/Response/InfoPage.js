@@ -11,7 +11,18 @@ var EditResponseModel = function(myUnits){
           
     return myActive.concat(myNotActive.length > 0 ? [{Id:"disable", Name:"--My Other Units--"}] : [], myNotActive)
   }, this);
-    
+  
+  this.Status = validatingObservable(function (obs) { });
+  this.Status('Responding');
+
+  this.Role = validatingObservable(function (obs) { });
+  this.Role('Field');
+
+
+  this.Eta = validatingObservable(function (obs) { });
+  this.Eta(null);
+  this.Eta.Label = ko.computed(function () { return 'ETA to ' + 'base' });
+
   this.Location = ko.computed({
     read: function () {
       ret = { Type: self.Location.Type() };
@@ -48,7 +59,7 @@ var EditResponseModel = function(myUnits){
   if (navigator.geolocation) { self.Location.watchId = navigator.geolocation.watchPosition(locationUpdate, locationErr, {enableHighAccuracy:true}); } else { self.Location.Reason(' - Unavailable');}
 };
 
-var PageModel = function (missionInfo, myUnits) {
+var PageModel = function (missionInfo, myUnits, checkinUrl) {
   var self = this;
   this.Info = ko.observable({});
   this.MyUnits = myUnits;
@@ -56,6 +67,8 @@ var PageModel = function (missionInfo, myUnits) {
   for (var i = 0, len = myUnits.length; i < len; i++) {
     this.MyUnitLookup[myUnits[i].Id] = myUnits[i];
     myUnits[i].IsActive = false;
+    myUnits[i].UnitId = myUnits[i].Id;
+    delete myUnits[i].Id;
   }
 
   this.SetMission = function (missionInfo) {
@@ -66,7 +79,7 @@ var PageModel = function (missionInfo, myUnits) {
     $.each(missionInfo.ActiveUnits, function(i,u) {
       myUnit = self.MyUnitLookup[u.UnitId];
       u.AmMember = (myUnit != undefined);
-      if (myUnit !== undefined) myUnit.IsActive = true;
+      if (myUnit !== undefined) { myUnit.IsActive = true; myUnit.Id = u.Id; }
     });
     self.Info(missionInfo);
   }
@@ -84,6 +97,28 @@ var PageModel = function (missionInfo, myUnits) {
 
   this.postResponse = function()
   {
+    self.IsWorking(true);
+    $.ajax({
+      type: 'POST', url: checkinUrl, data: ko.toJSON(self.EditResponse), dataType: 'json', contentType: 'application/json; charset=utf-8'
+    })
+    .done(function (result) {     
+      self.EditResponse(null);
+    })
+      .fail(function (error) {
+        if (error.status == 400) {
+          for (var key in error.responseJSON) {
+            var key2 = key.replace(/.*\./, '');
+            self.EditResponse[key2].errors(error.responseJSON[key]);
+          }
+        }
+        else {
+          alert(error.responseText);
+        }
+      })
+
+    .always(function (errorMsg) {
+      self.IsWorking(false);
+    })
   }
   this.IsWorking = ko.observable(false);
 };

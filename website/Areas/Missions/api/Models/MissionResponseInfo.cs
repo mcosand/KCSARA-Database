@@ -30,7 +30,7 @@ using M = Kcsar.Database.Model;
       return new MissionResponseInfo().LoadData(m, Guid.Empty);
     }
 
-    public new static MissionResponseInfo FromData(M.Mission m, Guid? userId)
+    public static MissionResponseInfo FromData(M.Mission m, Guid? userId)
     {
       return new MissionResponseInfo().LoadData(m, userId);
     }

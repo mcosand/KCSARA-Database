@@ -78,6 +78,8 @@ namespace Kcsar.Database.Model
         .HasForeignKey(f => f.MissionId).WillCascadeOnDelete(false);
       modelBuilder.Entity<SarUnit>().HasMany(f => f.MissionResponses).WithRequired(f => f.Unit)
         .HasForeignKey(f => f.UnitId).WillCascadeOnDelete(true);
+      modelBuilder.Entity<MissionResponder>().HasMany(f => f.Timeline).WithRequired(f => f.Responder).HasForeignKey(f => f.ResponderId);
+      //modelBuilder.Entity<MissionResponder>().HasOptional(f => f.LastTimeline).WithRequired(f => f.Responder);
     }
 
     public Func<UnitMembership, bool> GetActiveMembershipFilter(Guid? unit, DateTime time)

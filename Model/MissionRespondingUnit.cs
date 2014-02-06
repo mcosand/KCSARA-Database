@@ -16,6 +16,12 @@ namespace Kcsar.Database.Model
   {
     public static readonly string ReportFormat = "Unit '{0}' responding to '{1}'";
 
+    public MissionRespondingUnit()
+      : base()
+    {
+      this.Responders = new List<MissionResponder>();
+    }
+
     [Required]
     public virtual Mission Mission { get; set; }
     [ForeignKey("Mission")]

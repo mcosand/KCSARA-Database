@@ -61,7 +61,7 @@ namespace Kcsara.Database.Web.Controllers
     protected override void Initialize(System.Web.Routing.RequestContext requestContext)
     {
       base.Initialize(requestContext);
-      if (this.Permissions == null) Permissions = new AuthService(User, this.db);
+      if (this.Permissions == null) Permissions = new AuthService(User, this.db, this.log);
       Document.StorageRoot = requestContext.HttpContext.Request.MapPath("~/Content/auth/documents/");
     }
 

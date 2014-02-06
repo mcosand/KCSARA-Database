@@ -13,6 +13,12 @@ namespace Kcsar.Database.Model
   {
     public const string ReportFormat = "<b>{0} {1}</b> responded to {2} {3} with {4}";
 
+    public MissionResponder() : base()
+    {
+      this.Timeline = new List<MissionResponderTimelime>();
+      this.RosterEntries = new List<MissionRoster>();
+    }
+
     [Required]
     public virtual Mission Mission { get; set; }
     [ForeignKey("Mission")]
@@ -46,6 +52,11 @@ namespace Kcsar.Database.Model
     public string Role { get; set; }
 
     public virtual ICollection<MissionRoster> RosterEntries { get; set; }
+
+    public virtual ICollection<MissionResponderTimelime> Timeline { get; set; }
+    public virtual MissionResponderTimelime LastTimeline { get; set; }
+    [ForeignKey("LastTimeline")]
+    public Guid? LastTimelineId { get; set; }
 
     public override string GetReportHtml()
     {
