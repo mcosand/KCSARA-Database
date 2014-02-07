@@ -12,7 +12,9 @@
         <!-- ko ifnot: Missions.isLoading -->
         <tbody data-bind="foreach: Missions">
           <tr>
-            <td data-bind="text: Mission.Title"></td>
+            <td>
+              <input type="checkbox" data-bind="checked:visible" />
+              <span data-bind="text: Mission.Title"></span></td>
             <td data-bind="text: Mission.StartTime.format('ddd MMM D')"></td>
             <td data-bind="text: ShouldStage"></td>
             <td data-bind="text: ShouldCall"></td>
@@ -31,7 +33,7 @@
 </div>
 <div class="container">
   <div data-bind="foreach: Missions">
-    <div class="row">
+    <div class="row" data-bind="visible:visible">
       <h4 data-bind="text: Mission.Title"></h4>
       <div data-bind="ifnot: Responders().length">No active responders</div>
       <!-- ko if: Responders().length -->

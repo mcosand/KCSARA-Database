@@ -49,6 +49,7 @@
     $.ajax({ type: 'GET', url: apiRoot + '/Missions/Response/GetCurrentStatus', data: null, dataType: 'json' })
       .done(function (data) {
         for (i = 0; i < data.length; i++) {
+          data[i].visible = ko.observable(true);
           mapMoment(data[i].Mission, ['StartTime']);
           mapMoment(data[i], ['NextStart', 'StopStaging']);
           data[i].Responders = ko.observableArray();

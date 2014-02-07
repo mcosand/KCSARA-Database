@@ -96,7 +96,7 @@ namespace Kcsara.Database.Web.Areas.Missions.api
         {
           IsActive = true,
           Mission = mission,
-          UnitId = checkin.Unit.UnitId
+          Unit = this.db.Units.SingleOrDefault(f => f.Id == checkin.Unit.UnitId)
         };
         mission.RespondingUnits.Add(respondingUnit);
       }
