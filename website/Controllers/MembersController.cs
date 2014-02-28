@@ -127,18 +127,18 @@ namespace Kcsara.Database.Web.Controllers
       Member m = NewEsarTrainee_Internal(fields);
       if (ModelState.IsValid)
       {
-        try
-        {
+        //try
+        //{
           this.db.SaveChanges();
           this.db.RecalculateTrainingAwards(m.Id);
           this.db.SaveChanges();
 
           return RedirectToAction("NewEsarTrainee", new { date = fields["CourseDate"], last = m.FullName });
-        }
-        catch (RuleViolationsException ex)
-        {
-          this.CollectRuleViolations(ex, fields);
-        }
+        //}
+        //catch (RuleViolationsException ex)
+        //{
+        //  this.CollectRuleViolations(ex, fields);
+        //}
       }
 
       ViewData["Gender"] = new SelectList(Enum.GetNames(typeof(Gender)), ((m == null) ? Gender.Unknown : m.Gender).ToString());
@@ -512,8 +512,8 @@ namespace Kcsara.Database.Web.Controllers
 
     private ActionResult InternalSave(Member m, FormCollection fields, ActionResult successAction)
     {
-      try
-      {
+      //try
+      //{
         if (Permissions.IsAdmin)
         {
           TryUpdateModel(m, new string[] { "DEM", "WacLevel", "BackgroundDate", "SheriffApp" });
@@ -530,11 +530,11 @@ namespace Kcsara.Database.Web.Controllers
           TempData["message"] = "Saved";
           return successAction;
         }
-      }
-      catch (RuleViolationsException ex)
-      {
-        this.CollectRuleViolations(ex, fields);
-      }
+      //}
+      //catch (RuleViolationsException ex)
+      //{
+      //  this.CollectRuleViolations(ex, fields);
+      //}
       return InternalEdit(m);
     }
 
@@ -1030,8 +1030,8 @@ namespace Kcsara.Database.Web.Controllers
 
     private ActionResult InternalSaveMembership(UnitMembership um, FormCollection fields)
     {
-      try
-      {
+      //try
+      //{
         TryUpdateModel(um, new string[] { "Activated", "Comments" });
 
         Guid unitId = new Guid(fields["Unit"]);
@@ -1055,11 +1055,11 @@ namespace Kcsara.Database.Web.Controllers
           return RedirectToAction("ClosePopup");
         }
 
-      }
-      catch (RuleViolationsException ex)
-      {
-        this.CollectRuleViolations(ex, fields);
-      }
+      //}
+      //catch (RuleViolationsException ex)
+      //{
+      //  this.CollectRuleViolations(ex, fields);
+      //}
 
       return InternalEditMembership(um);
     }
@@ -1208,8 +1208,8 @@ namespace Kcsara.Database.Web.Controllers
 
     private ActionResult InternalSaveAddress(PersonAddress address, FormCollection fields)
     {
-      try
-      {
+      //try
+      //{
         TryUpdateModel(address, new string[] { "Street", "City", "State", "Zip", "Type" });
 
         Guid personId = new Guid(fields["Person"]);
@@ -1224,11 +1224,11 @@ namespace Kcsara.Database.Web.Controllers
           TempData["message"] = "Saved";
           return RedirectToAction("ClosePopup");
         }
-      }
-      catch (RuleViolationsException ex)
-      {
-        this.CollectRuleViolations(ex, fields);
-      }
+      //}
+      //catch (RuleViolationsException ex)
+      //{
+      //  this.CollectRuleViolations(ex, fields);
+      //}
       return InternalEditAddress(address);
     }
 
@@ -1296,17 +1296,17 @@ namespace Kcsara.Database.Web.Controllers
       {
         contact.Priority = 1;
       }
-      try
-      {
+      //try
+      //{
         this.db.SaveChanges();
-      }
-      catch (RuleViolationsException ex)
-      {
-        foreach (RuleViolation v in ex.Errors)
-        {
-          errors.Add(new SubmitError { Error = v.ErrorMessage, Property = v.PropertyName, Id = new[] { v.EntityKey } });
-        }
-      }
+      //}
+      //catch (RuleViolationsException ex)
+      //{
+      //  foreach (RuleViolation v in ex.Errors)
+      //  {
+      //    errors.Add(new SubmitError { Error = v.ErrorMessage, Property = v.PropertyName, Id = new[] { v.EntityKey } });
+      //  }
+      //}
       return Data(new SubmitResult<bool> { Errors = errors.ToArray(), Result = (errors.Count == 0) });
     }
 
@@ -1328,8 +1328,8 @@ namespace Kcsara.Database.Web.Controllers
         this.db.PersonContact.Add(model);
       }
 
-      try
-      {
+      //try
+      //{
         if (model.Type != view.Type) model.Type = view.Type;
         if (model.Subtype != view.SubType) model.Subtype = view.SubType;
         if (model.Value != view.Value) model.Value = view.Value;
@@ -1341,14 +1341,14 @@ namespace Kcsara.Database.Web.Controllers
         }
         view.Id = model.Id;
         view.Priority = model.Priority;
-      }
-      catch (RuleViolationsException ex)
-      {
-        foreach (RuleViolation v in ex.Errors)
-        {
-          errors.Add(new SubmitError { Error = v.ErrorMessage, Property = v.PropertyName, Id = new[] { v.EntityKey } });
-        }
-      }
+      //}
+      //catch (RuleViolationsException ex)
+      //{
+      //  foreach (RuleViolation v in ex.Errors)
+      //  {
+      //    errors.Add(new SubmitError { Error = v.ErrorMessage, Property = v.PropertyName, Id = new[] { v.EntityKey } });
+      //  }
+      //}
 
       return Data(new SubmitResult<MemberContactView>
       {

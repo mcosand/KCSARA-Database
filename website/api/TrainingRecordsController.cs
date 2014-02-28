@@ -157,8 +157,8 @@ namespace Kcsara.Database.Web.api
         db.TrainingAward.Add(model);
       }
 
-      try
-      {
+ //     try
+ //     {
         model.UploadsPending = (view.PendingUploads > 0);
 
         DateTime completed;
@@ -232,20 +232,20 @@ namespace Kcsara.Database.Web.api
 
         view.ReferenceId = model.Id;
         view.Course.Title = model.Course.DisplayName;
-      }
-      catch (RuleViolationsException ex)
-      {
-        foreach (RuleViolation v in ex.Errors)
-        {
-          errors.Add(new SubmitError { Error = v.ErrorMessage, Property = v.PropertyName, Id = new[] { v.EntityKey } });
-        }
-        // throw new InvalidOperationException("TODO: report errors");
-      }
+      //}
+      //catch (RuleViolationsException ex)
+      //{
+      //  foreach (RuleViolation v in ex.Errors)
+      //  {
+      //    errors.Add(new SubmitError { Error = v.ErrorMessage, Property = v.PropertyName, Id = new[] { v.EntityKey } });
+      //  }
+      //  // throw new InvalidOperationException("TODO: report errors");
+      //}
 
-      if (errors.Count > 0)
-      {
-        ThrowSubmitErrors(errors);
-      }
+      //if (errors.Count > 0)
+      //{
+      //  ThrowSubmitErrors(errors);
+      //}
 
       return view;
     }

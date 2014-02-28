@@ -145,7 +145,6 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModelObject.cs" />
-    <Compile Include="PersonSubscription.cs" />
     <Compile Include="IAddress.cs" />
     <Compile Include="MissionDetails.cs" />
     <Compile Include="MissionGeography.cs" />
@@ -155,10 +154,7 @@
     <Compile Include="TrainingCourse.cs" />
     <Compile Include="PersonContact.cs" />
     <Compile Include="MissionLog.cs" />
-    <Compile Include="Exceptions.cs" />
     <Compile Include="ITrainingAward.cs" />
-    <Compile Include="IValidatedEntity.cs" />
-    <Compile Include="RuleViolation.cs" />
     <Compile Include="SarUnit.cs" />
     <Compile Include="Training.cs" />
     <Compile Include="TrainingAward.cs" />

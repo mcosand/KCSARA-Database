@@ -231,8 +231,8 @@ namespace Kcsara.Database.Web.Controllers
     {
       MissionDetails details = GetDetails(id);
 
-      try
-      {
+      //try
+      //{
         TryUpdateModel(details, new[] { "Clouds", "RainInches", "RainType", "SnowType", "SnowInches", "TempHigh", "TempLow", "Visibility", "WindHigh", "WindLow" });
         TryUpdateModel(details, new[] { "Terrain", "Topography", "GroundCoverDensity", "GroundCoverHeight", "TimberType", "WaterType", "ElevationLow", "ElevationHigh" });
 
@@ -246,11 +246,11 @@ namespace Kcsara.Database.Web.Controllers
           TempData["message"] = "Saved";
           return RedirectToAction("ClosePopup");
         }
-      }
-      catch (RuleViolationsException ex)
-      {
-        this.CollectRuleViolations(ex, fields);
-      }
+      //}
+      //catch (RuleViolationsException ex)
+      //{
+      //  this.CollectRuleViolations(ex, fields);
+      //}
 
       return EditDetails(details.Mission.Id);
     }
@@ -290,8 +290,8 @@ namespace Kcsara.Database.Web.Controllers
     {
       var group = (from sb in this.db.SubjectGroups.Include(f => f.Mission).Include(f => f.SubjectLinks.Select(g => g.Subject)) where sb.Id == id select sb).First();
 
-      try
-      {
+      //try
+      //{
         TryUpdateModel(group, new[] { "FoundNorthing", "FoundEasting", "PlsNorthing", "PlsEasting", "PlsCommonName", "WhenAtPls", "WhenCalled", "WhenFound", "WhenLost", "WhenReported", "Comments" });
 
         group.Category = ((fields["CategoryList"] ?? "").Replace(',', '|') + '|' + (fields["CategoryOther"] ?? "")).Trim('|');
@@ -307,11 +307,11 @@ namespace Kcsara.Database.Web.Controllers
           TempData["message"] = "Saved";
           return RedirectToAction("ClosePopup");
         }
-      }
-      catch (RuleViolationsException ex)
-      {
-        this.CollectRuleViolations(ex, fields);
-      }
+      //}
+      //catch (RuleViolationsException ex)
+      //{
+      //  this.CollectRuleViolations(ex, fields);
+      //}
       return EditSubjectGroup(group.Id);
     }
 
@@ -361,8 +361,8 @@ namespace Kcsara.Database.Web.Controllers
 
     private ActionResult InternalSaveSubject(Subject subject, FormCollection fields)
     {
-      try
-      {
+      //try
+      //{
         TryUpdateModel(subject, new[] { "FirstName", "LastName", "BirthYear", "Gender", "Address", "HomePhone", "WorkPhone", "OtherPhone", "Comments" });
 
 
@@ -390,11 +390,11 @@ namespace Kcsara.Database.Web.Controllers
           TempData["message"] = "Saved";
           return RedirectToAction("ClosePopup");
         }
-      }
-      catch (RuleViolationsException ex)
-      {
-        this.CollectRuleViolations(ex, fields);
-      }
+      //}
+      //catch (RuleViolationsException ex)
+      //{
+      //  this.CollectRuleViolations(ex, fields);
+      //}
 
       return InternalEditSubject(subject);
     }
@@ -549,8 +549,8 @@ namespace Kcsara.Database.Web.Controllers
     {
       MissionDetails details = GetDetails(id);
 
-      try
-      {
+      //try
+      //{
         TryUpdateModel(details, new[] { "Comments" });
 
         if (ModelState.IsValid)
@@ -559,11 +559,11 @@ namespace Kcsara.Database.Web.Controllers
           TempData["message"] = "Saved";
           return RedirectToAction("ClosePopup");
         }
-      }
-      catch (RuleViolationsException ex)
-      {
-        this.CollectRuleViolations(ex, fields);
-      }
+      //}
+      //catch (RuleViolationsException ex)
+      //{
+      //  this.CollectRuleViolations(ex, fields);
+      //}
 
       return EditDetails(details.Mission.Id);
     }
@@ -584,8 +584,8 @@ namespace Kcsara.Database.Web.Controllers
     {
       MissionDetails details = GetDetails(id);
 
-      try
-      {
+      //try
+      //{
         TryUpdateModel(details, new[] { "EquipmentNotes" });
 
         if (ModelState.IsValid)
@@ -594,11 +594,11 @@ namespace Kcsara.Database.Web.Controllers
           TempData["message"] = "Saved";
           return RedirectToAction("ClosePopup");
         }
-      }
-      catch (RuleViolationsException ex)
-      {
-        this.CollectRuleViolations(ex, fields);
-      }
+      //}
+      //catch (RuleViolationsException ex)
+      //{
+      //  this.CollectRuleViolations(ex, fields);
+      //}
 
       return EditDetails(details.Mission.Id);
     }
@@ -635,12 +635,12 @@ namespace Kcsara.Database.Web.Controllers
       Guid result = Guid.Empty;
 
       MissionLog newLog = null;
-      try
-      {
-        if (!log.Time.HasValue)
-        {
-          throw new RuleViolationsException(new List<RuleViolation> { new RuleViolation(log.Id, "Time", null, "Invalid Date/Time") });
-        }
+      //try
+      //{
+      //  if (!log.Time.HasValue)
+      //  {
+      //    throw new RuleViolationsException(new List<RuleViolation> { new RuleViolation(log.Id, "Time", null, "Invalid Date/Time") });
+      //  }
 
         newLog = new MissionLog
         {
@@ -657,15 +657,15 @@ namespace Kcsara.Database.Web.Controllers
         this.db.MissionLog.Add(newLog);
         this.db.SaveChanges();
 
-      }
-      catch (RuleViolationsException ex)
-      {
-        //this.CollectRuleViolations(ex, fields);
-        foreach (RuleViolation v in ex.Errors)
-        {
-          errors.Add(new SubmitError { Error = v.ErrorMessage, Property = v.PropertyName, Id = new[] { v.EntityKey } });
-        }
-      }
+      //}
+      //catch (RuleViolationsException ex)
+      //{
+      //  //this.CollectRuleViolations(ex, fields);
+      //  foreach (RuleViolation v in ex.Errors)
+      //  {
+      //    errors.Add(new SubmitError { Error = v.ErrorMessage, Property = v.PropertyName, Id = new[] { v.EntityKey } });
+      //  }
+      //}
 
       return new JsonDataContractResult(new SubmitResult<LogSubmission>
       {
@@ -746,8 +746,8 @@ namespace Kcsara.Database.Web.Controllers
 
     private ActionResult InternalSaveLog(MissionLog log, FormCollection fields)
     {
-      try
-      {
+      //try
+      //{
         TryUpdateModel(log, new string[] { "Time", "Data" });
 
         Guid missionId = new Guid(fields["Mission"]);
@@ -772,11 +772,11 @@ namespace Kcsara.Database.Web.Controllers
           TempData["message"] = "Saved";
           return RedirectToAction("ClosePopup");
         }
-      }
-      catch (RuleViolationsException ex)
-      {
-        this.CollectRuleViolations(ex, fields);
-      }
+      //}
+      //catch (RuleViolationsException ex)
+      //{
+      //  this.CollectRuleViolations(ex, fields);
+      //}
 
       return InternalEditLog(log);
     }

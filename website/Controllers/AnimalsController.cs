@@ -111,8 +111,8 @@ namespace Kcsara.Database.Web.Controllers
 
     private ActionResult InternalSave(Animal a, FormCollection fields)
     {
-      try
-      {
+      //try
+      //{
         TryUpdateModel(a, new string[] { "Name", "DemSuffix", "Comments", "Type" });
         if (ModelState.IsValid)
         {
@@ -120,12 +120,13 @@ namespace Kcsara.Database.Web.Controllers
           TempData["message"] = "Saved";
           return RedirectToAction("ClosePopup");
         }
-      }
-      catch (RuleViolationsException ex)
-      {
-        this.CollectRuleViolations(ex, fields);
-      }
-      return InternalEdit(a);
+        return InternalEdit(a);
+      //}
+      //catch (DbValidationsException ex)
+      //{
+      //  this.CollectRuleViolations(ex, fields);
+      //}
+      //return InternalEdit(a);
     }
 
     [Authorize]
@@ -211,8 +212,8 @@ namespace Kcsara.Database.Web.Controllers
 
     private ActionResult InternalSaveOwner(AnimalOwner o, FormCollection fields)
     {
-      try
-      {
+      //try
+      //{
         TryUpdateModel(o, new string[] { "IsPrimary", "Starting", "Ending" });
 
         if (string.IsNullOrEmpty(fields["pid_a"]))
@@ -234,11 +235,11 @@ namespace Kcsara.Database.Web.Controllers
           return RedirectToAction("ClosePopup");
         }
 
-      }
-      catch (RuleViolationsException ex)
-      {
-        this.CollectRuleViolations(ex, fields);
-      }
+      //}
+      //catch (RuleViolationsException ex)
+      //{
+      //  this.CollectRuleViolations(ex, fields);
+      //}
       return InternalEditOwner(o);
     }
 

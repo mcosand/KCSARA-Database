@@ -51,12 +51,20 @@ namespace Kcsar.Database.Model
     protected IDbSet<AuditLog> AuditLog { get; set; }
     public IDbSet<SensitiveInfoAccess> SensitiveInfoLog { get; set; }
 
-    public KcsarContext()
-      : base("DataStore")
+    public KcsarContext() : this("DataStore") { }
+
+    public KcsarContext(string connName)
+      : base(connName)
     {
       this.AuditLog = this.Set<AuditLog>();
     }
 
+    public KcsarContext(string connName, Action<string> logMethod)
+      : this(connName)
+    {
+      this.Database.Log = logMethod;
+    }
+    
     public static readonly DateTime MinEntryDate = new DateTime(1945, 1, 1);
 
     private Dictionary<Type, List<PropertyInfo>> reportingProperties = new Dictionary<Type, List<PropertyInfo>>();
@@ -93,57 +101,57 @@ namespace Kcsar.Database.Model
 
     public override int SaveChanges()
     {
-      List<RuleViolation> errors = new List<RuleViolation>();
+      //List<RuleViolation> errors = new List<RuleViolation>();
 
-      KcsarContext comparisonContext = new KcsarContext();
+      //KcsarContext comparisonContext = new KcsarContext(this.Database.Connection.ConnectionString);
 
-      List<AuditLog> changes = new List<AuditLog>();
+      //List<AuditLog> changes = new List<AuditLog>();
 
-      // Validate the state of each entity in the context
-      // before SaveChanges can succeed.
-      Random rand = new Random();
+      //// Validate the state of each entity in the context
+      //// before SaveChanges can succeed.
+      //Random rand = new Random();
 
       ObjectContext oc = ((IObjectContextAdapter)this).ObjectContext;
       var osm = oc.ObjectStateManager;
 
       oc.DetectChanges();
 
-      // Added and modified objects - we can describe the state of the object with
-      // the information already present.
+      //// Added and modified objects - we can describe the state of the object with
+      //// the information already present.
       foreach (ObjectStateEntry entry in
           osm.GetObjectStateEntries(
           EntityState.Added | EntityState.Modified))
       {
-        // Do Validation
-        if (entry.Entity is IValidatedEntity)
-        {
-          IValidatedEntity validate = (IValidatedEntity)entry.Entity;
-          if (!validate.Validate())
-          {
-            errors.AddRange(validate.Errors);
-          }
-          else
-          {
-            Document d = entry.Entity as Document;
-            if (d != null)
-            {
-              if (string.IsNullOrWhiteSpace(d.StorePath))
-              {
-                string path = string.Empty;
-                for (int i = 0; i < Document.StorageTreeDepth; i++)
-                {
-                  path += ((i > 0) ? "\\" : "") + rand.Next(Document.StorageTreeSpan).ToString();
-                }
-                if (!System.IO.Directory.Exists(Document.StorageRoot + path))
-                {
-                  System.IO.Directory.CreateDirectory(Document.StorageRoot + path);
-                }
-                path += "\\" + d.Id.ToString();
-                d.StorePath = path;
-              }
-              System.IO.File.WriteAllBytes(Document.StorageRoot + d.StorePath, d.Contents);
-            }
-            // New values are valid
+      //  // Do Validation
+      //  if (entry.Entity is IValidatedEntity)
+      //  {
+      //    IValidatedEntity validate = (IValidatedEntity)entry.Entity;
+      //    if (!validate.Validate())
+      //    {
+      //      errors.AddRange(validate.Errors);
+      //    }
+      //    else
+      //    {
+      //      Document d = entry.Entity as Document;
+      //      if (d != null)
+      //      {
+      //        if (string.IsNullOrWhiteSpace(d.StorePath))
+      //        {
+      //          string path = string.Empty;
+      //          for (int i = 0; i < Document.StorageTreeDepth; i++)
+      //          {
+      //            path += ((i > 0) ? "\\" : "") + rand.Next(Document.StorageTreeSpan).ToString();
+      //          }
+      //          if (!System.IO.Directory.Exists(Document.StorageRoot + path))
+      //          {
+      //            System.IO.Directory.CreateDirectory(Document.StorageRoot + path);
+      //          }
+      //          path += "\\" + d.Id.ToString();
+      //          d.StorePath = path;
+      //        }
+      //        System.IO.File.WriteAllBytes(Document.StorageRoot + d.StorePath, d.Contents);
+      //      }
+      //      // New values are valid
 
             if (entry.Entity is IModelObject)
             {
@@ -153,91 +161,91 @@ namespace Kcsar.Database.Model
               obj.LastChanged = DateTime.Now;
               obj.ChangedBy = Thread.CurrentPrincipal.Identity.Name;
 
-              IModelObject original = (entry.State == EntityState.Added) ? null : GetOriginalVersion(comparisonContext, entry);
+      //        IModelObject original = (entry.State == EntityState.Added) ? null : GetOriginalVersion(comparisonContext, entry);
 
 
-              if (original == null)
-              {
-                changes.Add(new AuditLog
-                {
-                  Action = entry.State.ToString(),
-                  Comment = obj.GetReportHtml(),
-                  Collection = entry.EntitySet.Name,
-                  Changed = DateTime.Now,
-                  ObjectId = obj.Id,
-                  User = Thread.CurrentPrincipal.Identity.Name
-                });
-              }
-              else
-              {
-                string report = string.Format("<b>{0}</b><br/>", obj);
+      //        if (original == null)
+      //        {
+      //          changes.Add(new AuditLog
+      //          {
+      //            Action = entry.State.ToString(),
+      //            Comment = obj.GetReportHtml(),
+      //            Collection = entry.EntitySet.Name,
+      //            Changed = DateTime.Now,
+      //            ObjectId = obj.Id,
+      //            User = Thread.CurrentPrincipal.Identity.Name
+      //          });
+      //        }
+      //        else
+      //        {
+      //          string report = string.Format("<b>{0}</b><br/>", obj);
 
-                foreach (PropertyInfo pi in GetReportableProperties(obj.GetType()))
-                {
-                  object left = pi.GetValue(original, null);
-                  object right = pi.GetValue(obj, null);
-                  if ((left == null && right == null) || (left != null && left.Equals(right)))
-                  {
-                    //   report += string.Format("{0}: unchanged<br/>", pi.Name);
-                  }
-                  else
-                  {
-                    report += string.Format("{0}: {1} => {2}<br/>", pi.Name, left, right);
-                  }
-                }
-                changes.Add(new AuditLog
-                {
-                  Action = entry.State.ToString(),
-                  Comment = report,
-                  Collection = entry.EntitySet.Name,
-                  Changed = DateTime.Now,
-                  ObjectId = obj.Id,
-                  User = Thread.CurrentPrincipal.Identity.Name
-                });
-              }
+      //          foreach (PropertyInfo pi in GetReportableProperties(obj.GetType()))
+      //          {
+      //            object left = pi.GetValue(original, null);
+      //            object right = pi.GetValue(obj, null);
+      //            if ((left == null && right == null) || (left != null && left.Equals(right)))
+      //            {
+      //              //   report += string.Format("{0}: unchanged<br/>", pi.Name);
+      //            }
+      //            else
+      //            {
+      //              report += string.Format("{0}: {1} => {2}<br/>", pi.Name, left, right);
+      //            }
+      //          }
+      //          changes.Add(new AuditLog
+      //          {
+      //            Action = entry.State.ToString(),
+      //            Comment = report,
+      //            Collection = entry.EntitySet.Name,
+      //            Changed = DateTime.Now,
+      //            ObjectId = obj.Id,
+      //            User = Thread.CurrentPrincipal.Identity.Name
+      //          });
+      //        }
             }
-          }
-        }
+      //    }
+      //  }
       }
 
-      // Added and modified objects - we need to fetch more data before we can report what the change was in readable form.
-      foreach (ObjectStateEntry entry in osm.GetObjectStateEntries(EntityState.Deleted))
-      {
-        IModelObject modelObject = GetOriginalVersion(comparisonContext, entry);
-        if (modelObject != null)
-        {
-          Document d = modelObject as Document;
-          if (d != null && !string.IsNullOrWhiteSpace(d.StorePath))
-          {
-            string path = Document.StorageRoot + d.StorePath;
-            System.IO.File.Delete(path);
-            for (int i = 0; i < Document.StorageTreeDepth; i++)
-            {
-              path = System.IO.Path.GetDirectoryName(path);
-              if (System.IO.Directory.GetDirectories(path).Length + System.IO.Directory.GetFiles(path).Length == 0)
-              {
-                System.IO.Directory.Delete(path);
-              }
-            }
-          }
-          changes.Add(new AuditLog
-          {
-            Action = entry.State.ToString(),
-            Comment = modelObject.GetReportHtml(),
-            Collection = entry.EntitySet.Name,
-            Changed = DateTime.Now,
-            ObjectId = modelObject.Id,
-            User = Thread.CurrentPrincipal.Identity.Name
-          });
-        }
-      }
+      //// Added and modified objects - we need to fetch more data before we can report what the change was in readable form.
+      //foreach (ObjectStateEntry entry in osm.GetObjectStateEntries(EntityState.Deleted))
+      //{
+      //  IModelObject modelObject = GetOriginalVersion(comparisonContext, entry);
+      //  if (modelObject != null)
+      //  {
+      //    Document d = modelObject as Document;
+      //    if (d != null && !string.IsNullOrWhiteSpace(d.StorePath))
+      //    {
+      //      string path = Document.StorageRoot + d.StorePath;
+      //      System.IO.File.Delete(path);
+      //      for (int i = 0; i < Document.StorageTreeDepth; i++)
+      //      {
+      //        path = System.IO.Path.GetDirectoryName(path);
+      //        if (System.IO.Directory.GetDirectories(path).Length + System.IO.Directory.GetFiles(path).Length == 0)
+      //        {
+      //          System.IO.Directory.Delete(path);
+      //        }
+      //      }
+      //    }
+      //    changes.Add(new AuditLog
+      //    {
+      //      Action = entry.State.ToString(),
+      //      Comment = modelObject.GetReportHtml(),
+      //      Collection = entry.EntitySet.Name,
+      //      Changed = DateTime.Now,
+      //      ObjectId = modelObject.Id,
+      //      User = Thread.CurrentPrincipal.Identity.Name
+      //    });
+      //  }
+      //}
 
-      if (errors.Count > 0)
-      {
-        throw new RuleViolationsException(errors);
-      }
+      //if (errors.Count > 0)
+      //{
+      //  throw new RuleViolationsException(errors);
+      //}
 
-      changes.ForEach(f => this.AuditLog.Add(f));
+      //changes.ForEach(f => this.AuditLog.Add(f));
 
       return base.SaveChanges();
       //if (SavedChanges != null)

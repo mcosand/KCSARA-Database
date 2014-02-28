@@ -58,8 +58,10 @@
   <ItemGroup>
     <Compile Include="AnimalMissionTests.cs" />
     <Compile Include="AnimalTests.cs" />
+    <Compile Include="AuditLogTests.cs" />
     <Compile Include="ClassTests.cs" />
     <Compile Include="AnimalOwnerTests.cs" />
+    <Compile Include="DatabaseTestHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -15,16 +15,5 @@ namespace Kcsar.Database.Model
     {
       return string.Format(AnimalMission.ReportFormat, this.MissionRoster.Mission.Title, this.Animal.Name, this.MissionRoster.TimeIn, this.MissionRoster.TimeOut);
     }
-
-    #region IValidatedEntity Members
-
-    public override bool Validate()
-    {
-      errors.Clear();
-
-      return (errors.Count == 0);
-    }
-
-    #endregion
   }
 }

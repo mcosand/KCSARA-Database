@@ -907,8 +907,8 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
 
     private ActionResult InternalSaveCourse(TrainingCourse c, FormCollection fields)
     {
-      try
-      {
+      //try
+      //{
         TryUpdateModel(c, new string[] { "DisplayName", "FullName", "OfferedFrom", "OfferedTo", "ValidMonths", "ShowOnCard", "WacRequired" });
 
         if (ModelState.IsValid)
@@ -917,11 +917,11 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
           TempData["message"] = "Saved";
           return RedirectToAction("ClosePopup");
         }
-      }
-      catch (RuleViolationsException ex)
-      {
-        this.CollectRuleViolations(ex, fields);
-      }
+      //}
+      //catch (RuleViolationsException ex)
+      //{
+      //  this.CollectRuleViolations(ex, fields);
+      //}
       return InternalEditCourse(c);
     }
 

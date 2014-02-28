@@ -76,17 +76,6 @@ namespace Kcsara.Database.Web.Controllers
       }
     }
 
-    public void CollectRuleViolations(RuleViolationsException ex, FormCollection fields)
-    {
-      foreach (RuleViolation violation in ex.Errors)
-      {
-        string value = fields[violation.PropertyName] ?? "";
-        ModelState.SetModelValue(violation.PropertyName, new ValueProviderResult(value, value, CultureInfo.CurrentUICulture));
-        ModelState.AddModelError(violation.PropertyName, violation.ErrorMessage);
-      }
-      TempData["message"] = "Please correct errors";
-    }
-
     protected Expression<Func<T, bool>> GetSelectorPredicate<T>(IEnumerable<Guid> ids) where T : IModelObject
     {
       var o = Expression.Parameter(typeof(T), "o");
@@ -97,11 +86,6 @@ namespace Kcsara.Database.Web.Controllers
           .Aggregate((accum, clause) => Expression.Or(accum, clause));
       return Expression.Lambda<Func<T, bool>>(body, o);
     }
-
-    //protected JsonDataContractResult GetAjaxLoginError<T>(T result)
-    //{
-    //    return new JsonDataContractResult(new SubmitResult<T> { Errors = new[] { new SubmitError { Error = "login" } }, Result = result });
-    //}
 
     protected DataActionResult GetLoginError()
     {
