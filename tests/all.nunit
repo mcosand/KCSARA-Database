@@ -1,0 +1,8 @@
+﻿<NUnitProject>
+  <Settings activeconfig="Default" />
+  <Config name="Default" binpathtype="Auto">
+    <assembly path="Website.UI.Tests\bin\Debug\Internal.Website.UI.Tests.dll" />
+    <assembly path="Website.UnitTests\bin\Debug\Internal.Website.UnitTests.dll" />
+    <assembly path="Model.Tests\bin\Debug\Kcsara.Database.Model.Tests.dll" />
+  </Config>
+</NUnitProject>

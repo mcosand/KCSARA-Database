@@ -4,6 +4,7 @@
 namespace Internal.Database.Model
 {
   using System;
+  using System.Linq;
   using Kcsar.Database.Model;
   using NUnit.Framework;
 
@@ -35,8 +36,7 @@ namespace Internal.Database.Model
     public void Validate()
     {
       var am = new AnimalMission();
-      Assert.IsTrue(am.Validate());
-      Assert.IsEmpty(am.Errors);
+      Assert.AreEqual(0, am.Validate(null).Count());
     }
   }
 }

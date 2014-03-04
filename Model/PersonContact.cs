@@ -1,4 +1,5 @@
-﻿/*
+﻿
+/*
  * Copyright 2009-2014 Matthew Cosand
  */
 namespace Kcsar.Database.Model
@@ -132,13 +133,12 @@ namespace Kcsar.Database.Model
         yield return new ValidationResult("SubType must be one of: " + string.Join(", ", subtypes.SubTypes), new[] { "SubType" });
       }
 
+      string dummy;
       if (string.IsNullOrEmpty(this.Value))
       {
         yield return new ValidationResult("Required", new[] { "Value" });
       }
-
-      string dummy;
-      if (!PersonContact.TryParse(this.Type, this.Subtype, this.Value, true, out dummy))
+      else if (!PersonContact.TryParse(this.Type, this.Subtype, this.Value, true, out dummy))
       {
         yield return new ValidationResult(string.Format("'{0}' is not in valid form", this.Value), new[] { "Value" });
       }

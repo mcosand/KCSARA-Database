@@ -26,7 +26,7 @@ namespace Kcsar.Database.Model
     {
       if (this.Ending.HasValue && this.Ending <= this.Starting)
       {
-        yield return new ValidationResult("Must be after start date: " + this.Starting.ToString(), new[] { "Ending" });
+        yield return new ValidationResult("Ending date must be after start date", new[] { "Ending", "Starting" });
       }
     }
   }

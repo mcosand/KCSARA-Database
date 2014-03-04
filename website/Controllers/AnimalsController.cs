@@ -111,22 +111,14 @@ namespace Kcsara.Database.Web.Controllers
 
     private ActionResult InternalSave(Animal a, FormCollection fields)
     {
-      //try
-      //{
-        TryUpdateModel(a, new string[] { "Name", "DemSuffix", "Comments", "Type" });
-        if (ModelState.IsValid)
-        {
-          this.db.SaveChanges();
-          TempData["message"] = "Saved";
-          return RedirectToAction("ClosePopup");
-        }
-        return InternalEdit(a);
-      //}
-      //catch (DbValidationsException ex)
-      //{
-      //  this.CollectRuleViolations(ex, fields);
-      //}
-      //return InternalEdit(a);
+      TryUpdateModel(a, new string[] { "Name", "DemSuffix", "Comments", "Type" });
+      if (ModelState.IsValid)
+      {
+        this.db.SaveChanges();
+        TempData["message"] = "Saved";
+        return RedirectToAction("ClosePopup");
+      }
+      return InternalEdit(a);
     }
 
     [Authorize]
@@ -212,34 +204,27 @@ namespace Kcsara.Database.Web.Controllers
 
     private ActionResult InternalSaveOwner(AnimalOwner o, FormCollection fields)
     {
-      //try
-      //{
-        TryUpdateModel(o, new string[] { "IsPrimary", "Starting", "Ending" });
+      TryUpdateModel(o, new string[] { "IsPrimary", "Starting", "Ending" });
 
-        if (string.IsNullOrEmpty(fields["pid_a"]))
-        {
-          ModelState.AddModelError("Owner", "Required. Please pick from list.");
+      if (string.IsNullOrEmpty(fields["pid_a"]))
+      {
+        ModelState.AddModelError("Owner", "Required. Please pick from list.");
 
-        }
-        else
-        {
-          Guid personId = new Guid(fields["pid_a"]);
-          Member member = (from m in this.db.Members where m.Id == personId select m).First();
-          o.Owner = member;
-        }
+      }
+      else
+      {
+        Guid personId = new Guid(fields["pid_a"]);
+        Member member = (from m in this.db.Members where m.Id == personId select m).First();
+        o.Owner = member;
+      }
 
-        if (ModelState.IsValid)
-        {
-          this.db.SaveChanges();
-          TempData["message"] = "Saved";
-          return RedirectToAction("ClosePopup");
-        }
+      if (ModelState.IsValid)
+      {
+        this.db.SaveChanges();
+        TempData["message"] = "Saved";
+        return RedirectToAction("ClosePopup");
+      }
 
-      //}
-      //catch (RuleViolationsException ex)
-      //{
-      //  this.CollectRuleViolations(ex, fields);
-      //}
       return InternalEditOwner(o);
     }
 

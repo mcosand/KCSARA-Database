@@ -22,6 +22,7 @@ namespace Kcsara.Database.Web.Controllers
   using System.Web.Mvc;
   using IO = System.IO;
   using Kcsara.Database.Web.Services;
+  using System.Data.Entity.Validation;
 
   public class MembersController : BaseController
   {
@@ -127,18 +128,11 @@ namespace Kcsara.Database.Web.Controllers
       Member m = NewEsarTrainee_Internal(fields);
       if (ModelState.IsValid)
       {
-        //try
-        //{
-          this.db.SaveChanges();
-          this.db.RecalculateTrainingAwards(m.Id);
-          this.db.SaveChanges();
+        this.db.SaveChanges();
+        this.db.RecalculateTrainingAwards(m.Id);
+        this.db.SaveChanges();
 
-          return RedirectToAction("NewEsarTrainee", new { date = fields["CourseDate"], last = m.FullName });
-        //}
-        //catch (RuleViolationsException ex)
-        //{
-        //  this.CollectRuleViolations(ex, fields);
-        //}
+        return RedirectToAction("NewEsarTrainee", new { date = fields["CourseDate"], last = m.FullName });
       }
 
       ViewData["Gender"] = new SelectList(Enum.GetNames(typeof(Gender)), ((m == null) ? Gender.Unknown : m.Gender).ToString());
@@ -512,29 +506,30 @@ namespace Kcsara.Database.Web.Controllers
 
     private ActionResult InternalSave(Member m, FormCollection fields, ActionResult successAction)
     {
-      //try
-      //{
-        if (Permissions.IsAdmin)
-        {
-          TryUpdateModel(m, new string[] { "DEM", "WacLevel", "BackgroundDate", "SheriffApp" });
-          // Force WacLevelDate to be set after WacLevel
-          TryUpdateModel(m, new string[] { "WacLevelDate" });
-        }
-        if (Permissions.IsAdmin || Permissions.IsMembershipForPerson(m.Id))
-        {
-          TryUpdateModel(m, new string[] { "FirstName", "LastName", "MiddleName", "Gender", "BirthDate", "ExternalKey1" });
-        }
-        if (ModelState.IsValid)
-        {
-          this.db.SaveChanges();
-          TempData["message"] = "Saved";
-          return successAction;
-        }
-      //}
-      //catch (RuleViolationsException ex)
-      //{
-      //  this.CollectRuleViolations(ex, fields);
-      //}
+      if (Permissions.IsAdmin)
+      {
+        TryUpdateModel(m, new string[] { "DEM", "WacLevel", "BackgroundDate", "SheriffApp" });
+        // Force WacLevelDate to be set after WacLevel
+        TryUpdateModel(m, new string[] { "WacLevelDate" });
+
+        // When creating a new user, the above methods will set ModelState to Invalid
+        // and the call below doesn't clear it. Reset it now and the method
+        // below will flag it Invalid if neededd.
+        ModelState.Remove("FirstName");
+      }
+
+      if (Permissions.IsAdmin || Permissions.IsMembershipForPerson(m.Id))
+      {
+        TryUpdateModel(m, new string[] { "FirstName", "LastName", "MiddleName", "Gender", "BirthDate", "ExternalKey1" });
+      }
+
+      if (ModelState.IsValid)
+      {
+        this.db.SaveChanges();
+        TempData["message"] = "Saved";
+        return successAction;
+      }
+
       return InternalEdit(m);
     }
 
@@ -1030,36 +1025,28 @@ namespace Kcsara.Database.Web.Controllers
 
     private ActionResult InternalSaveMembership(UnitMembership um, FormCollection fields)
     {
-      //try
-      //{
-        TryUpdateModel(um, new string[] { "Activated", "Comments" });
+      TryUpdateModel(um, new string[] { "Activated", "Comments" });
 
-        Guid unitId = new Guid(fields["Unit"]);
-        SarUnit unit = (from u in this.db.Units where u.Id == unitId select u).First();
-        um.Unit = unit;
+      Guid unitId = new Guid(fields["Unit"]);
+      SarUnit unit = (from u in this.db.Units where u.Id == unitId select u).First();
+      um.Unit = unit;
 
-        Guid statusId = new Guid(fields["Status"]);
-        UnitStatus status = (from s in this.db.UnitStatusTypes where s.Id == statusId select s).First();
-        um.Status = status;
+      Guid statusId = new Guid(fields["Status"]);
+      UnitStatus status = (from s in this.db.UnitStatusTypes where s.Id == statusId select s).First();
+      um.Status = status;
 
-        Guid personId = new Guid(fields["Person"]);
-        Member person = (from m in this.db.Members where m.Id == personId select m).First();
-        um.Person = person;
+      Guid personId = new Guid(fields["Person"]);
+      Member person = (from m in this.db.Members where m.Id == personId select m).First();
+      um.Person = person;
 
-        if (ModelState.IsValid)
-        {
-          this.db.SaveChanges();
-          TempData["message"] = "Saved";
-          UpdateMemberships(um.Person.Id);
+      if (ModelState.IsValid)
+      {
+        this.db.SaveChanges();
+        TempData["message"] = "Saved";
+        UpdateMemberships(um.Person.Id);
 
-          return RedirectToAction("ClosePopup");
-        }
-
-      //}
-      //catch (RuleViolationsException ex)
-      //{
-      //  this.CollectRuleViolations(ex, fields);
-      //}
+        return RedirectToAction("ClosePopup");
+      }
 
       return InternalEditMembership(um);
     }
@@ -1208,27 +1195,20 @@ namespace Kcsara.Database.Web.Controllers
 
     private ActionResult InternalSaveAddress(PersonAddress address, FormCollection fields)
     {
-      //try
-      //{
-        TryUpdateModel(address, new string[] { "Street", "City", "State", "Zip", "Type" });
+      TryUpdateModel(address, new string[] { "Street", "City", "State", "Zip", "Type" });
 
-        Guid personId = new Guid(fields["Person"]);
-        Member person = (from m in this.db.Members where m.Id == personId select m).First();
-        address.Person = person;
-        address.Quality = 0;
-        address.Location = null;
+      Guid personId = new Guid(fields["Person"]);
+      Member person = (from m in this.db.Members where m.Id == personId select m).First();
+      address.Person = person;
+      address.Quality = 0;
+      address.Location = null;
 
-        if (ModelState.IsValid)
-        {
-          this.db.SaveChanges();
-          TempData["message"] = "Saved";
-          return RedirectToAction("ClosePopup");
-        }
-      //}
-      //catch (RuleViolationsException ex)
-      //{
-      //  this.CollectRuleViolations(ex, fields);
-      //}
+      if (ModelState.IsValid)
+      {
+        this.db.SaveChanges();
+        TempData["message"] = "Saved";
+        return RedirectToAction("ClosePopup");
+      }
       return InternalEditAddress(address);
     }
 
@@ -1296,17 +1276,21 @@ namespace Kcsara.Database.Web.Controllers
       {
         contact.Priority = 1;
       }
-      //try
-      //{
+      try
+      {
         this.db.SaveChanges();
-      //}
-      //catch (RuleViolationsException ex)
-      //{
-      //  foreach (RuleViolation v in ex.Errors)
-      //  {
-      //    errors.Add(new SubmitError { Error = v.ErrorMessage, Property = v.PropertyName, Id = new[] { v.EntityKey } });
-      //  }
-      //}
+      }
+      catch (DbEntityValidationException ex)
+      {
+        foreach (var entry in ex.EntityValidationErrors.Where(f => !f.IsValid))
+        {
+          foreach (var err in entry.ValidationErrors)
+          {
+            errors.Add(new SubmitError { Error = err.ErrorMessage, Property = err.PropertyName, Id = new[] { ((IModelObject)entry.Entry.Entity).Id } });
+          }
+        }
+      }
+
       return Data(new SubmitResult<bool> { Errors = errors.ToArray(), Result = (errors.Count == 0) });
     }
 
@@ -1328,27 +1312,28 @@ namespace Kcsara.Database.Web.Controllers
         this.db.PersonContact.Add(model);
       }
 
-      //try
-      //{
+      try
+      {
         if (model.Type != view.Type) model.Type = view.Type;
         if (model.Subtype != view.SubType) model.Subtype = view.SubType;
         if (model.Value != view.Value) model.Value = view.Value;
         if (model.Person == null || model.Person.Id != view.MemberId) model.Person = (from m in this.db.Members where m.Id == view.MemberId select m).FirstOrDefault();
 
-        if (errors.Count == 0)
-        {
-          this.db.SaveChanges();
-        }
+        this.db.SaveChanges();
+
         view.Id = model.Id;
         view.Priority = model.Priority;
-      //}
-      //catch (RuleViolationsException ex)
-      //{
-      //  foreach (RuleViolation v in ex.Errors)
-      //  {
-      //    errors.Add(new SubmitError { Error = v.ErrorMessage, Property = v.PropertyName, Id = new[] { v.EntityKey } });
-      //  }
-      //}
+      }
+      catch (DbEntityValidationException ex)
+      {
+        foreach (var entry in ex.EntityValidationErrors.Where(f => !f.IsValid))
+        {
+          foreach (var err in entry.ValidationErrors)
+          {
+            errors.Add(new SubmitError { Error = err.ErrorMessage, Property = err.PropertyName, Id = new[] { ((IModelObject)entry.Entry.Entity).Id } });
+          }
+        }
+      }
 
       return Data(new SubmitResult<MemberContactView>
       {

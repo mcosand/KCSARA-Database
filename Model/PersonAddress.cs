@@ -9,13 +9,18 @@ namespace Kcsar.Database.Model
   using Microsoft.SqlServer.Types;
   using System.Data.SqlTypes;
   using System.ComponentModel.DataAnnotations.Schema;
+  using System.ComponentModel.DataAnnotations;
 
   public class PersonAddress : ModelObject, IAddressGeography
   {
     public string InternalType { get; set; }
+    [Required]
     public string Street { get; set; }
+    [Required]
     public string City { get; set; }
+    [Required]
     public string State { get; set; }
+    [Required]
     public string Zip { get; set; }
     public string Geo { get; set; }
     public int Quality { get; set; }
