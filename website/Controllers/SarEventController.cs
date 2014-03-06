@@ -13,6 +13,7 @@ namespace Kcsara.Database.Web.Controllers
   using System.Text;
   using System.Text.RegularExpressions;
   using System.Web.Mvc;
+  using System.Data.Entity.Validation;
 
   public abstract class SarEventController<E, R> : BaseController, IEventController
     where R : class, IRosterEntry<E, R>, new()
@@ -460,8 +461,8 @@ namespace Kcsara.Database.Web.Controllers
         // Try to commit changes to the store
         if (ModelState.IsValid)
         {
-          //try
-          //{
+          try
+          {
             this.db.SaveChanges();
 
             OnRosterPostProcessing();
@@ -474,6 +475,39 @@ namespace Kcsara.Database.Web.Controllers
             {
               return RedirectToAction("Roster", new { id = rows.EventId });
             }
+          }
+          catch (DbEntityValidationException ex)
+          {
+            foreach (var entry in ex.EntityValidationErrors.Where(f => !f.IsValid))
+            {
+              foreach (var err in entry.ValidationErrors)
+              {
+                if (err.PropertyName == "TimeIn" || err.PropertyName == "TimeOut")
+                {
+                  bool flagged = false;
+                  for (int i = 0; i < rows.NumDays; i++)
+                  {
+                    string key = err.PropertyName.Substring(4).ToLower() + rows.RosterStart.AddDays(i).ToString("yyMMdd") + "_" + ((IModelObject)entry.Entry.Entity).Id.ToString();
+
+                    // Only flag the boxes with text in them.
+                    // If none have text, mark the last one in the row.
+                    if (!string.IsNullOrEmpty(fields[key]) || (!flagged && i == (rows.NumDays - 1)))
+                    {
+                      ModelState.SetModelValue(key, new ValueProviderResult(fields[key], fields[key], CultureInfo.CurrentUICulture));
+                      ModelState.AddModelError(key, err.ErrorMessage);
+                      flagged = true;
+                    }
+                  }
+                }
+                else
+                {
+                  string key = err.PropertyName + "_" + ((IModelObject)entry.Entry.Entity).Id.ToString();
+                  ModelState.SetModelValue(key, new ValueProviderResult(fields[key], fields[key], CultureInfo.CurrentUICulture));
+                  ModelState.AddModelError(key, err.ErrorMessage);
+                }
+              }
+            }
+          }
           //}
           //catch (RuleViolationsException violations)
           //{

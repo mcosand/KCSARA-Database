@@ -900,6 +900,7 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
     [Authorize(Roles = "cdb.admins")]
     public ActionResult EditCourse(Guid id, FormCollection fields)
     {
+      ViewData["HideFrame"] = true;
       TrainingCourse c = GetCourse(id);
       return InternalSaveCourse(c, fields);
     }
@@ -907,21 +908,14 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
 
     private ActionResult InternalSaveCourse(TrainingCourse c, FormCollection fields)
     {
-      //try
-      //{
-        TryUpdateModel(c, new string[] { "DisplayName", "FullName", "OfferedFrom", "OfferedTo", "ValidMonths", "ShowOnCard", "WacRequired" });
+      TryUpdateModel(c, new string[] { "DisplayName", "FullName", "OfferedFrom", "OfferedTo", "ValidMonths", "ShowOnCard", "WacRequired" });
 
-        if (ModelState.IsValid)
-        {
-          this.db.SaveChanges();
-          TempData["message"] = "Saved";
-          return RedirectToAction("ClosePopup");
-        }
-      //}
-      //catch (RuleViolationsException ex)
-      //{
-      //  this.CollectRuleViolations(ex, fields);
-      //}
+      if (ModelState.IsValid)
+      {
+        this.db.SaveChanges();
+        TempData["message"] = "Saved";
+        return RedirectToAction("ClosePopup");
+      }
       return InternalEditCourse(c);
     }
 

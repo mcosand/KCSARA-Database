@@ -73,7 +73,8 @@ namespace Kcsar.Database.Model
     protected override void OnModelCreating(DbModelBuilder modelBuilder)
     {
       base.OnModelCreating(modelBuilder);
-      modelBuilder.Entity<Mission>().HasOptional(f => f.Details).WithRequired(f => f.Mission);
+      modelBuilder.Entity<Mission>().HasOptional(f => f.Details).WithRequired(f => f.Mission).WillCascadeOnDelete();
+      modelBuilder.Entity<Mission>().HasMany(f => f.Log).WithRequired(f => f.Mission).WillCascadeOnDelete();
       modelBuilder.Entity<Member>().HasOptional(f => f.MedicalInfo).WithRequired(f => f.Member);
       modelBuilder.Entity<Member>().HasMany(f => f.Memberships).WithRequired(f => f.Person).WillCascadeOnDelete();
       modelBuilder.Entity<Member>().HasMany(f => f.Addresses).WithRequired(f => f.Person).WillCascadeOnDelete();

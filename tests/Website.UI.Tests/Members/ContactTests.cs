@@ -1,4 +1,4 @@
-﻿namespace Internal.Website.Animals
+﻿namespace Internal.Website.Members
 {
   using System;
   using System.Linq;
@@ -41,11 +41,7 @@
         form.FindElement(By.Id("contactValue")).SendKeys("123-456-7890");
         form.FindElements(By.XPath("..//div[@class='ui-dialog-buttonset']/button")).First().Click();
 
-        WebDriverWait wait = new WebDriverWait(d, TimeSpan.FromSeconds(10));
-        wait.Until(f =>
-        {
-          return f.FindElement(By.Id("contactform")).Displayed == false;
-        });
+        WaitFor(10, f => (f.FindElement(By.Id("contactform")).Displayed == false));
 
         Assert.IsTrue(d.FindElement(By.Id("contacts_table")).Text.Contains("123-456-7890"), "table has number");
 
@@ -84,12 +80,8 @@
         Assert.IsTrue(link.FindElement(By.XPath("../..")).Text.Contains("b@example.com"), "promote link on correct entry");
         link.Click();
 
-        WebDriverWait wait = new WebDriverWait(d, TimeSpan.FromSeconds(10));
-        wait.Until(f =>
-        {
-          return table.FindElement(By.LinkText("Promote"))
-          .FindElement(By.XPath("../..")).Text.Contains("a@example.com");
-        });
+        WaitFor(10, f => table.FindElement(By.LinkText("Promote"))
+          .FindElement(By.XPath("../..")).Text.Contains("a@example.com"));
       }
       finally
       {

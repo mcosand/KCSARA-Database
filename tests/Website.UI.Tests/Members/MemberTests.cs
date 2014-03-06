@@ -1,4 +1,4 @@
-﻿namespace Internal.Website.Animals
+﻿namespace Internal.Website.Members
 {
   using System;
   using System.Collections.Generic;

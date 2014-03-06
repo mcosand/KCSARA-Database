@@ -108,11 +108,7 @@
         Assert.IsTrue(fieldErrors.All(f => f.Text.StartsWith("Required")), "error text");
 
         d.FindElement(By.Id("name_a")).SendKeys(owner);
-        WebDriverWait wait = new WebDriverWait(d, TimeSpan.FromSeconds(10));
-        wait.Until<IWebElement>((f) =>
-        {
-          return f.FindElement(By.Id(string.Format("s_{0}", userId)));
-        }).Click();
+        PickSuggestedUser(userId);
 
         d.FindElement(By.Id("IsPrimary")).Click();
         

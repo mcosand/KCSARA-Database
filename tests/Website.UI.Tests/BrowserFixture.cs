@@ -8,6 +8,7 @@
   using NUnit.Framework;
   using OpenQA.Selenium;
   using OpenQA.Selenium.Firefox;
+  using OpenQA.Selenium.Support.UI;
 
   public abstract class BrowserFixture
   {
@@ -16,7 +17,7 @@
     protected IntegrationContext context = null;
 
     [TestFixtureSetUp]
-    public void Setup()
+    public virtual void FixtureSetup()
     {
       this.context = IntegrationContext.Load();
       this.d = new FirefoxDriver();
@@ -30,7 +31,7 @@
     }
 
     [TearDown]
-    public void Teardown()
+    public virtual void Teardown()
     {
       var toClose = d.WindowHandles.Where(f => f != mainWindow);
       foreach (var w in toClose)
@@ -43,7 +44,7 @@
     }
 
     [TestFixtureTearDown]
-    public void FixtureTeardown()
+    public virtual void FixtureTeardown()
     {
       d.Quit();
     }
@@ -52,6 +53,25 @@
     {
       string popupElement = d.WindowHandles.Where(f => f != mainWindow).Single();
       d.SwitchTo().Window(popupElement);
+    }
+
+
+    protected void PickSuggestedUser(Guid userId)
+    {
+      WebDriverWait wait = new WebDriverWait(d, TimeSpan.FromSeconds(10));
+      WaitFor(10, f => f.FindElement(By.Id(string.Format("s_{0}", userId))))
+        .Click();
+    }
+
+    protected T WaitFor<T>(int seconds, Func<IWebDriver, T> act)
+    {
+      WebDriverWait wait = new WebDriverWait(d, TimeSpan.FromSeconds(seconds));
+      return wait.Until(act);
+    }
+
+    protected void JQueryDialogSubmit(IWebElement form)
+    {
+      form.FindElements(By.XPath("..//div[@class='ui-dialog-buttonset']/button")).First().Click();
     }
   }
 }

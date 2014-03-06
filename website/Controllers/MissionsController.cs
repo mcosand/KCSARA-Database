@@ -9,15 +9,12 @@ namespace Kcsara.Database.Web.Controllers
   using System.Configuration;
   using System.Data.Entity;
   using System.Data.Entity.SqlServer;
+  using System.Data.Entity.Validation;
   using System.Globalization;
   using System.Linq;
   using System.Web.Mvc;
   using Kcsar.Database.Model;
   using Kcsara.Database.Web.Model;
-  //using Kcsara.Database.Web;
-  //using Kcsar.Database.Geo;
-  //using Kcsar.Database.Model;
-  //using Kcsara.Database.Web.Model;
 
   public partial class MissionsController : SarEventController<Mission, MissionRoster>
   {
@@ -231,26 +228,19 @@ namespace Kcsara.Database.Web.Controllers
     {
       MissionDetails details = GetDetails(id);
 
-      //try
-      //{
-        TryUpdateModel(details, new[] { "Clouds", "RainInches", "RainType", "SnowType", "SnowInches", "TempHigh", "TempLow", "Visibility", "WindHigh", "WindLow" });
-        TryUpdateModel(details, new[] { "Terrain", "Topography", "GroundCoverDensity", "GroundCoverHeight", "TimberType", "WaterType", "ElevationLow", "ElevationHigh" });
+      TryUpdateModel(details, new[] { "Clouds", "RainInches", "RainType", "SnowType", "SnowInches", "TempHigh", "TempLow", "Visibility", "WindHigh", "WindLow" });
+      TryUpdateModel(details, new[] { "Terrain", "Topography", "GroundCoverDensity", "GroundCoverHeight", "TimberType", "WaterType", "ElevationLow", "ElevationHigh" });
 
-        details.Tactics = ((fields["TacticsList"] ?? "").Replace(',', '|') + '|' + (fields["TacticsOther"] ?? "")).Trim('|');
-        details.CluesMethod = ((fields["CluesMethodList"] ?? "").Replace(',', '|') + '|' + (fields["CluesMethodOther"] ?? "")).Trim('|');
-        details.TerminatedReason = ((fields["TerminateReasonList"] ?? "").Replace(',', '|') + '|' + (fields["TerminateReasonOther"] ?? "")).Trim('|');
+      details.Tactics = ((fields["TacticsList"] ?? "").Replace(',', '|') + '|' + (fields["TacticsOther"] ?? "")).Trim('|');
+      details.CluesMethod = ((fields["CluesMethodList"] ?? "").Replace(',', '|') + '|' + (fields["CluesMethodOther"] ?? "")).Trim('|');
+      details.TerminatedReason = ((fields["TerminateReasonList"] ?? "").Replace(',', '|') + '|' + (fields["TerminateReasonOther"] ?? "")).Trim('|');
 
-        if (ModelState.IsValid)
-        {
-          this.db.SaveChanges();
-          TempData["message"] = "Saved";
-          return RedirectToAction("ClosePopup");
-        }
-      //}
-      //catch (RuleViolationsException ex)
-      //{
-      //  this.CollectRuleViolations(ex, fields);
-      //}
+      if (ModelState.IsValid)
+      {
+        this.db.SaveChanges();
+        TempData["message"] = "Saved";
+        return RedirectToAction("ClosePopup");
+      }
 
       return EditDetails(details.Mission.Id);
     }
@@ -635,38 +625,40 @@ namespace Kcsara.Database.Web.Controllers
       Guid result = Guid.Empty;
 
       MissionLog newLog = null;
-      //try
-      //{
-      //  if (!log.Time.HasValue)
-      //  {
-      //    throw new RuleViolationsException(new List<RuleViolation> { new RuleViolation(log.Id, "Time", null, "Invalid Date/Time") });
-      //  }
+      if (!log.Time.HasValue)
+      {
+        errors.Add(new SubmitError { Error = "Invalid Date/Time", Property = "Time", Id = new[] { log.Id }}); 
+      }
+      else
+      {
+        try
+        {
+          newLog = new MissionLog
+          {
+            Mission = this.db.Missions.Where(f => f.Id == log.MissionId).First(),
+            Data = log.Message,
+            Time = log.Time.Value
+          };
+          if (log.Person != null)
+          {
+            newLog.Person = this.db.Members.Where(f => f.Id == log.Person.Id).First();
+          }
+          result = newLog.Id;
 
-        newLog = new MissionLog
-        {
-          Mission = this.db.Missions.Where(f => f.Id == log.MissionId).First(),
-          Data = log.Message,
-          Time = log.Time.Value
-        };
-        if (log.Person != null)
-        {
-          newLog.Person = this.db.Members.Where(f => f.Id == log.Person.Id).First();
+          this.db.MissionLog.Add(newLog);
+          this.db.SaveChanges();
         }
-        result = newLog.Id;
-
-        this.db.MissionLog.Add(newLog);
-        this.db.SaveChanges();
-
-      //}
-      //catch (RuleViolationsException ex)
-      //{
-      //  //this.CollectRuleViolations(ex, fields);
-      //  foreach (RuleViolation v in ex.Errors)
-      //  {
-      //    errors.Add(new SubmitError { Error = v.ErrorMessage, Property = v.PropertyName, Id = new[] { v.EntityKey } });
-      //  }
-      //}
-
+        catch (DbEntityValidationException ex)
+        {
+          foreach (var entry in ex.EntityValidationErrors.Where(f => !f.IsValid))
+          {
+            foreach (var err in entry.ValidationErrors)
+            {
+              errors.Add(new SubmitError { Error = err.ErrorMessage, Property = err.PropertyName, Id = new[] { ((IModelObject)entry.Entry.Entity).Id } });
+            }
+          }
+        }
+      }
       return new JsonDataContractResult(new SubmitResult<LogSubmission>
       {
         Errors = errors.ToArray(),
@@ -1553,11 +1545,6 @@ select new { P = g.Key, Hours = g.Sum(f => f.Hours), Miles = g.Sum(f => f.Miles)
       }
       return Data(rows.ToArray());
     }
-
-    //protected override ObjectQuery<Mission> GetSummarySource()
-    //{
-    //    return this.db.Missions;
-    //}
 
     protected override IQueryable<Mission> GetEventSource()
     {
