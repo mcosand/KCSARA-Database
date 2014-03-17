@@ -21,6 +21,9 @@ namespace Kcsar.Database.Model.Migrations
             DropIndex("dbo.PersonAddresses", new[] { "Person_Id" });
             DropIndex("dbo.PersonContacts", new[] { "Person_Id" });
             DropIndex("dbo.UnitMemberships", new[] { "Person_Id" });
+            AddColumn("dbo.Members", "BirthDate", c => c.DateTime());
+            AddColumn("dbo.Members", "Gender", c => c.Int(nullable: false));
+            AddColumn("dbo.Members", "WacLevel", c => c.Int(nullable: false));
             AlterColumn("dbo.AnimalOwners", "Animal_Id", c => c.Guid(nullable: false));
             AlterColumn("dbo.AnimalOwners", "Owner_Id", c => c.Guid(nullable: false));
             AlterColumn("dbo.MissionLogs", "Mission_Id", c => c.Guid(nullable: false));
@@ -45,10 +48,20 @@ namespace Kcsar.Database.Model.Migrations
             AddForeignKey("dbo.PersonAddresses", "Person_Id", "dbo.Members", "Id", cascadeDelete: true);
             AddForeignKey("dbo.PersonContacts", "Person_Id", "dbo.Members", "Id", cascadeDelete: true);
             AddForeignKey("dbo.UnitMemberships", "Person_Id", "dbo.Members", "Id", cascadeDelete: true);
+
+            Sql("UPDATE dbo.Members SET BirthDate = InternalBirthDate");
+            Sql("UPDATE dbo.Members SET WacLevel = InternalWacLevel");
+            Sql("UPDATE dbo.Members SET Gender = CASE InternalGender WHEN 'm' THEN 1 WHEN 'f' THEN 2 ELSE 0 END");
+            DropColumn("dbo.Members", "InternalBirthDate");
+            DropColumn("dbo.Members", "InternalGender");
+            DropColumn("dbo.Members", "InternalWacLevel");
         }
         
         public override void Down()
         {
+            AddColumn("dbo.Members", "InternalWacLevel", c => c.Int(nullable: false));
+            AddColumn("dbo.Members", "InternalGender", c => c.String());
+            AddColumn("dbo.Members", "InternalBirthDate", c => c.DateTime());
             DropForeignKey("dbo.UnitMemberships", "Person_Id", "dbo.Members");
             DropForeignKey("dbo.PersonContacts", "Person_Id", "dbo.Members");
             DropForeignKey("dbo.PersonAddresses", "Person_Id", "dbo.Members");
@@ -73,6 +86,14 @@ namespace Kcsar.Database.Model.Migrations
             AlterColumn("dbo.MissionLogs", "Mission_Id", c => c.Guid());
             AlterColumn("dbo.AnimalOwners", "Owner_Id", c => c.Guid());
             AlterColumn("dbo.AnimalOwners", "Animal_Id", c => c.Guid());
+
+            Sql("UPDATE dbo.Members SET InternalBirthDate = BirthDate");
+            Sql("UPDATE dbo.Members SET InternalWacLevel = WacLevel");
+            Sql("UPDATE dbo.Members SET InternalGender = CASE Gender WHEN 1 THEN 'm' WHEN 2 THEN 'f' ELSE NULL END");
+
+            DropColumn("dbo.Members", "WacLevel");
+            DropColumn("dbo.Members", "Gender");
+            DropColumn("dbo.Members", "BirthDate");
             CreateIndex("dbo.UnitMemberships", "Person_Id");
             CreateIndex("dbo.PersonContacts", "Person_Id");
             CreateIndex("dbo.PersonAddresses", "Person_Id");

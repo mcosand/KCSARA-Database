@@ -111,7 +111,9 @@ namespace Kcsara.Database.Web.api
           MiddleName = data.Middlename,
           LastName = data.Lastname,
           BirthDate = data.BirthDate,
-          InternalGender = data.Gender,
+          Gender = (data.Gender == "m") ? Gender.Male
+                  : (data.Gender == "f") ? Gender.Female
+                  : Gender.Unknown,
           Status = MemberStatus.Applicant,
           Username = data.Username
         };

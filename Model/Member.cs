@@ -12,7 +12,6 @@ namespace Kcsar.Database.Model
   using System.Runtime.Serialization;
   using System.Threading;
 
-  [MemberReporting("WacLevelDate", Format = "{0:yyyy-MM-dd}")]
   public class Member : ModelObject
   {
     [MaxLength(50)]
@@ -20,14 +19,18 @@ namespace Kcsar.Database.Model
     public string LastName { get; set; }
     public string FirstName { get; set; }
     public string MiddleName { get; set; }
-    public DateTime? InternalBirthDate { get; set; }
-    public string InternalGender { get; set; }
+    [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:d}")]
+    public DateTime? BirthDate { get; set; }
+    public Gender Gender { get; set; }
     public string PhotoFile { get; set; }
-    public int InternalWacLevel { get; set; }
+    public WacLevel WacLevel { get; set; }
+    [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:d}")]
     public DateTime WacLevelDate { get; set; }
     public string Username { get; set; }
     public string Comments { get; set; }
+    [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:d}")]
     public DateTime? BackgroundDate { get; set; }
+    [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:d}")]
     public DateTime? SheriffApp { get; set; }
     public int? ExternalKey1 { get; set; }
     public MemberStatus Status { get; set; }
@@ -104,78 +107,11 @@ namespace Kcsar.Database.Model
     {
       get
       {
-        if (this.InternalBirthDate.HasValue)
+        if (this.BirthDate.HasValue)
         {
-          return this.InternalBirthDate.Value.Date.AddYears(18) >= DateTime.Now.Date;
+          return this.BirthDate.Value.Date.AddYears(18) >= DateTime.Now.Date;
         }
         return null;
-      }
-    }
-
-    [Reporting(Hides = "InternalGender")]
-    [NotMapped]
-    public Gender Gender
-    {
-      get
-      {
-        Gender result = Gender.Unknown;
-        foreach (string s in Enum.GetNames(typeof(Gender)))
-        {
-          if (string.Equals(this.InternalGender, s.Substring(0, 1), StringComparison.OrdinalIgnoreCase))
-          {
-            result = (Gender)Enum.Parse(typeof(Gender), s, true);
-          }
-        }
-        return result;
-      }
-
-      set
-      {
-        if (value == Gender.Unknown)
-        {
-          this.InternalGender = null;
-        }
-        else
-        {
-          this.InternalGender = value.ToString().Substring(0, 1).ToLower();
-        }
-      }
-    }
-
-
-    /// <summary>Changing this value will also change WacLevelDate to the current date. Manually set WacLevelDate afterwards if necessary.</summary>
-    [DataMember]
-    [Reporting(Hides = "InternalWacLevel")]
-    [NotMapped]
-    public WacLevel WacLevel
-    {
-      get
-      {
-        return (WacLevel)this.InternalWacLevel;
-      }
-
-      set
-      {
-        if (value != this.WacLevel)
-        {
-          this.InternalWacLevel = (int)value;
-          this.WacLevelDate = DateTime.Today;
-        }
-      }
-    }
-
-    [Reporting(Hides = "InternalBirthDate", Format = "{0:yyyy-MM-dd}")]
-    [NotMapped]
-    public DateTime? BirthDate
-    {
-      get
-      {
-        return this.InternalBirthDate;
-      }
-
-      set
-      {
-        this.InternalBirthDate = value;
       }
     }
 

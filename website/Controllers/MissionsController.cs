@@ -738,37 +738,30 @@ namespace Kcsara.Database.Web.Controllers
 
     private ActionResult InternalSaveLog(MissionLog log, FormCollection fields)
     {
-      //try
-      //{
-        TryUpdateModel(log, new string[] { "Time", "Data" });
+      TryUpdateModel(log, new string[] { "Time", "Data" });
 
-        Guid missionId = new Guid(fields["Mission"]);
-        Mission mission = (from m in this.db.Missions where m.Id == missionId select m).First();
-        log.Mission = mission;
+      Guid missionId = new Guid(fields["Mission"]);
+      Mission mission = (from m in this.db.Missions where m.Id == missionId select m).First();
+      log.Mission = mission;
 
-        if (string.IsNullOrEmpty(fields["pid_a"]))
-        {
-          ModelState.AddModelError("Person", "Required. Please pick from list.");
+      if (string.IsNullOrEmpty(fields["pid_a"]))
+      {
+        ModelState.AddModelError("Person", "Required. Please pick from list.");
 
-        }
-        else
-        {
-          Guid personId = new Guid(fields["pid_a"]);
-          Member person = (from m in this.db.Members where m.Id == personId select m).First();
-          log.Person = person;
-        }
+      }
+      else
+      {
+        Guid personId = new Guid(fields["pid_a"]);
+        Member person = (from m in this.db.Members where m.Id == personId select m).First();
+        log.Person = person;
+      }
 
-        if (ModelState.IsValid)
-        {
-          this.db.SaveChanges();
-          TempData["message"] = "Saved";
-          return RedirectToAction("ClosePopup");
-        }
-      //}
-      //catch (RuleViolationsException ex)
-      //{
-      //  this.CollectRuleViolations(ex, fields);
-      //}
+      if (ModelState.IsValid)
+      {
+        this.db.SaveChanges();
+        TempData["message"] = "Saved";
+        return RedirectToAction("ClosePopup");
+      }
 
       return InternalEditLog(log);
     }

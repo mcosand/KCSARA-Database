@@ -5,6 +5,7 @@ namespace Internal.Database.Model
 {
   using System;
   using System.Linq;
+  using System.Threading;
   using Kcsar.Database.Model;
   using NUnit.Framework;
 
@@ -31,22 +32,97 @@ namespace Internal.Database.Model
       Guid memberId;
       using (var db = new KcsarContext(this.databaseLocation))
       {
-        Member m = new Member { FirstName = "Log property" };
+        Member m = new Member {
+          FirstName = "Log property",
+          Gender = Gender.Female,
+          BirthDate = new DateTime(2000, 12, 19)
+        };
         db.Members.Add(m);
         db.SaveChanges();
         memberId = m.Id;
       }
-      DateTime checkpoint = DateTime.Now;
+
+      DateTime checkpoint = GetCheckpoint();
       using (var db = new KcsarContext(this.databaseLocation))
       {
         Member m = db.Members.Single(f => f.Id == memberId);
         m.FirstName = "Fixed";
+        m.BirthDate = new DateTime(1990, 3, 5);
+        m.Gender = Gender.Male;
         db.SaveChanges();
         var log = db.GetLog(checkpoint);
 
         Assert.AreEqual(1, log.Length, "log entries");
-        Assert.IsTrue(log[0].Comment.Contains("Log property => Fixed"), "log msg: " + log[0].Comment);
+        Console.WriteLine(log[0].Comment);
+        Assert.IsTrue(log[0].Comment.Contains("FirstName: Log property => Fixed"), "log msg: " + log[0].Comment);
+        Assert.IsTrue(log[0].Comment.Contains("Gender: Female => Male"), "log msg gender: " + log[0].Comment);
+        Assert.IsTrue(log[0].Comment.Contains("BirthDate: 12/19/2000 => 3/5/1990"), "log msg date: " + log[0].Comment);
+        Assert.AreEqual("Modified", log[0].Action, "action: " + log[0].Action);
       }
+    }
+
+    [Test]
+    public void LogObjectDeleted()
+    {
+      Guid memberId;
+      string reportHtml;
+      using (var db = new KcsarContext(this.databaseLocation))
+      {
+        Member m = new Member { FirstName = "RemoveMe" };
+        db.Members.Add(m);
+        db.SaveChanges();
+        memberId = m.Id;
+        reportHtml = m.GetReportHtml();
+      }
+
+      DateTime checkpoint = GetCheckpoint();
+
+      using (var db = new KcsarContext(this.databaseLocation))
+      {
+        Member m = db.Members.Single(f => f.Id == memberId);
+        db.Members.Remove(m);
+        db.SaveChanges();
+        var log = db.GetLog(checkpoint);
+
+        Assert.AreEqual(1, log.Length, "log entries");
+        Assert.AreEqual("Deleted", log[0].Action, "action: " + log[0].Action);
+        Assert.AreEqual(reportHtml, log[0].Comment, "log msg: " + log[0].Comment);
+      }
+    }
+
+
+    [Test]
+    public void LogObjectCreated()
+    {
+      Guid memberId;
+      DateTime checkpoint;
+      checkpoint = GetCheckpoint();
+
+      using (var db = new KcsarContext(this.databaseLocation))
+      {
+        Member m = new Member { FirstName = "NewUser" };
+        db.Members.Add(m);
+        db.SaveChanges();
+        memberId = m.Id;
+      }
+
+      using (var db = new KcsarContext(this.databaseLocation))
+      {
+        var member = db.Members.Single(f => f.Id == memberId);
+        var logs = db.GetLog(checkpoint);
+        Assert.AreEqual(1, logs.Length, "log entries");
+        Assert.AreEqual(member.GetReportHtml(), logs[0].Comment, "log msg: " + logs[0].Comment);
+        Assert.AreEqual("Added", logs[0].Action, "action: " + logs[0].Action);
+      }
+    }
+
+    // Wait long enough to pass the resolution of the sql time check.
+    private static DateTime GetCheckpoint()
+    {
+      Thread.Sleep(200);
+      DateTime checkpoint = DateTime.Now;
+      Thread.Sleep(200);
+      return checkpoint;
     }
   }
 }

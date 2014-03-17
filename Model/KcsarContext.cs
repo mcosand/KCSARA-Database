@@ -1,10 +1,12 @@
-﻿/*
+﻿
+/*
  * Copyright 2009-2014 Matthew Cosand
  */
 namespace Kcsar.Database.Model
 {
   using System;
   using System.Collections.Generic;
+  using System.ComponentModel.DataAnnotations;
   using System.Data.Entity;
   using System.Data.Entity.Core;
   using System.Data.Entity.Core.Objects;
@@ -105,18 +107,68 @@ namespace Kcsar.Database.Model
       return active;
     }
 
+
+    private KcsarContext comparisonContext = null;
+    protected KcsarContext ComparisonContext
+    {
+      get
+      {
+        if (this.comparisonContext == null)
+        {
+          this.comparisonContext = new KcsarContext(this.Database.Connection.ConnectionString, this.Database.Log);
+        }
+        return this.comparisonContext;
+      }
+    }
+
+    private void AuditChange(ObjectStateEntry entry)
+    {
+      var obj = entry.Entity as IModelObject;
+
+      var audit = new AuditLog
+      {
+        Action = entry.State.ToString(),
+        Changed = DateTime.Now,
+        ObjectId = obj.Id,
+        Collection = entry.EntitySet.Name
+      };
+
+      switch (entry.State)
+      {
+        case EntityState.Added:
+          audit.Comment = obj.GetReportHtml();
+          break;
+
+        case EntityState.Modified:
+          string report = string.Format("<b>{0}</b><br/>", entry.Entity);
+          foreach (var prop in entry.GetModifiedProperties())
+          {
+            var displayFormat = entry.Entity.GetType().GetProperty(prop).GetCustomAttribute<DisplayFormatAttribute>();
+            string format = displayFormat == null ? "{0}" : displayFormat.DataFormatString;
+
+            report += string.Format(
+              "{0}: {1} => {2}<br/>",
+              prop,
+              string.Format(format, entry.OriginalValues[prop]),
+              string.Format(format, entry.CurrentValues[prop]));
+          }
+          audit.Comment = report;
+          break;
+
+        case EntityState.Deleted:
+          object original;
+          ((IObjectContextAdapter)this.ComparisonContext).ObjectContext.TryGetObjectByKey(entry.EntityKey, out original);
+          audit.Comment = ((IModelObject)original).GetReportHtml();
+          break;
+
+        default:
+          throw new NotImplementedException("Unhandled state" + entry.State.ToString());
+      }
+      this.AuditLog.Add(audit);
+    }
+
     public override int SaveChanges()
     {
-      //List<RuleViolation> errors = new List<RuleViolation>();
-
-      //KcsarContext comparisonContext = new KcsarContext(this.Database.Connection.ConnectionString);
-
-      //List<AuditLog> changes = new List<AuditLog>();
-
-      //// Validate the state of each entity in the context
-      //// before SaveChanges can succeed.
-      //Random rand = new Random();
-
       ObjectContext oc = ((IObjectContextAdapter)this).ObjectContext;
       var osm = oc.ObjectStateManager;
 
@@ -167,6 +219,7 @@ namespace Kcsar.Database.Model
               obj.LastChanged = DateTime.Now;
               obj.ChangedBy = Thread.CurrentPrincipal.Identity.Name;
 
+              AuditChange(entry);
       //        IModelObject original = (entry.State == EntityState.Added) ? null : GetOriginalVersion(comparisonContext, entry);
 
 
@@ -214,9 +267,10 @@ namespace Kcsar.Database.Model
       //  }
       }
 
-      //// Added and modified objects - we need to fetch more data before we can report what the change was in readable form.
-      //foreach (ObjectStateEntry entry in osm.GetObjectStateEntries(EntityState.Deleted))
-      //{
+      // Deleted objects - we need to fetch more data before we can report what the change was in readable form.
+      foreach (ObjectStateEntry entry in osm.GetObjectStateEntries(EntityState.Deleted))
+      {
+        AuditChange(entry);
       //  IModelObject modelObject = GetOriginalVersion(comparisonContext, entry);
       //  if (modelObject != null)
       //  {
@@ -244,20 +298,9 @@ namespace Kcsar.Database.Model
       //      User = Thread.CurrentPrincipal.Identity.Name
       //    });
       //  }
-      //}
-
-      //if (errors.Count > 0)
-      //{
-      //  throw new RuleViolationsException(errors);
-      //}
-
-      //changes.ForEach(f => this.AuditLog.Add(f));
+      }
 
       return base.SaveChanges();
-      //if (SavedChanges != null)
-      //{
-      //    SavedChanges(this, new SavingChangesArgs { Changes = changes.Select(f => f.Comment).ToList() });
-      //}
     }
 
     private IEnumerable<PropertyInfo> GetReportableProperties(Type forType)

@@ -281,7 +281,7 @@ namespace Kcsara.Database.Web.Controllers
       var cardMembersDict = cardMembers.ToDictionary(f => f.PK, f => f);
 
       var dbMembers = this.db.Members
-          .Where(f => f.InternalWacLevel > 0 && f.Memberships.Any(g => g.EndTime == null && g.Status.IsActive) && f.ExternalKey1 != null)
+          .Where(f => f.WacLevel > WacLevel.None && f.Memberships.Any(g => g.EndTime == null && g.Status.IsActive) && f.ExternalKey1 != null)
           .OrderBy(f => f.LastName).ThenBy(f => f.FirstName).ToList();
 
       StringBuilder builder = new StringBuilder();
@@ -317,7 +317,7 @@ namespace Kcsara.Database.Web.Controllers
       }
 
       cardMembers = cardMembersDict.Values.OrderBy(f => f.LastName).ThenBy(f => f.FirstName).ToList();
-      dbMembers = this.db.Members.Where(f => f.InternalWacLevel > 0 && f.Memberships.Any(g => g.EndTime == null && g.Status.IsActive) && f.ExternalKey1 == null)
+      dbMembers = this.db.Members.Where(f => f.WacLevel > WacLevel.None && f.Memberships.Any(g => g.EndTime == null && g.Status.IsActive) && f.ExternalKey1 == null)
           .OrderBy(f => f.LastName).ThenBy(f => f.FirstName).ToList();
 
       d = 0;
@@ -508,9 +508,7 @@ namespace Kcsara.Database.Web.Controllers
     {
       if (Permissions.IsAdmin)
       {
-        TryUpdateModel(m, new string[] { "DEM", "WacLevel", "BackgroundDate", "SheriffApp" });
-        // Force WacLevelDate to be set after WacLevel
-        TryUpdateModel(m, new string[] { "WacLevelDate" });
+        TryUpdateModel(m, new string[] { "DEM", "WacLevel", "WacLevelDate", "BackgroundDate", "SheriffApp" });
 
         // When creating a new user, the above methods will set ModelState to Invalid
         // and the call below doesn't clear it. Reset it now and the method
@@ -1539,7 +1537,7 @@ namespace Kcsara.Database.Web.Controllers
       string debug = string.Empty;
       DateTime oneYear = DateTime.Today.AddYears(-1);
 
-      var model = (from m in this.db.Members.Include("Memberships.Unit").Include("Memberships.Status") where m.Memberships.Any(f => f.Unit.Id == unitId && (!f.EndTime.HasValue || f.EndTime > oneYear)) && m.InternalWacLevel != (int)WacLevel.None select m)
+      var model = (from m in this.db.Members.Include("Memberships.Unit").Include("Memberships.Status") where m.Memberships.Any(f => f.Unit.Id == unitId && (!f.EndTime.HasValue || f.EndTime > oneYear)) && m.WacLevel != WacLevel.None select m)
           .OrderBy(f => f.LastName).ThenBy(f => f.FirstName).ToList();
 
       var courses = (from c in this.db.TrainingCourses where c.WacRequired > 0 select c).OrderBy(x => x.DisplayName).ToList();
@@ -1869,7 +1867,7 @@ namespace Kcsara.Database.Web.Controllers
 
       DateTime cutoff = DateTime.Today.AddYears(-1);
       var promotions = this.db.Members.Where(f =>
-          f.InternalWacLevel == (int)WacLevel.Novice
+          f.WacLevel == WacLevel.Novice
           && f.WacLevelDate < cutoff
           && f.Memberships.Any(g => g.EndTime == null && g.Status.IsActive)
       ).OrderBy(f => f.LastName).ThenBy(f => f.FirstName).ToList();

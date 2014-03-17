@@ -56,5 +56,43 @@ namespace Internal.Website.Missions
         WaitFor(10, f => f.FindElement(By.Id("missionlog")).Text.Contains(msg));
       }
     }
+
+    [Test]
+    public void EditLog()
+    {
+      using (var db = context.GetDb())
+      {
+        var member = db.Members.First();
+        var log = new MissionLog
+        {
+          Time = DateTime.Now,
+          Data = "Incorrect log",
+          Person = member
+        };
+        db.Missions.Single(f => f.Id == MissionId).Log.Add(log);
+        db.SaveChanges();
+
+        d.Url = string.Format("{0}/Missions/Roster/{1}", context.Url, this.MissionId);
+        d.FindElement(By.ClassName("nav-second")).FindElement(By.LinkText("Log")).Click();
+
+        d.FindElement(By.Id("missionlog")).FindElement(By.LinkText("Edit")).Click();
+        SwitchToPopup();
+
+        var msgBox = d.FindElement(By.Id("Data"));
+        msgBox.Clear();
+        msgBox.SendKeys("fixed log");
+
+        var nameBox = d.FindElement(By.Id("name_a"));
+        nameBox.Clear();
+        nameBox.SendKeys(member.ReverseName);
+        PickSuggestedUser(member.Id);
+
+        d.FindElement(By.XPath("//input[@type='submit']")).Click();
+        d.SwitchTo().Window(mainWindow);
+
+        WaitFor(10, f => f.FindElement(By.Id("missionlog")).Text.Contains("fixed log"));
+
+      }
+    }
   }
 }
