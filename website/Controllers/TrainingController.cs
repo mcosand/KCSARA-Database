@@ -1111,7 +1111,7 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
 
           if (trainee.PhotoFile != null) wrap.SetCellValue("havePhoto", row, col++);
 
-          if (Request.QueryString["usernames"] != null && string.IsNullOrWhiteSpace(trainee.Username)) wrap.SetCellValue(trainee.Username, row, col++);
+          if (Request.QueryString["usernames"] != null && !string.IsNullOrWhiteSpace(trainee.Username)) wrap.SetCellValue(trainee.Username, row, col++);
         }
         wrap.AutoFit();
       }
