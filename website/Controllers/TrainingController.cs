@@ -369,9 +369,14 @@ namespace Kcsara.Database.Web.Controllers
           var match = member.ComputedAwards.SingleOrDefault(f => f.Course.Id == courses[i].Id);
           if (match != null)
           {
-            if (match.Expiry < goodUntil) goodUntil = match.Expiry.Value;
+            string text = "Complete";
+            if (match.Expiry.HasValue)
+            {
+              if (match.Expiry < goodUntil) goodUntil = match.Expiry.Value;
+              text = match.Expiry.Value.ToString("yyyy-MM-dd");
+            }
             coursesCount++;
-            sheet.CellAt(row, col + i).SetValue(match.Expiry.Value.ToString("yyyy-MM-dd"));
+            sheet.CellAt(row, col + i).SetValue(text);
           }
         }
         sheet.CellAt(row, goodColumn).SetValue(courses.Count == coursesCount ? goodUntil.ToString("yyyy-MM-dd") : "");
