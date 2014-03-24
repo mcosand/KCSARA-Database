@@ -7,6 +7,7 @@ run.log*
 # mstest test results
 TestResults
 testCoverage.xml
+coverage.xml
 coverage/
 *.VisualState.xml
 

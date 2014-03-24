@@ -539,6 +539,7 @@
     <Content Include="Views\Map\Index.aspx" />
     <Content Include="Views\Account\Signup.aspx" />
     <Content Include="Views\Members\Awards.aspx" />
+    <Content Include="Views\Members\MemberCoreCompetencies.ascx" />
     <Content Include="Views\Members\Delete.aspx" />
     <Content Include="Views\Members\DeleteAddress.aspx" />
     <Content Include="Views\Members\DeleteMembership.aspx" />

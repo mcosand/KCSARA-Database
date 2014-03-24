@@ -59,7 +59,7 @@ namespace Kcsar.Database.Model
   {
     public static IList<TrainingCourse> GetCoreCompetencyCourses(this IKcsarContext context)
     {
-      var courses = new[] {
+      var courses = new [] {
                 "Clues.WE",
                 "CPR",
                 "Crime.C", "Crime.WE",
@@ -75,7 +75,9 @@ namespace Kcsar.Database.Model
                 "Safety.PE", "Safety.WE",
                 "Search.PE", "Search.WE",
                 "Survival.PE", "Survival.WE"
-            }.Select(f => "Core/" + f).ToArray();
+            }.Select(f => "Core/" + f).ToList();
+      courses.Add("ICS-100");
+      courses.Add("ICS-700");
 
       return (from c in context.TrainingCourses where courses.Contains(c.DisplayName) select c).AsNoTracking().OrderBy(f => f.DisplayName).ToList();
     }
