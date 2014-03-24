@@ -50,6 +50,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESAR.Extensions", "ESAR.Ext
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Website.UI.Tests", "tests\Website.UI.Tests\Website.UI.Tests.csproj", "{A892AFE4-95DA-4861-9935-B520C23440CA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HamFromFCC", "Tools\HamFromFCC\HamFromFCC.csproj", "{BE475201-A881-4BEF-8682-7C9A275281BB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -213,6 +215,21 @@ Global
 		{A892AFE4-95DA-4861-9935-B520C23440CA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{A892AFE4-95DA-4861-9935-B520C23440CA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{A892AFE4-95DA-4861-9935-B520C23440CA}.Release|x86.ActiveCfg = Release|Any CPU
+		{BE475201-A881-4BEF-8682-7C9A275281BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE475201-A881-4BEF-8682-7C9A275281BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE475201-A881-4BEF-8682-7C9A275281BB}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{BE475201-A881-4BEF-8682-7C9A275281BB}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{BE475201-A881-4BEF-8682-7C9A275281BB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BE475201-A881-4BEF-8682-7C9A275281BB}.Deploy|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE475201-A881-4BEF-8682-7C9A275281BB}.Deploy|Any CPU.Build.0 = Debug|Any CPU
+		{BE475201-A881-4BEF-8682-7C9A275281BB}.Deploy|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{BE475201-A881-4BEF-8682-7C9A275281BB}.Deploy|Mixed Platforms.Build.0 = Debug|Any CPU
+		{BE475201-A881-4BEF-8682-7C9A275281BB}.Deploy|x86.ActiveCfg = Debug|Any CPU
+		{BE475201-A881-4BEF-8682-7C9A275281BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE475201-A881-4BEF-8682-7C9A275281BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE475201-A881-4BEF-8682-7C9A275281BB}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{BE475201-A881-4BEF-8682-7C9A275281BB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{BE475201-A881-4BEF-8682-7C9A275281BB}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -223,5 +240,6 @@ Global
 		{A892AFE4-95DA-4861-9935-B520C23440CA} = {F67F8451-20E4-4277-8BA4-6EBD663BCEA3}
 		{15EDE6E7-A4D7-491B-AF30-AC245C7EC6F1} = {AEC88F4A-AE57-4855-A44B-82D7A6BE0B32}
 		{FAD0ED26-A017-4EB3-9D53-F6D0A6B72FA8} = {AEC88F4A-AE57-4855-A44B-82D7A6BE0B32}
+		{BE475201-A881-4BEF-8682-7C9A275281BB} = {AEC88F4A-AE57-4855-A44B-82D7A6BE0B32}
 	EndGlobalSection
 EndGlobal

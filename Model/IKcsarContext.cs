@@ -59,22 +59,25 @@ namespace Kcsar.Database.Model
   {
     public static IList<TrainingCourse> GetCoreCompetencyCourses(this IKcsarContext context)
     {
-      var courses = new[] {
-                "Clues",
-                "Crime",
-                "FA",
-                "Fitness",
-                "GPS.P", "GPS.W",
-                "Helicopter",
-                "Legal",
-                "Management",
-                "Nav.P", "Nav.W",
-                "Radio",
-                "Rescue.P", "Rescue.W",
-                "Safety.P", "Safety.W",
-                "Search.P", "Search.W",
-                "Survival.P", "Survival.W"
-            }.Select(f => "Core/" + f).ToArray();
+      var courses = new [] {
+                "Clues.WE",
+                "CPR",
+                "Crime.C", "Crime.WE",
+                "FirstAid",
+                "Fitness.WE",
+                "GPS.PE", "GPS.WE",
+                "Helo.C", "Helo.WE",
+                "Legal.C", "Legal.WE",
+                "Management.WE",
+                "Nav.PE", "Nav.WE",
+                "Radio.PE", "Radio.WE",
+                "Rescue.PE", "Rescue.WE",
+                "Safety.PE", "Safety.WE",
+                "Search.PE", "Search.WE",
+                "Survival.PE", "Survival.WE"
+            }.Select(f => "Core/" + f).ToList();
+      courses.Add("ICS-100");
+      courses.Add("ICS-700");
 
       return (from c in context.TrainingCourses where courses.Contains(c.DisplayName) select c).AsNoTracking().OrderBy(f => f.DisplayName).ToList();
     }

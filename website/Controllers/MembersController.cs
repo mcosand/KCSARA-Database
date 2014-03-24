@@ -86,6 +86,8 @@ namespace Kcsara.Database.Web.Controllers
         FilterPersonal(member);
       }
 
+      var courses = this.db.GetCoreCompetencyCourses();
+      ViewData["CoreStatus"] = CompositeTrainingStatus.Compute(member, courses, DateTime.Now).Expirations.ToDictionary(f => f.Value.CourseName, f => f.Value);
       return View(member);
     }
 

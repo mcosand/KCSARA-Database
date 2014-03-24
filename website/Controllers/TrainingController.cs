@@ -1105,60 +1105,7 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
 
           if (trainee.PhotoFile != null) wrap.SetCellValue("havePhoto", row, col++);
 
-          //    wrap.SetCellValue(trainee.SheriffApp.HasValue ? "X" : "", row, col++);
-          //    wrap.SetCellValue(trainee.BackgroundDate.HasValue ? "X" : "", row, col+1);
-
-
-          //    bool needNextCourse = false;
-          //    if (!trainee.ComputedAwards.Any(f => f.Course.DisplayName == "Course A" && f.Expiry > today))
-          //    {
-          //        // Hasn't taken Course A this year
-          //        wrap.SetCellValue("Course A", row, col++);
-          //    }
-          //    else if (!trainee.SheriffApp.HasValue)
-          //    {
-          //        wrap.SetCellValue("Waiting App", row, col++);
-          //    }
-          //    else if (!trainee.ComputedAwards.Any(f => f.Course.DisplayName == "Course B" && f.Expiry > today))
-          //    {
-          //        wrap.SetCellValue("Course B", row, col++);
-          //    }
-          //    else if (!trainee.BackgroundDate.HasValue)
-          //    {
-          //        wrap.SetCellValue("Waiting BG", row, col++);
-          //    }
-          //    else
-          //    {
-          //        needNextCourse = true;
-          //        nextCourseCol = col++;
-          //    }
-
-          //    string nextCourse = string.Empty;
-          //    //DateTime cutoff = new DateTime(DateTime.Today.AddMonths(-5).Year, 6, 1);
-          //    foreach (var course in courses)
-          //    {
-          //        DateTime? completed = trainee.ComputedAwards.Where(f => f.Course != null && f.Course.Id == course.Id && (f.Expiry == null || f.Expiry > today)).Select(f => f.Completed).SingleOrDefault();
-          //            //.Where(f => f.Course != null && f.Course.Id == course.Id && f.Completed > cutoff).OrderBy(f => f.Completed).Select(f => f.Completed).FirstOrDefault();
-          //        if (completed.HasValue)
-          //        {
-          //            while (!string.IsNullOrWhiteSpace(string.Format("{0}", wrap.Sheet.Cells[1, col].Value))
-          //                && string.Format("{0}", wrap.Sheet.Cells[1, col].Value).Replace("ICS ", "NIMS I-") != course.DisplayName)
-          //            {
-          //                wrap.Sheet.Cells[row, col].Value = wrap.Sheet.Cells[1, col].Value;
-          //                col++;
-          //            }
-          //            wrap.Sheet.Cells[row, col].Value = completed.Value.Date;
-          //            wrap.Sheet.Cells[row, col].Style.NumberFormat = "yyyy-mm-dd";
-          //        }
-          //        else if (string.IsNullOrWhiteSpace(nextCourse))
-          //        {
-          //            nextCourse = course.DisplayName;
-          //        }
-          //        col++;
-          //    }
-          //    if (needNextCourse) wrap.SetCellValue(nextCourse, row, nextCourseCol);
-          //    if (trainee.PhotoFile != null) wrap.Sheet.Cells[row, nextCourseCol + courses.Count + 1].Value = "havePhoto";
-          //}
+          if (Request.QueryString["usernames"] != null && !string.IsNullOrWhiteSpace(trainee.Username)) wrap.SetCellValue(trainee.Username, row, col++);
         }
         wrap.AutoFit();
       }

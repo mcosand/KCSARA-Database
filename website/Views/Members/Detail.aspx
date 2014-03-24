@@ -94,6 +94,10 @@
     <h2>Required Training:</h2>
     <% Html.RenderPartial("MemberRequiredTraining", Model.Id); /*ViewData["RequiredStatus"]);*/ %>
     </div>
+    <div style="float:left;">
+      <h2>Core Competencies:</h2>
+      <% Html.RenderPartial("MemberCoreCompetencies", Model.Id); %>
+    </div>
     <div style="clear:both;"></div>
   </div>
 

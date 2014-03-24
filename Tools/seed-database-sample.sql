@@ -1,4 +1,5 @@
-﻿DECLARE @mtnrsq UNIQUEIDENTIFIER = NEWID()
+﻿
+DECLARE @mtnrsq UNIQUEIDENTIFIER = NEWID()
 IF EXISTS (SELECT 1 FROM SarUnits WHERE DisplayName='MtnRsq')
   SET @mtnrsq = (SELECT id FROM SarUnits WHERE DisplayName='MtnRsq')
 ELSE
@@ -51,6 +52,47 @@ ELSE
   INSERT INTO TrainingCourses (Id, DisplayName, FullName, Categories, ValidMonths, WacRequired, ShowOnCard, LastChanged)
        VALUES (@helo, 'Helo', 'Helicopter Safety', 'helo', 24, 224, 0, GETDATE())
 
+DECLARE @rescue_w UNIQUEIDENTIFIER = NEWID()
+IF EXISTS (SELECT 1 FROM TrainingCourses WHERE DisplayName='Core/Rescue.WE')
+  SET @rescue_w = (SELECT id FROM TrainingCourses WHERE DisplayName='Core/Rescue.WE')
+ELSE
+  INSERT INTO TrainingCourses (Id, DisplayName, FullName, Categories, ValidMonths, WacRequired, ShowOnCard, LastChanged)
+       VALUES (@rescue_w, 'Core/Rescue.WE', 'Rescue Techniques - Written', 'core', 60, 0, 0, GETDATE())
+
+DECLARE @rescue_p UNIQUEIDENTIFIER = NEWID()
+IF EXISTS (SELECT 1 FROM TrainingCourses WHERE DisplayName='Core/Rescue.PE')
+  SET @rescue_p = (SELECT id FROM TrainingCourses WHERE DisplayName='Core/Rescue.PE')
+ELSE
+  INSERT INTO TrainingCourses (Id, DisplayName, FullName, Categories, ValidMonths, WacRequired, ShowOnCard, LastChanged)
+       VALUES (@rescue_p, 'Core/Rescue.PE', 'Rescue Techniques - Practical', 'core', 60, 0, 0, GETDATE())
+
+DECLARE @helo_c UNIQUEIDENTIFIER = NEWID()
+IF EXISTS (SELECT 1 FROM TrainingCourses WHERE DisplayName='Core/Helo.C')
+  SET @helo_c = (SELECT id FROM TrainingCourses WHERE DisplayName='Core/Helo.C')
+ELSE
+  INSERT INTO TrainingCourses (Id, DisplayName, FullName, Categories, ValidMonths, WacRequired, ShowOnCard, LastChanged)
+       VALUES (@helo_c, 'Core/Helo.C', 'Helicopter - classroom', 'core', 60, 0, 0, GETDATE())
+
+DECLARE @helo_w UNIQUEIDENTIFIER = NEWID()
+IF EXISTS (SELECT 1 FROM TrainingCourses WHERE DisplayName='Core/Helo.WE')
+  SET @helo_w = (SELECT id FROM TrainingCourses WHERE DisplayName='Core/Helo.WE')
+ELSE
+  INSERT INTO TrainingCourses (Id, DisplayName, FullName, Categories, ValidMonths, WacRequired, ShowOnCard, LastChanged)
+       VALUES (@helo_w, 'Core/Helo.WE', 'Helicopter - Written', 'core', 60, 0, 0, GETDATE())
+
+DECLARE @cpr UNIQUEIDENTIFIER = NEWID()
+IF EXISTS (SELECT 1 FROM TrainingCourses WHERE DisplayName='Core/CPR')
+  SET @cpr = (SELECT id FROM TrainingCourses WHERE DisplayName='Core/CPR')
+ELSE
+  INSERT INTO TrainingCourses (Id, DisplayName, FullName, Categories, ValidMonths, WacRequired, ShowOnCard, LastChanged)
+       VALUES (@cpr, 'Core/CPR', 'CPR', 'firstaid', 60, 0, 0, GETDATE())
+
+DECLARE @ics100 UNIQUEIDENTIFIER = NEWID()
+IF EXISTS (SELECT 1 FROM TrainingCourses WHERE DisplayName='ICS-100')
+  SET @ics100 = (SELECT id FROM TrainingCourses WHERE DisplayName='ICS-100')
+ELSE
+  INSERT INTO TrainingCourses (Id, DisplayName, FullName, Categories, ValidMonths, WacRequired, ShowOnCard, LastChanged)
+       VALUES (@ics100, 'ICS-100', 'ICS-100', 'ics', 60, 0, 0, GETDATE())
 
 -- ==========================  PEOPLE ===================================
 

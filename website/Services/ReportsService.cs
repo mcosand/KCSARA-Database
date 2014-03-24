@@ -68,9 +68,7 @@ namespace Kcsara.Database.Services
 
       var dataSheet = xl.CreateSheet("Member Data");
 
-      var interestingCourses = (from c in this.db.TrainingCourses where c.WacRequired > 0 select c).OrderBy(x => x.DisplayName).ToList();
-      interestingCourses.AddRange(this.db.GetCoreCompetencyCourses());
-
+      var interestingCourses = this.db.GetCoreCompetencyCourses();
 
       IQueryable<Member> members = this.db.Members.Include("Addresses", "Memberships", "ComputedAwards.Course").Where(f => f.Memberships.Any(g => g.Status.IsActive && g.EndTime == null));
       members = members.OrderBy(f => f.LastName).ThenBy(f => f.FirstName);
