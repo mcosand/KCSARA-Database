@@ -15,11 +15,11 @@
     <tr><th>Core/Legal</th><%: CCStatus("Core/Legal.C", false) %><%: CCStatus("Core/Legal.WE", false) %><td></td></tr>
     <tr><th>Core/Management</th><td></td><%: CCStatus("Core/Management.WE", false) %><td></td></tr>
     <tr><th>Core/Nav</th><td></td><%: CCStatus("Core/Nav.WE", false) %><%: CCStatus("Core/Nav.PE", false) %></tr>
-    <tr><th>Core/Radio</th><td></td><%: CCStatus("Core/Radio.WE", false) %><%: CCStatus("Core/Radio.WE", false) %></tr>
-    <tr><th>Core/Rescue</th><td></td><%: CCStatus("Core/Rescue.WE", false) %><%: CCStatus("Core/Rescue.WE", false) %></tr>
-    <tr><th>Core/Safety</th><td></td><%: CCStatus("Core/Safety.WE", false) %><%: CCStatus("Core/Safety.WE", false) %></tr>
-    <tr><th>Core/Search</th><td></td><%: CCStatus("Core/Search.WE", false) %><%: CCStatus("Core/Search.WE", false) %></tr>
-    <tr><th>Core/Survival</th><td></td><%: CCStatus("Core/Survival.WE", false) %><%: CCStatus("Core/Survival.WE", false) %></tr>
+    <tr><th>Core/Radio</th><td></td><%: CCStatus("Core/Radio.WE", false) %><%: CCStatus("Core/Radio.PE", false) %></tr>
+    <tr><th>Core/Rescue</th><td></td><%: CCStatus("Core/Rescue.WE", false) %><%: CCStatus("Core/Rescue.PE", false) %></tr>
+    <tr><th>Core/Safety</th><td></td><%: CCStatus("Core/Safety.WE", false) %><%: CCStatus("Core/Safety.PE", false) %></tr>
+    <tr><th>Core/Search</th><td></td><%: CCStatus("Core/Search.WE", false) %><%: CCStatus("Core/Search.PE", false) %></tr>
+    <tr><th>Core/Survival</th><td></td><%: CCStatus("Core/Survival.WE", false) %><%: CCStatus("Core/Survival.PE", false) %></tr>
   </tbody>
 </table>
 <script runat="server">
