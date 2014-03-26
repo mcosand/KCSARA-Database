@@ -21,6 +21,11 @@ namespace Kcsar.Database.Model
       this.Id = Guid.NewGuid();
     }
 
+    public override string ToString()
+    {
+      return GetReportHtml();
+    }
+
     public abstract string GetReportHtml();
 
     public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

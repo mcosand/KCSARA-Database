@@ -116,6 +116,42 @@ namespace Internal.Database.Model
       }
     }
 
+    [Test]
+    public void LogPrincipalChanged()
+    {
+      Member first;
+      Member second;
+      PersonAddress address;
+      using (var db = new KcsarContext(this.databaseLocation))
+      {
+        first = new Member { FirstName = "First" };
+        db.Members.Add(first);
+        second = new Member { FirstName = "Second" };
+        db.Members.Add(second);
+        address = new PersonAddress { Person = first, Street = "123", City = "Any", State = "WA", Zip = "98765" };
+        first.Addresses.Add(address);
+
+        db.SaveChanges();
+      }
+
+      var checkpoint = GetCheckpoint();
+      using (var db = new KcsarContext(this.databaseLocation))
+      {
+        address = db.Members.Where(f => f.Id == first.Id).SelectMany(f => f.Addresses).Single();
+        address.Person = db.Members.Single(f => f.Id == second.Id);
+        db.SaveChanges();
+      }
+
+      using (var db = new KcsarContext(this.databaseLocation))
+      {
+        var logs = db.GetLog(checkpoint);
+        Assert.AreEqual(1, logs.Length, "log count");
+        Assert.AreEqual(string.Format("{0}<br/>{1} => {2}",
+          address, first, second), logs[0].Comment);
+        Assert.AreEqual("Modified", logs[0].Action);
+      }       
+    }
+
     // Wait long enough to pass the resolution of the sql time check.
     private static DateTime GetCheckpoint()
     {

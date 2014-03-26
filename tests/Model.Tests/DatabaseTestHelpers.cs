@@ -73,7 +73,6 @@ namespace Internal.Database.Model
 
     class TestConfiguration : DbMigrationsConfiguration<KcsarContext>
     {
-      private string connectionString = null;
       public TestConfiguration(string connString)
       {
         AutomaticMigrationDataLossAllowed = true;
