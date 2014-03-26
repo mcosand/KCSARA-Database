@@ -31,7 +31,7 @@ namespace Internal.Website.Missions
         // time field should auto-populate with current time
         var time = form.FindElement(By.Id("time"));
         DateTime t = DateTime.Parse(time.GetAttribute("value"));
-        Assert.Less(10, Math.Abs((DateTime.Now - t).TotalSeconds), "current time");
+        Assert.Less(Math.Abs((DateTime.Now - t).TotalSeconds), 10, "current time");
 
         // submit with no time
         time.Clear();
