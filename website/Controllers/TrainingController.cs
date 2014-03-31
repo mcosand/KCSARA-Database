@@ -905,6 +905,7 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
     [Authorize(Roles = "cdb.admins")]
     public ActionResult EditCourse(Guid id, FormCollection fields)
     {
+      ViewData["HideFrame"] = true;
       TrainingCourse c = GetCourse(id);
       return InternalSaveCourse(c, fields);
     }
@@ -912,20 +913,13 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
 
     private ActionResult InternalSaveCourse(TrainingCourse c, FormCollection fields)
     {
-      try
-      {
-        TryUpdateModel(c, new string[] { "DisplayName", "FullName", "OfferedFrom", "OfferedTo", "ValidMonths", "ShowOnCard", "WacRequired" });
+      TryUpdateModel(c, new string[] { "DisplayName", "FullName", "OfferedFrom", "OfferedTo", "ValidMonths", "ShowOnCard", "WacRequired" });
 
-        if (ModelState.IsValid)
-        {
-          this.db.SaveChanges();
-          TempData["message"] = "Saved";
-          return RedirectToAction("ClosePopup");
-        }
-      }
-      catch (RuleViolationsException ex)
+      if (ModelState.IsValid)
       {
-        this.CollectRuleViolations(ex, fields);
+        this.db.SaveChanges();
+        TempData["message"] = "Saved";
+        return RedirectToAction("ClosePopup");
       }
       return InternalEditCourse(c);
     }
@@ -1079,7 +1073,7 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
           wrap.SetCellValue(trainee.LastName, row, col++);
           wrap.SetCellValue(trainee.FirstName, row, col++);
           wrap.SetCellValue(trainee.BirthDate.HasValue ? ((trainee.BirthDate.Value.AddYears(21) > DateTime.Today) ? "Y" : "A") : "?", row, col++);
-          wrap.SetCellValue(trainee.InternalGender, row, col++);
+          wrap.SetCellValue(trainee.Gender.ToString().Substring(0,1), row, col++);
           wrap.SetCellValue(string.Join("\n", trainee.ContactNumbers.Where(f => f.Type.ToLowerInvariant() == "phone" && f.Subtype.ToLowerInvariant() == "home").Select(f => f.Value).ToArray()), row, col++);
           wrap.SetCellValue(string.Join("\n", trainee.ContactNumbers.Where(f => f.Type.ToLowerInvariant() == "phone" && f.Subtype.ToLowerInvariant() == "cell").Select(f => f.Value).ToArray()), row, col++);
           wrap.SetCellValue(string.Join("\n", trainee.ContactNumbers.Where(f => f.Type.ToLowerInvariant() == "email").Select(f => f.Value).ToArray()), row, col++);

@@ -301,8 +301,8 @@ namespace Kcsara.Database.Web.Controllers
         this.db.MissionGeography.Add(geog);
       }
 
-      try
-      {
+      //try
+      //{
         if (geog.Kind != wpt.Kind) geog.Kind = wpt.Kind;
         if (geog.InstanceId != wpt.InstanceId) geog.InstanceId = wpt.InstanceId;
 
@@ -320,15 +320,15 @@ namespace Kcsara.Database.Web.Controllers
           this.db.SaveChanges();
         }
 
-      }
-      catch (RuleViolationsException ex)
-      {
-        //this.CollectRuleViolations(ex, fields);
-        foreach (RuleViolation v in ex.Errors)
-        {
-          errors.Add(new SubmitError { Error = v.ErrorMessage, Property = v.PropertyName, Id = new[] { v.EntityKey } });
-        }
-      }
+      //}
+      //catch (RuleViolationsException ex)
+      //{
+      //  //this.CollectRuleViolations(ex, fields);
+      //  foreach (RuleViolation v in ex.Errors)
+      //  {
+      //    errors.Add(new SubmitError { Error = v.ErrorMessage, Property = v.PropertyName, Id = new[] { v.EntityKey } });
+      //  }
+      //}
 
       return Data(new SubmitResult<GeographyView>
       {

@@ -9,368 +9,368 @@
 
 (function ($) {
 
-    $.suggest = function (input, options) {
+  $.suggest = function (input, options) {
 
-        var $input = $(input).attr("autocomplete", "off");
-        var results;
+    var $input = $(input).attr("autocomplete", "off");
+    var results;
 
-        var timeout = false; 	// hold timeout ID for suggestion results to appear	
-        var prevLength = 0; 		// last recorded length of $input.val()
-        var cache = []; 			// cache MRU list
-        var cacheSize = 0; 		// size of cache in chars (bytes?)
+    var timeout = false; 	// hold timeout ID for suggestion results to appear	
+    var prevLength = 0; 		// last recorded length of $input.val()
+    var cache = []; 			// cache MRU list
+    var cacheSize = 0; 		// size of cache in chars (bytes?)
 
-        var lookup = [];
-        var lastCall = "";
+    var lookup = [];
+    var lastCall = "";
 
-        results = $('<ul class="ac_results"></ul>').appendTo('body');
-
-
-        //results.addClass(options.resultsClass);
-
-        resetPosition();
-        $(window)
-				.load(resetPosition)		// just in case user is changing size of page while loading
-				.resize(resetPosition);
-
-        $input.blur(function () {
-            setTimeout(function () { results.hide() }, 200);
-        });
-
-        // help IE users if possible
-        try {
-            results.bgiframe();
-        } catch (e) { }
+    results = $('<ul class="ac_results"></ul>').appendTo('body');
 
 
-        // I really hate browser detection, but I don't see any other way
-        //if ($.browser.mozilla)
-        //    $input.keypress(processKey); // onkeypress repeats arrow keys in Mozilla/Opera
-        //else
-            $input.keydown(processKey); 	// onkeydown repeats arrow keys in IE/Safari
+    //results.addClass(options.resultsClass);
 
-        $input.keyup(function () {
-            if ($input.val().length != prevLength) {
-                $input.css("backgroundColor", "#ffffbb");
+    resetPosition();
+    $(window)
+    .load(resetPosition)		// just in case user is changing size of page while loading
+    .resize(resetPosition);
 
-                //                var dem = $("#dem_" + options.dataContainer);
-                //                dem.attr('disabled', false);
-                //                dem.css("backgroundColor", "#ffffbb");
-                //                if (options.onClear) {
-                //                    options.onClear.apply(options.dataContainer);
-                //                }
+    $input.blur(function () {
+      setTimeout(function () { results.hide() }, 200);
+    });
 
-            }
-        });
+    // help IE users if possible
+    try {
+      results.bgiframe();
+    } catch (e) { }
 
 
-        function resetPosition() {
-            // requires jquery.dimension plugin
-            var offset = $input.offset();
-            results.css({
-                top: (offset.top + input.offsetHeight) + 'px',
-                left: offset.left + 'px'
-            });
-        }
+    // I really hate browser detection, but I don't see any other way
+    //if ($.browser.mozilla)
+    //    $input.keypress(processKey); // onkeypress repeats arrow keys in Mozilla/Opera
+    //else
+    $input.keydown(processKey); 	// onkeydown repeats arrow keys in IE/Safari
+
+    $input.keyup(function () {
+      if ($input.val().length != prevLength) {
+        $input.css("backgroundColor", "#ffffbb");
+
+        //                var dem = $("#dem_" + options.dataContainer);
+        //                dem.attr('disabled', false);
+        //                dem.css("backgroundColor", "#ffffbb");
+        //                if (options.onClear) {
+        //                    options.onClear.apply(options.dataContainer);
+        //                }
+
+      }
+    });
 
 
-        function processKey(e) {
+    function resetPosition() {
+      // requires jquery.dimension plugin
+      var offset = $input.offset();
+      results.css({
+        top: (offset.top + input.offsetHeight) + 'px',
+        left: offset.left + 'px'
+      });
+    }
 
-            // handling up/down/escape requires results to be visible
-            // handling enter/tab requires that AND a result to be selected
-            if ((/27$|38$|40$/.test(e.keyCode) && results.is(':visible')) ||
-					(/^13$|^9$/.test(e.keyCode) && getCurrentResult())) {
 
-                if (e.preventDefault)
-                    e.preventDefault();
-                if (e.stopPropagation)
-                    e.stopPropagation();
+    function processKey(e) {
 
-                e.cancelBubble = true;
-                e.returnValue = false;
+      // handling up/down/escape requires results to be visible
+      // handling enter/tab requires that AND a result to be selected
+      if ((/27$|38$|40$/.test(e.keyCode) && results.is(':visible')) ||
+    (/^13$|^9$/.test(e.keyCode) && getCurrentResult())) {
 
-                switch (e.keyCode) {
+        if (e.preventDefault)
+          e.preventDefault();
+        if (e.stopPropagation)
+          e.stopPropagation();
 
-                    case 38: // up
-                        prevResult();
-                        break;
+        e.cancelBubble = true;
+        e.returnValue = false;
 
-                    case 40: // down
-                        nextResult();
-                        break;
+        switch (e.keyCode) {
 
-                    case 9:  // tab
-                    case 13: // return
-                        selectCurrentResult();
-                        break;
+          case 38: // up
+            prevResult();
+            break;
 
-                    case 27: //	escape
-                        results.hide();
-                        break;
+          case 40: // down
+            nextResult();
+            break;
 
-                }
+          case 9:  // tab
+          case 13: // return
+            selectCurrentResult();
+            break;
 
-            } else if ($input.val().length != prevLength) {
-                if (timeout)
-                    clearTimeout(timeout);
-                timeout = setTimeout(suggest, options.delay);
-                prevLength = $input.val().length;
-
-            }
-
+          case 27: //	escape
+            results.hide();
+            break;
 
         }
 
+      } else if ($input.val().length != prevLength) {
+        if (timeout)
+          clearTimeout(timeout);
+        timeout = setTimeout(suggest, options.delay);
+        prevLength = $input.val().length;
 
-        function suggest() {
+      }
 
-            var q = $.trim($input.val());
-
-            if (q.length >= options.minchars) {
-
-                cached = checkCache(q);
-
-                if (cached) {
-
-                    displayItems(eval(cached['items']));
-
-                } else {
-
-                    var progress = $("#progress");
-                    if (progress != null) {
-                        var offset = $input.offset();
-                        progress.css({
-                            top: (offset.top + ($input.outerHeight() - progress.outerHeight()) / 2) + 'px',
-                            left: (offset.left - progress.outerWidth()) + 'px'
-                        });
-                        progress.show();
-                    }
-
-                    var oldBg = $input.css("backgroundColor");
-                    $input.css("backgroundColor", "Orange");
-
-                    lastCall = q;
-
-                    $.ajax({
-                        type: 'POST', url: options.source, data: { q: q }, dataType: 'json',
-                        success: function (txt) {
-                            addToCache(q, txt, txt.length);
-                            if (q != lastCall) {
-                                return;
-                            }
-
-                            results.hide();
-
-                            var items = eval(txt);  //parseTxt(txt, q);
-                            lookup = [];
-
-                            displayItems(items);
-
-                            if (progress != null) {
-                                progress.hide();
-                            }
-                            $input.css("backgroundColor", oldBg);
-                        }
-                    });
-
-                }
-
-            } else {
-
-                results.hide();
-
-            }
-
-        }
-
-
-        function checkCache(q) {
-
-            for (var i = 0; i < cache.length; i++)
-                if (cache[i]['q'] == q) {
-                    cache.unshift(cache.splice(i, 1)[0]);
-                    return cache[0];
-                }
-
-            return false;
-
-        }
-
-        function addToCache(q, items, size) {
-
-            while (cache.length && (cacheSize + size > options.maxCacheSize)) {
-                var cached = cache.pop();
-                cacheSize -= cached['size'];
-            }
-
-            cache.push({
-                q: q,
-                size: size,
-                items: items
-            });
-
-            cacheSize += size;
-
-        }
-
-        function displayItems(items) {
-
-            if (!items)
-                return;
-
-            if (!items.length) {
-                results.hide();
-                return;
-            }
-
-            var html = '';
-            for (var i = 0; i < items.length; i++) {
-                html += '<li id="s_' + items[i]['Id'] + '">' + items[i]['Name'] + ' [' + items[i]['DEM'] + ']' + '</li>';
-                lookup[items[i]['Id']] = items[i];
-            }
-            resetPosition();
-            results.html(html).show();
-
-            results
-					.children('li')
-					.mouseover(function () {
-					    results.children('li').removeClass(options.selectClass);
-					    $(this).addClass(options.selectClass);
-					})
-					.click(function (e) {
-					    e.preventDefault();
-					    e.stopPropagation();
-					    selectCurrentResult();
-					});
-
-        }
-
-        function parseTxt(txt, q) {
-
-            var items = [];
-            var tokens = txt.split(options.delimiter);
-
-            // parse returned data for non-empty items
-            for (var i = 0; i < tokens.length; i++) {
-                var data = $.trim(tokens[i]).split(options.dataDelimiter);
-                if (data.length > 1) {
-                    token = data[0];
-                    key = data[1];
-                }
-                else {
-                    token = data[0]
-                    key = '';
-                }
-
-                if (token) {
-                    token = token.replace(
-							new RegExp(q, 'ig'),
-							function (q) { return '<span class="' + options.matchClass + '">' + q + '</span>' }
-							);
-                    items[items.length] = { 'value': token, 'key': key };
-                }
-            }
-
-            return items;
-        }
-
-        function getCurrentResult() {
-
-            if (!results.is(':visible'))
-                return false;
-
-            var $currentResult = results.children('li.' + options.selectClass);
-
-            if (!$currentResult.length)
-                $currentResult = false;
-
-            return $currentResult;
-
-        }
-
-        function selectCurrentResult() {
-
-            $currentResult = getCurrentResult();
-
-            if ($currentResult) {
-                var $id = $currentResult.attr('id').replace('s_', '');
-
-                $input.val(lookup[$id].Name);
-                results.hide();
-
-                if (options.dataContainer) {
-                    $("#pid_" + options.dataContainer).val($id);
-                    var dem = $("#dem_" + options.dataContainer);
-                    dem.val(lookup[$id].DEM);
-                    dem.attr('disabled', true);
-                    dem.css('backgroundColor', "#ffffff");
-                }
-
-                if (options.onSelect) {
-                    options.onSelect.apply($input[0], new Array(options.dataContainer, lookup[$id]));
-                }
-
-                $input.css("backgroundColor", "#ffffff");
-                prevLength = $input.val().length;
-            }
-
-        }
-
-        function nextResult() {
-
-            $currentResult = getCurrentResult();
-
-            if ($currentResult)
-                $currentResult
-						.removeClass(options.selectClass)
-						.next()
-							.addClass(options.selectClass);
-            else
-                results.children('li:first-child').addClass(options.selectClass);
-
-        }
-
-        function prevResult() {
-
-            $currentResult = getCurrentResult();
-
-            if ($currentResult)
-                $currentResult
-						.removeClass(options.selectClass)
-						.prev()
-							.addClass(options.selectClass);
-            else
-                results.children('li:last-child').addClass(options.selectClass);
-
-        }
 
     }
 
-    $.fn.suggest = function (source, options) {
 
-        if (!source)
-            return;
+    function suggest() {
 
-        options = options || {};
-        options.source = source;
-        options.delay = options.delay || 150;
-        options.resultsClass = options.resultsClass || 'ac_results';
-        options.selectClass = options.selectClass || 'ac_over';
-        options.matchClass = options.matchClass || 'ac_match';
-        options.minchars = options.minchars || 2;
-        options.delimiter = options.delimiter || '\n';
-        options.onSelect = options.onSelect || false;
-        options.maxCacheSize = options.maxCacheSize || 65536;
-        options.dataDelimiter = options.dataDelimiter || '\t';
-        options.dataContainer = options.dataContainer || '#SuggestResult';
-        options.attachObject = options.attachObject || null;
+      var q = $.trim($input.val());
 
-        this.each(function () {
-            new $.suggest(this, options);
-        });
+      if (q.length >= options.minchars) {
 
-        return this;
+        cached = checkCache(q);
 
-    };
+        if (cached) {
+
+          displayItems(eval(cached['items']));
+
+        } else {
+
+          var progress = $("#progress");
+          if (progress != null) {
+            var offset = $input.offset();
+            progress.css({
+              top: (offset.top + ($input.outerHeight() - progress.outerHeight()) / 2) + 'px',
+              left: (offset.left - progress.outerWidth()) + 'px'
+            });
+            progress.show();
+          }
+
+          var oldBg = $input.css("backgroundColor");
+          $input.css("backgroundColor", "Orange");
+
+          lastCall = q;
+
+          $.ajax({
+            type: 'POST', url: options.source, data: { q: q }, dataType: 'json',
+            success: function (txt) {
+              addToCache(q, txt, txt.length);
+              if (q != lastCall) {
+                return;
+              }
+
+              results.hide();
+
+              var items = eval(txt);  //parseTxt(txt, q);
+              lookup = [];
+
+              displayItems(items);
+
+              if (progress != null) {
+                progress.hide();
+              }
+              $input.css("backgroundColor", oldBg);
+            }
+          });
+
+        }
+
+      } else {
+
+        results.hide();
+
+      }
+
+    }
+
+
+    function checkCache(q) {
+
+      for (var i = 0; i < cache.length; i++)
+        if (cache[i]['q'] == q) {
+          cache.unshift(cache.splice(i, 1)[0]);
+          return cache[0];
+        }
+
+      return false;
+
+    }
+
+    function addToCache(q, items, size) {
+
+      while (cache.length && (cacheSize + size > options.maxCacheSize)) {
+        var cached = cache.pop();
+        cacheSize -= cached['size'];
+      }
+
+      cache.push({
+        q: q,
+        size: size,
+        items: items
+      });
+
+      cacheSize += size;
+
+    }
+
+    function displayItems(items) {
+
+      if (!items)
+        return;
+
+      if (!items.length) {
+        results.hide();
+        return;
+      }
+
+      var html = '';
+      for (var i = 0; i < items.length; i++) {
+        html += '<li id="s_' + items[i]['Id'] + '">' + items[i]['Name'] + ' [' + items[i]['DEM'] + ']' + '</li>';
+        lookup[items[i]['Id']] = items[i];
+      }
+      resetPosition();
+      results.html(html).show();
+
+      results
+    .children('li')
+    .mouseover(function () {
+      results.children('li').removeClass(options.selectClass);
+      $(this).addClass(options.selectClass);
+    })
+    .click(function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      selectCurrentResult();
+    });
+
+    }
+
+    function parseTxt(txt, q) {
+
+      var items = [];
+      var tokens = txt.split(options.delimiter);
+
+      // parse returned data for non-empty items
+      for (var i = 0; i < tokens.length; i++) {
+        var data = $.trim(tokens[i]).split(options.dataDelimiter);
+        if (data.length > 1) {
+          token = data[0];
+          key = data[1];
+        }
+        else {
+          token = data[0]
+          key = '';
+        }
+
+        if (token) {
+          token = token.replace(
+            new RegExp(q, 'ig'),
+            function (q) { return '<span class="' + options.matchClass + '">' + q + '</span>' }
+            );
+          items[items.length] = { 'value': token, 'key': key };
+        }
+      }
+
+      return items;
+    }
+
+    function getCurrentResult() {
+
+      if (!results.is(':visible'))
+        return false;
+
+      var $currentResult = results.children('li.' + options.selectClass);
+
+      if (!$currentResult.length)
+        $currentResult = false;
+
+      return $currentResult;
+
+    }
+
+    function selectCurrentResult() {
+
+      $currentResult = getCurrentResult();
+
+      if ($currentResult) {
+        var $id = $currentResult.attr('id').replace('s_', '');
+
+        $input.val(lookup[$id].Name);
+        results.hide();
+
+        if (options.dataContainer) {
+          $("#pid_" + options.dataContainer).val($id);
+          var dem = $("#dem_" + options.dataContainer);
+          dem.val(lookup[$id].DEM);
+          dem.attr('disabled', true);
+          dem.css('backgroundColor', "#ffffff");
+        }
+
+        if (options.onSelect) {
+          options.onSelect.apply($input[0], new Array(options.dataContainer, lookup[$id]));
+        }
+
+        $input.css("backgroundColor", "#ffffff");
+        prevLength = $input.val().length;
+      }
+
+    }
+
+    function nextResult() {
+
+      $currentResult = getCurrentResult();
+
+      if ($currentResult)
+        $currentResult
+    .removeClass(options.selectClass)
+    .next()
+      .addClass(options.selectClass);
+      else
+        results.children('li:first-child').addClass(options.selectClass);
+
+    }
+
+    function prevResult() {
+
+      $currentResult = getCurrentResult();
+
+      if ($currentResult)
+        $currentResult
+    .removeClass(options.selectClass)
+    .prev()
+      .addClass(options.selectClass);
+      else
+        results.children('li:last-child').addClass(options.selectClass);
+
+    }
+
+  }
+
+  $.fn.suggest = function (source, options) {
+
+    if (!source)
+      return;
+
+    options = options || {};
+    options.source = source;
+    options.delay = options.delay || 150;
+    options.resultsClass = options.resultsClass || 'ac_results';
+    options.selectClass = options.selectClass || 'ac_over';
+    options.matchClass = options.matchClass || 'ac_match';
+    options.minchars = options.minchars || 2;
+    options.delimiter = options.delimiter || '\n';
+    options.onSelect = options.onSelect || false;
+    options.maxCacheSize = options.maxCacheSize || 65536;
+    options.dataDelimiter = options.dataDelimiter || '\t';
+    options.dataContainer = options.dataContainer || '#SuggestResult';
+    options.attachObject = options.attachObject || null;
+
+    this.each(function () {
+      new $.suggest(this, options);
+    });
+
+    return this;
+
+  };
 
 })(jQuery);
 
@@ -390,718 +390,718 @@
 // Requires: jquery-json, jquery
 (function ($) {
 
-    $.suggest2 = function (input, options) {
-        var $input = $(input).attr("autocomplete", "off");
-        var results;
+  $.suggest2 = function (input, options) {
+    var $input = $(input).attr("autocomplete", "off");
+    var results;
 
-        var timeout = false; 	// hold timeout ID for suggestion results to appear	
-        var prevText = $input.val(); 		// last recorded length of $input.val()
-        var cache = []; 			// cache MRU list
-        var cacheSize = 0; 		// size of cache in chars (bytes?)
+    var timeout = false; 	// hold timeout ID for suggestion results to appear	
+    var prevText = $input.val(); 		// last recorded length of $input.val()
+    var cache = []; 			// cache MRU list
+    var cacheSize = 0; 		// size of cache in chars (bytes?)
 
-        var lookup = [];
-        var lastCall = "";
+    var lookup = [];
+    var lastCall = "";
 
-        if (!options.attachObject)
-            options.attachObject = $(document.createElement("ul")).appendTo('body');
+    if (!options.attachObject)
+      options.attachObject = $(document.createElement("ul")).appendTo('body');
 
-        results = $(options.attachObject);
-        results.addClass(options.resultsClass);
+    results = $(options.attachObject);
+    results.addClass(options.resultsClass);
 
-        resetPosition();
-        $(window)
-				.load(resetPosition)		// just in case user is changing size of page while loading
-				.resize(resetPosition);
+    resetPosition();
+    $(window)
+    .load(resetPosition)		// just in case user is changing size of page while loading
+    .resize(resetPosition);
 
-        $input.blur(function () {
-            setTimeout(function () { results.hide() }, 200);
-        });
+    $input.blur(function () {
+      setTimeout(function () { results.hide() }, 200);
+    });
 
-        // help IE users if possible
-        try {
-            results.bgiframe();
-        } catch (e) { }
-
-
-        // I really hate browser detection, but I don't see any other way
-        if ($.browser.mozilla)
-            $input.keypress(processKey); // onkeypress repeats arrow keys in Mozilla/Opera
-        else
-            $input.keydown(processKey); 	// onkeydown repeats arrow keys in IE/Safari
-
-        $input.keyup(function () {
-            if ($input.val().length != prevText.length) {
-                $input.css("backgroundColor", "#ffffbb");
-                $input.removeAttr("result");
-
-                var dem = $("#dem_" + options.dataContainer);
-                dem.attr('disabled', false);
-                dem.css("backgroundColor", "#ffffbb");
-                if (options.onClear) {
-                    options.onClear.apply(options.dataContainer);
-                }
-
-            }
-        });
+    // help IE users if possible
+    try {
+      results.bgiframe();
+    } catch (e) { }
 
 
-        function resetPosition() {
-            // requires jquery.dimension plugin
-            var offset = $input.offset();
-            results.css({
-                top: (offset.top + input.offsetHeight) + 'px',
-                left: offset.left + 'px'
-            });
+    // I really hate browser detection, but I don't see any other way
+    //if ($.browser.mozilla)
+    //  $input.keypress(processKey); // onkeypress repeats arrow keys in Mozilla/Opera
+    //else
+      $input.keydown(processKey); 	// onkeydown repeats arrow keys in IE/Safari
+
+    $input.keyup(function () {
+      if ($input.val().length != prevText.length) {
+        $input.css("backgroundColor", "#ffffbb");
+        $input.removeAttr("result");
+
+        var dem = $("#dem_" + options.dataContainer);
+        dem.attr('disabled', false);
+        dem.css("backgroundColor", "#ffffbb");
+        if (options.onClear) {
+          options.onClear.apply(options.dataContainer);
         }
 
+      }
+    });
 
-        function processKey(e) {
 
-            // handling up/down/escape requires results to be visible
-            // handling enter/tab requires that AND a result to be selected
-            if ((/27$|38$|40$/.test(e.keyCode) && results.is(':visible')) ||
-					(/^13$|^9$/.test(e.keyCode) && getCurrentResult())) {
+    function resetPosition() {
+      // requires jquery.dimension plugin
+      var offset = $input.offset();
+      results.css({
+        top: (offset.top + input.offsetHeight) + 'px',
+        left: offset.left + 'px'
+      });
+    }
 
-                if (e.preventDefault)
-                    e.preventDefault();
-                if (e.stopPropagation)
-                    e.stopPropagation();
 
-                e.cancelBubble = true;
-                e.returnValue = false;
+    function processKey(e) {
 
-                switch (e.keyCode) {
+      // handling up/down/escape requires results to be visible
+      // handling enter/tab requires that AND a result to be selected
+      if ((/27$|38$|40$/.test(e.keyCode) && results.is(':visible')) ||
+    (/^13$|^9$/.test(e.keyCode) && getCurrentResult())) {
 
-                    case 38: // up
-                        prevResult();
-                        break;
+        if (e.preventDefault)
+          e.preventDefault();
+        if (e.stopPropagation)
+          e.stopPropagation();
 
-                    case 40: // down
-                        nextResult();
-                        break;
+        e.cancelBubble = true;
+        e.returnValue = false;
 
-                    case 9:  // tab
-                    case 13: // return
-                        selectCurrentResult();
-                        break;
+        switch (e.keyCode) {
 
-                    case 27: //	escape
-                        results.hide();
-                        break;
+          case 38: // up
+            prevResult();
+            break;
 
-                }
+          case 40: // down
+            nextResult();
+            break;
 
-            } else if ($input.val().length != prevText.length) {
-                if (timeout)
-                    clearTimeout(timeout);
-                timeout = setTimeout(suggest, options.delay);
-                //                prevLength = $input.val().length;
+          case 9:  // tab
+          case 13: // return
+            selectCurrentResult();
+            break;
 
-            }
-
+          case 27: //	escape
+            results.hide();
+            break;
 
         }
 
+      } else if ($input.val().length != prevText.length) {
+        if (timeout)
+          clearTimeout(timeout);
+        timeout = setTimeout(suggest, options.delay);
+        //                prevLength = $input.val().length;
 
-        function suggest() {
+      }
 
-            var q = $.trim($input.val());
-
-            if (q.length >= options.minchars) {
-
-                cached = checkCache(q);
-
-                if (cached) {
-
-                    displayItems(eval(cached['items']));
-
-                } else {
-
-                    var progress = $("#progress");
-                    if (progress != null) {
-                        var offset = $input.offset();
-                        progress.css({
-                            top: (offset.top + ($input.outerHeight() - progress.outerHeight()) / 2) + 'px',
-                            left: (offset.left - progress.outerWidth()) + 'px'
-                        });
-                        progress.show();
-                    }
-
-                    var oldBg = $input.css("backgroundColor");
-                    $input.css("backgroundColor", "Orange");
-
-                    lastCall = q;
-
-                    $.ajax({
-                        type: 'POST', url: options.source, data: { q: q, when: ($("#StartDay").val()) }, dataType: 'json',
-                        success: function (txt) {
-                            addToCache(q, txt, txt.length);
-                            if (q != lastCall) {
-                                return;
-                            }
-
-                            results.hide();
-
-                            var items = eval(txt);  //parseTxt(txt, q);
-                            lookup = [];
-
-                            displayItems(items);
-
-                            if (progress != null) {
-                                progress.hide();
-                            }
-                            $input.css("backgroundColor", oldBg);
-                        }
-                    });
-                }
-
-            } else {
-
-                results.hide();
-
-            }
-
-        }
-
-
-        function checkCache(q) {
-
-            for (var i = 0; i < cache.length; i++)
-                if (cache[i]['q'] == q) {
-                    cache.unshift(cache.splice(i, 1)[0]);
-                    return cache[0];
-                }
-
-            return false;
-
-        }
-
-        function addToCache(q, items, size) {
-
-            while (cache.length && (cacheSize + size > options.maxCacheSize)) {
-                var cached = cache.pop();
-                cacheSize -= cached['size'];
-            }
-
-            cache.push({
-                q: q,
-                size: size,
-                items: items
-            });
-
-            cacheSize += size;
-
-        }
-
-        function displayItems(items) {
-
-            if (!items)
-                return;
-
-            if (!items.length) {
-                results.hide();
-                return;
-            }
-
-            var html = '';
-            for (var i = 0; i < items.length; i++) {
-                html += '<li id="s_' + items[i]['Id'] + '">' + items[i]['Name'] + ' [' + items[i]['DEM'] + ']' + '</li>';
-                lookup[items[i]['Id']] = items[i];
-            }
-            resetPosition();
-            results.html(html).show();
-
-            results
-					.children('li')
-					.mouseover(function () {
-					    results.children('li').removeClass(options.selectClass);
-					    $(this).addClass(options.selectClass);
-					})
-					.click(function (e) {
-					    e.preventDefault();
-					    e.stopPropagation();
-					    selectCurrentResult();
-					});
-
-        }
-
-        function parseTxt(txt, q) {
-
-            var items = [];
-            var tokens = txt.split(options.delimiter);
-
-            // parse returned data for non-empty items
-            for (var i = 0; i < tokens.length; i++) {
-                var data = $.trim(tokens[i]).split(options.dataDelimiter);
-                if (data.length > 1) {
-                    token = data[0];
-                    key = data[1];
-                }
-                else {
-                    token = data[0]
-                    key = '';
-                }
-
-                if (token) {
-                    token = token.replace(
-							new RegExp(q, 'ig'),
-							function (q) { return '<span class="' + options.matchClass + '">' + q + '</span>' }
-							);
-                    items[items.length] = { 'value': token, 'key': key };
-                }
-            }
-
-            return items;
-        }
-
-        function getCurrentResult() {
-
-            if (!results.is(':visible'))
-                return false;
-
-            var $currentResult = results.children('li.' + options.selectClass);
-
-            if (!$currentResult.length)
-                $currentResult = false;
-
-            return $currentResult;
-
-        }
-
-        function selectCurrentResult() {
-            $currentResult = getCurrentResult();
-
-            if ($currentResult) {
-                var $id = $currentResult.attr('id').replace('s_', '');
-                $input.val(lookup[$id].Name);
-                $input.attr("result", JSON.stringify(lookup[$id]));
-
-                results.hide();
-
-                if (options.dataContainer) {
-                    $("#pid_" + options.dataContainer).val($id);
-                    var dem = $("#dem_" + options.dataContainer);
-                    dem.val(lookup[$id].DEM);
-                    dem.attr('disabled', true);
-                    dem.css('backgroundColor', "#ffffff");
-                }
-
-                if (options.onSelect) {
-                    options.onSelect.apply($input[0], new Array(options.dataContainer, lookup[$id]));
-                }
-
-                $input.css("backgroundColor", "#ffffff");
-                //            prevLength = $input.val().length;
-            }
-
-        }
-
-        function nextResult() {
-
-            $currentResult = getCurrentResult();
-
-            if ($currentResult)
-                $currentResult
-						.removeClass(options.selectClass)
-						.next()
-							.addClass(options.selectClass);
-            else
-                results.children('li:first-child').addClass(options.selectClass);
-
-        }
-
-        function prevResult() {
-
-            $currentResult = getCurrentResult();
-
-            if ($currentResult)
-                $currentResult
-						.removeClass(options.selectClass)
-						.prev()
-							.addClass(options.selectClass);
-            else
-                results.children('li:last-child').addClass(options.selectClass);
-
-        }
 
     }
 
-    $.fn.suggest2 = function (source, options) {
-        if (!source)
-            return;
 
-        options = options || {};
-        options.source = source;
-        options.delay = options.delay || 150;
-        options.resultsClass = options.resultsClass || 'ac_results';
-        options.selectClass = options.selectClass || 'ac_over';
-        options.matchClass = options.matchClass || 'ac_match';
-        options.minchars = options.minchars || 2;
-        options.delimiter = options.delimiter || '\n';
-        options.onSelect = options.onSelect || false;
-        options.maxCacheSize = options.maxCacheSize || 65536;
-        options.dataDelimiter = options.dataDelimiter || '\t';
-        //       options.dataContainer = options.dataContainer || '#SuggestResult';
-        //       options.attachObject = options.attachObject || null;
+    function suggest() {
 
-        this.each(function () {
-            new $.suggest2(this, options);
-        });
+      var q = $.trim($input.val());
 
-        return this;
+      if (q.length >= options.minchars) {
 
-    };
+        cached = checkCache(q);
+
+        if (cached) {
+
+          displayItems(eval(cached['items']));
+
+        } else {
+
+          var progress = $("#progress");
+          if (progress != null) {
+            var offset = $input.offset();
+            progress.css({
+              top: (offset.top + ($input.outerHeight() - progress.outerHeight()) / 2) + 'px',
+              left: (offset.left - progress.outerWidth()) + 'px'
+            });
+            progress.show();
+          }
+
+          var oldBg = $input.css("backgroundColor");
+          $input.css("backgroundColor", "Orange");
+
+          lastCall = q;
+
+          $.ajax({
+            type: 'POST', url: options.source, data: { q: q, when: ($("#StartDay").val()) }, dataType: 'json',
+            success: function (txt) {
+              addToCache(q, txt, txt.length);
+              if (q != lastCall) {
+                return;
+              }
+
+              results.hide();
+
+              var items = eval(txt);  //parseTxt(txt, q);
+              lookup = [];
+
+              displayItems(items);
+
+              if (progress != null) {
+                progress.hide();
+              }
+              $input.css("backgroundColor", oldBg);
+            }
+          });
+        }
+
+      } else {
+
+        results.hide();
+
+      }
+
+    }
+
+
+    function checkCache(q) {
+
+      for (var i = 0; i < cache.length; i++)
+        if (cache[i]['q'] == q) {
+          cache.unshift(cache.splice(i, 1)[0]);
+          return cache[0];
+        }
+
+      return false;
+
+    }
+
+    function addToCache(q, items, size) {
+
+      while (cache.length && (cacheSize + size > options.maxCacheSize)) {
+        var cached = cache.pop();
+        cacheSize -= cached['size'];
+      }
+
+      cache.push({
+        q: q,
+        size: size,
+        items: items
+      });
+
+      cacheSize += size;
+
+    }
+
+    function displayItems(items) {
+
+      if (!items)
+        return;
+
+      if (!items.length) {
+        results.hide();
+        return;
+      }
+
+      var html = '';
+      for (var i = 0; i < items.length; i++) {
+        html += '<li id="s_' + items[i]['Id'] + '">' + items[i]['Name'] + ' [' + items[i]['DEM'] + ']' + '</li>';
+        lookup[items[i]['Id']] = items[i];
+      }
+      resetPosition();
+      results.html(html).show();
+
+      results
+    .children('li')
+    .mouseover(function () {
+      results.children('li').removeClass(options.selectClass);
+      $(this).addClass(options.selectClass);
+    })
+    .click(function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      selectCurrentResult();
+    });
+
+    }
+
+    function parseTxt(txt, q) {
+
+      var items = [];
+      var tokens = txt.split(options.delimiter);
+
+      // parse returned data for non-empty items
+      for (var i = 0; i < tokens.length; i++) {
+        var data = $.trim(tokens[i]).split(options.dataDelimiter);
+        if (data.length > 1) {
+          token = data[0];
+          key = data[1];
+        }
+        else {
+          token = data[0]
+          key = '';
+        }
+
+        if (token) {
+          token = token.replace(
+    new RegExp(q, 'ig'),
+    function (q) { return '<span class="' + options.matchClass + '">' + q + '</span>' }
+    );
+          items[items.length] = { 'value': token, 'key': key };
+        }
+      }
+
+      return items;
+    }
+
+    function getCurrentResult() {
+
+      if (!results.is(':visible'))
+        return false;
+
+      var $currentResult = results.children('li.' + options.selectClass);
+
+      if (!$currentResult.length)
+        $currentResult = false;
+
+      return $currentResult;
+
+    }
+
+    function selectCurrentResult() {
+      $currentResult = getCurrentResult();
+
+      if ($currentResult) {
+        var $id = $currentResult.attr('id').replace('s_', '');
+        $input.val(lookup[$id].Name);
+        $input.attr("result", JSON.stringify(lookup[$id]));
+
+        results.hide();
+
+        if (options.dataContainer) {
+          $("#pid_" + options.dataContainer).val($id);
+          var dem = $("#dem_" + options.dataContainer);
+          dem.val(lookup[$id].DEM);
+          dem.attr('disabled', true);
+          dem.css('backgroundColor', "#ffffff");
+        }
+
+        if (options.onSelect) {
+          options.onSelect.apply($input[0], new Array(options.dataContainer, lookup[$id]));
+        }
+
+        $input.css("backgroundColor", "#ffffff");
+        //            prevLength = $input.val().length;
+      }
+
+    }
+
+    function nextResult() {
+
+      $currentResult = getCurrentResult();
+
+      if ($currentResult)
+        $currentResult
+    .removeClass(options.selectClass)
+    .next()
+      .addClass(options.selectClass);
+      else
+        results.children('li:first-child').addClass(options.selectClass);
+
+    }
+
+    function prevResult() {
+
+      $currentResult = getCurrentResult();
+
+      if ($currentResult)
+        $currentResult
+    .removeClass(options.selectClass)
+    .prev()
+      .addClass(options.selectClass);
+      else
+        results.children('li:last-child').addClass(options.selectClass);
+
+    }
+
+  }
+
+  $.fn.suggest2 = function (source, options) {
+    if (!source)
+      return;
+
+    options = options || {};
+    options.source = source;
+    options.delay = options.delay || 150;
+    options.resultsClass = options.resultsClass || 'ac_results';
+    options.selectClass = options.selectClass || 'ac_over';
+    options.matchClass = options.matchClass || 'ac_match';
+    options.minchars = options.minchars || 2;
+    options.delimiter = options.delimiter || '\n';
+    options.onSelect = options.onSelect || false;
+    options.maxCacheSize = options.maxCacheSize || 65536;
+    options.dataDelimiter = options.dataDelimiter || '\t';
+    //       options.dataContainer = options.dataContainer || '#SuggestResult';
+    //       options.attachObject = options.attachObject || null;
+
+    this.each(function () {
+      new $.suggest2(this, options);
+    });
+
+    return this;
+
+  };
 
 })(jQuery);
 
 (function ($) {
 
-    $.suggest3 = function (input, options) {
+  $.suggest3 = function (input, options) {
 
-        var $input = $(input).attr("autocomplete", "off");
-        var results = $('<ul class="ac_results"></ul>').appendTo('body');
-        $input[0].setPerson = function (person) { setItem(person); }
+    var $input = $(input).attr("autocomplete", "off");
+    var results = $('<ul class="ac_results"></ul>').appendTo('body');
+    $input[0].setPerson = function (person) { setItem(person); }
 
-        var timeout = false; 	// hold timeout ID for suggest3ion results to appear	
-        var prevText = $input.val(); 		// last recorded length of $input.val()
-        var cache = []; 			// cache MRU list
-        var cacheSize = 0; 		// size of cache in chars (bytes?)
+    var timeout = false; 	// hold timeout ID for suggest3ion results to appear	
+    var prevText = $input.val(); 		// last recorded length of $input.val()
+    var cache = []; 			// cache MRU list
+    var cacheSize = 0; 		// size of cache in chars (bytes?)
 
-        //    var lookup = [];
-        //    var lastCall = "";
-
-
-        //results.addClass(options.resultsClass);
-
-        resetPosition();
-        $(window)
-			.load(resetPosition)		// just in case user is changing size of page while loading
-			.resize(resetPosition);
-
-        $input.blur(function () {
-            setTimeout(function () { results.hide() }, 200);
-        });
-
-        // help IE users if possible
-        try {
-            results.bgiframe();
-        } catch (e) { }
+    //    var lookup = [];
+    //    var lastCall = "";
 
 
-        // I really hate browser detection, but I don't see any other way
-        if ($.browser.mozilla)
-            $input.keypress(processKey); // onkeypress repeats arrow keys in Mozilla/Opera
-        else
-            $input.keydown(processKey); 	// onkeydown repeats arrow keys in IE/Safari
+    //results.addClass(options.resultsClass);
 
-        $input.keyup(function () {
-            if ($input.val() != prevText) {
-                $input.css("backgroundColor", "#ffffbb");
-            }
-        });
+    resetPosition();
+    $(window)
+  .load(resetPosition)		// just in case user is changing size of page while loading
+  .resize(resetPosition);
+
+    $input.blur(function () {
+      setTimeout(function () { results.hide() }, 200);
+    });
+
+    // help IE users if possible
+    try {
+      results.bgiframe();
+    } catch (e) { }
 
 
-        function resetPosition() {
-            // requires jquery.dimension plugin
+    // I really hate browser detection, but I don't see any other way
+    if ($.browser.mozilla)
+      $input.keypress(processKey); // onkeypress repeats arrow keys in Mozilla/Opera
+    else
+      $input.keydown(processKey); 	// onkeydown repeats arrow keys in IE/Safari
+
+    $input.keyup(function () {
+      if ($input.val() != prevText) {
+        $input.css("backgroundColor", "#ffffbb");
+      }
+    });
+
+
+    function resetPosition() {
+      // requires jquery.dimension plugin
+      var offset = $input.offset();
+      results.css({
+        top: (offset.top + input.offsetHeight) + 'px',
+        left: offset.left + 'px'
+      });
+    }
+
+
+    function processKey(e) {
+
+      // handling up/down/escape requires results to be visible
+      // handling enter/tab requires that AND a result to be selected
+      if ((/27$|38$|40$/.test(e.keyCode) && results.is(':visible')) ||
+  (/^13$|^9$/.test(e.keyCode) && getCurrentResult())) {
+
+        if (e.preventDefault)
+          e.preventDefault();
+        if (e.stopPropagation)
+          e.stopPropagation();
+
+        e.cancelBubble = true;
+        e.returnValue = false;
+
+        switch (e.keyCode) {
+
+          case 38: // up
+            prevResult();
+            break;
+
+          case 40: // down
+            nextResult();
+            break;
+
+          case 9:  // tab
+          case 13: // return
+            selectCurrentResult();
+            break;
+
+          case 27: //	escape
+            results.hide();
+            break;
+
+        }
+
+      } else if ($input.val() != prevText) {
+        if (timeout)
+          clearTimeout(timeout);
+        timeout = setTimeout(suggest3, options.delay);
+        prevText = $input.val();
+        $input[0].person = null;
+      }
+    }
+
+
+    function suggest3() {
+      var q = $.trim($input.val());
+      if (q.length >= options.minchars) {
+        cached = checkCache(q);
+        if (cached) {
+          displayItems(eval(cached['items']));
+        } else {
+          var progress = $("#progress");
+          if (progress != null) {
             var offset = $input.offset();
-            results.css({
-                top: (offset.top + input.offsetHeight) + 'px',
-                left: offset.left + 'px'
+            progress.css({
+              top: (offset.top + ($input.outerHeight() - progress.outerHeight()) / 2) + 'px',
+              left: (offset.left - progress.outerWidth()) + 'px'
             });
-        }
+            progress.show();
+          }
 
+          var oldBg = $input.css("backgroundColor");
+          $input.css("backgroundColor", "Orange");
 
-        function processKey(e) {
+          lastCall = q;
 
-            // handling up/down/escape requires results to be visible
-            // handling enter/tab requires that AND a result to be selected
-            if ((/27$|38$|40$/.test(e.keyCode) && results.is(':visible')) ||
-				(/^13$|^9$/.test(e.keyCode) && getCurrentResult())) {
-
-                if (e.preventDefault)
-                    e.preventDefault();
-                if (e.stopPropagation)
-                    e.stopPropagation();
-
-                e.cancelBubble = true;
-                e.returnValue = false;
-
-                switch (e.keyCode) {
-
-                    case 38: // up
-                        prevResult();
-                        break;
-
-                    case 40: // down
-                        nextResult();
-                        break;
-
-                    case 9:  // tab
-                    case 13: // return
-                        selectCurrentResult();
-                        break;
-
-                    case 27: //	escape
-                        results.hide();
-                        break;
-
-                }
-
-            } else if ($input.val() != prevText) {
-                if (timeout)
-                    clearTimeout(timeout);
-                timeout = setTimeout(suggest3, options.delay);
-                prevText = $input.val();
-                $input[0].person = null;
-            }
-        }
-
-
-        function suggest3() {
-            var q = $.trim($input.val());
-            if (q.length >= options.minchars) {
-                cached = checkCache(q);
-                if (cached) {
-                    displayItems(eval(cached['items']));
-                } else {
-                    var progress = $("#progress");
-                    if (progress != null) {
-                        var offset = $input.offset();
-                        progress.css({
-                            top: (offset.top + ($input.outerHeight() - progress.outerHeight()) / 2) + 'px',
-                            left: (offset.left - progress.outerWidth()) + 'px'
-                        });
-                        progress.show();
-                    }
-
-                    var oldBg = $input.css("backgroundColor");
-                    $input.css("backgroundColor", "Orange");
-
-                    lastCall = q;
-
-                    $.ajax({
-                        type: 'POST', url: options.source, data: { q: q }, dataType: 'json',
-                        success: function (txt) {
-                            addToCache(q, txt, txt.length);
-                            if (q != lastCall) {
-                                return;
-                            }
-
-                            results.hide();
-
-                            var items = eval(txt);  //parseTxt(txt, q);
-                            //    lookup = [];
-
-                            displayItems(items);
-
-                            if (progress != null) {
-                                progress.hide();
-                            }
-                            $input.css("backgroundColor", oldBg);
-                        }
-                    });
-
-                }
-            } else {
-                results.hide();
-            }
-        }
-
-
-        function checkCache(q) {
-
-            for (var i = 0; i < cache.length; i++)
-                if (cache[i]['q'] == q) {
-                    cache.unshift(cache.splice(i, 1)[0]);
-                    return cache[0];
-                }
-
-            return false;
-
-        }
-
-        function addToCache(q, items, size) {
-
-            while (cache.length && (cacheSize + size > options.maxCacheSize)) {
-                var cached = cache.pop();
-                cacheSize -= cached['size'];
-            }
-
-            cache.push({
-                q: q,
-                size: size,
-                items: items
-            });
-
-            cacheSize += size;
-
-        }
-
-        function displayItems(items) {
-
-            if (!items)
+          $.ajax({
+            type: 'POST', url: options.source, data: { q: q }, dataType: 'json',
+            success: function (txt) {
+              addToCache(q, txt, txt.length);
+              if (q != lastCall) {
                 return;
+              }
 
-            if (!items.length) {
-                results.hide();
-                return;
+              results.hide();
+
+              var items = eval(txt);  //parseTxt(txt, q);
+              //    lookup = [];
+
+              displayItems(items);
+
+              if (progress != null) {
+                progress.hide();
+              }
+              $input.css("backgroundColor", oldBg);
             }
-
-            results.html('');
-            for (var i = 0; i < items.length; i++) {
-                var li = $('<li>' + items[i]['Name'] + ' [' + items[i]['DEM'] + ']</li>').appendTo(results);
-                li[0].item = items[i];
-                //        html += '<li id="s_' + items[i]['Id'] + '">' + items[i]['Name'] + ' [' + items[i]['DEM'] + ']' + '</li>';
-                //        lookup[items[i]['Id']] = items[i];
-            }
-            resetPosition();
-            results/*.html(html)*/.show();
-
-            results
-				.children('li')
-				.mouseover(function () {
-				    results.children('li').removeClass(options.selectClass);
-				    $(this).addClass(options.selectClass);
-				})
-				.click(function (e) {
-				    e.preventDefault();
-				    e.stopPropagation();
-				    selectCurrentResult();
-				});
+          });
 
         }
+      } else {
+        results.hide();
+      }
+    }
 
-        function parseTxt(txt, q) {
 
-            var items = [];
-            var tokens = txt.split(options.delimiter);
+    function checkCache(q) {
 
-            // parse returned data for non-empty items
-            for (var i = 0; i < tokens.length; i++) {
-                var data = $.trim(tokens[i]).split(options.dataDelimiter);
-                if (data.length > 1) {
-                    token = data[0];
-                    key = data[1];
-                }
-                else {
-                    token = data[0]
-                    key = '';
-                }
-
-                if (token) {
-                    token = token.replace(
-						new RegExp(q, 'ig'),
-						function (q) { return '<span class="' + options.matchClass + '">' + q + '</span>' }
-						);
-                    items[items.length] = { 'value': token, 'key': key };
-                }
-            }
-
-            return items;
+      for (var i = 0; i < cache.length; i++)
+        if (cache[i]['q'] == q) {
+          cache.unshift(cache.splice(i, 1)[0]);
+          return cache[0];
         }
 
-        function getCurrentResult() {
-
-            if (!results.is(':visible'))
-                return false;
-
-            var $currentResult = results.children('li.' + options.selectClass);
-
-            if (!$currentResult.length)
-                $currentResult = false;
-
-            return $currentResult;
-
-        }
-
-        function setItem(item) {
-            $input[0].person = item;
-            $input.val(item.Name);
-        }
-
-        function selectCurrentResult() {
-            $currentResult = getCurrentResult();
-
-            if ($currentResult) {
-                //var $id = $currentResult.attr('id').replace('s_', '');
-                setItem($currentResult[0].item);
-
-                //$input.val(lookup[$id].Name);
-                results.hide();
-
-                //        if (options.dataContainer) {
-                //          $("#pid_" + options.dataContainer).val($id);
-                //          var dem = $("#dem_" + options.dataContainer);
-                //          dem.val(lookup[$id].DEM);
-                //          dem.attr('disabled', true);
-                //          dem.css('backgroundColor', "#ffffff");
-                //        }
-
-                if (options.onSelect) {
-                    options.onSelect($currentResult[0].item);
-                }
-
-                $input.css("backgroundColor", "#ffffff");
-                prevText = $input.val();
-            }
-
-        }
-
-        function nextResult() {
-
-            $currentResult = getCurrentResult();
-
-            if ($currentResult)
-                $currentResult
-					.removeClass(options.selectClass)
-					.next()
-						.addClass(options.selectClass);
-            else
-                results.children('li:first-child').addClass(options.selectClass);
-
-        }
-
-        function prevResult() {
-
-            $currentResult = getCurrentResult();
-
-            if ($currentResult)
-                $currentResult
-					.removeClass(options.selectClass)
-					.prev()
-						.addClass(options.selectClass);
-            else
-                results.children('li:last-child').addClass(options.selectClass);
-
-        }
+      return false;
 
     }
 
-    $.fn.suggest3 = function (source, options) {
+    function addToCache(q, items, size) {
 
-        if (!source)
-            return;
+      while (cache.length && (cacheSize + size > options.maxCacheSize)) {
+        var cached = cache.pop();
+        cacheSize -= cached['size'];
+      }
 
-        options = options || {};
-        options.source = source;
-        options.delay = options.delay || 150;
-        options.resultsClass = options.resultsClass || 'ac_results';
-        options.selectClass = options.selectClass || 'ac_over';
-        options.matchClass = options.matchClass || 'ac_match';
-        options.minchars = options.minchars || 2;
-        //options.delimiter = options.delimiter || '\n';
-        options.onSelect = options.onSelect || false;
-        //options.maxCacheSize = options.maxCacheSize || 65536;
-        //options.dataDelimiter = options.dataDelimiter || '\t';
-        //options.dataContainer = options.dataContainer || '#suggest3Result';
-        //options.attachObject = options.attachObject || null;
+      cache.push({
+        q: q,
+        size: size,
+        items: items
+      });
 
-        this.each(function () {
-            new $.suggest3(this, options);
-        });
+      cacheSize += size;
 
-        return this;
+    }
 
-    };
+    function displayItems(items) {
+
+      if (!items)
+        return;
+
+      if (!items.length) {
+        results.hide();
+        return;
+      }
+
+      results.html('');
+      for (var i = 0; i < items.length; i++) {
+        var li = $('<li>' + items[i]['Name'] + ' [' + items[i]['DEM'] + ']</li>').appendTo(results);
+        li[0].item = items[i];
+        //        html += '<li id="s_' + items[i]['Id'] + '">' + items[i]['Name'] + ' [' + items[i]['DEM'] + ']' + '</li>';
+        //        lookup[items[i]['Id']] = items[i];
+      }
+      resetPosition();
+      results/*.html(html)*/.show();
+
+      results
+  .children('li')
+  .mouseover(function () {
+    results.children('li').removeClass(options.selectClass);
+    $(this).addClass(options.selectClass);
+  })
+  .click(function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    selectCurrentResult();
+  });
+
+    }
+
+    function parseTxt(txt, q) {
+
+      var items = [];
+      var tokens = txt.split(options.delimiter);
+
+      // parse returned data for non-empty items
+      for (var i = 0; i < tokens.length; i++) {
+        var data = $.trim(tokens[i]).split(options.dataDelimiter);
+        if (data.length > 1) {
+          token = data[0];
+          key = data[1];
+        }
+        else {
+          token = data[0]
+          key = '';
+        }
+
+        if (token) {
+          token = token.replace(
+  new RegExp(q, 'ig'),
+  function (q) { return '<span class="' + options.matchClass + '">' + q + '</span>' }
+  );
+          items[items.length] = { 'value': token, 'key': key };
+        }
+      }
+
+      return items;
+    }
+
+    function getCurrentResult() {
+
+      if (!results.is(':visible'))
+        return false;
+
+      var $currentResult = results.children('li.' + options.selectClass);
+
+      if (!$currentResult.length)
+        $currentResult = false;
+
+      return $currentResult;
+
+    }
+
+    function setItem(item) {
+      $input[0].person = item;
+      $input.val(item.Name);
+    }
+
+    function selectCurrentResult() {
+      $currentResult = getCurrentResult();
+
+      if ($currentResult) {
+        //var $id = $currentResult.attr('id').replace('s_', '');
+        setItem($currentResult[0].item);
+
+        //$input.val(lookup[$id].Name);
+        results.hide();
+
+        //        if (options.dataContainer) {
+        //          $("#pid_" + options.dataContainer).val($id);
+        //          var dem = $("#dem_" + options.dataContainer);
+        //          dem.val(lookup[$id].DEM);
+        //          dem.attr('disabled', true);
+        //          dem.css('backgroundColor', "#ffffff");
+        //        }
+
+        if (options.onSelect) {
+          options.onSelect($currentResult[0].item);
+        }
+
+        $input.css("backgroundColor", "#ffffff");
+        prevText = $input.val();
+      }
+
+    }
+
+    function nextResult() {
+
+      $currentResult = getCurrentResult();
+
+      if ($currentResult)
+        $currentResult
+  .removeClass(options.selectClass)
+  .next()
+    .addClass(options.selectClass);
+      else
+        results.children('li:first-child').addClass(options.selectClass);
+
+    }
+
+    function prevResult() {
+
+      $currentResult = getCurrentResult();
+
+      if ($currentResult)
+        $currentResult
+  .removeClass(options.selectClass)
+  .prev()
+    .addClass(options.selectClass);
+      else
+        results.children('li:last-child').addClass(options.selectClass);
+
+    }
+
+  }
+
+  $.fn.suggest3 = function (source, options) {
+
+    if (!source)
+      return;
+
+    options = options || {};
+    options.source = source;
+    options.delay = options.delay || 150;
+    options.resultsClass = options.resultsClass || 'ac_results';
+    options.selectClass = options.selectClass || 'ac_over';
+    options.matchClass = options.matchClass || 'ac_match';
+    options.minchars = options.minchars || 2;
+    //options.delimiter = options.delimiter || '\n';
+    options.onSelect = options.onSelect || false;
+    //options.maxCacheSize = options.maxCacheSize || 65536;
+    //options.dataDelimiter = options.dataDelimiter || '\t';
+    //options.dataContainer = options.dataContainer || '#suggest3Result';
+    //options.attachObject = options.attachObject || null;
+
+    this.each(function () {
+      new $.suggest3(this, options);
+    });
+
+    return this;
+
+  };
 
 })(jQuery);

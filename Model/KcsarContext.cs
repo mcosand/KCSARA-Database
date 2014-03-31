@@ -1,15 +1,18 @@
-﻿/*
+﻿
+/*
  * Copyright 2009-2014 Matthew Cosand
  */
 namespace Kcsar.Database.Model
 {
   using System;
   using System.Collections.Generic;
+  using System.ComponentModel.DataAnnotations;
   using System.Data.Entity;
   using System.Data.Entity.Core;
   using System.Data.Entity.Core.Objects;
   using System.Data.Entity.Core.Objects.DataClasses;
   using System.Data.Entity.Infrastructure;
+  using System.IO;
   using System.Linq;
   using System.Reflection;
   using System.Text.RegularExpressions;
@@ -51,22 +54,37 @@ namespace Kcsar.Database.Model
     protected IDbSet<AuditLog> AuditLog { get; set; }
     public IDbSet<SensitiveInfoAccess> SensitiveInfoLog { get; set; }
 
-    public KcsarContext()
-      : base("DataStore")
+    public KcsarContext() : this("DataStore") { }
+
+    public KcsarContext(string connName)
+      : base(connName)
     {
       this.AuditLog = this.Set<AuditLog>();
+    }
+
+    public KcsarContext(string connName, Action<string> logMethod)
+      : this(connName)
+    {
+      this.Database.Log = logMethod;
     }
 
     public static readonly DateTime MinEntryDate = new DateTime(1945, 1, 1);
 
     private Dictionary<Type, List<PropertyInfo>> reportingProperties = new Dictionary<Type, List<PropertyInfo>>();
     private Dictionary<string, string> reportingFormats = new Dictionary<string, string>();
+    private Random rand = new Random();
 
     protected override void OnModelCreating(DbModelBuilder modelBuilder)
     {
       base.OnModelCreating(modelBuilder);
-      modelBuilder.Entity<Mission>().HasOptional(f => f.Details).WithRequired(f => f.Mission);
+      modelBuilder.Entity<Mission>().HasOptional(f => f.Details).WithRequired(f => f.Mission).WillCascadeOnDelete();
+      modelBuilder.Entity<Mission>().HasMany(f => f.Log).WithRequired(f => f.Mission).WillCascadeOnDelete();
       modelBuilder.Entity<Member>().HasOptional(f => f.MedicalInfo).WithRequired(f => f.Member);
+      modelBuilder.Entity<Member>().HasMany(f => f.Memberships).WithRequired(f => f.Person).WillCascadeOnDelete();
+      modelBuilder.Entity<Member>().HasMany(f => f.Addresses).WithRequired(f => f.Person).WillCascadeOnDelete();
+      modelBuilder.Entity<Member>().HasMany(f => f.ContactNumbers).WithRequired(f => f.Person).WillCascadeOnDelete();
+      modelBuilder.Entity<Animal>().HasMany(f => f.Owners).WithRequired(f => f.Animal).WillCascadeOnDelete();
+      modelBuilder.Entity<Member>().HasMany(f => f.Animals).WithRequired(f => f.Owner).WillCascadeOnDelete();
     }
 
     public Func<UnitMembership, bool> GetActiveMembershipFilter(Guid? unit, DateTime time)
@@ -91,227 +109,198 @@ namespace Kcsar.Database.Model
       return active;
     }
 
+
+    private ObjectContext comparisonContext = null;
+    protected ObjectContext ComparisonContext
+    {
+      get
+      {
+        if (this.comparisonContext == null)
+        {
+          var dbContext = new KcsarContext(this.Database.Connection.ConnectionString, this.Database.Log);
+          this.comparisonContext = ((IObjectContextAdapter)dbContext).ObjectContext;
+      //    this.comparisonContext.ContextOptions.ProxyCreationEnabled = false;
+      //    this.comparisonContext.ContextOptions.LazyLoadingEnabled = true;
+        }
+        return this.comparisonContext;
+      }
+    }
+
+    private void AuditChange(ObjectStateEntry entry)
+    {
+      var obj = entry.Entity as IModelObject;
+      if (obj == null) return;
+
+      var audit = new AuditLog
+      {
+        Action = entry.State.ToString(),
+        Changed = DateTime.Now,
+        ObjectId = obj.Id,
+        Collection = entry.EntitySet.Name
+      };
+
+      switch (entry.State)
+      {
+        case EntityState.Added:
+          audit.Comment = obj.GetReportHtml();
+          break;
+
+        case EntityState.Modified:
+          string report = string.Format("<b>{0}</b><br/>", entry.Entity);
+          foreach (var prop in entry.GetModifiedProperties())
+          {
+            var displayFormat = entry.Entity.GetType().GetProperty(prop).GetCustomAttribute<DisplayFormatAttribute>();
+            string format = displayFormat == null ? "{0}" : displayFormat.DataFormatString;
+
+            report += string.Format(
+              "{0}: {1} => {2}<br/>",
+              prop,
+              string.Format(format, entry.OriginalValues[prop]),
+              string.Format(format, entry.CurrentValues[prop]));
+          }
+          audit.Comment = report;
+          break;
+
+        case EntityState.Deleted:
+          object original;
+          this.ComparisonContext.TryGetObjectByKey(entry.EntityKey, out original);
+          audit.Comment = ((IModelObject)original).GetReportHtml();
+          break;
+
+        default:
+          throw new NotImplementedException("Unhandled state" + entry.State.ToString());
+      }
+      this.AuditLog.Add(audit);
+    }
+
     public override int SaveChanges()
     {
-      List<RuleViolation> errors = new List<RuleViolation>();
-
-      KcsarContext comparisonContext = new KcsarContext();
-
-      List<AuditLog> changes = new List<AuditLog>();
-
-      // Validate the state of each entity in the context
-      // before SaveChanges can succeed.
-      Random rand = new Random();
-
       ObjectContext oc = ((IObjectContextAdapter)this).ObjectContext;
       var osm = oc.ObjectStateManager;
 
       oc.DetectChanges();
 
-      // Added and modified objects - we can describe the state of the object with
-      // the information already present.
+      Dictionary<string, IModelObject> updatedRelations = new Dictionary<string, IModelObject>();
+
+      // Deleted objects - we need to fetch more data before we can report what the change was in readable form.
+      foreach (ObjectStateEntry entry in osm.GetObjectStateEntries(EntityState.Deleted))
+      {
+        if (entry.IsRelationship)
+        {
+          IModelObject obj1 = oc.GetObjectByKey((EntityKey)entry.OriginalValues[0]) as IModelObject;
+          IModelObject obj2 = oc.GetObjectByKey((EntityKey)entry.OriginalValues[1]) as IModelObject;
+
+          string key = string.Format("{0}{1}", entry.EntitySet.Name, obj2.Id);
+          updatedRelations.Add(key, obj1);
+        }
+        else
+        {
+          AuditChange(entry);
+        }
+      }
+
+
+      //// Added and modified objects - we can describe the state of the object with
+      //// the information already present.
       foreach (ObjectStateEntry entry in
           osm.GetObjectStateEntries(
           EntityState.Added | EntityState.Modified))
       {
-        // Do Validation
-        if (entry.Entity is IValidatedEntity)
+        if (entry.IsRelationship)
         {
-          IValidatedEntity validate = (IValidatedEntity)entry.Entity;
-          if (!validate.Validate())
+          var key1 = ((EntityKey)entry.CurrentValues[0]);
+          if (key1.IsTemporary) continue;
+
+          var key2 = ((EntityKey)entry.CurrentValues[1]);
+
+          var obj1 = oc.GetObjectByKey(key1);
+          IModelObject obj2 = oc.GetObjectByKey(key2) as IModelObject;
+
+          var audit = new AuditLog
+            {
+              Action = "Modified",
+              Changed = DateTime.Now,
+              ObjectId = obj2.Id,
+              Collection = entry.EntitySet.Name,
+              Comment = null
+            };
+
+          string key = string.Format("{0}{1}", entry.EntitySet.Name, obj2.Id);
+          IModelObject original = null;
+          if (updatedRelations.TryGetValue(key, out original))
           {
-            errors.AddRange(validate.Errors);
+            audit.Collection = key2.EntitySetName;
+            audit.Comment = string.Format("{0}<br/>{1} => {2}", obj2, original, obj1);
+            this.AuditLog.Add(audit);
           }
-          else
+        }
+        else if (entry.Entity is IModelObject)
+        {
+          IModelObject obj = (IModelObject)entry.Entity;
+
+          // Keep track of the change for reporting.
+          obj.LastChanged = DateTime.Now;
+          obj.ChangedBy = Thread.CurrentPrincipal.Identity.Name;
+
+          AuditChange(entry);
+          Document doc = obj as Document;
+          if (doc != null)
           {
-            Document d = entry.Entity as Document;
-            if (d != null)
-            {
-              if (string.IsNullOrWhiteSpace(d.StorePath))
-              {
-                string path = string.Empty;
-                for (int i = 0; i < Document.StorageTreeDepth; i++)
-                {
-                  path += ((i > 0) ? "\\" : "") + rand.Next(Document.StorageTreeSpan).ToString();
-                }
-                if (!System.IO.Directory.Exists(Document.StorageRoot + path))
-                {
-                  System.IO.Directory.CreateDirectory(Document.StorageRoot + path);
-                }
-                path += "\\" + d.Id.ToString();
-                d.StorePath = path;
-              }
-              System.IO.File.WriteAllBytes(Document.StorageRoot + d.StorePath, d.Contents);
-            }
-            // New values are valid
-
-            if (entry.Entity is IModelObject)
-            {
-              IModelObject obj = (IModelObject)entry.Entity;
-
-              // Keep track of the change for reporting.
-              obj.LastChanged = DateTime.Now;
-              obj.ChangedBy = Thread.CurrentPrincipal.Identity.Name;
-
-              IModelObject original = (entry.State == EntityState.Added) ? null : GetOriginalVersion(comparisonContext, entry);
-
-
-              if (original == null)
-              {
-                changes.Add(new AuditLog
-                {
-                  Action = entry.State.ToString(),
-                  Comment = obj.GetReportHtml(),
-                  Collection = entry.EntitySet.Name,
-                  Changed = DateTime.Now,
-                  ObjectId = obj.Id,
-                  User = Thread.CurrentPrincipal.Identity.Name
-                });
-              }
-              else
-              {
-                string report = string.Format("<b>{0}</b><br/>", obj);
-
-                foreach (PropertyInfo pi in GetReportableProperties(obj.GetType()))
-                {
-                  object left = pi.GetValue(original, null);
-                  object right = pi.GetValue(obj, null);
-                  if ((left == null && right == null) || (left != null && left.Equals(right)))
-                  {
-                    //   report += string.Format("{0}: unchanged<br/>", pi.Name);
-                  }
-                  else
-                  {
-                    report += string.Format("{0}: {1} => {2}<br/>", pi.Name, left, right);
-                  }
-                }
-                changes.Add(new AuditLog
-                {
-                  Action = entry.State.ToString(),
-                  Comment = report,
-                  Collection = entry.EntitySet.Name,
-                  Changed = DateTime.Now,
-                  ObjectId = obj.Id,
-                  User = Thread.CurrentPrincipal.Identity.Name
-                });
-              }
-            }
+            SaveDocumentFile(doc);
           }
         }
       }
-
-      // Added and modified objects - we need to fetch more data before we can report what the change was in readable form.
-      foreach (ObjectStateEntry entry in osm.GetObjectStateEntries(EntityState.Deleted))
-      {
-        IModelObject modelObject = GetOriginalVersion(comparisonContext, entry);
-        if (modelObject != null)
-        {
-          Document d = modelObject as Document;
-          if (d != null && !string.IsNullOrWhiteSpace(d.StorePath))
-          {
-            string path = Document.StorageRoot + d.StorePath;
-            System.IO.File.Delete(path);
-            for (int i = 0; i < Document.StorageTreeDepth; i++)
-            {
-              path = System.IO.Path.GetDirectoryName(path);
-              if (System.IO.Directory.GetDirectories(path).Length + System.IO.Directory.GetFiles(path).Length == 0)
-              {
-                System.IO.Directory.Delete(path);
-              }
-            }
-          }
-          changes.Add(new AuditLog
-          {
-            Action = entry.State.ToString(),
-            Comment = modelObject.GetReportHtml(),
-            Collection = entry.EntitySet.Name,
-            Changed = DateTime.Now,
-            ObjectId = modelObject.Id,
-            User = Thread.CurrentPrincipal.Identity.Name
-          });
-        }
-      }
-
-      if (errors.Count > 0)
-      {
-        throw new RuleViolationsException(errors);
-      }
-
-      changes.ForEach(f => this.AuditLog.Add(f));
 
       return base.SaveChanges();
-      //if (SavedChanges != null)
-      //{
-      //    SavedChanges(this, new SavingChangesArgs { Changes = changes.Select(f => f.Comment).ToList() });
-      //}
     }
 
-    private IEnumerable<PropertyInfo> GetReportableProperties(Type forType)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="d"></param>
+    private void SaveDocumentFile(Document d)
     {
-      if (!this.reportingProperties.ContainsKey(forType))
+      if (string.IsNullOrWhiteSpace(d.StorePath))
       {
-        var properties = forType.GetProperties().ToDictionary(f => f.Name, f => f);
-        foreach (string prop in properties.Keys.ToArray())
+        string path = string.Empty;
+        for (int i = 0; i < Document.StorageTreeDepth; i++)
         {
-          if (!properties.ContainsKey(prop)) continue;
-
-          object[] reporting = properties[prop].GetCustomAttributes(typeof(ReportingAttribute), false);
-          if (prop == "LastChanged" || prop == "ChangedBy" || prop == "Id")
-          {
-            properties.Remove(prop);
-          }
-          else if (reporting.Length == 1)
-          {
-            // Keep this property in the list
-
-            // Hide the ones it hides...
-            ReportingAttribute attrib = (ReportingAttribute)reporting[0];
-            this.reportingFormats.Add(forType.FullName + ':' + prop, attrib.Format);
-            foreach (string pname in attrib.Hides.Split(','))
-            {
-              properties.Remove(pname);
-            }
-          }
-          else if (properties[prop].GetCustomAttributes(typeof(EdmScalarPropertyAttribute), false).Length == 0)
-          {
-            // Only show ones that have the EdmScalar attribute or the reporting attribute
-            properties.Remove(prop);
-          }
+          path += ((i > 0) ? "\\" : "") + rand.Next(Document.StorageTreeSpan).ToString();
         }
-        this.reportingProperties.Add(forType, properties.Values.ToList());
-
-        foreach (MemberReportingAttribute attrib in forType.GetCustomAttributes(typeof(MemberReportingAttribute), true))
+        if (!System.IO.Directory.Exists(Document.StorageRoot + path))
         {
-          this.reportingFormats.Add(forType.FullName + ':' + attrib.Property, attrib.Format);
+          System.IO.Directory.CreateDirectory(Document.StorageRoot + path);
         }
+        path += "\\" + d.Id.ToString();
+        d.StorePath = path;
       }
-      return this.reportingProperties[forType];
+      System.IO.File.WriteAllBytes(Document.StorageRoot + d.StorePath, d.Contents);
     }
 
-    private IModelObject GetOriginalVersion(KcsarContext context, ObjectStateEntry entry)
+    public void RemoveStaleDocumentFiles()
     {
-      object original;
-      if (entry.EntityKey == null || !(entry.Entity is IModelObject))
-      {
-        // We don't know how to report objects that aren't IModelObjects
-        return null;
-      }
+      HashSet<string> dbFiles = new HashSet<string>(
+        this.Documents
+        .Select(f => f.StorePath).Distinct()
+        .AsNoTracking().AsEnumerable());
 
-      // Try to get the original version of the deleted object.
-      EntityKey key = new EntityKey(entry.EntityKey.EntityContainerName + "." + entry.EntityKey.EntitySetName, "Id", ((IModelObject)entry.Entity).Id);
-      ((IObjectContextAdapter)context).ObjectContext.TryGetObjectByKey(key, out original);
-
-      foreach (var property in original.GetType().GetProperties())
+      int rootLength = Document.StorageRoot.Length;
+      foreach (var file in Directory.GetFiles(Document.StorageRoot, "*.*", SearchOption.AllDirectories))
       {
-        foreach (ReportedReferenceAttribute attrib in property.GetCustomAttributes(typeof(ReportedReferenceAttribute), true))
+        if (dbFiles.Contains(file.Substring(rootLength)))
+          continue;
+
+        File.Delete(file);
+        string path = file;
+        for (int i = 0; i < Document.StorageTreeDepth; i++)
         {
-          var reference = context.Entry(original).Reference(property.Name);
-          if (!reference.IsLoaded) reference.Load();
+          path = Path.GetDirectoryName(path);
+          if (Directory.GetDirectories(path).Length + Directory.GetFiles(path).Length == 0)
+          {
+            Directory.Delete(path);
+          }
         }
       }
-
-      // Now that we have the object before it (and its associations) was deleted, we can report on what it was...
-      return original as IModelObject;
     }
 
     #region Computed Training

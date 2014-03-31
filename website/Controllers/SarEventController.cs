@@ -13,6 +13,7 @@ namespace Kcsara.Database.Web.Controllers
   using System.Text;
   using System.Text.RegularExpressions;
   using System.Web.Mvc;
+  using System.Data.Entity.Validation;
 
   public abstract class SarEventController<E, R> : BaseController, IEventController
     where R : class, IRosterEntry<E, R>, new()
@@ -179,11 +180,11 @@ namespace Kcsara.Database.Web.Controllers
       {
         return InternalEdit(evt);
       }
-      catch (RuleViolationsException ex)
-      {
-        this.CollectRuleViolations(ex, fields);
+      //catch (RuleViolationsException ex)
+      //{
+      //  this.CollectRuleViolations(ex, fields);
         return InternalEdit(evt);
-      }
+      //}
     }
 
     private bool TryParseSarDate(string s, out DateTime date)
@@ -475,37 +476,39 @@ namespace Kcsara.Database.Web.Controllers
               return RedirectToAction("Roster", new { id = rows.EventId });
             }
           }
-          catch (RuleViolationsException violations)
+          catch (DbEntityValidationException ex)
           {
-            // Resolve business logic violations to controls that generated them
-            foreach (RuleViolation violation in violations.Errors)
+            foreach (var entry in ex.EntityValidationErrors.Where(f => !f.IsValid))
             {
-              if (violation.PropertyName == "TimeIn" || violation.PropertyName == "TimeOut")
+              foreach (var err in entry.ValidationErrors)
               {
-                bool flagged = false;
-
-                for (int i = 0; i < rows.NumDays; i++)
+                if (err.PropertyName == "TimeIn" || err.PropertyName == "TimeOut")
                 {
-                  string key = violation.PropertyName.Substring(4).ToLower() + rows.RosterStart.AddDays(i).ToString("yyMMdd") + "_" + violation.EntityKey.ToString();
-
-                  // Only flag the boxes with text in them.
-                  // If none have text, mark the last one in the row.
-                  if (!string.IsNullOrEmpty(fields[key]) || (!flagged && i == (rows.NumDays - 1)))
+                  bool flagged = false;
+                  for (int i = 0; i < rows.NumDays; i++)
                   {
-                    ModelState.SetModelValue(key, new ValueProviderResult(fields[key], fields[key], CultureInfo.CurrentUICulture));
-                    ModelState.AddModelError(key, violation.ErrorMessage);
-                    flagged = true;
+                    string key = err.PropertyName.Substring(4).ToLower() + rows.RosterStart.AddDays(i).ToString("yyMMdd") + "_" + ((IModelObject)entry.Entry.Entity).Id.ToString();
+
+                    // Only flag the boxes with text in them.
+                    // If none have text, mark the last one in the row.
+                    if (!string.IsNullOrEmpty(fields[key]) || (!flagged && i == (rows.NumDays - 1)))
+                    {
+                      ModelState.SetModelValue(key, new ValueProviderResult(fields[key], fields[key], CultureInfo.CurrentUICulture));
+                      ModelState.AddModelError(key, err.ErrorMessage);
+                      flagged = true;
+                    }
                   }
                 }
-              }
-              else
-              {
-                string key = violation.PropertyName + "_" + violation.EntityKey.ToString();
-                ModelState.SetModelValue(key, new ValueProviderResult(fields[key], fields[key], CultureInfo.CurrentUICulture));
-                ModelState.AddModelError(key, violation.ErrorMessage);
+                else
+                {
+                  string key = err.PropertyName + "_" + ((IModelObject)entry.Entry.Entity).Id.ToString();
+                  ModelState.SetModelValue(key, new ValueProviderResult(fields[key], fields[key], CultureInfo.CurrentUICulture));
+                  ModelState.AddModelError(key, err.ErrorMessage);
+                }
               }
             }
           }
+
           // Return to editing view
         }
       }
@@ -881,21 +884,23 @@ namespace Kcsara.Database.Web.Controllers
         this.db.Documents.Add(doc);
         this.db.SaveChanges();
       }
-      catch (RuleViolationsException ex)
+      catch (DbEntityValidationException ex)
       {
         errors = true;
-        foreach (var error in ex.Errors)
+        foreach (var entry in ex.EntityValidationErrors)
         {
-          var modelRow = model.Rows.SingleOrDefault(f => f.Id == error.EntityKey);
-          results.AppendFormat("\"error\",\"{0}\",\"{1}\",\"{2}\",\"{3}\"\n",
+          foreach (var err in entry.ValidationErrors)
+          {
+            var modelRow = model.Rows.SingleOrDefault(f => f.Id == ((IModelObject)entry.Entry.Entity).Id);
+            results.AppendFormat("\"error\",\"{0}\",\"{1}\",\"{2}\",\"{3}\"\n",
               (modelRow == null) ? "" : modelRow.Person.ReverseName,
-              (modelRow == null) ? error.PropertyName : modelRow.TimeIn.ToString(),
-              (modelRow == null) ? error.PropertyValue : modelRow.TimeOut.ToString(),
-              error.ErrorMessage);
+              (modelRow == null) ? err.PropertyName : modelRow.TimeIn.ToString(),
+              (modelRow == null) ? entry.Entry.CurrentValues[err.PropertyName] : modelRow.TimeOut.ToString(),
+              err.ErrorMessage);
+          }
         }
       }
-      //            }
-
+      
       bool? bot = (bool?)GetSessionValue("reviewRosterBot") ?? false;
 
       return (bot.Value || errors) ?

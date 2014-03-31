@@ -38,10 +38,10 @@
     <div class="content-container-inner" <%= (ViewData["HideMenu"] == null) ? "" : "style=\"padding:0px;\"" %>>
 <% } %>
         <div class="content-main" id="content"><a id="maincontent"></a>
-        <%= ConditionalDiv(ViewData["alert"], "border:solid 2px black; padding:.3em; margin:1em")%>
-        <%= ConditionalDiv(ViewData["success"], "border:solid 2px #008800; color:#008800; padding:.3em; margin:1em;")%>
-        <%= ConditionalDiv(ViewData["warning"], "border:solid 2px orange; color:orange; padding:.3em; margin:1em")%>
-        <%= ConditionalDiv(ViewData["error"], "border:solid 2px red; color:red; padding:.3em; margin:1em")%>
+        <%= ConditionalDiv("alert", "border:solid 2px black; padding:.3em; margin:1em")%>
+        <%= ConditionalDiv("success", "border:solid 2px #008800; color:#008800; padding:.3em; margin:1em;")%>
+        <%= ConditionalDiv("warning", "border:solid 2px orange; color:orange; padding:.3em; margin:1em")%>
+        <%= ConditionalDiv("error", "border:solid 2px red; color:red; padding:.3em; margin:1em")%>
       <asp:ContentPlaceHolder ID="MainContent" runat="server" />
         
         </div>
@@ -90,8 +90,9 @@
 </script>
 </asp:Content>
   <script language="C#" runat="server">
-    protected string ConditionalDiv(object innerHtml, string style)
+    protected string ConditionalDiv(string name, string style)
     {
-      return (innerHtml == null) ? "" : string.Format("<div style=\"{0}\">{1}</div>", style, innerHtml);
+      object innerHtml = ViewData[name];
+      return (innerHtml == null) ? "" : string.Format("<div id=\"msg_{0}\" style=\"{1}\">{2}</div>", name, style, innerHtml);
     }
   </script>

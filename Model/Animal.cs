@@ -5,6 +5,7 @@ namespace Kcsar.Database.Model
 {
   using System;
   using System.Collections.Generic;
+  using System.ComponentModel.DataAnnotations;
   using System.Linq;
   using System.Text.RegularExpressions;
 
@@ -46,34 +47,28 @@ namespace Kcsar.Database.Model
       return string.Format(Animal.ReportFormat, this.Name, this.DemSuffix, this.Type, this.Comments);
     }
 
-    #region IValidatedEntity Members
-
-    public override bool Validate()
-    {
-      errors.Clear();
-
+    public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+{
+ 	
       if (string.IsNullOrEmpty(this.Name))
       {
-        errors.Add(new RuleViolation(this.Id, "Name", "", "Required"));
+        yield return new ValidationResult("Required", new[]{"Name"});
       }
 
       if (string.IsNullOrEmpty(this.DemSuffix))
       {
-        errors.Add(new RuleViolation(this.Id, "DemSuffix", "", "Required"));
+        yield return new ValidationResult("Required", new[]{"DemSuffix"});
       }
 
       if (string.IsNullOrEmpty(this.Type))
       {
-        errors.Add(new RuleViolation(this.Id, "Type", "", "Required"));
+        yield return new ValidationResult("Required", new[]{"Type"});
       }
       else if (!Animal.AllowedTypes.Contains(this.Type.ToLower()))
       {
-        errors.Add(new RuleViolation(this.Id, "Type", this.Type, "Must be one of: " + string.Join(", ", Animal.AllowedTypes)));
+        yield return new ValidationResult("Must be one of: " + string.Join(", ", Animal.AllowedTypes), new[]{"Type"});
       }
 
-      return (errors.Count == 0);
     }
-
-    #endregion
   }
 }

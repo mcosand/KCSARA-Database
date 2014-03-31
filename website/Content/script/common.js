@@ -443,7 +443,7 @@ function handleDataActionError(request, status, error)
         $('#formsUsername').focus();
         $('#formsLogin').dialog('option', 'position', 'center');
       }
-      else
+      else if (request.status != 0)
       {
         alert('Error submitting request:\n  ' + request + '::' + status + '::' + error);
       }

@@ -111,19 +111,12 @@ namespace Kcsara.Database.Web.Controllers
 
     private ActionResult InternalSave(Animal a, FormCollection fields)
     {
-      try
+      TryUpdateModel(a, new string[] { "Name", "DemSuffix", "Comments", "Type" });
+      if (ModelState.IsValid)
       {
-        TryUpdateModel(a, new string[] { "Name", "DemSuffix", "Comments", "Type" });
-        if (ModelState.IsValid)
-        {
-          this.db.SaveChanges();
-          TempData["message"] = "Saved";
-          return RedirectToAction("ClosePopup");
-        }
-      }
-      catch (RuleViolationsException ex)
-      {
-        this.CollectRuleViolations(ex, fields);
+        this.db.SaveChanges();
+        TempData["message"] = "Saved";
+        return RedirectToAction("ClosePopup");
       }
       return InternalEdit(a);
     }
@@ -211,34 +204,27 @@ namespace Kcsara.Database.Web.Controllers
 
     private ActionResult InternalSaveOwner(AnimalOwner o, FormCollection fields)
     {
-      try
+      TryUpdateModel(o, new string[] { "IsPrimary", "Starting", "Ending" });
+
+      if (string.IsNullOrEmpty(fields["pid_a"]))
       {
-        TryUpdateModel(o, new string[] { "IsPrimary", "Starting", "Ending" });
-
-        if (string.IsNullOrEmpty(fields["pid_a"]))
-        {
-          ModelState.AddModelError("Owner", "Required. Please pick from list.");
-
-        }
-        else
-        {
-          Guid personId = new Guid(fields["pid_a"]);
-          Member member = (from m in this.db.Members where m.Id == personId select m).First();
-          o.Owner = member;
-        }
-
-        if (ModelState.IsValid)
-        {
-          this.db.SaveChanges();
-          TempData["message"] = "Saved";
-          return RedirectToAction("ClosePopup");
-        }
+        ModelState.AddModelError("Owner", "Required. Please pick from list.");
 
       }
-      catch (RuleViolationsException ex)
+      else
       {
-        this.CollectRuleViolations(ex, fields);
+        Guid personId = new Guid(fields["pid_a"]);
+        Member member = (from m in this.db.Members where m.Id == personId select m).First();
+        o.Owner = member;
       }
+
+      if (ModelState.IsValid)
+      {
+        this.db.SaveChanges();
+        TempData["message"] = "Saved";
+        return RedirectToAction("ClosePopup");
+      }
+
       return InternalEditOwner(o);
     }
 

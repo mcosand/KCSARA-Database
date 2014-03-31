@@ -105,6 +105,10 @@
     <Compile Include="AnimalOwner.cs" />
     <Compile Include="AnimalMission.cs" />
     <Compile Include="IKcsarContext.cs" />
+    <Compile Include="Migrations\201403040055520_RefactorValidate.cs" />
+    <Compile Include="Migrations\201403040055520_RefactorValidate.Designer.cs">
+      <DependentUpon>201403040055520_RefactorValidate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Migrator.cs" />
     <Compile Include="MemberUnitDocument.cs" />
     <Compile Include="MemberMedical.cs" />
@@ -145,7 +149,6 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModelObject.cs" />
-    <Compile Include="PersonSubscription.cs" />
     <Compile Include="IAddress.cs" />
     <Compile Include="MissionDetails.cs" />
     <Compile Include="MissionGeography.cs" />
@@ -155,10 +158,7 @@
     <Compile Include="TrainingCourse.cs" />
     <Compile Include="PersonContact.cs" />
     <Compile Include="MissionLog.cs" />
-    <Compile Include="Exceptions.cs" />
     <Compile Include="ITrainingAward.cs" />
-    <Compile Include="IValidatedEntity.cs" />
-    <Compile Include="RuleViolation.cs" />
     <Compile Include="SarUnit.cs" />
     <Compile Include="Training.cs" />
     <Compile Include="TrainingAward.cs" />
@@ -221,6 +221,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201309050314287_UnitDocuments.resx">
       <DependentUpon>201309050314287_UnitDocuments.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201403040055520_RefactorValidate.resx">
+      <DependentUpon>201403040055520_RefactorValidate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

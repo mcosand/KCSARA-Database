@@ -1,38 +1,36 @@
 ﻿/*
  * Copyright 2012-2014 Matthew Cosand
  */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Kcsar.Database.Model
 {
-    public abstract class ModelObject : IModelObject
+  using System;
+  using System.Collections.Generic;
+  using System.ComponentModel.DataAnnotations;
+  using System.Linq;
+  using System.Text;
+  using System.Threading.Tasks;
+
+  public abstract class ModelObject : IModelObject
+  {
+    public DateTime LastChanged { get; set; }
+    public string ChangedBy { get; set; }
+    public Guid Id { get; set; }
+
+    public ModelObject()
     {
-        public DateTime LastChanged { get; set; }
-        public string ChangedBy { get; set; }
-        public Guid Id { get; set; }
-
-        protected List<RuleViolation> errors = new List<RuleViolation>();
-
-
-        public ModelObject()
-        {
-            this.Id = Guid.NewGuid();
-        }
-        
-        public abstract string GetReportHtml();
-
-        public IList<RuleViolation> Errors
-        {
-            get { return errors.AsReadOnly(); }
-        }
-
-        public virtual bool Validate()
-        {
-            return true;
-        }
+      this.Id = Guid.NewGuid();
     }
+
+    public override string ToString()
+    {
+      return GetReportHtml();
+    }
+
+    public abstract string GetReportHtml();
+
+    public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+      return new ValidationResult[0];
+    }
+  }
 }

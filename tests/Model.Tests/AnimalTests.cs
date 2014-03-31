@@ -3,6 +3,7 @@
  */
 namespace Internal.Database.Model
 {
+  using System.Linq;
   using Kcsar.Database.Model;
   using NUnit.Framework;
 
@@ -49,7 +50,7 @@ namespace Internal.Database.Model
     public void Validate()
     {
       var animal = GetValidAnimal();
-      Assert.IsTrue(animal.Validate());
+      Assert.AreEqual(0, animal.Validate(null).Count());
     }
 
     [TestCase(null)]
@@ -58,8 +59,8 @@ namespace Internal.Database.Model
     {
       var animal = GetValidAnimal();
       animal.Name = name;
-      Assert.IsFalse(animal.Validate());
-      Assert.AreEqual("Name", animal.Errors[0].PropertyName);
+      var result = animal.Validate(null);
+      Assert.AreEqual("Name", result.Single().MemberNames.Single());
     }
 
     [TestCase(null)]
@@ -68,8 +69,8 @@ namespace Internal.Database.Model
     {
       var animal = GetValidAnimal();
       animal.DemSuffix = suffix;
-      Assert.IsFalse(animal.Validate());
-      Assert.AreEqual("DemSuffix", animal.Errors[0].PropertyName);
+      var result = animal.Validate(null);
+      Assert.AreEqual("DemSuffix", result.Single().MemberNames.Single());
     }
 
     [TestCase(null)]
@@ -78,8 +79,8 @@ namespace Internal.Database.Model
     {
       var animal = GetValidAnimal();
       animal.Type = type;
-      Assert.IsFalse(animal.Validate());
-      Assert.AreEqual("Type", animal.Errors[0].PropertyName);
+      var result = animal.Validate(null);
+      Assert.AreEqual("Type", result.Single().MemberNames.Single());
     }
 
     [Test]
@@ -87,9 +88,9 @@ namespace Internal.Database.Model
     {
       var animal = GetValidAnimal();
       animal.Type = "other";
-      Assert.IsFalse(animal.Validate());
-      Assert.AreEqual("Type", animal.Errors[0].PropertyName);
-      Assert.AreNotEqual("Required", animal.Errors[0].ErrorMessage);
+      var result = animal.Validate(null);
+      Assert.AreEqual("Type", result.Single().MemberNames.Single());
+      Assert.AreEqual("Must be one of", result.Single().ErrorMessage.Split(':')[0]);
     }
 
     private Animal GetValidAnimal()
