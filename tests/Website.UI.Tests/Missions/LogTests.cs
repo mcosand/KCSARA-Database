@@ -1,5 +1,4 @@
-﻿
-namespace Internal.Website.Missions
+﻿namespace Internal.Website.Missions
 {
   using System;
   using System.Collections.Generic;
@@ -25,13 +24,16 @@ namespace Internal.Website.Missions
         d.Url = string.Format("{0}/Missions/Roster/{1}", context.Url, this.MissionId);
         d.FindElement(By.ClassName("nav-second")).FindElement(By.LinkText("Log")).Click();
 
+        // If the script doesn't update the field, the time will be way off.
+        ((IJavaScriptExecutor)d).ExecuteScript("$('#time').val('1900-01-01 5:00')");        
+
         d.FindElement(By.Id("addlog")).Click();
         var form = d.FindElement(By.Id("logform"));
 
         // time field should auto-populate with current time
         var time = form.FindElement(By.Id("time"));
         DateTime t = DateTime.Parse(time.GetAttribute("value"));
-        Assert.Less(Math.Abs((DateTime.Now - t).TotalSeconds), 10, "current time");
+        Assert.Less(Math.Abs((DateTime.Now - t).TotalMinutes), 2, "current time");
 
         // submit with no time
         time.Clear();

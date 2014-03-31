@@ -7,9 +7,9 @@ ELSE
 
 IF NOT EXISTS (SELECT 1 FROM UnitStatus WHERE Unit_Id=@mtnrsq)
 BEGIN
-  INSERT INTO UnitStatus (Id,StatusName,IsActive,InternalWacLevel,WacLevel,GetsAccount,Unit_Id, LastChanged) VALUES (newid(), 'Active', 1, 4, 4, 0, @mtnrsq, GETDATE())
-  INSERT INTO UnitStatus (Id,StatusName,IsActive,InternalWacLevel,WacLevel,GetsAccount,Unit_Id, LastChanged) VALUES (newid(), 'Novice', 1, 1, 1, 0, @mtnrsq, GETDATE())
-  INSERT INTO UnitStatus (Id,StatusName,IsActive,InternalWacLevel,WacLevel,GetsAccount,Unit_Id, LastChanged) VALUES (newid(), 'Alumni', 0, 0, 0, 0, @mtnrsq, GETDATE())
+  INSERT INTO UnitStatus (Id,StatusName,IsActive,WacLevel,GetsAccount,Unit_Id, LastChanged) VALUES (newid(), 'Active', 1, 4, 0, @mtnrsq, GETDATE())
+  INSERT INTO UnitStatus (Id,StatusName,IsActive,WacLevel,GetsAccount,Unit_Id, LastChanged) VALUES (newid(), 'Novice', 1, 1, 0, @mtnrsq, GETDATE())
+  INSERT INTO UnitStatus (Id,StatusName,IsActive,WacLevel,GetsAccount,Unit_Id, LastChanged) VALUES (newid(), 'Alumni', 0, 0, 0, @mtnrsq, GETDATE())
 END
 
 DECLARE @dogs UNIQUEIDENTIFIER = NEWID()
@@ -20,10 +20,10 @@ ELSE
 
 IF NOT EXISTS (SELECT 1 FROM UnitStatus WHERE Unit_Id=@dogs)
 BEGIN
-  INSERT INTO UnitStatus (Id,StatusName,IsActive,InternalWacLevel,WacLevel,GetsAccount,Unit_Id, LastChanged) VALUES (newid(), 'Active', 1, 4, 4, 0, @dogs, GETDATE())
-  INSERT INTO UnitStatus (Id,StatusName,IsActive,InternalWacLevel,WacLevel,GetsAccount,Unit_Id, LastChanged) VALUES (newid(), 'Trainee', 1, 1, 1, 0, @dogs, GETDATE())
-  INSERT INTO UnitStatus (Id,StatusName,IsActive,InternalWacLevel,WacLevel,GetsAccount,Unit_Id, LastChanged) VALUES (newid(), 'OnLeave', 0, 0, 0, 0, @dogs, GETDATE())
-  INSERT INTO UnitStatus (Id,StatusName,IsActive,InternalWacLevel,WacLevel,GetsAccount,Unit_Id, LastChanged) VALUES (newid(), 'Alumni', 0, 0, 0, 0, @dogs, GETDATE())
+  INSERT INTO UnitStatus (Id,StatusName,IsActive,WacLevel,GetsAccount,Unit_Id, LastChanged) VALUES (newid(), 'Active', 1, 4, 0, @dogs, GETDATE())
+  INSERT INTO UnitStatus (Id,StatusName,IsActive,WacLevel,GetsAccount,Unit_Id, LastChanged) VALUES (newid(), 'Trainee', 1, 1, 0, @dogs, GETDATE())
+  INSERT INTO UnitStatus (Id,StatusName,IsActive,WacLevel,GetsAccount,Unit_Id, LastChanged) VALUES (newid(), 'OnLeave', 0, 0, 0, @dogs, GETDATE())
+  INSERT INTO UnitStatus (Id,StatusName,IsActive,WacLevel,GetsAccount,Unit_Id, LastChanged) VALUES (newid(), 'Alumni', 0, 0, 0, @dogs, GETDATE())
 END
 
 -- ========================== TRAINING ==================================
@@ -100,7 +100,7 @@ DECLARE @marc UNIQUEIDENTIFIER = NEWID()
 IF EXISTS (SELECT 1 FROM Members WHERE FirstName='Marc')
   SET @marc = (SELECT id FROM Members WHERE FirstName='Marc')
 ELSE
-  INSERT INTO Members (Id,DEM,LastName,FirstName,InternalBirthDate,InternalGender,InternalWacLevel,WacLevelDate,BackgroundDate,LastChanged,[Status])
+  INSERT INTO Members (Id,DEM,LastName,FirstName,BirthDate,Gender,WacLevel,WacLevelDate,BackgroundDate,LastChanged,[Status])
                VALUES (@marc, '1534', 'Rickenbacker', 'Marc', '1973-10-25', 'm', 4, '1995-09-21', '2012-10-04', GETDATE(), 48)
 
 IF NOT EXISTS (SELECT 1 FROM UnitMemberships WHERE Unit_Id=@mtnrsq AND Person_Id=@marc)
