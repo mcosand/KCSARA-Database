@@ -189,8 +189,12 @@ namespace Kcsar.Database.Model
         {
           IModelObject obj1 = oc.GetObjectByKey((EntityKey)entry.OriginalValues[0]) as IModelObject;
           IModelObject obj2 = oc.GetObjectByKey((EntityKey)entry.OriginalValues[1]) as IModelObject;
+          if (obj1 == null || obj2 == null)
+          {
+            continue;
+          }
 
-          string key = string.Format("{0}{1}", entry.EntitySet.Name, obj2.Id);
+          string key = string.Format("{0}{1}", obj1.Id, obj2.Id);
           updatedRelations.Add(key, obj1);
         }
         else
@@ -213,8 +217,12 @@ namespace Kcsar.Database.Model
 
           var key2 = ((EntityKey)entry.CurrentValues[1]);
 
-          var obj1 = oc.GetObjectByKey(key1);
+          IModelObject obj1 = oc.GetObjectByKey(key1) as IModelObject;
           IModelObject obj2 = oc.GetObjectByKey(key2) as IModelObject;
+          if (obj1 == null || obj2 == null)
+          {
+            continue;
+          }
 
           var audit = new AuditLog
             {
@@ -225,7 +233,7 @@ namespace Kcsar.Database.Model
               Comment = null
             };
 
-          string key = string.Format("{0}{1}", entry.EntitySet.Name, obj2.Id);
+          string key = string.Format("{0}{1}", obj1.Id, obj2.Id);
           IModelObject original = null;
           if (updatedRelations.TryGetValue(key, out original))
           {
