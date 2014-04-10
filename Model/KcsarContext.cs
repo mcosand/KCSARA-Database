@@ -136,6 +136,7 @@ namespace Kcsar.Database.Model
         Action = entry.State.ToString(),
         Changed = DateTime.Now,
         ObjectId = obj.Id,
+        User = Thread.CurrentPrincipal.Identity.Name,
         Collection = entry.EntitySet.Name
       };
 
@@ -228,6 +229,7 @@ namespace Kcsar.Database.Model
             {
               Action = "Modified",
               Changed = DateTime.Now,
+              User = Thread.CurrentPrincipal.Identity.Name,
               ObjectId = obj2.Id,
               Collection = entry.EntitySet.Name,
               Comment = null
