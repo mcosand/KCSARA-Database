@@ -8,6 +8,7 @@ namespace Kcsara.Database.Web.Controllers
   using Kcsar.Database.Model;
   using Kcsara.Database.Geo;
   using Kcsara.Database.Web.Model;
+  using ApiModels = Kcsara.Database.Web.api.Models;
   using System;
   using System.Collections.Generic;
   using System.Drawing;
@@ -43,7 +44,7 @@ namespace Kcsara.Database.Web.Controllers
 
       DateTime now = DateTime.Now;
       var members = this.db.GetActiveMembers(null, now, "Memberships.Unit", "Memberships.Status");
-      var model = members.ToArray().Select(f => new MemberSummaryRow(f)
+      var model = members.ToArray().Select(f => new ApiModels.MemberSummary(f)
       {
         Units = f.Memberships.Where(this.db.GetActiveMembershipFilter(null, now)).ToDictionary(g => g.Unit.Id, g => g.Unit.DisplayName)
       });
@@ -708,7 +709,7 @@ namespace Kcsara.Database.Web.Controllers
                    || (m.LastName + ", " + m.FirstName).ToLower().Contains(query)
                    || m.DEM.Contains(query)
                  select m);
-      return Data(results.Select(f => new MemberSummaryRow(f)).ToArray());
+      return Data(results.Select(f => new ApiModels.MemberSummary(f)).ToArray());
     }
 
 

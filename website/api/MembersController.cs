@@ -340,5 +340,26 @@ namespace Kcsara.Database.Web.api
 
       return "OK";
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpGet]
+    [Authorize(Roles = "cdb.users")]
+    public IEnumerable<MemberSummary> ByWorkerNumber(string id)
+    {
+      var result = db.Members.Where(f => f.DEM == id)
+        .OrderBy(f => f.LastName).ThenBy(f => f.FirstName)
+        .AsEnumerable()
+        .Select(f => new MemberSummary
+        {
+          Name = f.FirstName,
+          WorkerNumber = f.DEM,
+          Id = f.Id
+        });
+      return result;
+    }
   }
 }

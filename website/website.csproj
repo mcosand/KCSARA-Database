@@ -189,7 +189,10 @@
     </Compile>
     <Compile Include="api\AccountController.cs" />
     <Compile Include="api\Models\Admin\ExecuteDatabaseScript.cs" />
+    <Compile Include="api\Models\MemberSummary.cs" />
     <Compile Include="api\Models\MemberUnitDocument.cs" />
+    <Compile Include="api\Models\TrainingCourse.cs" />
+    <Compile Include="api\Models\TrainingRecord.cs" />
     <Compile Include="api\Models\UnitDocument.cs" />
     <Compile Include="api\UnitsController.cs" />
     <Compile Include="api\MembersController.cs" />
@@ -306,7 +309,6 @@
     <Compile Include="Models\MemberDetailView.cs" />
     <Compile Include="Models\MemberRosterRow.cs" />
     <Compile Include="Models\AnimalView.cs" />
-    <Compile Include="Models\MemberSummaryRow.cs" />
     <Compile Include="Models\MeshNodeStatus.cs" />
     <Compile Include="Models\MissionRosterWithExpiredTrainingView.cs" />
     <Compile Include="Models\NameIdViewModel.cs" />
@@ -315,9 +317,7 @@
     <Compile Include="Models\RosterRowsContext.cs" />
     <Compile Include="Models\SubmitResult.cs" />
     <Compile Include="Models\Telemetry\TelemetryErrorView.cs" />
-    <Compile Include="Models\TrainingAwardView.cs" />
     <Compile Include="Models\TrainingCourseHoursView.cs" />
-    <Compile Include="Models\TrainingCourseView.cs" />
     <Compile Include="Models\UnitApplicationInfoViewModel.cs" />
     <Compile Include="Models\UnitMemberStatusViewModel.cs" />
     <Compile Include="NinjectResolver.cs" />
