@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Popup.Master" Inherits="System.Web.Mvc.ViewPage<Kcsara.Database.Web.Model.TrainingAwardView>" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Popup.Master" Inherits="System.Web.Mvc.ViewPage<Kcsara.Database.Web.api.Models.TrainingRecord>" %>
 <%@ Import Namespace="Kcsara.Database.Web.Controllers" %>
 <%@ Import Namespace="Kcsara.Database.Web.Model" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
