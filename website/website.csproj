@@ -604,7 +604,6 @@
     <Content Include="Views\Shared\ICS211.aspx" />
     <Content Include="Views\Shared\Review4x4Roster.aspx" />
     <Content Include="Views\Shared\RosterOfEvents.ascx" />
-    <Content Include="Views\Shared\Submit4x4Roster.aspx" />
     <Content Include="Views\Shared\SupportingDoc.ascx" />
     <Content Include="Views\Shared\Upload4x4Roster.aspx" />
     <Content Include="Views\Shared\UploadSupportingDoc.aspx" />

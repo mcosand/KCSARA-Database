@@ -355,7 +355,7 @@ namespace Kcsara.Database.Web.api
         .AsEnumerable()
         .Select(f => new MemberSummary
         {
-          Name = f.FirstName,
+          Name = f.FullName,
           WorkerNumber = f.DEM,
           Id = f.Id
         });
