@@ -14,8 +14,8 @@ This project can be deployed into a Windows Azure web site instance using SQL Az
 
 ### First Run
 1. Load kcsara-database.sln in Visual Studio
-2. Review UpdateDatabaseKey app setting in web.config
-3. Review ConnectionStrings, make sure they are compatible with your installation. If the connecting users has permissions to create a database on the server it does not need to be created before hand.
+2. Review DatabaseUpdateKey app setting in website\web.config
+3. Review ConnectionStrings, make sure they are compatible with your installation. If the connecting user has permissions to create a database on the server it does not need to be created beforehand.
 4. Run the project.
 5. Point your web browser to `http://localhost:4944/admin/updatedatabase?updatekey=[appSettings Updatekey]`
 6. The database is now running, and you can log in using username `admin`, with password `password`
