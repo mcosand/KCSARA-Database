@@ -18,7 +18,7 @@
     <tr><th>Core/Radio</th><td></td><%: CCStatus("Core/Radio.WE", false) %><%: CCStatus("Core/Radio.PE", false) %></tr>
     <tr><th>Core/Rescue</th><td></td><%: CCStatus("Core/Rescue.WE", false) %><%: CCStatus("Core/Rescue.PE", false) %></tr>
     <tr><th>Core/Safety</th><td></td><%: CCStatus("Core/Safety.WE", false) %><%: CCStatus("Core/Safety.PE", false) %></tr>
-    <tr><th>Core/Search</th><td></td><%: CCStatus("Core/Search.WE", false) %><%: CCStatus("Core/Search.PE", false) %></tr>
+    <tr><th>Core/SearchTech</th><td></td><%: CCStatus("Core/SearchTech.WE", false) %><%: CCStatus("Core/SearchTech.PE", false) %></tr>
     <tr><th>Core/Survival</th><td></td><%: CCStatus("Core/Survival.WE", false) %><%: CCStatus("Core/Survival.PE", false) %></tr>
   </tbody>
 </table>

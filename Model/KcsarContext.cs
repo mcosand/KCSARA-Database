@@ -481,6 +481,11 @@ namespace Kcsar.Database.Model
       IEnumerable<string> results = newAwardsString.Split('+');
       bool awarded = false;
 
+      if (completed < (rule.OfferedFrom ?? DateTime.MinValue) || completed > (rule.OfferedUntil ?? DateTime.MaxValue))
+      {
+        return false;
+      }
+
       foreach (string result in results)
       {
         string[] parts = result.Split(':');

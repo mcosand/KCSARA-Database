@@ -73,7 +73,7 @@ namespace Kcsar.Database.Model
                 "Radio.PE", "Radio.WE",
                 "Rescue.PE", "Rescue.WE",
                 "Safety.PE", "Safety.WE",
-                "Search.PE", "Search.WE",
+                "SearchTech.PE", "SearchTech.WE",
                 "Survival.PE", "Survival.WE"
             }.Select(f => "Core/" + f).ToList();
       courses.Add("ICS-100");
