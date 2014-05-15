@@ -2,7 +2,7 @@
  * Copyright 2009-2014 Matthew Cosand
  */
 
-namespace Kcsara.Database.Web.Model
+namespace Kcsara.Database.Web.api.Models
 {
     using System;
     using System.Collections.Generic;
@@ -12,7 +12,7 @@ namespace Kcsara.Database.Web.Model
     using Kcsar.Database.Model;
 
     [DataContract]
-    public class MemberSummaryRow
+    public class MemberSummary
     {
         [DataMember]
         public Guid Id { get; set; }
@@ -26,11 +26,11 @@ namespace Kcsara.Database.Web.Model
         [IgnoreDataMember]
         public Dictionary<Guid, string> Units { get; set; }
 
-        public MemberSummaryRow()
+        public MemberSummary()
         {
         }
 
-        public MemberSummaryRow(Member member)
+        public MemberSummary(Member member)
         {
             this.Id = member.Id;
             this.Name = member.ReverseName;

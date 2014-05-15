@@ -2,7 +2,7 @@
  * Copyright 2010-2014 Matthew Cosand
  */
 
-namespace Kcsara.Database.Web.Model
+namespace Kcsara.Database.Web.api.Models
 {
     using System;
     using System.Collections.Generic;
@@ -10,10 +10,10 @@ namespace Kcsara.Database.Web.Model
     using System.Web;
     using System.Runtime.Serialization;
     using System.Linq.Expressions;
-    using Kcsar.Database.Model;
+    using Model = Kcsar.Database.Model;
     
     [DataContract(Namespace="")]
-    public class TrainingCourseView
+    public class TrainingCourse
     {
         [DataMember(EmitDefaultValue=false)]
         public Guid Id { get; set; }
@@ -27,9 +27,9 @@ namespace Kcsara.Database.Web.Model
         [DataMember]
         public bool? Offered { get; set; }
 
-        public static Expression<Func<TrainingCourse, TrainingCourseView>> GetTrainingCourseConversion(DateTime? when)
+        public static Expression<Func<Model.TrainingCourse, TrainingCourse>> GetTrainingCourseConversion(DateTime? when)
         {
-            return f => new TrainingCourseView
+            return f => new TrainingCourse
             {
                 Id = f.Id,
                 Title = f.DisplayName,

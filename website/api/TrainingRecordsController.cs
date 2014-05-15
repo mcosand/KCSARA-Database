@@ -4,7 +4,7 @@
 
 namespace Kcsara.Database.Web.api
 {
-  using Kcsar.Database.Model;
+  using Data = Kcsar.Database.Model;
   using Kcsara.Database.Web.Model;
   using Newtonsoft.Json;
   using System;
@@ -13,43 +13,44 @@ namespace Kcsara.Database.Web.api
   using System.Linq.Expressions;
   using System.Web.Http;
   using log4net;
+  using Kcsara.Database.Web.api.Models;
 
   [ModelValidationFilter]
   public class TrainingRecordsController : BaseApiController
   {
-    public TrainingRecordsController(IKcsarContext db, ILog log)
+    public TrainingRecordsController(Data.IKcsarContext db, ILog log)
       : base(db, log)
     { }
 
     [HttpGet]
-    public TrainingAwardView Get(Guid id)
+    public TrainingRecord Get(Guid id)
     {
       return GetObjectOrNotFound(
-          () => GetTrainingRecordViews(f => f.Id == id, true, null).SingleOrDefault()
+          () => GetTrainingRecords(f => f.Id == id, true, null).SingleOrDefault()
       );
     }
 
     [HttpGet]
-    public IEnumerable<TrainingAwardView> FindComputedForMember(Guid id)
+    public IEnumerable<TrainingRecord> FindComputedForMember(Guid id)
     {
       if (!User.IsInRole("cdb.users")) ThrowAuthError();
 
-      Member m = GetObjectOrNotFound(() => db.Members.SingleOrDefault(f => f.Id == id));
+      Data.Member m = GetObjectOrNotFound(() => db.Members.SingleOrDefault(f => f.Id == id));
 
       var model = GetComputedTrainingRecordViews(f => f.Member.Id == id, false, m.WacLevel);
 
       return model;
     }
 
-    private IEnumerable<TrainingAwardView> GetComputedTrainingRecordViews(Expression<Func<ComputedTrainingAward, bool>> whereClause, bool includeMember, WacLevel? levelForRequired)
+    private IEnumerable<TrainingRecord> GetComputedTrainingRecordViews(Expression<Func<Data.ComputedTrainingAward, bool>> whereClause, bool includeMember, Data.WacLevel? levelForRequired)
     {
-      int mask = (1 << (((int)(levelForRequired ?? WacLevel.None) - 1) * 2 + 1));
+      int mask = (1 << (((int)(levelForRequired ?? Data.WacLevel.None) - 1) * 2 + 1));
       string dateFormat = GetDateFormat();
 
       var model = db.ComputedTrainingAwards.Where(whereClause).Select(computed =>
                                    new
                                    {
-                                     Course = new TrainingCourseView
+                                     Course = new TrainingCourse
                                      {
                                        Id = computed.Course.Id,
                                        Title = computed.Course.DisplayName,
@@ -68,7 +69,7 @@ namespace Kcsara.Database.Web.api
                                                   select award.Id).FirstOrDefault(),
                                      Required = (levelForRequired == null) ? (bool?)null : (computed.Course.WacRequired & mask) > 0
                                    }).OrderByDescending(f => f.Completed).ThenBy(f => f.Source)
-                                   .AsEnumerable().Select(f => new TrainingAwardView
+                                   .AsEnumerable().Select(f => new TrainingRecord
                                        {
                                          Course = f.Course,
                                          Comments = f.Comments,
@@ -81,15 +82,15 @@ namespace Kcsara.Database.Web.api
       return model;
     }
 
-    private IEnumerable<TrainingAwardView> GetTrainingRecordViews(Expression<Func<TrainingAward, bool>> whereClause, bool includeMember, WacLevel? levelForRequired)
+    private IEnumerable<TrainingRecord> GetTrainingRecords(Expression<Func<Data.TrainingAward, bool>> whereClause, bool includeMember, Data.WacLevel? levelForRequired)
     {
-      int mask = (1 << (((int)(levelForRequired ?? WacLevel.None) - 1) * 2 + 1));
+      int mask = (1 << (((int)(levelForRequired ?? Data.WacLevel.None) - 1) * 2 + 1));
       string dateFormat = GetDateFormat();
 
       var model = db.TrainingAward.Where(whereClause).Select(
                   award => new
                   {
-                    Course = new TrainingCourseView
+                    Course = new TrainingCourse
                     {
                       Id = award.Course.Id,
                       Title = award.Course.DisplayName
@@ -101,7 +102,7 @@ namespace Kcsara.Database.Web.api
                     ReferenceId = (from roster in db.TrainingRosters where roster.Id == award.Roster.Id select (Guid?)roster.Training.Id).FirstOrDefault<Guid?>() ??
                                     award.Id,
                     Required = (award.Course.WacRequired & mask) > 0
-                  }).AsEnumerable().Select(f => new TrainingAwardView
+                  }).AsEnumerable().Select(f => new TrainingRecord
                   {
                     Course = f.Course,
                     Comments = f.Comments,
@@ -115,22 +116,22 @@ namespace Kcsara.Database.Web.api
     }
 
     [HttpGet]
-    public IEnumerable<TrainingAwardView> FindForMember(Guid id)
+    public IEnumerable<TrainingRecord> FindForMember(Guid id)
     {
       if (!User.IsInRole("cdb.users")) ThrowAuthError();
 
-      Member m = GetObjectOrNotFound(() => db.Members.SingleOrDefault(f => f.Id == id));
+      Data.Member m = GetObjectOrNotFound(() => db.Members.SingleOrDefault(f => f.Id == id));
 
       int mask = (1 << (((int)m.WacLevel - 1) * 2 + 1));
 
-      var model = GetTrainingRecordViews(f => f.Member.Id == id, false, m.WacLevel);
+      var model = GetTrainingRecords(f => f.Member.Id == id, false, m.WacLevel);
 
       return model;
     }
 
     // POST api/<controller>
     [HttpPost]
-    public TrainingAwardView Post([FromBody]TrainingAwardView view)
+    public TrainingRecord Post([FromBody]TrainingRecord view)
     {
       log.DebugFormat("POST {0} {1} {2}", Request.RequestUri, User.Identity.Name, JsonConvert.SerializeObject(view));
       if (!User.IsInRole("cdb.trainingeditors")) ThrowAuthError();
@@ -142,12 +143,12 @@ namespace Kcsara.Database.Web.api
         ThrowSubmitErrors(new[] { new SubmitError { Error = Strings.API_Required, Property = "Member" } });
       }
 
-      TrainingAward model;
+      Data.TrainingAward model;
       model = (from a in db.TrainingAward.Include("Member").Include("Course") where a.Id == view.ReferenceId select a).FirstOrDefault();
 
       if (model == null)
       {
-        model = new TrainingAward();
+        model = new Data.TrainingAward();
         model.Member = db.Members.Where(f => f.Id == view.Member.Id).FirstOrDefault();
         if (model.Member == null)
         {

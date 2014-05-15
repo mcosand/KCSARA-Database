@@ -1,7 +1,7 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" AutoEventWireup="true" Inherits="System.Web.Mvc.ViewPage<IEnumerable<MemberSummaryRow>>" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" AutoEventWireup="true" Inherits="System.Web.Mvc.ViewPage<IEnumerable<MemberSummary>>" %>
 <%@ Import Namespace="Kcsara.Database.Web.Controllers" %>
 <%@ Import Namespace="Kcsar.Database.Model" %>
-<%@ Import Namespace="Kcsara.Database.Web.Model" %>
+<%@ Import Namespace="Kcsara.Database.Web.api.Models" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
   <% if (Page.User.IsInRole("cdb.admins") && ViewData["filtered"] == null) { %><div><%=
         Html.PopupActionLink<MembersController>(f => f.Create(), Strings.ActionNew)%></div> <% } %>
@@ -18,7 +18,7 @@
     </thead>
     <tbody>
       <%
-          foreach (MemberSummaryRow m in ViewData.Model)
+          foreach (MemberSummary m in ViewData.Model)
          {%>
         <tr>
           <td><%= m.WorkerNumber %></td>

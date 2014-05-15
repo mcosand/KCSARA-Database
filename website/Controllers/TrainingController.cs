@@ -7,6 +7,7 @@ namespace Kcsara.Database.Web.Controllers
   using Kcsar.Database;
   using Kcsar.Database.Model;
   using Kcsara.Database.Web.Model;
+  using ApiModels = Kcsara.Database.Web.api.Models;
   using System;
   using System.Collections.Generic;
   using System.Configuration;
@@ -84,17 +85,17 @@ namespace Kcsara.Database.Web.Controllers
         return new ContentResult { Content = "No id specified" };
       }
 
-      TrainingAwardView award;
+      ApiModels.TrainingRecord award;
       award = (from a in this.db.TrainingAward
                where a.Id == id
                select new
                {
-                 Course = new TrainingCourseView
+                 Course = new ApiModels.TrainingCourse
                  {
                    Id = a.Course.Id,
                    Title = a.Course.DisplayName
                  },
-                 Member = new MemberSummaryRow
+                 Member = new ApiModels.MemberSummary
                  {
                    Id = a.Member.Id,
                    Name = a.Member.LastName + ", " + a.Member.FirstName,
@@ -105,7 +106,7 @@ namespace Kcsara.Database.Web.Controllers
                  Expires = a.Expiry,
                  Source = "rule",
                  ReferenceId = a.Id
-               }).AsEnumerable().Select(f => new TrainingAwardView
+               }).AsEnumerable().Select(f => new ApiModels.TrainingRecord
                     {
                       Course = f.Course,
                       Member = f.Member,
@@ -284,7 +285,7 @@ namespace Kcsara.Database.Web.Controllers
           {
             memberHours.Add(award.Person.Id, new MemberRosterRow
             {
-              Person = new MemberSummaryRow { Id = award.Person.Id, Name = award.Person.ReverseName, WorkerNumber = award.Person.DEM },
+              Person = new ApiModels.MemberSummary { Id = award.Person.Id, Name = award.Person.ReverseName, WorkerNumber = award.Person.DEM },
               Count = 0,
               Hours = 0
             });
@@ -439,7 +440,7 @@ namespace Kcsara.Database.Web.Controllers
     {
       if (!Permissions.IsUserOrLocal(Request)) return GetLoginError();
 
-      object model = (from c in this.db.TrainingCourses where c.WacRequired > 0 select new TrainingCourseView { Id = c.Id, Required = c.WacRequired, Title = c.DisplayName }).OrderBy(f => f.Title).ToList();
+      object model = (from c in this.db.TrainingCourses where c.WacRequired > 0 select new ApiModels.TrainingCourse { Id = c.Id, Required = c.WacRequired, Title = c.DisplayName }).OrderBy(f => f.Title).ToList();
       return Data(model);
     }
 
@@ -448,20 +449,20 @@ namespace Kcsara.Database.Web.Controllers
     {
       if (!Permissions.IsUser && !Permissions.IsSelf(id)) return GetLoginError();
 
-      CompositeExpirationView model;
+      ApiModels.CompositeExpiration model;
       var courses = (from c in this.db.TrainingCourses where c.WacRequired > 0 select c).OrderBy(x => x.DisplayName).ToDictionary(f => f.Id, f => f);
 
       Member m = this.db.Members.Include("ComputedAwards.Course").FirstOrDefault(f => f.Id == id);
 
       CompositeTrainingStatus stats = CompositeTrainingStatus.Compute(m, courses.Values, DateTime.Now);
 
-      model = new CompositeExpirationView
+      model = new ApiModels.CompositeExpiration
       {
         Goodness = stats.IsGood,
-        Expirations = stats.Expirations.Select(f => new TrainingExpirationView
+        Expirations = stats.Expirations.Select(f => new ApiModels.TrainingExpiration
         {
           Completed = string.Format(GetDateFormat(), f.Value.Completed),
-          Course = new TrainingCourseView
+          Course = new ApiModels.TrainingCourse
           {
             Id = f.Value.CourseId,
             Required = courses[f.Value.CourseId].WacRequired,

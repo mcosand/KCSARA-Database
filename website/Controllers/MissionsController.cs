@@ -15,6 +15,7 @@ namespace Kcsara.Database.Web.Controllers
   using System.Web.Mvc;
   using Kcsar.Database.Model;
   using Kcsara.Database.Web.Model;
+  using ApiModels = Kcsara.Database.Web.api.Models;
 
   public partial class MissionsController : SarEventController<Mission, MissionRoster>
   {
@@ -988,7 +989,7 @@ namespace Kcsara.Database.Web.Controllers
                        new MemberRosterRow
                        {
                          Hours = 1, //g.Sum(f => f.Hours),
-                         Person = new MemberSummaryRow
+                         Person = new ApiModels.MemberSummary
                          {
                            Id = g.Key
                          },
@@ -1522,7 +1523,7 @@ select new { P = g.Key, Hours = g.Sum(f => f.Hours), Miles = g.Sum(f => f.Miles)
 
             rows.Add(new MissionRosterWithExpiredTrainingView
             {
-              Member = new MemberSummaryRow(roster.Person),
+              Member = new ApiModels.MemberSummary(roster.Person),
               Mission = new EventSummaryView(roster.Mission),
               ExpiredTrainings = requiredCourses.Expirations.Where(f => ((f.Value.Status & ExpirationFlags.Okay) != ExpirationFlags.Okay)).Select(f => f.Value.CourseName).ToArray()
             });

@@ -6,18 +6,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Kcsara.Database.Web.Model
+namespace Kcsara.Database.Web.api.Models
 {
     using System.Runtime.Serialization;
 
     [DataContract]
-    public class TrainingAwardView
+    public class TrainingRecord
     {
         [DataMember(EmitDefaultValue = false)]
-        public MemberSummaryRow Member { get; set; }
+        public MemberSummary Member { get; set; }
 
         [DataMember(EmitDefaultValue=false)]
-        public TrainingCourseView Course { get; set; }
+        public TrainingCourse Course { get; set; }
 
         [DataMember]
         public string Completed { get; set; }
@@ -45,7 +45,7 @@ namespace Kcsara.Database.Web.Model
     }
 
     [DataContract]
-    public class TrainingExpirationView : TrainingAwardView
+    public class TrainingExpiration : TrainingRecord
     {
         [DataMember]
         public string Status { get; set; }
@@ -55,12 +55,12 @@ namespace Kcsara.Database.Web.Model
     }
 
     [DataContract]
-    public class CompositeExpirationView
+    public class CompositeExpiration
     {
         [DataMember]
         public bool? Goodness { get; set; }
 
         [DataMember]
-        public TrainingExpirationView[] Expirations { get; set; }
+        public TrainingExpiration[] Expirations { get; set; }
     }
 }
