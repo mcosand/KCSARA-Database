@@ -38,6 +38,7 @@ namespace Kcsara.Database.Web.api
     /// <param name="id">Username to check.</param>
     /// <returns></returns>
     [HttpPost]
+    [AllowAnonymous]
     public string CheckUsername(string id)
     {
       if (id.Length < 3)
@@ -52,6 +53,7 @@ namespace Kcsara.Database.Web.api
     }
 
     [HttpPost]
+    [AllowAnonymous]
     public string Signup(AccountSignup data)
     {
       if (string.IsNullOrWhiteSpace(data.Firstname))
@@ -169,6 +171,7 @@ namespace Kcsara.Database.Web.api
     }
 
     [HttpPost]
+    [AllowAnonymous]
     public bool Verify(AccountVerify data)
     {
       if (data == null || string.IsNullOrWhiteSpace(data.Username) || string.IsNullOrWhiteSpace(data.Key))
