@@ -10,6 +10,7 @@
     <tr><th>Core/CPR</th><%: CCStatus("Core/CPR", true) %></tr>
     <tr><th>Core/Crime</th><%: CCStatus("Core/Crime.C", false) %><%: CCStatus("Core/Crime.WE", false) %><td></td></tr>
     <tr><th>Core/FirstAid</th><%: CCStatus("Core/FirstAid", true) %></tr>
+    <tr><th>Core/Fitness</th><td></td><%: CCStatus("Core/Fitness.WE", false) %><td></td></tr>
     <tr><th>Core/GPS</th><td></td><%: CCStatus("Core/GPS.WE", false) %><%: CCStatus("Core/GPS.PE", false) %></tr>
     <tr><th>Core/Helo</th><%: CCStatus("Core/Helo.C", false) %><%: CCStatus("Core/Helo.WE", false) %><td></td></tr>
     <tr><th>Core/Legal</th><%: CCStatus("Core/Legal.C", false) %><%: CCStatus("Core/Legal.WE", false) %><td></td></tr>
