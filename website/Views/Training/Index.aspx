@@ -18,6 +18,7 @@
     <% if ((bool)ViewData["showESAR"])
        { %>
     <li style="margin-top:1em;"><%= Html.ActionLink<TrainingController>(x => x.IstTrainingReport(null,null), "SAR IST Training Report")%></li>
+    <li style="margin-top:1em;"><%= Html.ActionLink<TrainingController>(x => x.SpartTrainingReport(null,null), "SPART Training Report")%></li>
     <li style="margin-top:1em;"><%= Html.ActionLink<TrainingController>(x => x.EsarTrainingReport(), "ESAR Training Report")%></li>
 
     <li>Eligible Emails: 

@@ -1033,6 +1033,84 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
       return this.File(ms, "application/vnd.ms-excel", filename);
     }
 
+    [Authorize(Roles = "cdb.users")]
+    public FileStreamResult SpartTrainingReport(Guid? id, DateTime? date)
+    {
+      id = id ?? new Guid("574cb2fe-1acc-4e04-919c-030546b0e7bd");
+
+      DateTime today = date ?? DateTime.Today;
+      //// Take current month and subtract 1 to move to Jan = 0 counting system
+      //// Take away one more so that reports run during the first month of a new quarter report on last quarter.
+      //// Then, convert -1 to 12 with +12,%12
+      //// Divide by 3 months to get the quarter
+      //int quarter = ((today.Month + 10) % 12) / 3;
+      //DateTime quarterStart = new DateTime(today.AddMonths(-1).Year, 1, 1).AddMonths(quarter * 3);
+      //DateTime quarterStop = quarterStart.AddMonths(3);
+
+
+      ExcelFile file = ExcelService.Create(ExcelFileType.XLS);
+      ExcelSheet sheet = file.CreateSheet("SPART Members");
+
+      var members = this.db.GetActiveMembers(id, today, "Memberships").OrderBy(f => f.LastName).ThenBy(f => f.FirstName);
+
+      var spartCourses = new[] { "OEC", "Avalanche I", "Avalanche II", "MT&R", "MT&R 2" };
+      var courses = this.db.TrainingCourses.Where(f => spartCourses.Contains(f.DisplayName) || f.WacRequired > 0);
+      var spartCourseGuids = new Guid[spartCourses.Length];
+      for (int i = 0; i < spartCourses.Length; i++)
+      {
+        string courseName = spartCourses[i];
+        spartCourseGuids[i] = courses.Where(f => f.DisplayName == courseName).Select(f => f.Id).SingleOrDefault();
+      }
+
+      var headers = new[] { "Last Name", "First Name", "OEC", "Avalanche I", "Avalanche II", "MT&R", "MT&R 2", "Missions This Year", "Missions Last Year" };
+      for (int i = 0; i < headers.Length; i++)
+      {
+        sheet.CellAt(0, i).SetValue(headers[i]);
+        sheet.CellAt(0, i).SetBold(true);
+      }
+
+      int row = 1;
+      foreach (var member in members)
+      {
+        var expires = CompositeTrainingStatus.Compute(member, courses, today);
+
+        int col = 0;
+        sheet.CellAt(row, col++).SetValue(member.LastName);
+        sheet.CellAt(row, col++).SetValue(member.FirstName);
+
+        foreach (var courseId in spartCourseGuids)
+        {
+          if (courseId != Guid.Empty)
+          {
+            var expire = expires.Expirations[(Guid)courseId];
+            if (expire.CourseName.StartsWith("Avalanche") && expire.Completed.HasValue)
+            {
+              expire.Expires = expire.Completed.Value.AddYears(3);
+            }
+            sheet.CellAt(row, col).SetValue(expire.ToString());
+          }
+          col++;
+        }
+
+        var now = DateTime.Now;
+        var yearStart = new DateTime(now.Year, 1, 1);
+        var lastYear = new DateTime(now.Year - 1, 1, 1);
+
+        sheet.CellAt(row, col++).SetValue(member.MissionRosters.Where(f => f.Unit.Id == id && f.TimeIn >= yearStart).Select(f => f.Mission.Id).Distinct().Count());
+        sheet.CellAt(row, col++).SetValue(member.MissionRosters.Where(f => f.Unit.Id == id && f.TimeIn >= lastYear && f.TimeIn < yearStart).Select(f => f.Mission.Id).Distinct().Count());
+
+        row++;
+      }
+
+
+      string filename = string.Format("spart-training-{0:yyMMdd}.xls", today);
+
+      MemoryStream ms = new MemoryStream();
+      file.Save(ms);
+      ms.Seek(0, SeekOrigin.Begin);
+      return this.File(ms, "application/vnd.ms-excel", filename);
+    }
+
 
     [Authorize(Roles = "cdb.users")]
     public FileStreamResult EsarTrainingReport()
