@@ -64,7 +64,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Model\Model.csproj">
+    <ProjectReference Include="..\..\src\Model\Model.csproj">
       <Project>{EAE01EC9-F91D-4B72-A648-6AC96E688CCE}</Project>
       <Name>Model</Name>
     </ProjectReference>
