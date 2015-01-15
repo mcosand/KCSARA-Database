@@ -1182,6 +1182,14 @@ namespace Kcsara.Database.Web.Controllers
     {
       throw new InvalidCastException("Test exception " + (counter++).ToString());
     }
+
+    [Authorize]
+    public ContentResult TestMail()
+    {
+      string email = Membership.GetUser().Email;
+      base.SendMail(email, "Test mail from KCSARA database.", "This test mail was sent from the database at " + DateTime.Now.ToString());
+      return base.Content("Mail sent to " + email);
+    }
     #endregion
   }
 }
