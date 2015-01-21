@@ -1,18 +1,27 @@
 ﻿/*
  * Copyright 2010-2014 Matthew Cosand
  */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 namespace Kcsara.Database.Geo
 {
-    public enum LookupResult
-    {
-        Error,
-        NotFound,
-        Range,
-        Success
-    }
+  using System;
+  using System.Collections.Generic;
+  using System.Linq;
+  using System.Text;
+
+  public enum LookupResult
+  {
+    Error,
+    NotFound,
+    Range,
+    Success
+  }
+
+  public enum GeocodeQuality
+  {
+    Unknown = 0,
+    NotFound = 1,
+    Poor = 2,
+    Medium = 8,
+    High = 32
+  }
 }

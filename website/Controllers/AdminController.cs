@@ -21,6 +21,8 @@ namespace Kcsara.Database.Web.Controllers
   using Kcsara.Database.Geo;
   using Kcsara.Database.Web.Model;
   using ApiModels = Kcsara.Database.Web.api.Models;
+  using System.Data.Entity.Validation;
+  using log4net;
 
   public partial class AdminController : BaseController
   {
@@ -964,7 +966,7 @@ namespace Kcsara.Database.Web.Controllers
 
       string data = "<table>";
       int pageSize = 40;
-      foreach (var addr in (from a in this.db.PersonAddress.Include("Person") where a.Quality == 0 select a).OrderBy(f => f.Person.LastName).ThenBy(f => f.Person.FirstName).Skip(id.Value * pageSize).Take(pageSize))
+      foreach (var addr in (from a in this.db.PersonAddress.Include("Person") where a.Quality == (int)GeocodeQuality.Unknown select a).OrderBy(f => f.Person.LastName).ThenBy(f => f.Person.FirstName).Skip(id.Value * pageSize).Take(pageSize))
       {
         string oldAddr = addr.Street + "<br/>" + addr.City + " " + addr.State + " " + addr.Zip;
 
@@ -973,13 +975,21 @@ namespace Kcsara.Database.Web.Controllers
         data += string.Format("<tr><td><b>{0}</b></td><td style=\"white-space:nowrap\">{1}</td><td>{2}</td></tr>",
                             addr.Person.ReverseName,
                             oldAddr,
-                            string.Format("Mailing: {0},  GeoLocation: {1}<br/>{2}",
-                                addr.Quality & 0x000f,
-                                (addr.Quality & 0x00f0) >> 4,
+                            string.Format("Quality: {0}<br/>{2}",
+                                addr.Quality,
                                 HttpUtility.HtmlEncode(string.Format("[{0}][{1}][{2}][{3}]", addr.Street, addr.City, addr.State, addr.Zip)))
                             );
       }
-      this.db.SaveChanges();
+      try
+      {
+        this.db.SaveChanges();
+      }
+      catch (DbEntityValidationException ex)
+      {
+        LogManager.GetLogger("AdminController").ErrorFormat("Validation error: {0}", 
+          string.Join("\n", ex.EntityValidationErrors.SelectMany(f => f.ValidationErrors.Select(g => g.PropertyName + ": " + g.ErrorMessage))));
+        data += "<tr><td colspan=23>DIDN'T SAVE ANY CHANGES BECAUSE OF VALIDATION EXCEPTIONS. CHECK LOGS.</td></tr>";
+      }
       return new ContentResult { Content = data + "</table>", ContentType = "text/html" };
     }
 
