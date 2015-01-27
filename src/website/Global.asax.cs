@@ -17,6 +17,7 @@ using Kcsara.Database.Web.Controllers;
 using log4net;
 using Ninject;
 using Ninject.Web.Common;
+using Kcsara.Database.Services.Accounts;
 
 namespace Kcsara.Database.Web
 {
@@ -40,6 +41,10 @@ namespace Kcsara.Database.Web
       myKernel.Bind<IReportsService>().To<ReportsService>();
       myKernel.Bind<IExtensionProvider>().To<ExtensionProvider>().InSingletonScope();
       myKernel.Get<IExtensionProvider>().Initialize();
+
+      myKernel.Bind<Func<IKcsarContext>>().ToConstant((Func<IKcsarContext>)(() => new KcsarContext()));
+
+      myKernel.Bind<AccountsService>().ToSelf().InSingletonScope();
     }
 
     protected void Session_Start(Object sender, EventArgs e)

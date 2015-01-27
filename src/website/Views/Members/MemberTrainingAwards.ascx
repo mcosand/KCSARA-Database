@@ -102,7 +102,7 @@
                                         <td>
                                             <div><img src="<%= Url.Content("~/Content/images/upload.gif") %>" alt="upload" /></td>
                                         <td data-bind="text: name"></td>
-                                        <td class="r" data-bind="text: ($data['size'] == undefined) ? '' : formatFileSize(size)"></td>
+                                        <td class="r" data-bind="text: ($data['size'] == undefined) ? '' : formatFileSize($data['size'])"></td>
                                         <td><img src="<%= Url.Content("~/content/images/trash.png") %>" style="width:20px;" alt="remove" data-bind="click: function() { $parent.RemovePending($data) }" /></td>
                                     </tr>
                                     <!-- /ko -->

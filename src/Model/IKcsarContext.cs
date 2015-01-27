@@ -9,7 +9,7 @@ namespace Kcsar.Database.Model
   using System.Data.Entity.Infrastructure;
   using System.Linq;
 
-  public interface IKcsarContext
+  public interface IKcsarContext : IDisposable
   {
     IDbSet<Animal> Animals { get; set; }
     IDbSet<AnimalMission> AnimalMissions { get; set; }

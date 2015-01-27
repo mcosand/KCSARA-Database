@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build;Package" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -188,6 +188,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="api\AccountController.cs" />
+    <Compile Include="api\Models\AccountRegistration.cs" />
     <Compile Include="api\Models\Admin\ExecuteDatabaseScript.cs" />
     <Compile Include="api\Models\MemberSummary.cs" />
     <Compile Include="api\Models\MemberUnitDocument.cs" />
@@ -225,6 +226,10 @@
     <Content Include="App_Readme\Elmah.txt" />
     <Content Include="Content\auth\animals\none.jpg" />
     <Content Include="Content\auth\members\none.jpg" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\font-awesome.css" />
+    <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\images\maps\base-e.png" />
     <Content Include="Content\images\maps\clue-e.png" />
     <Content Include="Content\images\maps\found-e.png" />
@@ -469,10 +474,19 @@
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tooltip.min.css" />
     <Content Include="favicon.ico" />
+    <Content Include="fonts\fontawesome-webfont.svg" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\auth\Web.config" />
     <Content Include="Content\esartraining-template.xls" />
     <Content Include="Content\roster-template.xls" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="fonts\fontawesome-webfont.ttf" />
+    <Content Include="fonts\fontawesome-webfont.woff" />
+    <Content Include="fonts\FontAwesome.otf" />
     <None Include="Properties\PublishProfiles\Local IIS.pubxml" />
     <None Include="parameters.xml" />
     <Content Include="help\images\new-member-1.jpg" />
@@ -481,6 +495,8 @@
     <Content Include="help\images\new-member-4.png" />
     <Content Include="help\index.html" />
     <Content Include="help\new-member.html" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\html5.js" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -496,6 +512,7 @@
     <Content Include="Scripts\ViewModels.js" />
     <Content Include="Sql\AuthDatabase_Create.sql" />
     <Content Include="Sql\AuthDatabase_Update.sql" />
+    <Content Include="Templates\Email\register-account.html" />
     <Content Include="Templates\Email\new-account-verification.html" />
     <Content Include="Views\Account\ChangePassword.aspx" />
     <Content Include="Views\Account\ChangePasswordSuccess.aspx" />
@@ -507,6 +524,7 @@
     <Content Include="Views\Account\ResetPassword.aspx" />
     <Content Include="Views\Account\ResetPasswordDone.aspx" />
     <Content Include="Views\Account\Settings.aspx" />
+    <Content Include="Views\Account\Register.aspx" />
     <Content Include="Views\Account\Verify.aspx" />
     <Content Include="Views\Admin\Accounts.aspx" />
     <Content Include="Views\Admin\Sql.aspx" />
@@ -663,6 +681,10 @@
     <ProjectReference Include="..\Model\Model.csproj">
       <Project>{eae01ec9-f91d-4b72-a648-6ac96e688cce}</Project>
       <Name>Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Services\Services.csproj">
+      <Project>{2e5c85da-32f0-43f1-83ed-026867aa2a6d}</Project>
+      <Name>Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\Unit.Extensions\Unit.Extensions.csproj">
       <Project>{f56a1669-1009-4203-8045-c890f9f93a2e}</Project>

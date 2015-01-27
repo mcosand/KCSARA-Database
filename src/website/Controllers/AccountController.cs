@@ -41,6 +41,18 @@ namespace Kcsara.Database.Web.Controllers
       return View();
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public ActionResult Register()
+    {
+      ViewData["Title"] = "New Account Registration";
+      ViewData.Add("hideMenu", true);
+
+      return View();
+    }
+
     public ActionResult Verify(string id, string key)
     {
       ViewData["Title"] = "Verify KCSARA Account";

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2013-2014 Matthew Cosand
+ * Copyright 2013-2015 Matthew Cosand
  */
 
 namespace Kcsara.Database.Web.api
@@ -19,17 +19,78 @@ namespace Kcsara.Database.Web.api
   using Model = Kcsar.Database.Model;
   using log4net;
   using System.Web.Security;
+using Kcsara.Database.Services.Accounts;
 
   [ModelValidationFilter]
   public class AccountController : BaseApiController
   {
     public const string APPLICANT_ROLE = "cdb.applicants";
     readonly MembershipProvider membership;
+    readonly AccountsService accountsService;
 
-    public AccountController(IKcsarContext db, ILog log, MembershipProvider membership)
+    public AccountController(IKcsarContext db, AccountsService accountsSvc, ILog log, MembershipProvider membership)
       : base(db, log)
     {
       this.membership = membership;
+      this.accountsService = accountsSvc;
+    }
+
+    [HttpPost]
+    [AllowAnonymous]
+    public string Register(AccountRegistration data)
+    {
+      var emailCheck = CheckEmail(data.Email);
+      if (emailCheck != RegistrationEmailStatus.Ready)
+      {
+        throw new InvalidOperationException("Email verification returned: " + emailCheck.ToString());
+      }
+      if (CheckUsername(data.Username) != "Available")
+      {
+        throw new InvalidOperationException("Username not available");
+      }
+
+      Guid memberId = Guid.Empty;
+      var result = AddNewMember(data, () =>
+      {
+        var member = db.PersonContact.Where(f => f.Type == "email" && f.Value == data.Email).Select(f => f.Person).Single();
+        memberId = member.Id;
+
+        var now = DateTime.Now;
+        
+        // For all units where the member is active and they have accounts turned on...
+        foreach (var unit in member.Memberships.Where(f => f.Activated < now && (f.EndTime == null || f.EndTime > now) && f.Status.GetsAccount).Select(f => f.Unit))
+        {
+          string roleName = string.Format("sec.{0}.members", unit.DisplayName.Replace(" ", "").ToLowerInvariant());
+
+          // Give them rights as a member of the unit.
+          if (System.Web.Security.Roles.RoleExists(roleName))
+          {
+            System.Web.Security.Roles.AddUserToRole(data.Username, roleName);
+          }
+        }
+
+        return member;
+      }, "register-account.html");
+
+      if (result == "OK" && memberId != Guid.Empty)
+      {
+        var member = db.Members.Single(f => f.Id == memberId);
+        member.Username = data.Username;
+        db.SaveChanges();
+      }
+      return result;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="id">Email to check.</param>
+    /// <returns></returns>
+    [HttpPost]
+    [AllowAnonymous]
+    public RegistrationEmailStatus CheckEmail(string id)
+    {
+      return accountsService.CheckEmail((id ?? string.Empty).Trim());
     }
 
     /// <summary>
@@ -61,11 +122,6 @@ namespace Kcsara.Database.Web.api
       if (string.IsNullOrWhiteSpace(data.Lastname))
         return "Last name is required";
 
-      if (string.IsNullOrWhiteSpace(data.Email))
-        return "Email is required";
-      if (!Regex.IsMatch(data.Email, @"^\S+@\S+\.\S+$"))
-        return "Unrecognized email address";
-
       if (data.BirthDate > DateTime.Today.AddYears(-14))
         return "Applicants must be 14 years or older";
       if (data.BirthDate < DateTime.Today.AddYears(-120))
@@ -76,6 +132,54 @@ namespace Kcsara.Database.Web.api
 
       if (data.Units.Length == 0)
         return "Must select at least one unit";
+
+      return AddNewMember(data, () =>
+      {
+        Member newMember = new Member
+        {
+          FirstName = data.Firstname,
+          MiddleName = data.Middlename,
+          LastName = data.Lastname,
+          BirthDate = data.BirthDate,
+          Gender = (data.Gender == "m") ? Gender.Male
+                  : (data.Gender == "f") ? Gender.Female
+                  : Gender.Unknown,
+          Status = MemberStatus.Applicant,
+          Username = data.Username
+        };
+        db.Members.Add(newMember);
+
+        PersonContact email = new PersonContact
+        {
+          Person = newMember,
+          Type = "email",
+          Value = data.Email,
+          Priority = 0
+        };
+        db.PersonContact.Add(email);
+
+        foreach (Guid unitId in data.Units)
+        {
+          UnitsController.RegisterApplication(db, unitId, newMember);
+        }
+
+        if (!System.Web.Security.Roles.RoleExists(APPLICANT_ROLE))
+        {
+          System.Web.Security.Roles.CreateRole(APPLICANT_ROLE);
+        }
+        System.Web.Security.Roles.AddUserToRole(data.Username, APPLICANT_ROLE);
+
+        return newMember;
+      }, "new-account-verification.html");
+    }
+
+    private string AddNewMember(AccountRegistration data, Func<Member> memberCallback, string noticeTemplate)
+    {
+      if (string.IsNullOrWhiteSpace(data.Email))
+        return "Email is required";
+      if (!Regex.IsMatch(data.Email, @"^\S+@\S+\.\S+$"))
+        return "Unrecognized email address";
+
 
       if (string.IsNullOrWhiteSpace(data.Username))
         return "Username is required";
@@ -107,55 +211,23 @@ namespace Kcsara.Database.Web.api
         System.Web.Security.FormsAuthenticationTicket ticket = new System.Web.Security.FormsAuthenticationTicket(data.Username, false, 5);
         Thread.CurrentPrincipal = new System.Web.Security.RolePrincipal(new System.Web.Security.FormsIdentity(ticket));
 
-        Member newMember = new Member
-        {
-          FirstName = data.Firstname,
-          MiddleName = data.Middlename,
-          LastName = data.Lastname,
-          BirthDate = data.BirthDate,
-          Gender = (data.Gender == "m") ? Gender.Male
-                  : (data.Gender == "f") ? Gender.Female
-                  : Gender.Unknown,
-          Status = MemberStatus.Applicant,
-          Username = data.Username
-        };
-        db.Members.Add(newMember);
-
-        PersonContact email = new PersonContact
-        {
-          Person = newMember,
-          Type = "email",
-          Value = data.Email,
-          Priority = 0
-        };
-        db.PersonContact.Add(email);
-
-        foreach (Guid unitId in data.Units)
-        {
-          UnitsController.RegisterApplication(db, unitId, newMember);
-        }
-
+        var member = memberCallback();
+        
         SarMembership.KcsarUserProfile profile = ProfileBase.Create(data.Username) as SarMembership.KcsarUserProfile;
         if (profile != null)
         {
-          profile.FirstName = data.Firstname;
-          profile.LastName = data.Lastname;
-          profile.LinkKey = newMember.Id.ToString();
+          profile.FirstName = member.FirstName;
+          profile.LastName = member.LastName;
+          profile.LinkKey = member.Id.ToString();
           profile.Save();
         }
 
-        if (!System.Web.Security.Roles.RoleExists(APPLICANT_ROLE))
-        {
-          System.Web.Security.Roles.CreateRole(APPLICANT_ROLE);
-        }
-        System.Web.Security.Roles.AddUserToRole(data.Username, APPLICANT_ROLE);
-
         string mailSubject = string.Format("{0} account verification", ConfigurationManager.AppSettings["dbNameShort"] ?? "KCSARA");
-        string mailTemplate = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Templates", "Email", "new-account-verification.html"));
+        string mailTemplate = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Templates", "Email", noticeTemplate));
         string mailBody = mailTemplate
             .Replace("%Username%", data.Username)
             .Replace("%VerifyLink%", new Uri(this.Request.RequestUri, Url.Route("Default", new { httproute = "", controller = "Account", action = "Verify", id = data.Username })).AbsoluteUri + "?key=" + user.ProviderUserKey.ToString())
-            .Replace("%WebsiteContact%", "webpage@kingcountysar.org");
+            .Replace("%WebsiteContact%", ConfigurationManager.AppSettings["MailFrom"] ?? "database@kcsara.org");
 
         db.SaveChanges();
         EmailService.SendMail(data.Email, mailSubject, mailBody);

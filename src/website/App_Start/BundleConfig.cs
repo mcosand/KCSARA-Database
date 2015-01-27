@@ -65,7 +65,8 @@ namespace Kcsara.Database.Web
                 "~/Content/common.css",
                 "~/Content/suggest.css",
                 "~/Content/jquery.fileupload-ui.css",
-                "~/Content/nprogress.css"
+                "~/Content/nprogress.css",
+                "~/Content/font-awesome.css"
                 ));
 
             bundles.Add(new StyleBundle("~/style/print").Include(

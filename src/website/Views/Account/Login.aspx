@@ -38,6 +38,7 @@
             <td>
               <%= Html.SubmitButton("login", Strings.Login) %>
               <div style="font-size:70%; margin-top:1em"><%= Html.ActionLink<AccountController>(f => f.ResetPassword(string.Empty), "Forgotten Password") %></div>
+              <div style="font-size:70%;"><%= Html.ActionLink<AccountController>(f => f.Register(), "Register New Account") %></div>
             </td>
           </tr>
         </table>
