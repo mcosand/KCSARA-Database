@@ -183,4 +183,16 @@
   <data name="SensitiveText" xml:space="preserve">
     <value>[[ HIDDEN ]]</value>
   </data>
+  <data name="AccountForgotPassword" xml:space="preserve">
+    <value>Forgotten Password</value>
+  </data>
+  <data name="AccountRegisterNew" xml:space="preserve">
+    <value>Register New Account</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Username</value>
+  </data>
 </root>

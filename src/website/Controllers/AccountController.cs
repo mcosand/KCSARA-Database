@@ -331,10 +331,7 @@ namespace Kcsara.Database.Web.Controllers
     //    [RequireHttps]
     public ActionResult Login()
     {
-
-      ViewData["PageTitle"] = "Login";
-      ViewData["HideMenu"] = true;
-      return View();
+      return View(new LoginRequest());
     }
 
     [AcceptVerbs(HttpVerbs.Get)]
@@ -364,44 +361,32 @@ namespace Kcsara.Database.Web.Controllers
 
     [AcceptVerbs(HttpVerbs.Post)]
     //    [RequireHttps]
-    public ActionResult Login(string username, string password, bool rememberMe, string returnUrl, int? id, int? p)
+    public ActionResult Login(LoginRequest input)
     {
-      ViewData["PageTitle"] = "Login";
-
-      // Basic parameter validation
-      if (String.IsNullOrEmpty(username))
-      {
-        ModelState.AddModelError("username", "You must specify a username.");
-      }
-      if (String.IsNullOrEmpty(password))
-      {
-        ModelState.AddModelError("password", "You must specify a password.");
-      }
-
       if (ViewData.ModelState.IsValid)
       {
         // Attempt to login
-        bool loginSuccessful = Provider.ValidateUser(username, password);
+        bool loginSuccessful = Provider.ValidateUser(input.Username, input.Password);
 
         if (loginSuccessful)
         {
-          FormsAuth.SetAuthCookie(username, rememberMe);
-          if (p != null)
+          FormsAuth.SetAuthCookie(input.Username, input.RememberMe);
+          if (input.P != null)
           {
-            return RedirectToAction("GetTicket", new { p = p, returnUrl = returnUrl });
+            return RedirectToAction("GetTicket", new { p = input.P, returnUrl = input.ReturnUrl });
           }
 
-          if (id.HasValue)
+          if (input.Id.HasValue)
           {
-            return Redirect(string.Format("{0}://{1}:{2}/{3}", this.Request.Url.Scheme, this.Request.Url.Host, id, returnUrl));
+            return Redirect(string.Format("{0}://{1}:{2}/{3}", this.Request.Url.Scheme, this.Request.Url.Host, input.Id, input.ReturnUrl));
           }
-          else if (!String.IsNullOrEmpty(returnUrl))
+          else if (!String.IsNullOrEmpty(input.ReturnUrl))
           {
-            return Redirect(returnUrl);
+            return Redirect(input.ReturnUrl);
           }
-          else if (Roles.IsUserInRole(username, api.AccountController.APPLICANT_ROLE))
+          else if (Roles.IsUserInRole(input.Username, api.AccountController.APPLICANT_ROLE))
           {
-            KcsarUserProfile profile = ProfileBase.Create(username) as KcsarUserProfile;
+            KcsarUserProfile profile = ProfileBase.Create(input.Username) as KcsarUserProfile;
             if (!string.IsNullOrWhiteSpace(profile.LinkKey))
               return RedirectToAction("Detail", "Members", new { id = profile.LinkKey });
           }
@@ -414,7 +399,7 @@ namespace Kcsara.Database.Web.Controllers
       }
 
       // If we got this far, something failed, redisplay form
-      ViewData["rememberMe"] = rememberMe;
+      ViewData["rememberMe"] = input.RememberMe;
       return View();
     }
 

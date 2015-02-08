@@ -1,0 +1,11 @@
+﻿@*
+  * Copyright 2015 Matthew Cosand
+*@
+@{
+  Layout = "~/Views/Shared/_Bare.cshtml";
+}
+@RenderBody()
+
+@section scripts {
+@RenderSection("scripts", required: false)
+}
