@@ -241,7 +241,6 @@
     <Content Include="App_Readme\Elmah.txt" />
     <Content Include="Content\auth\animals\none.jpg" />
     <Content Include="Content\auth\members\none.jpg" />
-    <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\font-awesome.css" />
