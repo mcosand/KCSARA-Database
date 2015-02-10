@@ -13,7 +13,7 @@ namespace Kcsara.Database.Web
       BundleTable.EnableOptimizations = false;
 
       bundles.Add(new ScriptBundle("~/scripts/core-next").Include(
-        "~/scripts/jquery-1.10.2.js",
+        "~/scripts/jquery-2.1.3.min.js",
         "~/scripts/jquery.validate.min.js",
         "~/scripts/jquery.validate.unobtrusive.min.js",
         "~/scripts/site/validation.js",
@@ -29,14 +29,14 @@ namespace Kcsara.Database.Web
 
 
       bundles.Add(new ScriptBundle("~/script/core").Include(
-          "~/Scripts/jquery-1.10.2.js",
+          "~/Scripts/jquery-2.1.3.min.js",
           "~/Content/script/json2.js",
           "~/Content/script/errorHandling.js",
-          "~/Scripts/jquery-ui-1.10.3.js",
+          "~/Scripts/jquery-ui-1.11.2.min.js",
           "~/Content/script/date.js",
           "~/Content/script/jquery.tablesorter.js",
           "~/Content/script/timepicker.js",
-          "~/Scripts/knockout-3.0.0.js",
+          "~/Scripts/knockout-3.2.0.js",
           "~/Scripts/knockout.mapping-latest.js",
           "~/Content/script/jquery.iframe-transport.js",
           "~/Content/script/jquery.fileupload.js",
@@ -63,18 +63,18 @@ namespace Kcsara.Database.Web
       //            "~/Content/script/modernizr-*"));
 
       bundles.Add(new StyleBundle("~/Content/themes/base/jquery-ui").Include(
-          "~/Content/themes/base/jquery.ui.core.css",
-          "~/Content/themes/base/jquery.ui.resizable.css",
-          "~/Content/themes/base/jquery.ui.selectable.css",
-          "~/Content/themes/base/jquery.ui.accordion.css",
-          "~/Content/themes/base/jquery.ui.autocomplete.css",
-          "~/Content/themes/base/jquery.ui.button.css",
-          "~/Content/themes/base/jquery.ui.dialog.css",
-          "~/Content/themes/base/jquery.ui.slider.css",
-          "~/Content/themes/base/jquery.ui.tabs.css",
-          "~/Content/themes/base/jquery.ui.datepicker.css",
-          "~/Content/themes/base/jquery.ui.progressbar.css",
-          "~/Content/themes/base/jquery.ui.theme.css"
+          "~/Content/themes/base/core.css",
+          "~/Content/themes/base/resizable.css",
+          "~/Content/themes/base/selectable.css",
+          "~/Content/themes/base/accordion.css",
+          "~/Content/themes/base/autocomplete.css",
+          "~/Content/themes/base/button.css",
+          "~/Content/themes/base/dialog.css",
+          "~/Content/themes/base/slider.css",
+          "~/Content/themes/base/tabs.css",
+          "~/Content/themes/base/datepicker.css",
+          "~/Content/themes/base/progressbar.css",
+          "~/Content/themes/base/theme.css"
           ));
       bundles.Add(new StyleBundle("~/Content/site-style").Include(
           "~/Content/site.css",
