@@ -31,5 +31,11 @@ describe("app.js", function () {
       expect(App.getCookie("authInfo", 'authInfo='+data+'; expires=Thu, 12-Feb-2015 10:35:42 GMT; path=/'))
       .toBe(data)
     })
+    it("should parse out of multiple cookies", function () {
+      var data = '{"username":"","isAuthenticated":false}';
+      var other = 'other=foo; ';
+      expect(App.getCookie("authInfo", other + 'authInfo=' + data + '; expires=Thu, 12-Feb-2015 10:35:42 GMT; path=/'))
+      .toBe(data)
+    })
   })
 });

@@ -107,11 +107,12 @@
   }
 
   App.getCookie = function getCookie(name, source) {
-    var cookies = (source || document.cookie).split(';');
-    for (var i = 0; i < cookies.length; i++) {
-      var arr = cookies[i].split('=');
-      if (arr[0] == name) return arr[1];
-    }
+    var src = (source || document.cookie);
+    if (!src) return null;
+    var searched = src.split(';').map(function(e) { return e.trim() }).filter(function (s) {
+      return s.search(name + '=') == 0
+    })
+    return searched[0].split(/(=)/).slice(2).join('')
   }
 
   App.qs = (function (a) {

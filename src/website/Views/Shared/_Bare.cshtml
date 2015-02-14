@@ -25,10 +25,11 @@
         @loginLink("hidden-xs")
         <div class="navbar-form navbar-right" data-bind="visible: user().isAuthenticated(), component: { name: 'search-box', params: {selected: searchResult}}" style="display: none">
         </div>
-        @loginLink("visible-xs")
-        <ul class="nav navbar-nav" data-bind="if: user().isAuthenticated()" style="display: none">
-            <li><a href="#">Units</a></li>
+        <ul class="nav navbar-nav" data-bind="visible: user().isAuthenticated()" style="display: none">
+          <li><a href="#">Units</a></li>
         </ul>
+        @loginLink("visible-xs")
+
       </div>
     </div>
   </div>
