@@ -4,8 +4,8 @@
 namespace Kcsara.Database.Web.api
 {
   using System.Web.Http;
-  using System.Web.Http.Controllers;
   using Newtonsoft.Json.Converters;
+  using Newtonsoft.Json.Serialization;
   using Ninject;
 
   /// <summary>Configure API settings for the basic application</summary>
@@ -26,8 +26,11 @@ namespace Kcsara.Database.Web.api
 
       config.Filters.Add(new ExceptionFilter());
       config.Filters.Add(new AuthorizeAttribute());
+      
+      var jsonSettings = config.Formatters.JsonFormatter.SerializerSettings;
+      jsonSettings.Converters.Add(new StringEnumConverter());
+      jsonSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
 
-      config.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new StringEnumConverter());
     }
   }
 }

@@ -4,10 +4,6 @@
 
 namespace Kcsara.Database.Web.api
 {
-  using Kcsar.Database.Model;
-  using SarMembership = Kcsar.Membership;
-  using Kcsara.Database.Web.api.Models;
-  using Kcsara.Database.Web.Services;
   using System;
   using System.Configuration;
   using System.IO;
@@ -16,23 +12,34 @@ namespace Kcsara.Database.Web.api
   using System.Threading;
   using System.Web.Http;
   using System.Web.Profile;
-  using Model = Kcsar.Database.Model;
-  using log4net;
   using System.Web.Security;
-using Kcsara.Database.Services.Accounts;
+  using Kcsar.Database.Model;
+  using Kcsara.Database.Services.Accounts;
+  using Kcsara.Database.Web.api.Models;
+  using Kcsara.Database.Web.api.Models.Account;
+  using Kcsara.Database.Web.Services;
+  using log4net;
+  using SarMembership = Kcsar.Membership;
 
   [ModelValidationFilter]
   public class AccountController : BaseApiController
   {
     public const string APPLICANT_ROLE = "cdb.applicants";
     readonly MembershipProvider membership;
+    readonly IFormsAuthentication formsAuth;
     readonly AccountsService accountsService;
 
-    public AccountController(IKcsarContext db, AccountsService accountsSvc, ILog log, MembershipProvider membership)
+    public AccountController(
+      IKcsarContext db,
+      AccountsService accountsSvc,
+      ILog log,
+      MembershipProvider membership,
+      IFormsAuthentication formsAuth)
       : base(db, log)
     {
       this.membership = membership;
       this.accountsService = accountsSvc;
+      this.formsAuth = formsAuth;
     }
 
     [HttpPost]
@@ -56,16 +63,16 @@ using Kcsara.Database.Services.Accounts;
         memberId = member.Id;
 
         var now = DateTime.Now;
-        
+
         // For all units where the member is active and they have accounts turned on...
         foreach (var unit in member.Memberships.Where(f => f.Activated < now && (f.EndTime == null || f.EndTime > now) && f.Status.GetsAccount).Select(f => f.Unit))
         {
           string roleName = string.Format("sec.{0}.members", unit.DisplayName.Replace(" ", "").ToLowerInvariant());
 
           // Give them rights as a member of the unit.
-          if (System.Web.Security.Roles.RoleExists(roleName))
+          if (Roles.RoleExists(roleName))
           {
-            System.Web.Security.Roles.AddUserToRole(data.Username, roleName);
+            Roles.AddUserToRole(data.Username, roleName);
           }
         }
 
@@ -163,11 +170,11 @@ using Kcsara.Database.Services.Accounts;
           UnitsController.RegisterApplication(db, unitId, newMember);
         }
 
-        if (!System.Web.Security.Roles.RoleExists(APPLICANT_ROLE))
+        if (!Roles.RoleExists(APPLICANT_ROLE))
         {
-          System.Web.Security.Roles.CreateRole(APPLICANT_ROLE);
+          Roles.CreateRole(APPLICANT_ROLE);
         }
-        System.Web.Security.Roles.AddUserToRole(data.Username, APPLICANT_ROLE);
+        Roles.AddUserToRole(data.Username, APPLICANT_ROLE);
 
         return newMember;
       }, "new-account-verification.html");
@@ -208,11 +215,11 @@ using Kcsara.Database.Services.Accounts;
 
       try
       {
-        System.Web.Security.FormsAuthenticationTicket ticket = new System.Web.Security.FormsAuthenticationTicket(data.Username, false, 5);
-        Thread.CurrentPrincipal = new System.Web.Security.RolePrincipal(new System.Web.Security.FormsIdentity(ticket));
+        FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(data.Username, false, 5);
+        Thread.CurrentPrincipal = new RolePrincipal(new FormsIdentity(ticket));
 
         var member = memberCallback();
-        
+
         SarMembership.KcsarUserProfile profile = ProfileBase.Create(data.Username) as SarMembership.KcsarUserProfile;
         if (profile != null)
         {
@@ -234,7 +241,7 @@ using Kcsara.Database.Services.Accounts;
       }
       catch (Exception ex)
       {
-        log.Error(ex.ToString());        
+        log.Error(ex.ToString());
         membership.DeleteUser(data.Username, true);
         return "An error occured while creating your user account";
       }
@@ -262,12 +269,30 @@ using Kcsara.Database.Services.Accounts;
     }
 
     [HttpPost]
+    [AllowAnonymous]
+    public SubmitResult Login(LoginRequest input)
+    {
+      var result = new SubmitResult();
+
+      if (this.membership.ValidateUser(input.Username, input.Password))
+      {
+        this.formsAuth.SetAuthCookie(input.Username, input.RememberMe);
+      }
+      else
+      {
+        result.Errors.Add(new SubmitError(Strings.LoginFailure));
+      }
+
+      return result;
+    }
+
+    [HttpPost]
     [Authorize(Roles = "site.accounts")]
     public object GetInactiveAccounts()
     {
       DateTime now = DateTime.Now;
 
-      var members = this.db.Members.Where(f => 
+      var members = this.db.Members.Where(f =>
         f.Id != Guid.Empty
         && f.Username != null && !f.Username.StartsWith("-")
         && (f.Status & MemberStatus.Applicant) != MemberStatus.Applicant
@@ -298,6 +323,28 @@ using Kcsara.Database.Services.Accounts;
       db.SaveChanges();
 
       return true;
+    }
+  }
+
+  // The FormsAuthentication type is sealed and contains static members, so it is difficult to
+  // unit test code that calls its members. The interface and helper class below demonstrate
+  // how to create an abstract wrapper around such a type in order to make the AccountController
+  // code unit testable.
+  public interface IFormsAuthentication
+  {
+    void SetAuthCookie(string userName, bool createPersistentCookie);
+    void SignOut();
+  }
+
+  public class FormsAuthenticationWrapper : IFormsAuthentication
+  {
+    public void SetAuthCookie(string userName, bool createPersistentCookie)
+    {
+      FormsAuthentication.SetAuthCookie(userName, createPersistentCookie);
+    }
+    public void SignOut()
+    {
+      FormsAuthentication.SignOut();
     }
   }
 }

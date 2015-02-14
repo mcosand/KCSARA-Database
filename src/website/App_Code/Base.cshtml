@@ -1,0 +1,27 @@
+﻿@*
+ * Copyright 2015 Matthew Cosand
+ *@
+@helper ErrorPanel()
+{
+  <div class="panel panel-danger" data-bind="visible: error" style="display: none">
+    <div class="text-center text-danger panel-body"><strong data-bind="text: error"></strong></div>
+  </div>
+}
+@helper LabelledInput(string type, string property, string label, string placeholder, string labelCols, string inputCols)
+{
+  <div class="form-group" data-bind="css: { 'has-error': @(property).error() }">
+    <label class="col-sm-3 col-md-2 control-label">@label:</label>
+    <div class="col-sm-9 col-md-10">
+      <input type="@type" data-bind="value: @(property)" class="form-control" placeholder="@placeholder" />
+      <span class="help-block" data-bind="text: @(property).error()"></span>
+    </div>
+  </div>
+}
+@helper TextField(string property, string label, string placeholder, string labelCols, string inputCols)
+{
+  @LabelledInput("text", property, label, placeholder, labelCols, inputCols);
+}
+@helper PasswordField(string property, string label, string placeholder, string labelCols, string inputCols)
+{
+  @LabelledInput("password", property, label, placeholder, labelCols, inputCols);
+}

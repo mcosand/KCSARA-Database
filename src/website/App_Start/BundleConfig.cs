@@ -14,10 +14,12 @@ namespace Kcsara.Database.Web
 
       bundles.Add(new ScriptBundle("~/scripts/core-next").Include(
         "~/scripts/jquery-2.1.3.min.js",
-        "~/scripts/jquery.validate.min.js",
-        "~/scripts/jquery.validate.unobtrusive.min.js",
-        "~/scripts/site/validation.js",
-        "~/scripts/bootstrap.min.js"
+        "~/scripts/bootstrap.min.js",
+        "~/scripts/jquery.toaster.js",
+        "~/scripts/knockout-3.2.0.js",
+        "~/scripts/site/common.js",
+        "~/scripts/site/searchbox.js",
+        "~/scripts/site/app.js"
         ));
       
       bundles.Add(new StyleBundle("~/content/site-next").Include(

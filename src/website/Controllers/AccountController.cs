@@ -5,22 +5,20 @@ namespace Kcsara.Database.Web.Controllers
 {
   using System;
   using System.Collections.Generic;
+  using System.Data.SqlClient;
+  using System.Globalization;
+  using System.Linq;
   using System.Security.Principal;
   using System.Threading;
   using System.Web.Mvc;
+  using System.Web.Profile;
   using System.Web.Security;
   using System.Web.UI;
-  using System.Linq;
-  using System.Data.SqlClient;
-  using Config = System.Configuration;
   using Kcsar.Database.Model;
-  using Kcsar.Database;
-  using Kcsara.Database.Web.Controllers;
-  using System.Globalization;
   using Kcsar.Membership;
   using Kcsara.Database.Web;
-  using System.Web.Profile;
   using Kcsara.Database.Web.Model;
+  using Config = System.Configuration;
 
   [OutputCache(Location = OutputCacheLocation.None)]
   public sealed class AccountController : BaseController
@@ -202,14 +200,14 @@ namespace Kcsara.Database.Web.Controllers
       return View();
     }
 
-    public AccountController(IKcsarContext db, IFormsAuthentication formsAuth, System.Web.Security.MembershipProvider provider)
+    public AccountController(IKcsarContext db, api.IFormsAuthentication formsAuth, System.Web.Security.MembershipProvider provider)
       : base(db)
     {
       Provider = provider;
       FormsAuth = formsAuth;
     }
 
-    public IFormsAuthentication FormsAuth
+    public api.IFormsAuthentication FormsAuth
     {
       get;
       private set;
@@ -536,28 +534,5 @@ namespace Kcsara.Database.Web.Controllers
     //        return new Memberuser { Id = Kcsar.Membership.MembershipProvider.UsernameToMemberKey(username), Username = username };
     //    }
     //}
-  }
-
-  // The FormsAuthentication type is sealed and contains static members, so it is difficult to
-  // unit test code that calls its members. The interface and helper class below demonstrate
-  // how to create an abstract wrapper around such a type in order to make the AccountController
-  // code unit testable.
-
-  public interface IFormsAuthentication
-  {
-    void SetAuthCookie(string userName, bool createPersistentCookie);
-    void SignOut();
-  }
-
-  public class FormsAuthenticationWrapper : IFormsAuthentication
-  {
-    public void SetAuthCookie(string userName, bool createPersistentCookie)
-    {
-      FormsAuthentication.SetAuthCookie(userName, createPersistentCookie);
-    }
-    public void SignOut()
-    {
-      FormsAuthentication.SignOut();
-    }
   }
 }

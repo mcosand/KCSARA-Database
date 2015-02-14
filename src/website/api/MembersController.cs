@@ -361,5 +361,14 @@ namespace Kcsara.Database.Web.api
         });
       return result;
     }
+
+    /// <summary>Vdir-relative directory to the meber's photo store. Includes trailing-slash.</summary>
+    public const string PhotosStoreRelativePath = "~/Content/auth/members/";
+    public const string StandInPhotoFile = "none.jpg";
+    public static string GetPhotoOrFillInPath(string photoFile)
+    {
+      return MembersController.PhotosStoreRelativePath + (photoFile ?? MembersController.StandInPhotoFile);
+    }
+
   }
 }

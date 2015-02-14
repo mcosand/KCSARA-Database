@@ -195,4 +195,7 @@
   <data name="Username" xml:space="preserve">
     <value>Username</value>
   </data>
+  <data name="LoginFailure" xml:space="preserve">
+    <value>Incorrect username or password</value>
+  </data>
 </root>

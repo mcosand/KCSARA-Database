@@ -8,7 +8,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>@(ViewData["Title"] ?? ViewBag.Title)</title>
   @Styles.Render("~/Content/site-next")
-  @*@Scripts.Render("~/bundles/modernizr")*@
 </head>
 <body>
   <div class="navbar navbar-inverse navbar-fixed-top">
@@ -23,30 +22,12 @@
         @(Html.ActionLink<HomeController>(f => f.Index(), Strings.DatabaseName, new { @class = "navbar-brand" }))
       </div>
       <div class="navbar-collapse collapse">
-        <ul class="nav navbar-nav">
-          @if (User.Identity.IsAuthenticated)
-          {
+        @loginLink("hidden-xs")
+        <div class="navbar-form navbar-right" data-bind="visible: user().isAuthenticated(), component: { name: 'search-box', params: {selected: searchResult}}" style="display: none">
+        </div>
+        @loginLink("visible-xs")
+        <ul class="nav navbar-nav" data-bind="if: user().isAuthenticated()" style="display: none">
             <li><a href="#">Units</a></li>
-          }
-        </ul>
-
-        <ul class="nav navbar-nav navbar-right">
-
-          @if (User.Identity.IsAuthenticated)
-          {
-            var userName = ((ProfileCommon)Profile).FirstName;
-            if (string.IsNullOrWhiteSpace(userName)) { userName = User.Identity.Name; }
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">@userName <small><i class="fa fa-user fa-2x" style="position:relative;margin-top:-8px; bottom:-4px"></i></small></a>
-              <ul class="dropdown-menu" role="menu">
-                <li>@(Html.ActionLink<AccountController>(f => f.Logout(), Strings.LogoutPrompt))</li>
-              </ul>
-            </li>
-          }
-          else
-          {
-            <li>@(Html.ActionLink<AccountController>(f => f.Login(), Strings.LoginPrompt))</li>
-          }
         </ul>
       </div>
     </div>
@@ -56,11 +37,35 @@
     @RenderBody()
     <hr />
     <footer>
-      <p></p>
+      <p data-bind="text: ko.toJSON($data, null, 2)"></p>
     </footer>
   </div>
 
+  <script type="text/javascript">
+    window.appRoot = "@Url.Content("~/").TrimEnd('/')";
+    pageModel = null;
+  </script>
   @Scripts.Render("~/scripts/core-next")
   @RenderSection("scripts", required: false)
+  <script type="text/javascript">
+
+    $(document).ready(function () {
+      App.bootstrap(pageModel)();
+    });
+  
+  </script>
 </body>
 </html>
+
+@helper loginLink(string addClass) { 
+  <ul class="nav navbar-nav navbar-right @addClass" data-bind="with: user">
+    <li class="dropdown" data-bind="if: isAuthenticated">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+      <span data-bind="text: username"></span> <small><i class="fa fa-user fa-2x" style="position:relative;margin-top:-8px; bottom:-4px"></i></small></a>
+      <ul class="dropdown-menu" role="menu">
+        <li>@(Html.ActionLink<AccountController>(f => f.Logout(), Strings.LogoutPrompt))</li>
+      </ul>
+    </li>
+    <li data-bind="visible: !isAuthenticated()" style="display: none">@(Html.ActionLink<AccountController>(f => f.Login(), Strings.LoginPrompt))</li>
+  </ul>
+}

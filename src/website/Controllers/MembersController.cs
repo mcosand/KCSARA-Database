@@ -29,10 +29,6 @@ namespace Kcsara.Database.Web.Controllers
   {
     public MembersController(IKcsarContext db) : base(db) { }
 
-    /// <summary>Vdir-relative directory to the meber's photo store. Includes trailing-slash.</summary>
-    public const string PhotosStoreRelativePath = "~/Content/auth/members/";
-    public const string StandInPhotoFile = "none.jpg";
-
     [Authorize]
     //        [FilterTypes(FilterTypes.ActiveOnly | FilterTypes.Time | FilterTypes.Unit)]
     public ActionResult Index()
@@ -638,7 +634,7 @@ namespace Kcsara.Database.Web.Controllers
           // Permissions check
           if (!(Permissions.IsAdmin || Permissions.IsInRole(new[] { "cdb.photos" }) || Permissions.IsMembershipForPerson(m.Id))) return this.CreateLoginRedirect();
 
-          string storePath = Server.MapPath(MembersController.PhotosStoreRelativePath);
+          string storePath = Server.MapPath(api.MembersController.PhotosStoreRelativePath);
 
           if (keepImages.Contains(m.Id.ToString().ToLowerInvariant()))
           {
@@ -810,7 +806,7 @@ namespace Kcsara.Database.Web.Controllers
 
         if (!string.IsNullOrEmpty(member.PhotoFile))
         {
-          string virtualPathPhoto = MembersController.GetPhotoOrFillInPath(member.PhotoFile);
+          string virtualPathPhoto = api.MembersController.GetPhotoOrFillInPath(member.PhotoFile);
           string photoFile = Server.MapPath(virtualPathPhoto);
           if (IO.File.Exists(photoFile))
           {
@@ -1438,11 +1434,6 @@ namespace Kcsara.Database.Web.Controllers
     }
     #endregion
 
-    public static string GetPhotoOrFillInPath(string photoFile)
-    {
-      return MembersController.PhotosStoreRelativePath + (photoFile ?? MembersController.StandInPhotoFile);
-    }
-
     [Authorize]
     public ActionResult Promotions()
     {
@@ -1911,7 +1902,7 @@ namespace Kcsara.Database.Web.Controllers
       foreach (var row in results)
       {
         if (row.PhotoFile == null) continue;
-        string photoPath = GetPhotoOrFillInPath(row.PhotoFile);
+        string photoPath = api.MembersController.GetPhotoOrFillInPath(row.PhotoFile);
         FileInfo fInfo = new FileInfo(Server.MapPath(photoPath));
         if (fInfo.LastWriteTime >= since)
         {

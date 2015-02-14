@@ -24,6 +24,7 @@ namespace Kcsara.Database.Web.api
     /// <summary>Client trapped a generic unhandled error.</summary>
     /// <param name="error">Error details.</param>
     /// <returns>true</returns>
+    [AllowAnonymous]
     public bool Error([FromBody]TelemetryErrorView error)
     {
       log.DebugFormat("{3} CLIENT ERROR: {0} // {1} // {2} - {4}", error.Error, error.Message, error.Location, User.Identity.Name, Request.Headers.UserAgent);

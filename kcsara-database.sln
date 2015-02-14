@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		2010Coverage.testsettings = 2010Coverage.testsettings
 		CodeCoverage.runsettings = CodeCoverage.runsettings
+		Gruntfile.js = Gruntfile.js
 		README.md = README.md
 		Standard.testsettings = Standard.testsettings
 	EndProjectSection
@@ -57,6 +58,16 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A825EBF7-E7F6-4059-B151-BCE186E26073}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "src\Services\Services.csproj", "{2E5C85DA-32F0-43F1-83ED-026867AA2A6D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Jasmine", "Jasmine", "{C481B759-C48A-44A4-8E09-8984FDD67C9D}"
+	ProjectSection(SolutionItems) = preProject
+		tests\jasmine\website\app.spec.js = tests\jasmine\website\app.spec.js
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "account", "account", "{AAFDB7ED-FB2D-42B3-87C5-652B3B83239C}"
+	ProjectSection(SolutionItems) = preProject
+		tests\jasmine\website\account\loginmodel.spec.js = tests\jasmine\website\account\loginmodel.spec.js
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -267,5 +278,7 @@ Global
 		{A892AFE4-95DA-4861-9935-B520C23440CA} = {F67F8451-20E4-4277-8BA4-6EBD663BCEA3}
 		{BE475201-A881-4BEF-8682-7C9A275281BB} = {AEC88F4A-AE57-4855-A44B-82D7A6BE0B32}
 		{2E5C85DA-32F0-43F1-83ED-026867AA2A6D} = {A825EBF7-E7F6-4059-B151-BCE186E26073}
+		{C481B759-C48A-44A4-8E09-8984FDD67C9D} = {F67F8451-20E4-4277-8BA4-6EBD663BCEA3}
+		{AAFDB7ED-FB2D-42B3-87C5-652B3B83239C} = {C481B759-C48A-44A4-8E09-8984FDD67C9D}
 	EndGlobalSection
 EndGlobal
