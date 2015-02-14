@@ -51,8 +51,9 @@
 }
 .search-box-item {
   border: solid 1px transparent;
+  cursor: pointer;
 }
-.search-box-item:hover {
+.search-box-highlight {
   border-color: rgb(233, 166, 49);
 }
 .search-box-item img { display:inline-block; padding:-1px; margin-right:8px; width:25px; height:34px }
