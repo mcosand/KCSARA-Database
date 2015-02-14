@@ -15,8 +15,18 @@ namespace Kcsara.Database.Web.api.Models.Search
     }
 
     public SearchResultType Type { get; set; }
-    public Guid Id { get; set; }
     public string Text { get; set; }
     public string Url { get; set; }
+  }
+
+  public class SearchResult<T> : SearchResult
+  {
+    public SearchResult(SearchResultType type, string text, string url, T more)
+      : base(type, text, url)
+    {
+      this.More = more;
+    }
+
+    public T More { get; set; }
   }
 }

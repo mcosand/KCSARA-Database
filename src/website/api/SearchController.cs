@@ -8,6 +8,7 @@ namespace Kcsara.Database.Web.api
   using System.Web.Http;
   using System.Web.Http.ModelBinding.Binders;
   using Kcsar.Database.Model;
+  using Kcsara.Database.Web.api.Models;
   using Kcsara.Database.Web.api.Models.Search;
   using log4net;
 
@@ -30,8 +31,14 @@ namespace Kcsara.Database.Web.api
                    || (m.LastName + ", " + m.FirstName).ToLower().Contains(q)
                    || m.DEM.Contains(q)
                  select m).OrderBy(f => f.LastName).ThenBy(f => f.FirstName).AsEnumerable()
-                 .Select(f => new MemberSearchResult(f, Url.Content("~/Members/Detail/") + "{0}", Url.Content(MembersController.PhotosStoreRelativePath)+"{0}", MembersController.StandInPhotoFile))
-                 );
+                 .Select(f => {
+                   var summary = new MemberSummary(f);
+                   return new SearchResult<MemberSummary>(
+                     SearchResultType.Member,
+                     summary.Name,
+                     Url.Content("~/Members/Detail/") + summary.Id.ToString(),
+                     new MemberSummary(f));
+                 }));
       
       return result;
     }

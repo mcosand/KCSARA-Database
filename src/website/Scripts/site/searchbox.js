@@ -45,11 +45,14 @@ ko.components.register('search-box', {
     }
   },
   template: '<form class="form-group has-feedback">' +
-             '<label class="control-label sr-only">Search site</label>' +
-             '<input type="text" class="form-control" placeholder="Search" data-bind="textInput: text, event: { mouseover: doFocus, focus: doFocus}" />' +
-           '<div class="search-box-dropdown glue-previous" data-bind="visible: hasResults, foreach: results">' +
-           '<div data-bind="text: text, click: $parent.clickItem" class="search-box-item"></div>' +
-           '</div>' +
-             '<span class="form-control-feedback fa" data-bind="css: { \'fa-search\': !working(), \'fa-circle-o-notch fa-spin\': working()}"></span>' +
-           '</form>'
+              '<label class="control-label sr-only">Search site</label>' +
+              '<input type="text" class="form-control" placeholder="Search" data-bind="textInput: text, event: { mouseover: doFocus, focus: doFocus}" />' +
+              '<div class="search-box-dropdown glue-previous" data-bind="visible: hasResults, foreach: results">' +
+                '<div data-bind="click: $parent.clickItem" class="search-box-item">' +
+                  '<img data-bind="attr: { src: appRoot + \'/api/members/getthumbnail/\' + more.id + \'?width=25\' }" />' +
+                  '<div><strong data-bind="text: text"></strong><span data-bind="visible: more.dem, text: \' -  \' + more.dem"></span></div>' +
+                '</div>' +
+              '</div>' +
+              '<span class="form-control-feedback fa" data-bind="css: { \'fa-search\': !working(), \'fa-circle-o-notch fa-spin\': working()}"></span>' +
+            '</form>'
 });
