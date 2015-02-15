@@ -23,10 +23,10 @@
       </div>
       <div class="navbar-collapse collapse">
         @loginLink("hidden-xs")
-        <div class="navbar-form navbar-right" data-bind="visible: user().isAuthenticated(), component: { name: 'search-box', params: {selected: searchResult}}" style="display: none">
+        <div class="navbar-form navbar-right" data-bind="visible: user().isAuthenticated(), component: { name: 'search-box', params: {selected: searchResult, id: 'searchBox'}}" style="display: none">
         </div>
         <ul class="nav navbar-nav" data-bind="visible: user().isAuthenticated()" style="display: none">
-          <li><a href="#">Units</a></li>
+          <li>@(Html.ActionLink<UnitsController>(f => f.Index(), Strings.SarUnits))</li>
         </ul>
         @loginLink("visible-xs")
 

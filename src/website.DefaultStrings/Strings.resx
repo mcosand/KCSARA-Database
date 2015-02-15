@@ -198,4 +198,7 @@
   <data name="LoginFailure" xml:space="preserve">
     <value>Incorrect username or password</value>
   </data>
+  <data name="SarUnits" xml:space="preserve">
+    <value>Units</value>
+  </data>
 </root>

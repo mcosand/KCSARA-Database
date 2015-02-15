@@ -44,6 +44,15 @@
 .navbar-collapse.in {
   overflow-y: visible;
 }
+
+@media(min-width:992px) {
+  #searchBox { width: 300px; }
+}
+@media(min-width:1200px) {
+  #searchBox {
+    width: 350px;
+  }
+}
 .search-box-dropdown {
   border: solid 1px #888;
   border-radius: 4px;
@@ -51,6 +60,7 @@
 }
 .search-box-item {
   border: solid 1px transparent;
+  border-right-width:4px;
   cursor: pointer;
 }
 .search-box-highlight {

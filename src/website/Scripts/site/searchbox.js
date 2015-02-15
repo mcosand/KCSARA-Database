@@ -11,6 +11,7 @@ ko.components.register('search-box', {
     this.debounce = null;
     this.highlighted = ko.observable(-1);
     this.selected = (params && params.selected) ? params.selected : ko.observable();
+    this.ctrlId = (params && params.id) ? params.id : undefined;
 
     var ignoreUpdate = false;
     var _searchHandler = function () {
@@ -46,8 +47,8 @@ ko.components.register('search-box', {
       self.selected(item);
     }
 
-    this.blur = function () {
-      window.setTimeout(self.results.removeAll, 5);
+    this.blur = function (model, evt) {
+      window.setTimeout(function () { self.results.removeAll() }, 200);
     }
 
     this.keyup = function (model, evt) {
@@ -61,10 +62,7 @@ ko.components.register('search-box', {
 
     this.doHighlight = function(model, event)
     {
-      console.log('doing highlight');
       var list = self.results();
-      console.log(list);
-      console.log(model);
       for (var i = 0; i < list.length; i++)
       {
         if (model === list[i]) { self.highlighted(i); }
@@ -79,7 +77,7 @@ ko.components.register('search-box', {
   },
   template: '<form class="form-group has-feedback">' +
               '<label class="control-label sr-only">Search site</label>' +
-              '<input type="text" class="form-control" placeholder="Search" data-bind="textInput: text, event: { keyup: keyup, focus: doFocus, blur: blur}" />' +
+              '<input type="text" class="form-control" placeholder="Search" data-bind="textInput: text, event: { keyup: keyup, focus: doFocus, blur: blur}, attr:{ id: ctrlId }" autocomplete="off" />' +
               '<div class="search-box-dropdown glue-previous" data-bind="visible: hasResults, foreach: results">' +
                 '<div data-bind="click: $parent.clickItem, event: {mouseover: $parent.doHighlight}, css: { \'search-box-highlight\': $parent.highlighted() == $index() }" class="search-box-item">' +
                     '<img data-bind="attr: { src: appRoot + \'/api/members/getthumbnail/\' + more.id + \'?width=25\' }" />' +
