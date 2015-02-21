@@ -40,6 +40,30 @@ namespace Kcsara.Database.Web.Controllers
       return View();
     }
 
+    public ActionResult RequireConfig()
+    {
+      string contentTemplate = @"var require = {
+      baseUrl: '%BASE-URL%',
+      waitSeconds: 60,
+      paths: {
+        'jquery': 'jquery-2.1.3',
+        'bootstrap': 'bootstrap.min',
+        'bootstrap-dialog': 'bootstrap-dialog.min',
+        'knockout': 'knockout-3.2.0'
+      },
+      map: {
+        '*': { 'site/env': 'site/env-ko' },
+        'site/env-ko': { 'site/env': 'site/env' }
+      },
+      shim: {
+        bootstrap: { deps: ['jquery'] },
+        'jquery.toaster': { deps: ['jquery'] }
+      }
+    };";
+
+      return Content(contentTemplate.Replace("%BASE-URL%", Url.Content("~/scripts/")), "application/javascript");
+    }
+
     public ActionResult CountyReport()
     {
       if (!Permissions.IsUserOrLocal(Request)) return this.CreateLoginRedirect();

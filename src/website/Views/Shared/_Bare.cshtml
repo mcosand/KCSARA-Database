@@ -45,15 +45,14 @@
   <script type="text/javascript">
     window.appRoot = "@Url.Content("~/").TrimEnd('/')";
     pageModel = null;
+    entryPoint = "site/startup";
   </script>
-  @Scripts.Render("~/scripts/core-next")
+  @Scripts.Render("~/home/RequireConfig")
+  @Scripts.Render("~/scripts/require.js")
+
   @RenderSection("scripts", required: false)
   <script type="text/javascript">
-
-    $(document).ready(function () {
-      App.bootstrap(pageModel)();
-    });
-  
+    requirejs([entryPoint])
   </script>
 </body>
 </html>

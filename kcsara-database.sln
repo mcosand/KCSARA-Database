@@ -59,15 +59,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A825EBF7-E7F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "src\Services\Services.csproj", "{2E5C85DA-32F0-43F1-83ED-026867AA2A6D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Jasmine", "Jasmine", "{C481B759-C48A-44A4-8E09-8984FDD67C9D}"
-	ProjectSection(SolutionItems) = preProject
-		tests\jasmine\website\app.spec.js = tests\jasmine\website\app.spec.js
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "account", "account", "{AAFDB7ED-FB2D-42B3-87C5-652B3B83239C}"
-	ProjectSection(SolutionItems) = preProject
-		tests\jasmine\website\account\loginmodel.spec.js = tests\jasmine\website\account\loginmodel.spec.js
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Website.QUnit", "tests\Website.QUnit\Website.QUnit.csproj", "{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -262,6 +254,21 @@ Global
 		{2E5C85DA-32F0-43F1-83ED-026867AA2A6D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{2E5C85DA-32F0-43F1-83ED-026867AA2A6D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{2E5C85DA-32F0-43F1-83ED-026867AA2A6D}.Release|x86.ActiveCfg = Release|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Deploy|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Deploy|Any CPU.Build.0 = Debug|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Deploy|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Deploy|Mixed Platforms.Build.0 = Debug|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Deploy|x86.ActiveCfg = Debug|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -278,7 +285,6 @@ Global
 		{A892AFE4-95DA-4861-9935-B520C23440CA} = {F67F8451-20E4-4277-8BA4-6EBD663BCEA3}
 		{BE475201-A881-4BEF-8682-7C9A275281BB} = {AEC88F4A-AE57-4855-A44B-82D7A6BE0B32}
 		{2E5C85DA-32F0-43F1-83ED-026867AA2A6D} = {A825EBF7-E7F6-4059-B151-BCE186E26073}
-		{C481B759-C48A-44A4-8E09-8984FDD67C9D} = {F67F8451-20E4-4277-8BA4-6EBD663BCEA3}
-		{AAFDB7ED-FB2D-42B3-87C5-652B3B83239C} = {C481B759-C48A-44A4-8E09-8984FDD67C9D}
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533} = {F67F8451-20E4-4277-8BA4-6EBD663BCEA3}
 	EndGlobalSection
 EndGlobal

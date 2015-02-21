@@ -1,42 +1,41 @@
-module.exports = function(grunt) {
-  'use strict';
+module.exports = function (grunt) {
   grunt.initConfig({
-    jasmine : {
-coverage: {
-      src : [
-        'src/website/scripts/site/common.js',
-        'src/website/scripts/site/searchbox.js',
-        'src/website/scripts/site/app.js',
-        'src/website/scripts/site/account/loginmodel.js'
-      ],
-      options : {
-        vendor: [
-          'src/website/scripts/jquery-2.1.3.min.js',
-          'src/website/scripts/bootstrap.min.js',
-          'src/website/scripts/jquery.toaster.js',
-          'src/website/scripts/knockout-3.2.0.js'
-        ],
-        styles: [
-          'src/website/content/bootstrap.min.css',
-          'src/website/content/bootstrap-theme.css',
-          'src/website/content/font-awesome.min.css',
-          'src/website/content/size-next.css'
-        ],
-        specs : 'tests/jasmine/website/**/*.js',
-        keepRunner:true,
-template: require('grunt-template-jasmine-istanbul'),
-templateOptions: {
-  coverage: 'cover.json',
-  report: 'coverage/jasmine'
-}
-      },
-}
+    copy: {
+      files: {
+        cwd: 'src/website/scripts/',  // set working folder / root to copy
+        src: ['**/*', '!**/*.TMP'],           // copy all files and subfolders
+        dest: 'tests/website.qunit/prod/',    // destination folder
+        expand: true,           // required when using cwd
+        flatten: false
+      }
+    },
+    qunit: {
+      all: {
+        options: {
+          urls: ['tests/Website.QUnit/test.html?suite=app,utils,components/login-form,components/searchbox'],
+          timeout: 5000
+        }
+      }
+    },
+    blanket_qunit: {
+      all: {
+        options: {
+          urls: [
+            'tests/website.qunit/test.html?coverage=true&gruntReport&suite=' +
+            encodeURIComponent(['app', 'utils', 'components/login-form', 'components/searchbox'].join())
+          ],
+          threshold: 60
+        }
+      }
     },
     watch: {
-      files: ['src/website/scripts/**/*.js', 'tests/jasmine/**/*/js', 'Gruntfile.js'],
-      tasks: ['jasmine']
+      files: ['src/website/scripts/**/*.js', 'tests/website.qunit/tests/**', 'Gruntfile.js'],
+      tasks: ['copy','blanket_qunit']
     }
   });
-  grunt.loadNpmTasks('grunt-contrib-jasmine');
+
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-qunit');
+  grunt.loadNpmTasks('grunt-blanket-qunit');
+  grunt.loadNpmTasks('grunt-contrib-copy');
 };

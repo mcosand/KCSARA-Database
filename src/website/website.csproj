@@ -249,6 +249,7 @@
     <Content Include="App_Readme\Elmah.txt" />
     <Content Include="Content\auth\animals\none.jpg" />
     <Content Include="Content\auth\members\none.jpg" />
+    <Content Include="Content\bootstrap-dialog.min.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -271,6 +272,7 @@
     <Compile Include="Controllers\AdminController_Documents.cs" />
     <Compile Include="Controllers\AnimalsController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\ComponentsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\IEventController.cs" />
     <Compile Include="Controllers\LogController.cs" />
@@ -497,6 +499,7 @@
     <Content Include="help\images\new-member-4.png" />
     <Content Include="help\index.html" />
     <Content Include="help\new-member.html" />
+    <Content Include="Scripts\bootstrap-dialog.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\html5.js" />
@@ -514,11 +517,17 @@
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\npm.js" />
     <Content Include="Scripts\nprogress.js" />
-    <Content Include="Scripts\site\account\LoginModel.js" />
+    <Content Include="Scripts\r.js" />
+    <Content Include="Scripts\require.js" />
+    <Content Include="Scripts\site\components\login-form.js" />
     <Content Include="Scripts\site\app.js" />
-    <Content Include="Scripts\site\common.js" />
-    <Content Include="Scripts\site\searchbox.js" />
-    <Content Include="Scripts\site\validation.js" />
+    <Content Include="Scripts\site\components\searchbox.js" />
+    <Content Include="Scripts\site\env-ko.js" />
+    <Content Include="Scripts\site\env.js" />
+    <Content Include="Scripts\site\startup.js" />
+    <Content Include="Scripts\site\user.js" />
+    <Content Include="Scripts\site\utils.js" />
+    <Content Include="Scripts\text.js" />
     <Content Include="Scripts\ViewModels.js" />
     <Content Include="Sql\AuthDatabase_Create.sql" />
     <Content Include="Sql\AuthDatabase_Update.sql" />
@@ -682,6 +691,8 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Shared\_Bare.cshtml" />
+    <Content Include="Views\Components\LoginForm.cshtml" />
+    <Content Include="Views\Components\SearchBox.cshtml" />
     <None Include="Web.Production.config" />
   </ItemGroup>
   <ItemGroup>

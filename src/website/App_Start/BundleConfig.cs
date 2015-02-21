@@ -10,21 +10,10 @@ namespace Kcsara.Database.Web
   {
     public static void RegisterBundles(BundleCollection bundles)
     {
-      BundleTable.EnableOptimizations = false;
-
-      bundles.Add(new ScriptBundle("~/scripts/core-next").Include(
-        "~/scripts/jquery-2.1.3.min.js",
-        "~/scripts/bootstrap.min.js",
-        "~/scripts/jquery.toaster.js",
-        "~/scripts/knockout-3.2.0.js",
-        "~/scripts/site/common.js",
-        "~/scripts/site/searchbox.js",
-        "~/scripts/site/app.js"
-        ));
-      
       bundles.Add(new StyleBundle("~/content/site-next").Include(
         "~/content/bootstrap.min.css",
         "~/content/bootstrap-theme.css",
+        "~/content/bootstrap-dialog.min.css",
         "~/content/font-awesome.min.css",
         "~/content/site-next.css"
         ));
