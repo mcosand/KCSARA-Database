@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2012-2014 Matthew Cosand
+ * Copyright 2012-2015 Matthew Cosand
  */
 using Kcsara.Database.Web.Membership;
 using System;
@@ -28,6 +28,11 @@ namespace Kcsara.Database.Website.Tests
         public void SetPassword(string username, string newPassword)
         {
             File.AppendAllText(this.passwordFile, string.Format("{0} {1}: {2}{3}", DateTime.Now, username, newPassword, Environment.NewLine));
+        }
+
+        public string Name
+        {
+          get { return "Test Synchronizer"; }
         }
     }
 }

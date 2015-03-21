@@ -1,15 +1,18 @@
 ﻿/*
  * Copyright 2012-2014 Matthew Cosand
  */
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace Kcsara.Database.Web.Membership
 {
-    public interface IPasswordSynchronizer
-    {
-        void SetPassword(string username, string newPassword);      
-    }
+  public interface IPasswordSynchronizer
+  {
+    string Name { get; }
+    void SetPassword(string username, string newPassword);
+  }
+
+  public interface IPasswordSynchronizerWithOptions : IPasswordSynchronizer
+  {
+    void SetOptions(Dictionary<string, string> options);
+  }
 }

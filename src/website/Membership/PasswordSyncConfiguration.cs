@@ -70,5 +70,68 @@ namespace Kcsara.Database.Web.Membership.Config
             get { return (string)this["option"]; }
             set { this["option"] = value; }
         }
+
+        [ConfigurationProperty("", IsRequired = false, IsKey = false, IsDefaultCollection = true)]
+        public SynchronizerOptionCollection Items
+        {
+          get { return ((SynchronizerOptionCollection)base[""]); }
+          set { base[""] = value; }
+        }
     }
+
+    [ConfigurationCollection(typeof(SynchronizerOptionElement), CollectionType = ConfigurationElementCollectionType.BasicMapAlternate)]
+    public class SynchronizerOptionCollection : ConfigurationElementCollection
+    {
+      internal const string PropertyName = "add";
+
+
+      public override ConfigurationElementCollectionType CollectionType
+      {
+        get { return ConfigurationElementCollectionType.BasicMapAlternate; }
+      }
+
+      protected override string ElementName
+      {
+        get { return PropertyName; }
+      }
+
+      protected override bool IsElementName(string elementName)
+      {
+        return (elementName == PropertyName);
+      }
+
+      protected override ConfigurationElement CreateNewElement()
+      {
+        return new SynchronizerOptionElement();
+      }
+      protected override object GetElementKey(ConfigurationElement element)
+      {
+        return ((SynchronizerOptionElement)element).Key;
+      }
+
+      public override bool IsReadOnly()
+      {
+        return false;
+      }
+    }
+
+
+    public class SynchronizerOptionElement : ConfigurationElement
+    {
+      [ConfigurationProperty("key", IsRequired = true, IsKey = true)]
+      public string Key
+      {
+        get { return (string)this["key"]; }
+        set { this["key"] = value; }
+      }
+
+      [ConfigurationProperty("value")]
+      public string Value
+      {
+        get { return (string)this["value"]; }
+        set { this["value"] = value; }
+      }
+    }
+
+
 }

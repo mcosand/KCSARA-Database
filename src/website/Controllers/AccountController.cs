@@ -257,6 +257,10 @@ namespace Kcsara.Database.Web.Controllers
 
           return RedirectToAction("ChangePasswordSuccess");
         }
+        catch (AggregateException ex)
+        {
+          ModelState.AddModelError("_FORM", string.Join("<br/>", ex.InnerExceptions.Select(f => string.Format("{0}: {1}", f.Data.Contains("name") ? f.Data["name"] : null, f.Message))));
+        }
         catch (InvalidPasswordException)
         {
           ModelState.AddModelError("_FORM", "Password does not meet system requirements.");
@@ -313,10 +317,18 @@ namespace Kcsara.Database.Web.Controllers
 
       if (ModelState.IsValid)
       {
-        string password = ((SqlMembershipProvider)Membership.Provider).GeneratePassword();
-        ((Kcsar.Membership.ISetPassword)Membership.Provider).SetPassword(fields["id"], password, true);
 
-        return RedirectToAction("ResetPasswordDone", new { email = user.Email });
+        try
+        {
+          string password = ((SqlMembershipProvider)Membership.Provider).GeneratePassword();
+          ((Kcsar.Membership.ISetPassword)Membership.Provider).SetPassword(fields["id"], password, true);
+
+          return RedirectToAction("ResetPasswordDone", new { email = user.Email });
+        }
+        catch (AggregateException ex)
+        {
+          ModelState.AddModelError("_FORM", string.Join("<br/>", ex.InnerExceptions.Select(f => string.Format("{0}: {1}", f.Data.Contains("name") ? f.Data["name"] : null, f.Message))));
+        }
       }
 
       return View();

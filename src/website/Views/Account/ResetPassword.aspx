@@ -5,8 +5,8 @@
   <p>
     Use the form below to reset your password.
   </p>
-  <% using (Html.BeginForm())
-     { %>
+  <%= Html.ValidationSummary() %>
+  <% using (Html.BeginForm()){ %>
   <div>
     <table>
       <tr>
