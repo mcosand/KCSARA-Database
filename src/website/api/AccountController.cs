@@ -35,6 +35,7 @@ namespace Kcsara.Database.Web.api
     {
       this.membership = membership;
       this.accountsService = accountsSvc;
+      this.formsAuth = formsAuth;
     }
 
     [HttpPost]
