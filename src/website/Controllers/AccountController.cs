@@ -202,14 +202,14 @@ namespace Kcsara.Database.Web.Controllers
       return View();
     }
 
-    public AccountController(IKcsarContext db, IFormsAuthentication formsAuth, System.Web.Security.MembershipProvider provider)
+    public AccountController(IKcsarContext db, api.IFormsAuthentication formsAuth, System.Web.Security.MembershipProvider provider)
       : base(db)
     {
       Provider = provider;
       FormsAuth = formsAuth;
     }
 
-    public IFormsAuthentication FormsAuth
+    public api.IFormsAuthentication FormsAuth
     {
       get;
       private set;
@@ -551,28 +551,5 @@ namespace Kcsara.Database.Web.Controllers
     //        return new Memberuser { Id = Kcsar.Membership.MembershipProvider.UsernameToMemberKey(username), Username = username };
     //    }
     //}
-  }
-
-  // The FormsAuthentication type is sealed and contains static members, so it is difficult to
-  // unit test code that calls its members. The interface and helper class below demonstrate
-  // how to create an abstract wrapper around such a type in order to make the AccountController
-  // code unit testable.
-
-  public interface IFormsAuthentication
-  {
-    void SetAuthCookie(string userName, bool createPersistentCookie);
-    void SignOut();
-  }
-
-  public class FormsAuthenticationWrapper : IFormsAuthentication
-  {
-    public void SetAuthCookie(string userName, bool createPersistentCookie)
-    {
-      FormsAuthentication.SetAuthCookie(userName, createPersistentCookie);
-    }
-    public void SignOut()
-    {
-      FormsAuthentication.SignOut();
-    }
   }
 }
