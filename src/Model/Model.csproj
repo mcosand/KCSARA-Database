@@ -69,6 +69,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.SqlServer.Types.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\packages\Newtonsoft.Json.5.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -104,10 +107,22 @@
     <Compile Include="Animal.cs" />
     <Compile Include="AnimalOwner.cs" />
     <Compile Include="AnimalMission.cs" />
+    <Compile Include="Events\EventLog.cs" />
+    <Compile Include="Events\EventRoster.cs" />
+    <Compile Include="Events\EventTimeline.cs" />
+    <Compile Include="Events\ParticipantStatus.cs" />
+    <Compile Include="Events\Mission.cs" />
+    <Compile Include="Events\Participant.cs" />
+    <Compile Include="Events\ParticipatingUnit.cs" />
+    <Compile Include="Events\SarEvent.cs" />
     <Compile Include="IKcsarContext.cs" />
     <Compile Include="Migrations\201403040055520_RefactorValidate.cs" />
     <Compile Include="Migrations\201403040055520_RefactorValidate.Designer.cs">
       <DependentUpon>201403040055520_RefactorValidate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201504031640202_UnifiedEventModel_1.cs" />
+    <Compile Include="Migrations\201504031640202_UnifiedEventModel_1.Designer.cs">
+      <DependentUpon>201504031640202_UnifiedEventModel_1.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Migrator.cs" />
     <Compile Include="MemberUnitDocument.cs" />
@@ -224,6 +239,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201403040055520_RefactorValidate.resx">
       <DependentUpon>201403040055520_RefactorValidate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201504031640202_UnifiedEventModel_1.resx">
+      <DependentUpon>201504031640202_UnifiedEventModel_1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

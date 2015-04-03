@@ -8,12 +8,14 @@ namespace Kcsar.Database.Model
   using System.Data.Entity;
   using System.Data.Entity.Infrastructure;
   using System.Linq;
+  using Kcsar.Database.Model.Events;
 
   public interface IKcsarContext : IDisposable
   {
     IDbSet<Animal> Animals { get; set; }
     IDbSet<AnimalMission> AnimalMissions { get; set; }
     IDbSet<AnimalOwner> AnimalOwners { get; set; }
+    IDbSet<SarEvent> Events { get; set; }
     IDbSet<Mission> Missions { get; set; }
     IDbSet<MissionDetails> MissionDetails { get; set; }
     IDbSet<MissionLog> MissionLog { get; set; }

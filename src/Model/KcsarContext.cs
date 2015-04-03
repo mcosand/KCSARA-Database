@@ -17,12 +17,14 @@ namespace Kcsar.Database.Model
   using System.Reflection;
   using System.Text.RegularExpressions;
   using System.Threading;
+  using Kcsar.Database.Model.Events;
 
   public class KcsarContext : DbContext, IKcsarContext
   {
     public IDbSet<Animal> Animals { get; set; }
     public IDbSet<AnimalMission> AnimalMissions { get; set; }
     public IDbSet<AnimalOwner> AnimalOwners { get; set; }
+    public IDbSet<SarEvent> Events { get; set; }
     public IDbSet<Mission> Missions { get; set; }
     public IDbSet<MissionDetails> MissionDetails { get; set; }
     public IDbSet<MissionLog> MissionLog { get; set; }
@@ -77,6 +79,16 @@ namespace Kcsar.Database.Model
     protected override void OnModelCreating(DbModelBuilder modelBuilder)
     {
       base.OnModelCreating(modelBuilder);
+      modelBuilder.Entity<SarEvent>().HasMany(f => f.Roster).WithRequired(f => f.Event).WillCascadeOnDelete(false);
+      modelBuilder.Entity<Participant>().HasOptional(f => f.Member).WithMany().WillCascadeOnDelete(false);
+      modelBuilder.Entity<ParticipatingUnit>().HasOptional(f => f.MemberUnit).WithMany().WillCascadeOnDelete(false);
+      modelBuilder.Entity<EventRoster>().HasRequired(f => f.Participant).WithMany().WillCascadeOnDelete(false);
+      modelBuilder.Entity<EventRoster>().HasOptional(f => f.Unit).WithMany().WillCascadeOnDelete(false);
+      modelBuilder.Entity<ParticipantStatus>().HasRequired(f => f.Participant).WithMany().WillCascadeOnDelete(false);
+      modelBuilder.Entity<ParticipantStatus>().HasOptional(f => f.Unit).WithMany().WillCascadeOnDelete(false);
+      modelBuilder.Entity<EventLog>().HasOptional(f => f.Participant).WithMany().WillCascadeOnDelete(false);
+      modelBuilder.Entity<ParticipantEventTimeline>().HasOptional(f => f.Participant).WithMany().WillCascadeOnDelete(false);
+
       modelBuilder.Entity<Mission>().HasOptional(f => f.Details).WithRequired(f => f.Mission).WillCascadeOnDelete();
       modelBuilder.Entity<Mission>().HasMany(f => f.Log).WithRequired(f => f.Mission).WillCascadeOnDelete();
       modelBuilder.Entity<Member>().HasOptional(f => f.MedicalInfo).WithRequired(f => f.Member);

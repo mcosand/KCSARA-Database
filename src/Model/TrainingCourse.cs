@@ -8,6 +8,7 @@ namespace Kcsar.Database.Model
   using System.Collections.Generic;
   using System.ComponentModel.DataAnnotations;
   using System.Linq;
+  using Kcsar.Database.Model.Events;
 
   public class TrainingCourse : ModelObject
   {
@@ -25,6 +26,7 @@ namespace Kcsar.Database.Model
     public virtual SarUnit Unit { get; set; }
     public virtual ICollection<ComputedTrainingAward> ComputedAwards { get; set; }
     public virtual ICollection<Training> Trainings { get; set; }
+    public virtual ICollection<Training2> Trainings2 { get; set; }
     public string PrerequisiteText { get; set; }
 
     public override string GetReportHtml()
