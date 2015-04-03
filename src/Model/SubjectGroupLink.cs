@@ -16,7 +16,7 @@ namespace Kcsar.Database.Model
 
     public override string GetReportHtml()
     {
-      return string.Format("<b>{0}'s behavior on {1}</b> ", this.Subject.FirstName, this.Group.Mission.Title);
+      return string.Format("<b>{0}'s behavior on {1}</b> ", this.Subject.FirstName, this.Group.Event.Title);
     }
   }
 }

@@ -5,6 +5,7 @@
 namespace Kcsar.Database.Model
 {
     using System;
+  using Kcsar.Database.Model.Events;
     
     public interface ITrainingAward
     {
@@ -14,6 +15,7 @@ namespace Kcsar.Database.Model
         DateTime? Expiry { get; }
         TrainingCourse Course { get; }
         TrainingRule Rule { get; }
-        TrainingRoster Roster { get; }
+        Participant Attendance { get; }
+        Guid? AttendanceId { get; }
     }
 }

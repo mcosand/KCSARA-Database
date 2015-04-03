@@ -25,122 +25,126 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize]
     public ActionResult Documents(string id)
     {
-      Guid mid;
-      if (!Guid.TryParse(id, out mid)) return new ContentResult { Content = "Bad mission Id" };
+      throw new NotImplementedException("reimplement");
 
-      var model = this.db.Missions.FirstOrDefault(f => f.Id == mid);
-      if (model == null) return new ContentResult { Content = "Mission not found" };
+      //Guid mid;
+      //if (!Guid.TryParse(id, out mid)) return new ContentResult { Content = "Bad mission Id" };
 
-      ViewData["missionId"] = mid;
+      //var model = this.db.Missions.FirstOrDefault(f => f.Id == mid);
+      //if (model == null) return new ContentResult { Content = "Mission not found" };
+
+      //ViewData["missionId"] = mid;
 
 
-      return View(model);
+      //return View(model);
     }
 
 
     public ActionResult ICS109(Guid id)
     {
-      var mission = this.db.Missions.Include("Log").Single(f => f.Id == id);
+      throw new NotImplementedException("reimplement");
+
+      //var mission = this.db.Missions.Include("Log").Single(f => f.Id == id);
 
 
-      string pdfTemplate = Server.MapPath(Url.Content("~/Content/forms/ics109-log.pdf"));
+      //string pdfTemplate = Server.MapPath(Url.Content("~/Content/forms/ics109-log.pdf"));
 
 
-      using (MemoryStream result = new MemoryStream())
-      {
-        iTextSharp.text.Document resultDoc = new iTextSharp.text.Document();
-        PdfCopy copy = new PdfCopy(resultDoc, result);
-        resultDoc.Open();
+      //using (MemoryStream result = new MemoryStream())
+      //{
+      //  iTextSharp.text.Document resultDoc = new iTextSharp.text.Document();
+      //  PdfCopy copy = new PdfCopy(resultDoc, result);
+      //  resultDoc.Open();
 
-        Queue<Tuple<string, string, string>> rows = null;
-        int numPages = -1;
-        int totalRows = 0;
-        int page = 1;
+      //  Queue<Tuple<string, string, string>> rows = null;
+      //  int numPages = -1;
+      //  int totalRows = 0;
+      //  int page = 1;
 
-        List<string> operators = new List<string>();
+      //  List<string> operators = new List<string>();
 
-        do
-        {
-          using (MemoryStream filledForm = new MemoryStream())
-          {
-            iTextSharp.text.pdf.PdfReader pdfReader = new iTextSharp.text.pdf.PdfReader(pdfTemplate);
-            //// create and populate a string builder with each of the 
-            //// field names available in the subject PDF
+      //  do
+      //  {
+      //    using (MemoryStream filledForm = new MemoryStream())
+      //    {
+      //      iTextSharp.text.pdf.PdfReader pdfReader = new iTextSharp.text.pdf.PdfReader(pdfTemplate);
+      //      //// create and populate a string builder with each of the 
+      //      //// field names available in the subject PDF
 
-            //StringBuilder sb = new StringBuilder();
-            //foreach (var de in pdfReader.AcroFields.Fields)
-            //{
-            //    sb.Append(de.Key.ToString() + Environment.NewLine);
-            //}
-            //// Write the string builder's content to the form's textbox
+      //      //StringBuilder sb = new StringBuilder();
+      //      //foreach (var de in pdfReader.AcroFields.Fields)
+      //      //{
+      //      //    sb.Append(de.Key.ToString() + Environment.NewLine);
+      //      //}
+      //      //// Write the string builder's content to the form's textbox
 
-            using (MemoryStream buf = new MemoryStream())
-            {
-              PdfStamper stamper = new PdfStamper(pdfReader, buf);
+      //      using (MemoryStream buf = new MemoryStream())
+      //      {
+      //        PdfStamper stamper = new PdfStamper(pdfReader, buf);
 
-              var fields = stamper.AcroFields;
+      //        var fields = stamper.AcroFields;
 
-              if (rows == null)
-              {
-                rows = Fill109Rows(mission.Log.OrderBy(f => f.Time), fields, "topmostSubform[0].Page1[0].SUBJECTRow1[0]");
-                totalRows = rows.Count;
-              }
+      //        if (rows == null)
+      //        {
+      //          rows = Fill109Rows(mission.Log.OrderBy(f => f.Time), fields, "topmostSubform[0].Page1[0].SUBJECTRow1[0]");
+      //          totalRows = rows.Count;
+      //        }
 
-              foreach (var field in fields.Fields)
-              {
-                fields.SetField(field.Key, "");
-              }
+      //        foreach (var field in fields.Fields)
+      //        {
+      //          fields.SetField(field.Key, "");
+      //        }
 
-              int currentRow = 1;
-              operators.Clear();
-              while (rows.Count > 0 && fields.GetField("topmostSubform[0].Page1[0].SUBJECTRow" + currentRow.ToString() + "[0]") != null)
-              {
-                var row = rows.Dequeue();
+      //        int currentRow = 1;
+      //        operators.Clear();
+      //        while (rows.Count > 0 && fields.GetField("topmostSubform[0].Page1[0].SUBJECTRow" + currentRow.ToString() + "[0]") != null)
+      //        {
+      //          var row = rows.Dequeue();
 
-                fields.SetField("topmostSubform[0].Page1[0].TIMERow" + currentRow.ToString() + "[0]", row.Item1);
-                fields.SetField("topmostSubform[0].Page1[0].SUBJECTRow" + currentRow.ToString() + "[0]", row.Item2);
+      //          fields.SetField("topmostSubform[0].Page1[0].TIMERow" + currentRow.ToString() + "[0]", row.Item1);
+      //          fields.SetField("topmostSubform[0].Page1[0].SUBJECTRow" + currentRow.ToString() + "[0]", row.Item2);
 
-                if (!operators.Contains(row.Item3)) operators.Add(row.Item3);
-                currentRow++;
-              }
+      //          if (!operators.Contains(row.Item3)) operators.Add(row.Item3);
+      //          currentRow++;
+      //        }
 
-              // Now we know how many rows on a page. Figure out how many pages we need for all rows.
-              if (numPages < 0)
-              {
-                int rowsPerPage = currentRow - 1;
-                int remainder = totalRows % currentRow;
-                numPages = ((remainder == 0) ? 0 : 1) + (totalRows / currentRow);
-              }
+      //        // Now we know how many rows on a page. Figure out how many pages we need for all rows.
+      //        if (numPages < 0)
+      //        {
+      //          int rowsPerPage = currentRow - 1;
+      //          int remainder = totalRows % currentRow;
+      //          numPages = ((remainder == 0) ? 0 : 1) + (totalRows / currentRow);
+      //        }
 
-              if (numPages > 0)
-              {
-                fields.SetField("topmostSubform[0].Page1[0]._1_Incident_Name[0]", "   " + mission.Title);
-                fields.SetField("topmostSubform[0].Page1[0]._3_DEM_KCSO[0]", "    " + mission.StateNumber);
-                fields.SetField("topmostSubform[0].Page1[0]._5_RADIO_OPERATOR_NAME_LOGISTICS[0]", string.Join(",", operators.Distinct()));
-                fields.SetField("topmostSubform[0].Page1[0].Text30[0]", string.Format("{0:yyyy-MM-dd}", mission.Log.DefaultIfEmpty().Min(f => (f == null) ? (DateTime?)null : f.Time)));
-                fields.SetField("topmostSubform[0].Page1[0].Text31[0]", string.Format("{0:yyyy-MM-dd}", mission.Log.DefaultIfEmpty().Max(f => (f == null) ? (DateTime?)null : f.Time)));
-                fields.SetField("topmostSubform[0].Page1[0].Text28[0]", page.ToString());
-                fields.SetField("topmostSubform[0].Page1[0].Text29[0]", numPages.ToString());
-                fields.SetField("topmostSubform[0].Page1[0].DateTime[0]", DateTime.Now.ToString("     MMM d, yyyy  HH:mm"));
-                fields.SetField("topmostSubform[0].Page1[0]._8_Prepared_by_Name[0]", Strings.DatabaseName);
+      //        if (numPages > 0)
+      //        {
+      //          fields.SetField("topmostSubform[0].Page1[0]._1_Incident_Name[0]", "   " + mission.Title);
+      //          fields.SetField("topmostSubform[0].Page1[0]._3_DEM_KCSO[0]", "    " + mission.StateNumber);
+      //          fields.SetField("topmostSubform[0].Page1[0]._5_RADIO_OPERATOR_NAME_LOGISTICS[0]", string.Join(",", operators.Distinct()));
+      //          fields.SetField("topmostSubform[0].Page1[0].Text30[0]", string.Format("{0:yyyy-MM-dd}", mission.Log.DefaultIfEmpty().Min(f => (f == null) ? (DateTime?)null : f.Time)));
+      //          fields.SetField("topmostSubform[0].Page1[0].Text31[0]", string.Format("{0:yyyy-MM-dd}", mission.Log.DefaultIfEmpty().Max(f => (f == null) ? (DateTime?)null : f.Time)));
+      //          fields.SetField("topmostSubform[0].Page1[0].Text28[0]", page.ToString());
+      //          fields.SetField("topmostSubform[0].Page1[0].Text29[0]", numPages.ToString());
+      //          fields.SetField("topmostSubform[0].Page1[0].DateTime[0]", DateTime.Now.ToString("     MMM d, yyyy  HH:mm"));
+      //          fields.SetField("topmostSubform[0].Page1[0]._8_Prepared_by_Name[0]", Strings.DatabaseName);
 
-                fields.RemoveField("topmostSubform[0].Page1[0].PrintButton1[0]");
-              }
+      //          fields.RemoveField("topmostSubform[0].Page1[0].PrintButton1[0]");
+      //        }
 
-              stamper.FormFlattening = false;
-              stamper.Close();
+      //        stamper.FormFlattening = false;
+      //        stamper.Close();
 
-              pdfReader = new PdfReader(buf.ToArray());
-              copy.AddPage(copy.GetImportedPage(pdfReader, 1));
-              page++;
-            }
-          }
-          //copy.Close();
-        } while (rows != null && rows.Count > 0);
+      //        pdfReader = new PdfReader(buf.ToArray());
+      //        copy.AddPage(copy.GetImportedPage(pdfReader, 1));
+      //        page++;
+      //      }
+      //    }
+      //    //copy.Close();
+      //  } while (rows != null && rows.Count > 0);
 
-        resultDoc.Close();
-        return File(result.ToArray(), "application/pdf", mission.StateNumber + "_ICS109_CommLog.pdf");
-      }
+      //  resultDoc.Close();
+      //  return File(result.ToArray(), "application/pdf", mission.StateNumber + "_ICS109_CommLog.pdf");
+      //}
     }
 
     Queue<Tuple<string, string, string>> Fill109Rows(IEnumerable<MissionLog> logs, AcroFields fields, string fieldName)
@@ -225,7 +229,8 @@ namespace Kcsara.Database.Web.Controllers
     [HttpGet]
     public ActionResult UploadDocument(Guid id)
     {
-      return View(this.db.Missions.First(f => f.Id == id));
+      throw new NotImplementedException("reimplement");
+      //return View(this.db.Missions.First(f => f.Id == id));
     }
 
     [Authorize(Roles = "cdb.missioneditors")]
@@ -274,21 +279,23 @@ namespace Kcsara.Database.Web.Controllers
 
     protected override void AddRosterRowFrom4x4Sheet(ExpandedRowsContext model, SarUnit unit, IRosterEntry row)
     {
-      MissionRoster mrow = (MissionRoster)row;
+      throw new NotImplementedException("reimplement");
 
-      Guid personId = mrow.Person.Id;
-      MissionRoster newRow = new MissionRoster
-      {
-        Mission = (Mission)model.SarEvent,
-        Unit = unit,
-        Person = this.db.Members.Include("MissionRosters").Single(f => f.Id == personId),
-        TimeIn = mrow.TimeIn,
-        TimeOut = mrow.TimeOut,
-        Miles = mrow.Miles,
-        InternalRole = mrow.InternalRole
-      };
-      mrow.Id = newRow.Id;
-      this.db.MissionRosters.Add(newRow);
+      //MissionRoster mrow = (MissionRoster)row;
+
+      //Guid personId = mrow.Person.Id;
+      //MissionRoster newRow = new MissionRoster
+      //{
+      //  Mission = (Mission)model.SarEvent,
+      //  Unit = unit,
+      //  Person = this.db.Members.Include("MissionRosters").Single(f => f.Id == personId),
+      //  TimeIn = mrow.TimeIn,
+      //  TimeOut = mrow.TimeOut,
+      //  Miles = mrow.Miles,
+      //  InternalRole = mrow.InternalRole
+      //};
+      //mrow.Id = newRow.Id;
+      //this.db.MissionRosters.Add(newRow);
     }
   }
 }

@@ -11,6 +11,7 @@ namespace Kcsar.Database.Model
   using System.Linq;
   using System.Runtime.Serialization;
   using System.Threading;
+  using Kcsar.Database.Model.Events;
 
   public class Member : ModelObject
   {
@@ -36,6 +37,7 @@ namespace Kcsar.Database.Model
     public MemberStatus Status { get; set; }
     public virtual MemberMedical MedicalInfo { get; set; }
 
+    public virtual ICollection<Participant> Participation { get; set; }
     public virtual ICollection<MissionLog> MissionLogs { get; set; }
     public virtual ICollection<MissionRoster> MissionRosters { get; set; }
     public virtual ICollection<PersonAddress> Addresses { get; set; }
@@ -57,6 +59,7 @@ namespace Kcsar.Database.Model
       this.LastChanged = DateTime.Now;
       this.ChangedBy = Thread.CurrentPrincipal.Identity.Name;
 
+      this.Participation = new List<Participant>();
       this.MissionLogs = new List<MissionLog>();
       this.MissionRosters = new List<MissionRoster>();
       this.Addresses = new List<PersonAddress>();

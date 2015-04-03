@@ -44,75 +44,79 @@ namespace Kcsara.Database.Web.api
 
     private IEnumerable<TrainingRecord> GetComputedTrainingRecordViews(Expression<Func<Data.ComputedTrainingAward, bool>> whereClause, bool includeMember, Data.WacLevel? levelForRequired)
     {
-      int mask = (1 << (((int)(levelForRequired ?? Data.WacLevel.None) - 1) * 2 + 1));
-      string dateFormat = GetDateFormat();
+      //int mask = (1 << (((int)(levelForRequired ?? Data.WacLevel.None) - 1) * 2 + 1));
+      //string dateFormat = GetDateFormat();
 
-      var model = db.ComputedTrainingAwards.Where(whereClause).Select(computed =>
-                                   new
-                                   {
-                                     Course = new TrainingCourse
-                                     {
-                                       Id = computed.Course.Id,
-                                       Title = computed.Course.DisplayName,
-                                       Required = computed.Course.WacRequired
-                                     },
-                                     Comments = (from award in db.TrainingAward
-                                                 where award.Completed == computed.Completed && award.Course.Id == computed.Course.Id && award.Member.Id == computed.Member.Id
-                                                 select award.metadata).FirstOrDefault(),
-                                     Completed = computed.Completed,
-                                     Expires = computed.Expiry,
-                                     Source = (computed.Rule != null) ? "rule" : (computed.Roster != null) ? "roster" : "direct",
-                                     ReferenceId = ((Guid?)computed.Rule.Id) ??
-                                                 (from roster in db.TrainingRosters where roster.Id == computed.Roster.Id select (Guid?)roster.Training.Id).FirstOrDefault<Guid?>() ??
-                                                 (from award in db.TrainingAward
-                                                  where award.Completed == computed.Completed && award.Course.Id == computed.Course.Id && award.Member.Id == computed.Member.Id
-                                                  select award.Id).FirstOrDefault(),
-                                     Required = (levelForRequired == null) ? (bool?)null : (computed.Course.WacRequired & mask) > 0
-                                   }).OrderByDescending(f => f.Completed).ThenBy(f => f.Source)
-                                   .AsEnumerable().Select(f => new TrainingRecord
-                                       {
-                                         Course = f.Course,
-                                         Comments = f.Comments,
-                                         Completed = string.Format(dateFormat, f.Completed),
-                                         Expires = string.Format(dateFormat, f.Expires),
-                                         Source = f.Source,
-                                         ReferenceId = f.ReferenceId,
-                                         Required = f.Required
-                                       });
-      return model;
+      //var model = db.ComputedTrainingAwards.Where(whereClause).Select(computed =>
+      //                             new
+      //                             {
+      //                               Course = new TrainingCourse
+      //                               {
+      //                                 Id = computed.Course.Id,
+      //                                 Title = computed.Course.DisplayName,
+      //                                 Required = computed.Course.WacRequired
+      //                               },
+      //                               Comments = (from award in db.TrainingAward
+      //                                           where award.Completed == computed.Completed && award.Course.Id == computed.Course.Id && award.Member.Id == computed.Member.Id
+      //                                           select award.metadata).FirstOrDefault(),
+      //                               Completed = computed.Completed,
+      //                               Expires = computed.Expiry,
+      //                               Source = (computed.Rule != null) ? "rule" : (computed.Roster != null) ? "roster" : "direct",
+      //                               ReferenceId = ((Guid?)computed.Rule.Id) ??
+      //                                           (from roster in db.TrainingRosters where roster.Id == computed.Roster.Id select (Guid?)roster.Training.Id).FirstOrDefault<Guid?>() ??
+      //                                           (from award in db.TrainingAward
+      //                                            where award.Completed == computed.Completed && award.Course.Id == computed.Course.Id && award.Member.Id == computed.Member.Id
+      //                                            select award.Id).FirstOrDefault(),
+      //                               Required = (levelForRequired == null) ? (bool?)null : (computed.Course.WacRequired & mask) > 0
+      //                             }).OrderByDescending(f => f.Completed).ThenBy(f => f.Source)
+      //                             .AsEnumerable().Select(f => new TrainingRecord
+      //                                 {
+      //                                   Course = f.Course,
+      //                                   Comments = f.Comments,
+      //                                   Completed = string.Format(dateFormat, f.Completed),
+      //                                   Expires = string.Format(dateFormat, f.Expires),
+      //                                   Source = f.Source,
+      //                                   ReferenceId = f.ReferenceId,
+      //                                   Required = f.Required
+      //                                 });
+      //return model;
+      throw new NotImplementedException("reimplement");
+
     }
 
     private IEnumerable<TrainingRecord> GetTrainingRecords(Expression<Func<Data.TrainingAward, bool>> whereClause, bool includeMember, Data.WacLevel? levelForRequired)
     {
-      int mask = (1 << (((int)(levelForRequired ?? Data.WacLevel.None) - 1) * 2 + 1));
-      string dateFormat = GetDateFormat();
+      throw new NotImplementedException("reimplement");
 
-      var model = db.TrainingAward.Where(whereClause).Select(
-                  award => new
-                  {
-                    Course = new TrainingCourse
-                    {
-                      Id = award.Course.Id,
-                      Title = award.Course.DisplayName
-                    },
-                    Comments = award.metadata,
-                    Completed = award.Completed,
-                    Expires = award.Expiry,
-                    Source = (award.Roster != null) ? "roster" : "direct",
-                    ReferenceId = (from roster in db.TrainingRosters where roster.Id == award.Roster.Id select (Guid?)roster.Training.Id).FirstOrDefault<Guid?>() ??
-                                    award.Id,
-                    Required = (award.Course.WacRequired & mask) > 0
-                  }).AsEnumerable().Select(f => new TrainingRecord
-                  {
-                    Course = f.Course,
-                    Comments = f.Comments,
-                    Completed = string.Format(dateFormat, f.Completed),
-                    Expires = string.Format(dateFormat, f.Expires),
-                    Source = f.Source,
-                    ReferenceId = f.ReferenceId,
-                    Required = f.Required
-                  }).OrderByDescending(f => f.Completed).ThenBy(f => f.Source).ToArray();
-      return model;
+      //int mask = (1 << (((int)(levelForRequired ?? Data.WacLevel.None) - 1) * 2 + 1));
+      //string dateFormat = GetDateFormat();
+
+      //var model = db.TrainingAward.Where(whereClause).Select(
+      //            award => new
+      //            {
+      //              Course = new TrainingCourse
+      //              {
+      //                Id = award.Course.Id,
+      //                Title = award.Course.DisplayName
+      //              },
+      //              Comments = award.metadata,
+      //              Completed = award.Completed,
+      //              Expires = award.Expiry,
+      //              Source = (award.Roster != null) ? "roster" : "direct",
+      //              ReferenceId = (from roster in db.TrainingRosters where roster.Id == award.Roster.Id select (Guid?)roster.Training.Id).FirstOrDefault<Guid?>() ??
+      //                              award.Id,
+      //              Required = (award.Course.WacRequired & mask) > 0
+      //            }).AsEnumerable().Select(f => new TrainingRecord
+      //            {
+      //              Course = f.Course,
+      //              Comments = f.Comments,
+      //              Completed = string.Format(dateFormat, f.Completed),
+      //              Expires = string.Format(dateFormat, f.Expires),
+      //              Source = f.Source,
+      //              ReferenceId = f.ReferenceId,
+      //              Required = f.Required
+      //            }).OrderByDescending(f => f.Completed).ThenBy(f => f.Source).ToArray();
+      //return model;
     }
 
     [HttpGet]

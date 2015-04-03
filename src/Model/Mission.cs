@@ -29,7 +29,6 @@ namespace Kcsar.Database.Model
     public virtual ICollection<MissionLog> Log { get; set; }
     public virtual ICollection<MissionRoster> Roster { get; set; }
 
-    public virtual MissionDetails Details { get; set; }
     public virtual ICollection<SubjectGroup> SubjectGroups { get; set; }
     public virtual ICollection<MissionGeography> MissionGeography { get; set; }
 

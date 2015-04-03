@@ -25,34 +25,36 @@ namespace Kcsara.Database.Web.api
     [Authorize(Roles="cdb.users")]
     public IEnumerable<MemberDetailView> GetResponderEmails(Guid id, Guid? unitId)
     {
-      string unit = null;
+      throw new NotImplementedException("reimplement");
 
-      var q = db.MissionRosters.Where(f => f.Mission.Id == id);
-      if (unitId.HasValue)
-      {
-        q = q.Where(f => f.Unit.Id == unitId.Value);
-        unit = db.Units.Single(f => f.Id == unitId).DisplayName;
-      }
+      //string unit = null;
 
-      var responders = q.Select(f => new
-      {
-        Id = f.Person.Id,
-        First = f.Person.FirstName,
-        Last = f.Person.LastName,
-        Email = f.Person.ContactNumbers.Where(g => g.Type == "email").OrderBy(g => g.Priority).FirstOrDefault(),
-        Unit = f.Unit.DisplayName
-      }).Distinct().OrderBy(f => f.Last).ThenBy(f => f.First).ToArray();
+      //var q = db.MissionRosters.Where(f => f.Mission.Id == id);
+      //if (unitId.HasValue)
+      //{
+      //  q = q.Where(f => f.Unit.Id == unitId.Value);
+      //  unit = db.Units.Single(f => f.Id == unitId).DisplayName;
+      //}
 
-      var model = responders.Select(f => new MemberDetailView
-      {
-        Id = f.Id,
-        FirstName = f.First,
-        LastName = f.Last,
-        Units = new[] { f.Unit },
-        Contacts = new[] { f.Email == null ? null : new MemberContactView { Id = f.Email.Id, Value = f.Email.Value } }
-      });
+      //var responders = q.Select(f => new
+      //{
+      //  Id = f.Person.Id,
+      //  First = f.Person.FirstName,
+      //  Last = f.Person.LastName,
+      //  Email = f.Person.ContactNumbers.Where(g => g.Type == "email").OrderBy(g => g.Priority).FirstOrDefault(),
+      //  Unit = f.Unit.DisplayName
+      //}).Distinct().OrderBy(f => f.Last).ThenBy(f => f.First).ToArray();
 
-      return model;
+      //var model = responders.Select(f => new MemberDetailView
+      //{
+      //  Id = f.Id,
+      //  FirstName = f.First,
+      //  LastName = f.Last,
+      //  Units = new[] { f.Unit },
+      //  Contacts = new[] { f.Email == null ? null : new MemberContactView { Id = f.Email.Id, Value = f.Email.Value } }
+      //});
+
+      //return model;
     }
   }
 }

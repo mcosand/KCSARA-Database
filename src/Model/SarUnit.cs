@@ -8,6 +8,7 @@ namespace Kcsar.Database.Model
   using System.Linq;
   using System.Collections.Generic;
   using System.ComponentModel.DataAnnotations;
+  using Kcsar.Database.Model.Events;
 
   public class SarUnit : ModelObject
   {
@@ -17,6 +18,7 @@ namespace Kcsar.Database.Model
     public string LongName { get; set; }
     public string County { get; set; }
     public string Comments { get; set; }
+    public virtual ICollection<ParticipatingUnit> Participation { get; set; }
     public virtual ICollection<MissionRoster> MissionRosters { get; set; }
     public virtual ICollection<TrainingCourse> TrainingCourses { get; set; }
     public virtual ICollection<UnitMembership> Memberships { get; set; }

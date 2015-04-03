@@ -647,18 +647,20 @@ namespace Kcsara.Database.Web.Controllers
 
     public ActionResult ICS211(Guid id)
     {
-      var model = BuildRosterModel(id);
-      Dictionary<Guid, string> numbers = new Dictionary<Guid, string>();
-      var source = (model.SarEvent is Mission)
-          ? this.db.MissionRosters.Where(f => f.Mission.Id == id).Select(f => f.Person.Id).Distinct()
-          : this.db.TrainingRosters.Where(f => f.Training.Id == id).Select(f => f.Person.Id).Distinct();
+      throw new NotImplementedException("reimplement");
 
-      foreach (var row in source)
-      {
-        numbers.Add(row, this.db.PersonContact.Where(f => f.Person.Id == row && f.Subtype == "cell").OrderBy(f => f.Priority).Select(f => f.Value).FirstOrDefault());
-      }
-      ViewData["phones"] = numbers;
-      return View(model);
+      //var model = BuildRosterModel(id);
+      //Dictionary<Guid, string> numbers = new Dictionary<Guid, string>();
+      //var source = (model.SarEvent is Mission)
+      //    ? this.db.MissionRosters.Where(f => f.Mission.Id == id).Select(f => f.Person.Id).Distinct()
+      //    : this.db.TrainingRosters.Where(f => f.Training.Id == id).Select(f => f.Person.Id).Distinct();
+
+      //foreach (var row in source)
+      //{
+      //  numbers.Add(row, this.db.PersonContact.Where(f => f.Person.Id == row && f.Subtype == "cell").OrderBy(f => f.Priority).Select(f => f.Value).FirstOrDefault());
+      //}
+      //ViewData["phones"] = numbers;
+      //return View(model);
     }
 
 

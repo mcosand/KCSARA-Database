@@ -10,6 +10,7 @@ namespace Kcsar.Database.Model
   using System.ComponentModel.DataAnnotations.Schema;
   using System.Linq;
   using System.Threading;
+  using Kcsar.Database.Model.Events;
 
   public class TrainingAward : ModelObject, ITrainingAward
   {
@@ -22,6 +23,10 @@ namespace Kcsar.Database.Model
     public virtual Member Member { get; set; }
     [Required]
     public virtual TrainingCourse Course { get; set; }
+
+    [ForeignKey("AttendanceId")]
+    public virtual Participant Attendance { get; set; }
+    public Guid? AttendanceId { get; set; }
     public virtual TrainingRoster Roster { get; set; }
 
 
@@ -39,7 +44,7 @@ namespace Kcsar.Database.Model
 
     public override string GetReportHtml()
     {
-      return string.Format("<b>{0}</b> awarded <b>{1}</b>, {2:d}. Expires:{3:d}, Have Roster={4}", this.Member.FullName, this.Course.DisplayName, this.Completed, this.Expiry, this.Roster != null);
+      return string.Format("<b>{0}</b> awarded <b>{1}</b>, {2:d}. Expires:{3:d}, Have Roster={4}", this.Member.FullName, this.Course.DisplayName, this.Completed, this.Expiry, this.AttendanceId != null);
     }
 
     public override string ToString()

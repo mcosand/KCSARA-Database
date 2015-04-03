@@ -5,8 +5,10 @@ namespace Kcsar.Database.Model
 {
   using System;
   using System.Collections.Generic;
+  using System.ComponentModel.DataAnnotations.Schema;
   using System.Linq;
   using System.Text.RegularExpressions;
+  using Kcsar.Database.Model.Events;
 
   public class SubjectGroup : ModelObject
   {
@@ -32,6 +34,10 @@ namespace Kcsar.Database.Model
     public string Behavior { get; set; }
     public string Comments { get; set; }
     public virtual Mission Mission { get; set; }
+    [ForeignKey("EventId")]
+    public virtual SarEvent Event { get; set; }
+    public Guid? EventId { get; set; }
+
     public virtual ICollection<SubjectGroupLink> SubjectLinks { get; set; }
 
     public SubjectGroup()
@@ -56,7 +62,8 @@ namespace Kcsar.Database.Model
       n.FoundElevation = this.FoundElevation;
       n.FoundNorthing = this.FoundNorthing;
       n.FoundTactics = this.FoundTactics;
-      n.Mission = this.Mission;
+      n.Event = this.Event;
+      n.EventId = this.EventId;
       n.PlsCertainty = this.PlsCertainty;
       n.PlsCommonName = this.PlsCommonName;
       n.PlsEasting = this.PlsEasting;
@@ -67,7 +74,7 @@ namespace Kcsar.Database.Model
 
     public override string GetReportHtml()
     {
-      return string.Format("<b>{0} Subjects Group {1}</b> ", this.Mission.Title, this.Number);
+      return string.Format("<b>{0} Subjects Group {1}</b> ", this.Event.Title, this.Number);
     }
   }
 }

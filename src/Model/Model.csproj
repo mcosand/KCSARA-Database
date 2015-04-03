@@ -116,6 +116,9 @@
     <Compile Include="Events\ParticipatingUnit.cs" />
     <Compile Include="Events\SarEvent.cs" />
     <Compile Include="IKcsarContext.cs" />
+    <Compile Include="IRosterEvent.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Migrations\201403040055520_RefactorValidate.cs" />
     <Compile Include="Migrations\201403040055520_RefactorValidate.Designer.cs">
       <DependentUpon>201403040055520_RefactorValidate.cs</DependentUpon>
@@ -123,6 +126,10 @@
     <Compile Include="Migrations\201504031640202_UnifiedEventModel_1.cs" />
     <Compile Include="Migrations\201504031640202_UnifiedEventModel_1.Designer.cs">
       <DependentUpon>201504031640202_UnifiedEventModel_1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201504031951466_UnifiedEventModel_2.cs" />
+    <Compile Include="Migrations\201504031951466_UnifiedEventModel_2.Designer.cs">
+      <DependentUpon>201504031951466_UnifiedEventModel_2.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Migrator.cs" />
     <Compile Include="MemberUnitDocument.cs" />
@@ -133,7 +140,22 @@
     <Compile Include="Migrations\201309050314287_UnitDocuments.Designer.cs">
       <DependentUpon>201309050314287_UnitDocuments.cs</DependentUpon>
     </Compile>
+    <Compile Include="Mission.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MissionLog.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MissionRoster.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="SensitiveInfoAccess.cs" />
+    <Compile Include="Training.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TrainingRoster.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="UnitApplicant.cs" />
     <Compile Include="UnitContact.cs" />
     <Compile Include="UnitDocument.cs" />
@@ -172,16 +194,10 @@
     <Compile Include="SubjectGroupLink.cs" />
     <Compile Include="TrainingCourse.cs" />
     <Compile Include="PersonContact.cs" />
-    <Compile Include="MissionLog.cs" />
     <Compile Include="ITrainingAward.cs" />
     <Compile Include="SarUnit.cs" />
-    <Compile Include="Training.cs" />
     <Compile Include="TrainingAward.cs" />
     <Compile Include="TrainingExpirationSummary.cs" />
-    <Compile Include="TrainingRoster.cs" />
-    <Compile Include="Mission.cs" />
-    <Compile Include="IRosterEvent.cs" />
-    <Compile Include="MissionRoster.cs" />
     <Compile Include="PersonAddress.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="IModelObject.cs" />
@@ -192,7 +208,9 @@
     <Compile Include="UnitMembership.cs" />
     <Compile Include="UnitStatus.cs" />
     <Compile Include="Utils.cs" />
-    <Compile Include="xref_county_id.cs" />
+    <Compile Include="xref_county_id.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
@@ -242,6 +260,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201504031640202_UnifiedEventModel_1.resx">
       <DependentUpon>201504031640202_UnifiedEventModel_1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201504031951466_UnifiedEventModel_2.resx">
+      <DependentUpon>201504031951466_UnifiedEventModel_2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

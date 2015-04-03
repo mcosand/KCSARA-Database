@@ -11,6 +11,7 @@ namespace Kcsar.Database.Model
   using Microsoft.SqlServer.Types;
   using System.Data.SqlTypes;
   using System.ComponentModel.DataAnnotations.Schema;
+  using Kcsar.Database.Model.Events;
 
   public class MissionGeography : ModelObject
   {
@@ -21,6 +22,9 @@ namespace Kcsar.Database.Model
     public string LocationBinary { get; set; }
     public string LocationText { get; set; }
     public virtual Mission Mission { get; set; }
+    [ForeignKey("EventId")]
+    public virtual SarEvent Event { get; set; }
+    public Guid? EventId { get; set; }
 
     private SqlGeography geog = null;
     [NotMapped]

@@ -23,16 +23,17 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize]
     public ActionResult Documents(string id)
     {
-      Guid mid;
-      if (!Guid.TryParse(id, out mid)) return new ContentResult { Content = "Bad training Id" };
+      throw new NotImplementedException("reimplement");
+      //Guid mid;
+      //if (!Guid.TryParse(id, out mid)) return new ContentResult { Content = "Bad training Id" };
 
-      var model = this.db.Trainings.FirstOrDefault(f => f.Id == mid);
-      if (model == null) return new ContentResult { Content = "Training not found" };
+      //var model = this.db.Trainings.FirstOrDefault(f => f.Id == mid);
+      //if (model == null) return new ContentResult { Content = "Training not found" };
 
-      ViewData["trainingId"] = mid;
+      //ViewData["trainingId"] = mid;
 
 
-      return View(model);
+      //return View(model);
     }
 
     [HttpPost]
@@ -59,7 +60,8 @@ namespace Kcsara.Database.Web.Controllers
     [HttpGet]
     public ActionResult UploadDocument(Guid id)
     {
-      return View(this.db.Trainings.First(f => f.Id == id));
+      throw new NotImplementedException("reimplement");
+      //      return View(this.db.Trainings.First(f => f.Id == id));
     }
 
     [Authorize(Roles = "cdb.trainingeditors")]
@@ -141,19 +143,20 @@ namespace Kcsara.Database.Web.Controllers
 
     protected override void AddRosterRowFrom4x4Sheet(ExpandedRowsContext model, SarUnit unit, IRosterEntry row)
     {
-      TrainingRoster mrow = (TrainingRoster)row;
+      throw new NotImplementedException("reimplement");
+      //TrainingRoster mrow = (TrainingRoster)row;
 
-      Guid personId = mrow.Person.Id;
-      TrainingRoster newRow = new TrainingRoster
-      {
-        Training = (Training)model.SarEvent,
-        Person = this.db.Members.Include("TrainingRosters").Single(f => f.Id == personId),
-        TimeIn = mrow.TimeIn,
-        TimeOut = mrow.TimeOut,
-        Miles = mrow.Miles,
-      };
-      mrow.Id = newRow.Id;
-      this.db.TrainingRosters.Add(newRow);
+      //Guid personId = mrow.Person.Id;
+      //TrainingRoster newRow = new TrainingRoster
+      //{
+      //  Training = (Training)model.SarEvent,
+      //  Person = this.db.Members.Include("TrainingRosters").Single(f => f.Id == personId),
+      //  TimeIn = mrow.TimeIn,
+      //  TimeOut = mrow.TimeOut,
+      //  Miles = mrow.Miles,
+      //};
+      //mrow.Id = newRow.Id;
+      //this.db.TrainingRosters.Add(newRow);
     }
   }
 }

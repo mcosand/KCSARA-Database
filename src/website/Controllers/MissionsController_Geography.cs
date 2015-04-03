@@ -26,118 +26,122 @@ namespace Kcsara.Database.Web.Controllers
     [HttpGet]
     public ActionResult UploadGpx(Guid id)
     {
-      return View(this.db.Missions.First(f => f.Id == id));
+      throw new NotImplementedException("reimplement");
+
+      //return View(this.db.Missions.First(f => f.Id == id));
     }
 
     [Authorize(Roles = "cdb.missioneditors")]
     [HttpPost]
     public ActionResult UploadGpx(Guid id, FormCollection fields)
     {
-      Mission mission = this.db.Missions.Single(f => f.Id == id);
-      string kind = null;
-      string desc = null;
+      throw new NotImplementedException("reimplement");
 
-      if (string.IsNullOrWhiteSpace(fields["description"]))
-      {
-        ModelState.AddModelError("description", "description is required");
-      }
-      else
-      {
-        desc = fields["description"];
-        ModelState.SetModelValue("description", new ValueProviderResult(desc, desc, CultureInfo.CurrentUICulture));
-      }
+      //Mission mission = this.db.Missions.Single(f => f.Id == id);
+      //string kind = null;
+      //string desc = null;
 
-      if (string.IsNullOrWhiteSpace(fields["kind"]) || fields["kind"] != "teamtrk")
-      {
-        ModelState.AddModelError("kind", "only 'Team Track' is supported");
-      }
-      else
-      {
-        kind = fields["kind"];
-        ModelState.SetModelValue("kind", new ValueProviderResult(kind, kind, CultureInfo.CurrentUICulture));
-      }
+      //if (string.IsNullOrWhiteSpace(fields["description"]))
+      //{
+      //  ModelState.AddModelError("description", "description is required");
+      //}
+      //else
+      //{
+      //  desc = fields["description"];
+      //  ModelState.SetModelValue("description", new ValueProviderResult(desc, desc, CultureInfo.CurrentUICulture));
+      //}
 
-      if (Request.Files.Count == 0)
-      {
-        ModelState.AddModelError("file", "No file uploaded");
-      }
-      else if (Request.Files.Count > 1)
-      {
-        return new ContentResult { Content = "Invalid Request: Too many files" };
-      }
+      //if (string.IsNullOrWhiteSpace(fields["kind"]) || fields["kind"] != "teamtrk")
+      //{
+      //  ModelState.AddModelError("kind", "only 'Team Track' is supported");
+      //}
+      //else
+      //{
+      //  kind = fields["kind"];
+      //  ModelState.SetModelValue("kind", new ValueProviderResult(kind, kind, CultureInfo.CurrentUICulture));
+      //}
 
-      HttpPostedFileBase hpf = null;
-      if (ModelState.IsValid)
-      {
-        hpf = Request.Files[0] as HttpPostedFileBase;
-        if (hpf.ContentLength == 0)
-        {
-          ModelState.AddModelError("file", "No file uploaded");
-        }
-      }
+      //if (Request.Files.Count == 0)
+      //{
+      //  ModelState.AddModelError("file", "No file uploaded");
+      //}
+      //else if (Request.Files.Count > 1)
+      //{
+      //  return new ContentResult { Content = "Invalid Request: Too many files" };
+      //}
 
-      if (ModelState.IsValid)
-      {
-        try
-        {
-          XmlDocument doc = new XmlDocument();
-          doc.Load(hpf.InputStream);
+      //HttpPostedFileBase hpf = null;
+      //if (ModelState.IsValid)
+      //{
+      //  hpf = Request.Files[0] as HttpPostedFileBase;
+      //  if (hpf.ContentLength == 0)
+      //  {
+      //    ModelState.AddModelError("file", "No file uploaded");
+      //  }
+      //}
 
-          XmlNamespaceManager ns = new XmlNamespaceManager(doc.NameTable);
-          ns.AddNamespace("g", "http://www.topografix.com/GPX/1/1");
+      //if (ModelState.IsValid)
+      //{
+      //  try
+      //  {
+      //    XmlDocument doc = new XmlDocument();
+      //    doc.Load(hpf.InputStream);
 
-          XmlNodeList points = null;
-          XmlNodeList tracks = doc.SelectNodes("//g:trk", ns);
-          if (tracks.Count < 1)
-          {
-            ModelState.AddModelError("file", "At least one track required");
-          }
-          else
-          {
-            foreach (var track in tracks.Cast<XmlNode>())
-            {
-              string localDesc = desc;
-              var name = track.SelectSingleNode("g:name", ns);
-              if (name != null && !string.IsNullOrWhiteSpace(name.InnerText))
-              {
-                localDesc = name.InnerText;
-              }
+      //    XmlNamespaceManager ns = new XmlNamespaceManager(doc.NameTable);
+      //    ns.AddNamespace("g", "http://www.topografix.com/GPX/1/1");
 
-              points = track.SelectNodes("g:trkseg/g:trkpt", ns);
-              if (points != null && points.Count > 2)
-              {
-                DateTime? minDate;
-                //if (!TryExtractGpxGeography(ns, points, out geo, out minDate, 1, points.Count))
-                //{
-                //    geo = ExtractGeographyExcludeErrors(ns, points, out minDate);
-                //}
-                SqlGeography geo = ExtractGeography(ns, points, out minDate);
-                if (geo == null) continue;
+      //    XmlNodeList points = null;
+      //    XmlNodeList tracks = doc.SelectNodes("//g:trk", ns);
+      //    if (tracks.Count < 1)
+      //    {
+      //      ModelState.AddModelError("file", "At least one track required");
+      //    }
+      //    else
+      //    {
+      //      foreach (var track in tracks.Cast<XmlNode>())
+      //      {
+      //        string localDesc = desc;
+      //        var name = track.SelectSingleNode("g:name", ns);
+      //        if (name != null && !string.IsNullOrWhiteSpace(name.InnerText))
+      //        {
+      //          localDesc = name.InnerText;
+      //        }
 
-                MissionGeography geog = new MissionGeography
-                {
-                  Mission = mission,
-                  Description = localDesc,
-                  Kind = kind,
-                  Geography = geo,
-                  Time = minDate
-                };
-                this.db.MissionGeography.Add(geog);
-              }
-            }
-          }
-        }
-        catch (XmlException)
-        {
-          ModelState.AddModelError("file", "Invalid GPX file");
-        }
-      }
-      if (ModelState.IsValid)
-      {
-        this.db.SaveChanges();
-        return ClosePopup();
-      }
-      return View(mission);
+      //        points = track.SelectNodes("g:trkseg/g:trkpt", ns);
+      //        if (points != null && points.Count > 2)
+      //        {
+      //          DateTime? minDate;
+      //          //if (!TryExtractGpxGeography(ns, points, out geo, out minDate, 1, points.Count))
+      //          //{
+      //          //    geo = ExtractGeographyExcludeErrors(ns, points, out minDate);
+      //          //}
+      //          SqlGeography geo = ExtractGeography(ns, points, out minDate);
+      //          if (geo == null) continue;
+
+      //          MissionGeography geog = new MissionGeography
+      //          {
+      //            Mission = mission,
+      //            Description = localDesc,
+      //            Kind = kind,
+      //            Geography = geo,
+      //            Time = minDate
+      //          };
+      //          this.db.MissionGeography.Add(geog);
+      //        }
+      //      }
+      //    }
+      //  }
+      //  catch (XmlException)
+      //  {
+      //    ModelState.AddModelError("file", "Invalid GPX file");
+      //  }
+      //}
+      //if (ModelState.IsValid)
+      //{
+      //  this.db.SaveChanges();
+      //  return ClosePopup();
+      //}
+      //return View(mission);
     }
 
     private SqlGeography ExtractGeography(XmlNamespaceManager ns, XmlNodeList points, out DateTime? minDate)
@@ -284,70 +288,72 @@ namespace Kcsara.Database.Web.Controllers
     [HttpPost]
     public ActionResult SubmitWaypoint(WaypointView wpt)
     {
-      List<SubmitError> errors = new List<SubmitError>();
-      Guid result = Guid.Empty;
+      throw new NotImplementedException("reimplement");
 
-      if (!User.IsInRole("cdb.missioneditors"))
-      {
-        return GetLoginError();
-      }
+      //List<SubmitError> errors = new List<SubmitError>();
+      //Guid result = Guid.Empty;
 
-      MissionGeography geog = null;
-
-      geog = (from g in this.db.MissionGeography where g.Id == wpt.Id select g).FirstOrDefault();
-      if (geog == null)
-      {
-        geog = new MissionGeography { Mission = (from m in this.db.Missions where m.Id == wpt.EventId select m).First() };
-        this.db.MissionGeography.Add(geog);
-      }
-
-      //try
+      //if (!User.IsInRole("cdb.missioneditors"))
       //{
-        if (geog.Kind != wpt.Kind) geog.Kind = wpt.Kind;
-        if (geog.InstanceId != wpt.InstanceId) geog.InstanceId = wpt.InstanceId;
-
-        SqlGeography defaultCoord = GeographyServices.GetDefaultLocation();
-        wpt.Lat = Math.Abs(wpt.Lat) * Math.Sign(defaultCoord.Lat.Value);
-        wpt.Long = Math.Abs(wpt.Long) * Math.Sign(defaultCoord.Long.Value);
-
-        SqlGeography geography = wpt.AsSqlGeography();
-        if (string.Format("{0}", geog.Geography) != string.Format("{0}", geography)) geog.Geography = geography;
-        if (geog.Description != wpt.Description) geog.Description = wpt.Description;
-        if (geog.Time != wpt.Time) geog.Time = wpt.Time;
-
-        if (errors.Count == 0)
-        {
-          this.db.SaveChanges();
-        }
-
+      //  return GetLoginError();
       //}
-      //catch (RuleViolationsException ex)
+
+      //MissionGeography geog = null;
+
+      //geog = (from g in this.db.MissionGeography where g.Id == wpt.Id select g).FirstOrDefault();
+      //if (geog == null)
       //{
-      //  //this.CollectRuleViolations(ex, fields);
-      //  foreach (RuleViolation v in ex.Errors)
+      //  geog = new MissionGeography { Mission = (from m in this.db.Missions where m.Id == wpt.EventId select m).First() };
+      //  this.db.MissionGeography.Add(geog);
+      //}
+
+      ////try
+      ////{
+      //  if (geog.Kind != wpt.Kind) geog.Kind = wpt.Kind;
+      //  if (geog.InstanceId != wpt.InstanceId) geog.InstanceId = wpt.InstanceId;
+
+      //  SqlGeography defaultCoord = GeographyServices.GetDefaultLocation();
+      //  wpt.Lat = Math.Abs(wpt.Lat) * Math.Sign(defaultCoord.Lat.Value);
+      //  wpt.Long = Math.Abs(wpt.Long) * Math.Sign(defaultCoord.Long.Value);
+
+      //  SqlGeography geography = wpt.AsSqlGeography();
+      //  if (string.Format("{0}", geog.Geography) != string.Format("{0}", geography)) geog.Geography = geography;
+      //  if (geog.Description != wpt.Description) geog.Description = wpt.Description;
+      //  if (geog.Time != wpt.Time) geog.Time = wpt.Time;
+
+      //  if (errors.Count == 0)
       //  {
-      //    errors.Add(new SubmitError { Error = v.ErrorMessage, Property = v.PropertyName, Id = new[] { v.EntityKey } });
+      //    this.db.SaveChanges();
       //  }
-      //}
 
-      return Data(new SubmitResult<GeographyView>
-      {
-        Errors = errors.ToArray(),
-        Result = (errors.Count > 0) ?
-            (GeographyView)null :
-            GeographyView.BuildGeographyView(geog)
-        //new WaypointView
-        //{
-        //    Id = newView.Id,
-        //    MissionId = newView.Mission.Id,
-        //    Kind = newView.Kind,
-        //    Desc = newView.Description,
-        //    Lat = GeographyServices.FormatCoordinate(newView.Geography.Lat.Value, this.UserSettings.CoordinateDisplay),
-        //    Long = GeographyServices.FormatCoordinate(newView.Geography.Long.Value, this.UserSettings.CoordinateDisplay),
-        //    Instance = newView.InstanceId,
-        //    Time = newView.Geography.M.IsNull ? (DateTime?)null : DateTime.FromOADate(newView.Geography.M.Value)
-        //}
-      });
+      ////}
+      ////catch (RuleViolationsException ex)
+      ////{
+      ////  //this.CollectRuleViolations(ex, fields);
+      ////  foreach (RuleViolation v in ex.Errors)
+      ////  {
+      ////    errors.Add(new SubmitError { Error = v.ErrorMessage, Property = v.PropertyName, Id = new[] { v.EntityKey } });
+      ////  }
+      ////}
+
+      //return Data(new SubmitResult<GeographyView>
+      //{
+      //  Errors = errors.ToArray(),
+      //  Result = (errors.Count > 0) ?
+      //      (GeographyView)null :
+      //      GeographyView.BuildGeographyView(geog)
+      //  //new WaypointView
+      //  //{
+      //  //    Id = newView.Id,
+      //  //    MissionId = newView.Mission.Id,
+      //  //    Kind = newView.Kind,
+      //  //    Desc = newView.Description,
+      //  //    Lat = GeographyServices.FormatCoordinate(newView.Geography.Lat.Value, this.UserSettings.CoordinateDisplay),
+      //  //    Long = GeographyServices.FormatCoordinate(newView.Geography.Long.Value, this.UserSettings.CoordinateDisplay),
+      //  //    Instance = newView.InstanceId,
+      //  //    Time = newView.Geography.M.IsNull ? (DateTime?)null : DateTime.FromOADate(newView.Geography.M.Value)
+      //  //}
+      //});
     }
 
     [HttpPost]
@@ -471,64 +477,66 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize]
     public FileContentResult MissionKML(Guid id)
     {
-      MapDataView data = (MapDataView)GetGeography(id, false).Data;
+      throw new NotImplementedException("reimplement");
 
-      Mission m = (from mission in this.db.Missions where mission.Id == id select mission).FirstOrDefault();
+      //MapDataView data = (MapDataView)GetGeography(id, false).Data;
 
-      XNamespace ns = "http://earth.google.com/kml/2.1";
-      KmlBuilder kml = (new KmlBuilder { Name = string.Format("{0}: {1}", m.StateNumber, m.Title), Description = "" }).AddIconStyles(this.AbsoluteUrl(Url.Content("~/content/images/maps")));
+      //Mission m = (from mission in this.db.Missions where mission.Id == id select mission).FirstOrDefault();
 
-
-      string[] colors = "ff4500,ff42c3,904cff".Split(',');
-      Guid teamFolder = Guid.Empty;
-
-      foreach (var item in data.Items)
-      {
-        Guid? folder = null;
-        if (item.Kind == "team")
-        {
-          if (teamFolder == Guid.Empty)
-          {
-            teamFolder = kml.CreateFolder("Team Positions", null);
-          }
-          folder = teamFolder;
-        }
-
-        string name = string.IsNullOrWhiteSpace(item.Description) ? item.Kind : item.Description;
-
-        kml.AddItem(item, name, item.Kind, null, folder);
+      //XNamespace ns = "http://earth.google.com/kml/2.1";
+      //KmlBuilder kml = (new KmlBuilder { Name = string.Format("{0}: {1}", m.StateNumber, m.Title), Description = "" }).AddIconStyles(this.AbsoluteUrl(Url.Content("~/content/images/maps")));
 
 
-        //var itemNode = new XElement(ns + "Placemark");
-        //itemNode.Add(new XElement(ns + "name", item.Description));
-        //itemNode.Add(new XElement(ns + "description", item.Description));
+      //string[] colors = "ff4500,ff42c3,904cff".Split(',');
+      //Guid teamFolder = Guid.Empty;
 
-        //if (item is RouteView)
-        //{
-        //    itemNode.Add(new XElement(ns + "styleUrl", "#_" + colors[i++ % colors.Length]));
-        //    var lineNode = new XElement(ns + "LineString");
-        //    lineNode.Add(new XElement(ns + "extrude", 1));
-        //    lineNode.Add(new XElement(ns + "tessellate", 1));
-        //    lineNode.Add(new XElement(ns + "altitudeMode", "clampToGround"));
-        //    //lineNode.Add(new XElement(ns + "color", colors[i++ % colors.Length]+"ff"));
-        //    lineNode.Add(new XElement(ns + "coordinates", string.Join("\n", ((RouteView)item).Points.Select(f => string.Format("{0},{1},10", f.Long, f.Lat)).ToArray())));
-        //    itemNode.Add(lineNode);
-        //}
-        //else if (item is WaypointView)
-        //{
-        //    WaypointView wpt = (WaypointView)item;
-        //    itemNode.Add(new XElement(ns + "Point", new XElement(ns + "coordinates", string.Format("{0},{1}", wpt.Long, wpt.Lat))));
-        //    if (item.Kind == "team")
-        //    {
-        //        itemNode.Add(new XElement(ns + "visibility", 0));
-        //    }
-        //}
-        //docNode.Add(itemNode);
-      }
+      //foreach (var item in data.Items)
+      //{
+      //  Guid? folder = null;
+      //  if (item.Kind == "team")
+      //  {
+      //    if (teamFolder == Guid.Empty)
+      //    {
+      //      teamFolder = kml.CreateFolder("Team Positions", null);
+      //    }
+      //    folder = teamFolder;
+      //  }
+
+      //  string name = string.IsNullOrWhiteSpace(item.Description) ? item.Kind : item.Description;
+
+      //  kml.AddItem(item, name, item.Kind, null, folder);
 
 
+      //  //var itemNode = new XElement(ns + "Placemark");
+      //  //itemNode.Add(new XElement(ns + "name", item.Description));
+      //  //itemNode.Add(new XElement(ns + "description", item.Description));
 
-      return new FileContentResult(System.Text.Encoding.UTF8.GetBytes(kml.ToString()), "application/vnd.google-earth.kml+xml") { FileDownloadName = m.StateNumber + ".kml" };
+      //  //if (item is RouteView)
+      //  //{
+      //  //    itemNode.Add(new XElement(ns + "styleUrl", "#_" + colors[i++ % colors.Length]));
+      //  //    var lineNode = new XElement(ns + "LineString");
+      //  //    lineNode.Add(new XElement(ns + "extrude", 1));
+      //  //    lineNode.Add(new XElement(ns + "tessellate", 1));
+      //  //    lineNode.Add(new XElement(ns + "altitudeMode", "clampToGround"));
+      //  //    //lineNode.Add(new XElement(ns + "color", colors[i++ % colors.Length]+"ff"));
+      //  //    lineNode.Add(new XElement(ns + "coordinates", string.Join("\n", ((RouteView)item).Points.Select(f => string.Format("{0},{1},10", f.Long, f.Lat)).ToArray())));
+      //  //    itemNode.Add(lineNode);
+      //  //}
+      //  //else if (item is WaypointView)
+      //  //{
+      //  //    WaypointView wpt = (WaypointView)item;
+      //  //    itemNode.Add(new XElement(ns + "Point", new XElement(ns + "coordinates", string.Format("{0},{1}", wpt.Long, wpt.Lat))));
+      //  //    if (item.Kind == "team")
+      //  //    {
+      //  //        itemNode.Add(new XElement(ns + "visibility", 0));
+      //  //    }
+      //  //}
+      //  //docNode.Add(itemNode);
+      //}
+
+
+
+      //return new FileContentResult(System.Text.Encoding.UTF8.GetBytes(kml.ToString()), "application/vnd.google-earth.kml+xml") { FileDownloadName = m.StateNumber + ".kml" };
 
     }
 
@@ -551,15 +559,17 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize(Roles = "cdb.users")]
     public ActionResult Geography(Guid id)
     {
-      MapDataView model = new MapDataView();
-      Mission m = (from g in this.db.Missions where g.Id == id select g).First();
-      ViewData["Title"] = string.Format("Mission Geography{0}", " :: " + m.StateNumber + " " + m.Title);
-      ViewData["mission"] = m;
+      throw new NotImplementedException("reimplement");
 
-      model.Id = id;
-      ViewData["coordDisplay"] = this.UserSettings.CoordinateDisplay;
-      ViewData["missionId"] = id;
-      return View(model);
+      //MapDataView model = new MapDataView();
+      //Mission m = (from g in this.db.Missions where g.Id == id select g).First();
+      //ViewData["Title"] = string.Format("Mission Geography{0}", " :: " + m.StateNumber + " " + m.Title);
+      //ViewData["mission"] = m;
+
+      //model.Id = id;
+      //ViewData["coordDisplay"] = this.UserSettings.CoordinateDisplay;
+      //ViewData["missionId"] = id;
+      //return View(model);
     }
 
     private double ParseCoordinate(string coord)

@@ -352,43 +352,5 @@ namespace Kcsara.Database.Web.Controllers
                 //return Data(model);
             }
      */
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="id">External table name</param>
-    /// <returns></returns>
-    [HttpPost]
-    public DataActionResult GetExternalKeys(string id)
-    {
-      if (!Permissions.IsAdmin) return Data("bad username");
-
-      return Data(this.db.xref_county_id.Where(f => f.ExternalSource == id).ToArray());
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="kcsaraId"></param>
-    /// <param name="externalId"></param>
-    /// <param name="id">The external table name</param>
-    /// <returns></returns>
-    [HttpPost]
-    public ContentResult UpdateExternalKey(Guid kcsaraId, int externalId, string id)
-    {
-      if (!Permissions.IsInRole("cdb.admins")) throw new InvalidOperationException();
-
-      var entry = this.db.xref_county_id.Where(f => f.personId == kcsaraId && f.ExternalSource == id).SingleOrDefault();
-
-      if (entry == null)
-      {
-        entry = new Kcsar.Database.Model.xref_county_id { personId = kcsaraId, ExternalSource = id };
-        this.db.xref_county_id.Add(entry);
-      }
-
-      entry.accessMemberID = externalId;
-      this.db.SaveChanges();
-
-      return new ContentResult { Content = "OK", ContentType = "text/plain" };
-    }
   }
 }

@@ -146,117 +146,119 @@ namespace Kcsara.Database.Web.Controllers
 
     private Member NewEsarTrainee_Internal(FormCollection fields)
     {
-      Member m = new Member();
-      TryUpdateModel(m, new[] { "FirstName", "LastName", "MiddleName", "BirthDate", "SheriffApp", "Gender" });
-      this.db.Members.Add(m);
+      throw new NotImplementedException("reimplement");
 
-      SarUnit esar = (from u in this.db.Units where u.DisplayName == "ESAR" select u).First();
-      UnitStatus status = (from s in this.db.UnitStatusTypes where s.Unit.Id == esar.Id && s.StatusName == "trainee" select s).First();
+      //Member m = new Member();
+      //TryUpdateModel(m, new[] { "FirstName", "LastName", "MiddleName", "BirthDate", "SheriffApp", "Gender" });
+      //this.db.Members.Add(m);
 
-      if (!string.IsNullOrEmpty(fields["Street"]))
-      {
-        PersonAddress address = new PersonAddress { Person = m, Type = PersonAddressType.Mailing };
-        TryUpdateModel(address, new[] { "Street", "City", "State" });
+      //SarUnit esar = (from u in this.db.Units where u.DisplayName == "ESAR" select u).First();
+      //UnitStatus status = (from s in this.db.UnitStatusTypes where s.Unit.Id == esar.Id && s.StatusName == "trainee" select s).First();
 
-        GeographyServices.RefineAddressWithGeography(address);
-        if (address.Quality < 8)
-        {
-          try
-          {
-            ModelState.SetModelValue("Zip", new ValueProviderResult(fields["Zip"], fields["Zip"], CultureInfo.CurrentUICulture));
-            // This is supposed to be UpdateModel, not TryUpdate
-            UpdateModel(address, new[] { "Zip" });
-          }
-          catch (Exception)
-          {
-            ModelState.AddModelError("Zip", "Can't locate address. ZIP is required");
-          }
-        }
+      //if (!string.IsNullOrEmpty(fields["Street"]))
+      //{
+      //  PersonAddress address = new PersonAddress { Person = m, Type = PersonAddressType.Mailing };
+      //  TryUpdateModel(address, new[] { "Street", "City", "State" });
 
-        this.db.PersonAddress.Add(address);
-      }
+      //  GeographyServices.RefineAddressWithGeography(address);
+      //  if (address.Quality < 8)
+      //  {
+      //    try
+      //    {
+      //      ModelState.SetModelValue("Zip", new ValueProviderResult(fields["Zip"], fields["Zip"], CultureInfo.CurrentUICulture));
+      //      // This is supposed to be UpdateModel, not TryUpdate
+      //      UpdateModel(address, new[] { "Zip" });
+      //    }
+      //    catch (Exception)
+      //    {
+      //      ModelState.AddModelError("Zip", "Can't locate address. ZIP is required");
+      //    }
+      //  }
 
-      foreach (string contact in new[] { "Home", "Work", "Cell" })
-      {
-        if (string.IsNullOrEmpty(fields[contact + "Phone"]))
-        {
-          continue;
-        }
+      //  this.db.PersonAddress.Add(address);
+      //}
 
-        ModelState.SetModelValue(contact + "Phone", new ValueProviderResult(fields[contact + "Phone"], fields[contact + "Phone"], CultureInfo.CurrentUICulture));
-        PersonContact pc = new PersonContact { Person = m, Type = "phone", Subtype = contact.ToLower(), Value = fields[contact + "Phone"] };
-        this.db.PersonContact.Add(pc);
-      }
+      //foreach (string contact in new[] { "Home", "Work", "Cell" })
+      //{
+      //  if (string.IsNullOrEmpty(fields[contact + "Phone"]))
+      //  {
+      //    continue;
+      //  }
 
-      if (!string.IsNullOrEmpty(fields["HamCall"]))
-      {
-        ModelState.SetModelValue("HamCall", new ValueProviderResult(fields["HamCall"], fields["HamCall"], CultureInfo.CurrentUICulture));
-        PersonContact pc = new PersonContact { Person = m, Type = "hamcall", Value = fields["HamCall"] };
-        this.db.PersonContact.Add(pc);
-      }
+      //  ModelState.SetModelValue(contact + "Phone", new ValueProviderResult(fields[contact + "Phone"], fields[contact + "Phone"], CultureInfo.CurrentUICulture));
+      //  PersonContact pc = new PersonContact { Person = m, Type = "phone", Subtype = contact.ToLower(), Value = fields[contact + "Phone"] };
+      //  this.db.PersonContact.Add(pc);
+      //}
 
-      if (!string.IsNullOrEmpty(fields["Email"]))
-      {
-        ModelState.SetModelValue("Email", new ValueProviderResult(fields["Email"], fields["Email"], CultureInfo.CurrentUICulture));
-        PersonContact pc = new PersonContact { Person = m, Type = "email", Value = fields["Email"] };
-        this.db.PersonContact.Add(pc);
-      }
+      //if (!string.IsNullOrEmpty(fields["HamCall"]))
+      //{
+      //  ModelState.SetModelValue("HamCall", new ValueProviderResult(fields["HamCall"], fields["HamCall"], CultureInfo.CurrentUICulture));
+      //  PersonContact pc = new PersonContact { Person = m, Type = "hamcall", Value = fields["HamCall"] };
+      //  this.db.PersonContact.Add(pc);
+      //}
 
-      if (!string.IsNullOrEmpty(fields["Email2"]))
-      {
-        ModelState.SetModelValue("Email2", new ValueProviderResult(fields["Email2"], fields["Email2"], CultureInfo.CurrentUICulture));
-        PersonContact pc = new PersonContact { Person = m, Type = "email", Value = fields["Email2"] };
-        this.db.PersonContact.Add(pc);
-      }
+      //if (!string.IsNullOrEmpty(fields["Email"]))
+      //{
+      //  ModelState.SetModelValue("Email", new ValueProviderResult(fields["Email"], fields["Email"], CultureInfo.CurrentUICulture));
+      //  PersonContact pc = new PersonContact { Person = m, Type = "email", Value = fields["Email"] };
+      //  this.db.PersonContact.Add(pc);
+      //}
 
-      DateTime courseDate = new DateTime(1900, 1, 1);
-      ModelState.SetModelValue("CourseDate", new ValueProviderResult(fields["CourseDate"], fields["CourseDate"], CultureInfo.CurrentUICulture));
-      if (string.IsNullOrEmpty(fields["CourseDate"]))
-      {
-        ModelState.AddModelError("CourseDate", "Required");
-        return null;
-      }
-      else if (!DateTime.TryParse(fields["CourseDate"], out courseDate))
-      {
-        ModelState.AddModelError("CourseDate", "Unknown format. Try yyyy-mm-dd");
-        return null;
-      }
-      courseDate = courseDate.Date;
+      //if (!string.IsNullOrEmpty(fields["Email2"]))
+      //{
+      //  ModelState.SetModelValue("Email2", new ValueProviderResult(fields["Email2"], fields["Email2"], CultureInfo.CurrentUICulture));
+      //  PersonContact pc = new PersonContact { Person = m, Type = "email", Value = fields["Email2"] };
+      //  this.db.PersonContact.Add(pc);
+      //}
 
-      UnitMembership um = new UnitMembership { Person = m, Status = status, Unit = esar, Activated = courseDate };
-      this.db.UnitMemberships.Add(um);
+      //DateTime courseDate = new DateTime(1900, 1, 1);
+      //ModelState.SetModelValue("CourseDate", new ValueProviderResult(fields["CourseDate"], fields["CourseDate"], CultureInfo.CurrentUICulture));
+      //if (string.IsNullOrEmpty(fields["CourseDate"]))
+      //{
+      //  ModelState.AddModelError("CourseDate", "Required");
+      //  return null;
+      //}
+      //else if (!DateTime.TryParse(fields["CourseDate"], out courseDate))
+      //{
+      //  ModelState.AddModelError("CourseDate", "Unknown format. Try yyyy-mm-dd");
+      //  return null;
+      //}
+      //courseDate = courseDate.Date;
 
-      TrainingCourse courseA = (from tc in this.db.TrainingCourses where tc.DisplayName == "Course A" select tc).First();
-      DateTime nextDate = courseDate.AddDays(1);
+      //UnitMembership um = new UnitMembership { Person = m, Status = status, Unit = esar, Activated = courseDate };
+      //this.db.UnitMemberships.Add(um);
 
-      Training t = (from trn in this.db.Trainings where trn.StartTime >= courseDate && trn.StartTime < nextDate && trn.Title == "Course A" select trn).FirstOrDefault();
-      if (t == null)
-      {
-        t = new Training();
-        t.OfferedCourses.Add(courseA);
-        t.StartTime = courseDate.AddHours(19);
-        t.StopTime = courseDate.AddHours(21);
-        t.County = "King";
-        t.Title = "Course A";
-        t.Location = "Eastside Fire Headquarters";
-        this.db.Trainings.Add(t);
-      }
+      //TrainingCourse courseA = (from tc in this.db.TrainingCourses where tc.DisplayName == "Course A" select tc).First();
+      //DateTime nextDate = courseDate.AddDays(1);
 
-      TrainingRoster tr = new TrainingRoster { Person = m, TimeIn = courseDate.AddHours(18), TimeOut = courseDate.AddHours(22) };
-      this.db.TrainingRosters.Add(tr);
-      t.Roster.Add(tr);
+      //Training t = (from trn in this.db.Trainings where trn.StartTime >= courseDate && trn.StartTime < nextDate && trn.Title == "Course A" select trn).FirstOrDefault();
+      //if (t == null)
+      //{
+      //  t = new Training();
+      //  t.OfferedCourses.Add(courseA);
+      //  t.StartTime = courseDate.AddHours(19);
+      //  t.StopTime = courseDate.AddHours(21);
+      //  t.County = "King";
+      //  t.Title = "Course A";
+      //  t.Location = "Eastside Fire Headquarters";
+      //  this.db.Trainings.Add(t);
+      //}
 
-      TrainingAward ta = new TrainingAward();
-      ta.Completed = courseDate.AddHours(21);
-      if ((courseA.ValidMonths ?? 0) > 0)
-      {
-        ta.Expiry = ta.Completed.AddMonths(courseA.ValidMonths.Value);
-      }
-      ta.Course = courseA;
-      ta.Member = m;
-      this.db.TrainingAward.Add(ta);
-      tr.TrainingAwards.Add(ta);
-      return m;
+      //TrainingRoster tr = new TrainingRoster { Person = m, TimeIn = courseDate.AddHours(18), TimeOut = courseDate.AddHours(22) };
+      //this.db.TrainingRosters.Add(tr);
+      //t.Roster.Add(tr);
+
+      //TrainingAward ta = new TrainingAward();
+      //ta.Completed = courseDate.AddHours(21);
+      //if ((courseA.ValidMonths ?? 0) > 0)
+      //{
+      //  ta.Expiry = ta.Completed.AddMonths(courseA.ValidMonths.Value);
+      //}
+      //ta.Course = courseA;
+      //ta.Member = m;
+      //this.db.TrainingAward.Add(ta);
+      //tr.TrainingAwards.Add(ta);
+      //return m;
     }
 
     [AcceptVerbs(HttpVerbs.Get)]
@@ -1452,231 +1454,235 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize]
     public ActionResult PromotionsResult(List<Guid> m, bool? relative)
     {
-      List<string> names;
-      List<Dictionary<DateTime, int>> hourSeries = new List<Dictionary<DateTime, int>>();
-      List<Dictionary<DateTime, Tuple<int, string>>> promotions = new List<Dictionary<DateTime, Tuple<int, string>>>();
-      Guid esar = new Guid("C2F99BB4-3056-4097-9345-4B8797F40E10");
+      throw new NotImplementedException("reimplement");
 
-      names = this.db.Members.WhereIn(f => f.Id, m).OrderBy(f => f.LastName).ThenBy(f => f.FirstName).ThenBy(f => f.Id).Select(f => f.FirstName + " " + f.LastName).ToList();
+      //List<string> names;
+      //List<Dictionary<DateTime, int>> hourSeries = new List<Dictionary<DateTime, int>>();
+      //List<Dictionary<DateTime, Tuple<int, string>>> promotions = new List<Dictionary<DateTime, Tuple<int, string>>>();
+      //Guid esar = new Guid("C2F99BB4-3056-4097-9345-4B8797F40E10");
 
-      var courses = (from c in this.db.TrainingCourses where c.Unit.Id == esar && c.Categories.Contains("leadership") select c);
+      //names = this.db.Members.WhereIn(f => f.Id, m).OrderBy(f => f.LastName).ThenBy(f => f.FirstName).ThenBy(f => f.Id).Select(f => f.FirstName + " " + f.LastName).ToList();
 
-      var responses = this.db.MissionRosters.WhereIn(f => f.Person.Id, m).Where(f => f.InternalRole == "field" || f.InternalRole == "ol").Where(f => f.TimeIn != null && f.TimeOut != null).OrderBy(f => f.Person.LastName).ThenBy(f => f.Person.FirstName).ThenBy(f => f.Person.Id).ThenBy(f => f.TimeIn);
+      //var courses = (from c in this.db.TrainingCourses where c.Unit.Id == esar && c.Categories.Contains("leadership") select c);
 
-      Guid lastId = Guid.Empty;
-      Dictionary<DateTime, int> hours = new Dictionary<DateTime, int>();
-      Dictionary<DateTime, Tuple<int, string>> promotes = new Dictionary<DateTime, Tuple<int, string>>();
-      double hoursSum = 0;
-      TimeSpan offset = TimeSpan.FromSeconds(0);
-      DateTime lastTime = DateTime.MinValue;
-      int recordRow = 0;
-      List<TrainingAward> records = null;
-      foreach (var row in responses)
-      {
-        //Guid personId = (Guid)row.PersonReference.EntityKey.EntityKeyValues.First().Value;
-        Guid personId = row.Person.Id;
-        if (personId != lastId)
-        {
-          if (lastId != Guid.Empty)
-          {
-            hourSeries.Add(hours);
-            promotions.Add(promotes);
-          }
+      //var responses = this.db.MissionRosters.WhereIn(f => f.Person.Id, m).Where(f => f.InternalRole == "field" || f.InternalRole == "ol").Where(f => f.TimeIn != null && f.TimeOut != null).OrderBy(f => f.Person.LastName).ThenBy(f => f.Person.FirstName).ThenBy(f => f.Person.Id).ThenBy(f => f.TimeIn);
 
-          records = this.db.TrainingAward.Include("Course").WhereIn(f => f.Course.Id, courses.Select(f => f.Id)).Where(f => f.Member.Id == personId).OrderBy(f => f.Completed).ToList();
-          recordRow = 0;
-          hoursSum = 0;
-          lastId = personId;
-          hours = new Dictionary<DateTime, int>();
-          promotes = new Dictionary<DateTime, Tuple<int, string>>();
-          if (relative.HasValue && relative.Value)
-          {
-            offset = (row.TimeIn ?? row.Mission.StartTime) - new DateTime(1900, 1, 1);
-          }
-          lastTime = DateTime.MinValue;
-        }
+      //Guid lastId = Guid.Empty;
+      //Dictionary<DateTime, int> hours = new Dictionary<DateTime, int>();
+      //Dictionary<DateTime, Tuple<int, string>> promotes = new Dictionary<DateTime, Tuple<int, string>>();
+      //double hoursSum = 0;
+      //TimeSpan offset = TimeSpan.FromSeconds(0);
+      //DateTime lastTime = DateTime.MinValue;
+      //int recordRow = 0;
+      //List<TrainingAward> records = null;
+      //foreach (var row in responses)
+      //{
+      //  //Guid personId = (Guid)row.PersonReference.EntityKey.EntityKeyValues.First().Value;
+      //  Guid personId = row.Person.Id;
+      //  if (personId != lastId)
+      //  {
+      //    if (lastId != Guid.Empty)
+      //    {
+      //      hourSeries.Add(hours);
+      //      promotions.Add(promotes);
+      //    }
 
-        if (recordRow < records.Count && records[recordRow].Completed < row.TimeIn.Value)
-        {
-          promotes.Add(records[recordRow].Completed - offset, new Tuple<int, string>((int)hoursSum, records[recordRow].Course.DisplayName));
-          recordRow++;
-        }
+      //    records = this.db.TrainingAward.Include("Course").WhereIn(f => f.Course.Id, courses.Select(f => f.Id)).Where(f => f.Member.Id == personId).OrderBy(f => f.Completed).ToList();
+      //    recordRow = 0;
+      //    hoursSum = 0;
+      //    lastId = personId;
+      //    hours = new Dictionary<DateTime, int>();
+      //    promotes = new Dictionary<DateTime, Tuple<int, string>>();
+      //    if (relative.HasValue && relative.Value)
+      //    {
+      //      offset = (row.TimeIn ?? row.Mission.StartTime) - new DateTime(1900, 1, 1);
+      //    }
+      //    lastTime = DateTime.MinValue;
+      //  }
+
+      //  if (recordRow < records.Count && records[recordRow].Completed < row.TimeIn.Value)
+      //  {
+      //    promotes.Add(records[recordRow].Completed - offset, new Tuple<int, string>((int)hoursSum, records[recordRow].Course.DisplayName));
+      //    recordRow++;
+      //  }
 
 
-        DateTime x = row.TimeIn.Value - offset;
-        hoursSum += row.Hours.Value;
-        if (x == lastTime)
-        {
-          hours[x] = (int)hoursSum;
-        }
-        else
-        {
-          hours.Add(x, (int)hoursSum);
-        }
+      //  DateTime x = row.TimeIn.Value - offset;
+      //  hoursSum += row.Hours.Value;
+      //  if (x == lastTime)
+      //  {
+      //    hours[x] = (int)hoursSum;
+      //  }
+      //  else
+      //  {
+      //    hours.Add(x, (int)hoursSum);
+      //  }
 
-        lastTime = x;
-      }
-      if (lastId != Guid.Empty)
-      {
-        hourSeries.Add(hours);
-        promotions.Add(promotes);
-      }
+      //  lastTime = x;
+      //}
+      //if (lastId != Guid.Empty)
+      //{
+      //  hourSeries.Add(hours);
+      //  promotions.Add(promotes);
+      //}
 
-      ViewData["titles"] = names;
-      ViewData["data"] = hourSeries;
-      ViewData["promotes"] = promotions;
-      return View();
+      //ViewData["titles"] = names;
+      //ViewData["data"] = hourSeries;
+      //ViewData["promotes"] = promotions;
+      //return View();
     }
 
     [Authorize]
     public ActionResult ReconcileMemberStatus(string id)
     {
-      Guid unitId = new Guid("c2f99bb4-3056-4097-9345-4b8797f40e10");
-      if (!Guid.TryParse(id, out unitId))
-      {
-        unitId = new Guid("c2f99bb4-3056-4097-9345-4b8797f40e10");
-      }
+      throw new NotImplementedException("reimplement");
 
-      string debug = string.Empty;
-      DateTime oneYear = DateTime.Today.AddYears(-1);
+      //Guid unitId = new Guid("c2f99bb4-3056-4097-9345-4b8797f40e10");
+      //if (!Guid.TryParse(id, out unitId))
+      //{
+      //  unitId = new Guid("c2f99bb4-3056-4097-9345-4b8797f40e10");
+      //}
 
-      var model = (from m in this.db.Members.Include("Memberships.Unit").Include("Memberships.Status") where m.Memberships.Any(f => f.Unit.Id == unitId && (!f.EndTime.HasValue || f.EndTime > oneYear)) && m.WacLevel != WacLevel.None select m)
-          .OrderBy(f => f.LastName).ThenBy(f => f.FirstName).ToList();
+      //string debug = string.Empty;
+      //DateTime oneYear = DateTime.Today.AddYears(-1);
 
-      var courses = (from c in this.db.TrainingCourses where c.WacRequired > 0 select c).OrderBy(x => x.DisplayName).ToList();
+      //var model = (from m in this.db.Members.Include("Memberships.Unit").Include("Memberships.Status") where m.Memberships.Any(f => f.Unit.Id == unitId && (!f.EndTime.HasValue || f.EndTime > oneYear)) && m.WacLevel != WacLevel.None select m)
+      //    .OrderBy(f => f.LastName).ThenBy(f => f.FirstName).ToList();
 
-      int changeCount = 0;
-      foreach (Member m in model)
-      {
+      //var courses = (from c in this.db.TrainingCourses where c.WacRequired > 0 select c).OrderBy(x => x.DisplayName).ToList();
 
-        WacLevel newRole = m.WacLevel;
-        string reason = string.Empty;
-        string status = "error";
-        try
-        {
-          status = m.Memberships.Where(f => f.Unit.Id == unitId && !f.EndTime.HasValue).Select(f => f.Status.StatusName).Single();
-        }
-        catch (InvalidOperationException)
-        {
-          status = string.Join(", ", m.Memberships.Where(f => f.Unit.Id == unitId && !f.EndTime.HasValue).Select(f => f.Status.StatusName + f.Activated.ToShortDateString()).ToArray());
-        }
-        string newStatus = status;
+      //int changeCount = 0;
+      //foreach (Member m in model)
+      //{
 
-        if (m.Memberships.Any(f => f.Unit.Id == unitId && f.Status.IsActive && f.EndTime == null))
-        {
-          // Active with this unit
+      //  WacLevel newRole = m.WacLevel;
+      //  string reason = string.Empty;
+      //  string status = "error";
+      //  try
+      //  {
+      //    status = m.Memberships.Where(f => f.Unit.Id == unitId && !f.EndTime.HasValue).Select(f => f.Status.StatusName).Single();
+      //  }
+      //  catch (InvalidOperationException)
+      //  {
+      //    status = string.Join(", ", m.Memberships.Where(f => f.Unit.Id == unitId && !f.EndTime.HasValue).Select(f => f.Status.StatusName + f.Activated.ToShortDateString()).ToArray());
+      //  }
+      //  string newStatus = status;
 
-          if (m.WacLevel == WacLevel.Novice && m.WacLevelDate < oneYear)
-          {
-            Member mbr = this.db.Members.Include("ComputedAwards.Course").First(f => f.Id == m.Id);
-            mbr.WacLevel = WacLevel.Field;
-            var expires = CompositeTrainingStatus.Compute(mbr, courses, DateTime.Now);
-            mbr.WacLevel = newRole;
+      //  if (m.Memberships.Any(f => f.Unit.Id == unitId && f.Status.IsActive && f.EndTime == null))
+      //  {
+      //    // Active with this unit
 
-            if (expires.IsGood)
-            {
-              newRole = WacLevel.Field;
-              reason = "Novice > 1yr, WACs Current<br/>";
-            }
-            else
-            {
-              // TODO: move someone to support if they've been on missions?
+      //    if (m.WacLevel == WacLevel.Novice && m.WacLevelDate < oneYear)
+      //    {
+      //      Member mbr = this.db.Members.Include("ComputedAwards.Course").First(f => f.Id == m.Id);
+      //      mbr.WacLevel = WacLevel.Field;
+      //      var expires = CompositeTrainingStatus.Compute(mbr, courses, DateTime.Now);
+      //      mbr.WacLevel = newRole;
 
-              if (expires.Expirations.Any(f => (f.Value.Status & ExpirationFlags.Missing) == ExpirationFlags.Missing))
-              {
-                newRole = WacLevel.None;
-                newStatus = "Admin";
-              }
-              else
-              {
-                newRole = WacLevel.Support;
-                newStatus = "Support";
-              }
+      //      if (expires.IsGood)
+      //      {
+      //        newRole = WacLevel.Field;
+      //        reason = "Novice > 1yr, WACs Current<br/>";
+      //      }
+      //      else
+      //      {
+      //        // TODO: move someone to support if they've been on missions?
 
-              reason += "Novice > 1 year, delinquint in " + string.Join(",", expires.Expirations.Where(f => (f.Value.Status & ExpirationFlags.Okay) != ExpirationFlags.Okay).Select(f => courses.Single(g => g.Id == f.Key).DisplayName).ToArray()) + "<br/>";
-            }
-          }
-          else if (m.WacLevel == WacLevel.Field || m.WacLevel == WacLevel.Support)
-          {
-            Member mbr = this.db.Members.Include("ComputedAwards.Course").First(f => f.Id == m.Id);
-            var expires = CompositeTrainingStatus.Compute(mbr, courses, DateTime.Now);
+      //        if (expires.Expirations.Any(f => (f.Value.Status & ExpirationFlags.Missing) == ExpirationFlags.Missing))
+      //        {
+      //          newRole = WacLevel.None;
+      //          newStatus = "Admin";
+      //        }
+      //        else
+      //        {
+      //          newRole = WacLevel.Support;
+      //          newStatus = "Support";
+      //        }
 
-            if (!expires.IsGood)
-            {
-              int daysLate = 0;
-              foreach (var pair in expires.Expirations)
-              {
-                if ((pair.Value.Status & ExpirationFlags.Okay) != ExpirationFlags.Okay)
-                {
-                  if (pair.Value.Status == ExpirationFlags.Missing)
-                  {
-                    daysLate = int.MaxValue;
-                  }
-                  else if (pair.Value.Status == ExpirationFlags.Expired)
-                  {
-                    daysLate = (DateTime.Today - pair.Value.Expires.Value).Days;
-                  }
-                }
-              }
-              if (daysLate > 365)
-              {
-                newStatus = "Admin";
-                newRole = WacLevel.None;
-                reason += "Required Training missing or more than 1 yr expired.<br/>";
-              }
-            }
+      //        reason += "Novice > 1 year, delinquint in " + string.Join(",", expires.Expirations.Where(f => (f.Value.Status & ExpirationFlags.Okay) != ExpirationFlags.Okay).Select(f => courses.Single(g => g.Id == f.Key).DisplayName).ToArray()) + "<br/>";
+      //      }
+      //    }
+      //    else if (m.WacLevel == WacLevel.Field || m.WacLevel == WacLevel.Support)
+      //    {
+      //      Member mbr = this.db.Members.Include("ComputedAwards.Course").First(f => f.Id == m.Id);
+      //      var expires = CompositeTrainingStatus.Compute(mbr, courses, DateTime.Now);
 
-            DateTime missionCutoff = DateTime.Today.AddYears(-2);
-            int missions = this.db.MissionRosters.Where(f => f.Person.Id == m.Id && f.TimeIn > missionCutoff && f.InternalRole != "Responder").Count();
+      //      if (!expires.IsGood)
+      //      {
+      //        int daysLate = 0;
+      //        foreach (var pair in expires.Expirations)
+      //        {
+      //          if ((pair.Value.Status & ExpirationFlags.Okay) != ExpirationFlags.Okay)
+      //          {
+      //            if (pair.Value.Status == ExpirationFlags.Missing)
+      //            {
+      //              daysLate = int.MaxValue;
+      //            }
+      //            else if (pair.Value.Status == ExpirationFlags.Expired)
+      //            {
+      //              daysLate = (DateTime.Today - pair.Value.Expires.Value).Days;
+      //            }
+      //          }
+      //        }
+      //        if (daysLate > 365)
+      //        {
+      //          newStatus = "Admin";
+      //          newRole = WacLevel.None;
+      //          reason += "Required Training missing or more than 1 yr expired.<br/>";
+      //        }
+      //      }
 
-            if (missions == 0)
-            {
-              newStatus = "Admin";
-              newRole = WacLevel.None;
-              reason += "No mission assignments in 2 years.<br/>";
-            }
+      //      DateTime missionCutoff = DateTime.Today.AddYears(-2);
+      //      int missions = this.db.MissionRosters.Where(f => f.Person.Id == m.Id && f.TimeIn > missionCutoff && f.InternalRole != "Responder").Count();
 
-          }
-        }
-        else
-        {
-          // Not active with this unit.
-          newStatus = "Inactive";
+      //      if (missions == 0)
+      //      {
+      //        newStatus = "Admin";
+      //        newRole = WacLevel.None;
+      //        reason += "No mission assignments in 2 years.<br/>";
+      //      }
 
-          if (m.Memberships.Any(f => f.Status.IsActive && f.EndTime == null))
-          {
-            // Active with another unit
-            reason = "Not active with this unit, active with other(s)";
-          }
-          else
-          {
-            // Not active with any unit
-            newRole = WacLevel.None;
+      //    }
+      //  }
+      //  else
+      //  {
+      //    // Not active with this unit.
+      //    newStatus = "Inactive";
 
-            var previousUnits = m.Memberships.Where(f => f.Status.IsActive);
-            if (previousUnits.Count() > 0)
-            {
-              reason = "Not active with any unit (left last on " + previousUnits.Max(f => f.EndTime.Value).ToString("yyyy-MM-dd)<br/>");
-            }
-            else
-            {
-              reason = "Never active with any unit<br/>";
-            }
-          }
-        }
+      //    if (m.Memberships.Any(f => f.Status.IsActive && f.EndTime == null))
+      //    {
+      //      // Active with another unit
+      //      reason = "Not active with this unit, active with other(s)";
+      //    }
+      //    else
+      //    {
+      //      // Not active with any unit
+      //      newRole = WacLevel.None;
 
-        if (newRole != m.WacLevel || newStatus != status)
-        {
-          string otherUnits = (m.Memberships.Any(f => f.Status.IsActive && !f.EndTime.HasValue && f.Unit.Id != unitId)) ?
-              " (Check other units)" : "";
+      //      var previousUnits = m.Memberships.Where(f => f.Status.IsActive);
+      //      if (previousUnits.Count() > 0)
+      //      {
+      //        reason = "Not active with any unit (left last on " + previousUnits.Max(f => f.EndTime.Value).ToString("yyyy-MM-dd)<br/>");
+      //      }
+      //      else
+      //      {
+      //        reason = "Never active with any unit<br/>";
+      //      }
+      //    }
+      //  }
 
-          debug += string.Format("<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}{4}</td><td>{5}</td></tr>\n", m.ReverseName, m.WacLevel, reason, newRole, otherUnits, newStatus);
-          changeCount++;
-        }
-      }
+      //  if (newRole != m.WacLevel || newStatus != status)
+      //  {
+      //    string otherUnits = (m.Memberships.Any(f => f.Status.IsActive && !f.EndTime.HasValue && f.Unit.Id != unitId)) ?
+      //        " (Check other units)" : "";
+
+      //    debug += string.Format("<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}{4}</td><td>{5}</td></tr>\n", m.ReverseName, m.WacLevel, reason, newRole, otherUnits, newStatus);
+      //    changeCount++;
+      //  }
+      //}
 
 
-      return new ContentResult { Content = "<table><tr><th>Name</th><th>Current Role</th><th>Reason for Change</th><th>Suggested WAC Role</th><th>Suggested ESAR status</th><tr>" + debug + "</table>" + changeCount.ToString() + " changes", ContentType = "text/html" };
+      //return new ContentResult { Content = "<table><tr><th>Name</th><th>Current Role</th><th>Reason for Change</th><th>Suggested WAC Role</th><th>Suggested ESAR status</th><tr>" + debug + "</table>" + changeCount.ToString() + " changes", ContentType = "text/html" };
     }
 
 
@@ -1697,160 +1703,162 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize]
     public ActionResult ReconcileEmergencyWorkers(bool? saveFile)
     {
-      if (Request.Files.Count > 1)
-      {
-        throw new InvalidOperationException("Can only submit one roster");
-      }
+      throw new NotImplementedException("reimplement");
 
-      byte[] fileData;
+      //if (Request.Files.Count > 1)
+      //{
+      //  throw new InvalidOperationException("Can only submit one roster");
+      //}
 
-      var postedFile = Request.Files[0];
-      string fileName = postedFile.FileName;
-      string cachePath = this.ReconcileEmergencyWorkersCache;
+      //byte[] fileData;
 
-      if (!string.IsNullOrWhiteSpace(fileName))
-      {
-        if (!fileName.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase))
-        {
-          throw new InvalidOperationException("Must use XLSX file");
-        }
+      //var postedFile = Request.Files[0];
+      //string fileName = postedFile.FileName;
+      //string cachePath = this.ReconcileEmergencyWorkersCache;
 
-        fileData = new byte[postedFile.ContentLength];
-        postedFile.InputStream.Read(fileData, 0, fileData.Length);
+      //if (!string.IsNullOrWhiteSpace(fileName))
+      //{
+      //  if (!fileName.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase))
+      //  {
+      //    throw new InvalidOperationException("Must use XLSX file");
+      //  }
 
-        if (saveFile ?? false)
-        {
-          string[] pieces = postedFile.FileName.Split('.');
-          string extension = pieces.Last();
+      //  fileData = new byte[postedFile.ContentLength];
+      //  postedFile.InputStream.Read(fileData, 0, fileData.Length);
 
-          IO.File.WriteAllBytes(cachePath, fileData);
-        }
-      }
-      else if (IO.File.Exists(cachePath))
-      {
-        fileData = IO.File.ReadAllBytes(cachePath);
-        fileName = IO.Path.GetFileName(cachePath);
-      }
-      else
-      {
-        throw new InvalidOperationException("No new file was uploaded, and no older file is cached");
-      }
+      //  if (saveFile ?? false)
+      //  {
+      //    string[] pieces = postedFile.FileName.Split('.');
+      //    string extension = pieces.Last();
 
-      var stream = new System.IO.MemoryStream(fileData);
-      stream.Position = 0;
+      //    IO.File.WriteAllBytes(cachePath, fileData);
+      //  }
+      //}
+      //else if (IO.File.Exists(cachePath))
+      //{
+      //  fileData = IO.File.ReadAllBytes(cachePath);
+      //  fileName = IO.Path.GetFileName(cachePath);
+      //}
+      //else
+      //{
+      //  throw new InvalidOperationException("No new file was uploaded, and no older file is cached");
+      //}
 
-      ExcelFile xl = ExcelService.Read(stream, ExcelFileType.XLSX);
-      ExcelSheet sheet = xl.GetSheet(0);
+      //var stream = new System.IO.MemoryStream(fileData);
+      //stream.Position = 0;
 
-      string[] columns = new[] { "EMT?", "DEM #", "LastName", "FirstName", "Common Name", "ns1:OrgRank", "ns1:Status" };
-      for (int i = 0; i < columns.Length; i++)
-      {
-        string column = sheet.CellAt(0, i).StringValue;
-        if (column != columns[i])
-        {
-          return new ContentResult { Content = "Unexpected column: " + column };
-        }
-      }
+      //ExcelFile xl = ExcelService.Read(stream, ExcelFileType.XLSX);
+      //ExcelSheet sheet = xl.GetSheet(0);
 
-      ReconcileEmergencyWorkersViewModel model = new ReconcileEmergencyWorkersViewModel();
-      List<Guid> seen = new List<Guid>();
-      int row = 1;
-      DateTime now = DateTime.Now;
-      DateTime eighteenMonths = now.AddMonths(-18);
+      //string[] columns = new[] { "EMT?", "DEM #", "LastName", "FirstName", "Common Name", "ns1:OrgRank", "ns1:Status" };
+      //for (int i = 0; i < columns.Length; i++)
+      //{
+      //  string column = sheet.CellAt(0, i).StringValue;
+      //  if (column != columns[i])
+      //  {
+      //    return new ContentResult { Content = "Unexpected column: " + column };
+      //  }
+      //}
 
-      var members = this.db.Members.Include("Memberships.Status").Include("Memberships.Unit").Include("ComputedAwards.Course");
+      //ReconcileEmergencyWorkersViewModel model = new ReconcileEmergencyWorkersViewModel();
+      //List<Guid> seen = new List<Guid>();
+      //int row = 1;
+      //DateTime now = DateTime.Now;
+      //DateTime eighteenMonths = now.AddMonths(-18);
 
-      var courses = (from c in this.db.TrainingCourses where c.WacRequired > 0 select c).OrderBy(x => x.DisplayName).ToList();
+      //var members = this.db.Members.Include("Memberships.Status").Include("Memberships.Unit").Include("ComputedAwards.Course");
 
-      while (!string.IsNullOrWhiteSpace(sheet.CellAt(row, 0).StringValue))
-      {
-        string dem = sheet.CellAt(row, 1).StringValue.Trim().PadLeft(4, '0');
-        string last = sheet.CellAt(row, 2).StringValue.Trim().Split(',')[0];
-        string common = sheet.CellAt(row, 4).StringValue.Trim();
-        string first = string.IsNullOrWhiteSpace(common) ? sheet.CellAt(row, 3).StringValue.Trim() : common;
-        string wacRank = sheet.CellAt(row, 5).StringValue.Trim();
-        string active = sheet.CellAt(row, 6).StringValue.Trim();
+      //var courses = (from c in this.db.TrainingCourses where c.WacRequired > 0 select c).OrderBy(x => x.DisplayName).ToList();
 
-        if (wacRank == "Canine")
-        {
+      //while (!string.IsNullOrWhiteSpace(sheet.CellAt(row, 0).StringValue))
+      //{
+      //  string dem = sheet.CellAt(row, 1).StringValue.Trim().PadLeft(4, '0');
+      //  string last = sheet.CellAt(row, 2).StringValue.Trim().Split(',')[0];
+      //  string common = sheet.CellAt(row, 4).StringValue.Trim();
+      //  string first = string.IsNullOrWhiteSpace(common) ? sheet.CellAt(row, 3).StringValue.Trim() : common;
+      //  string wacRank = sheet.CellAt(row, 5).StringValue.Trim();
+      //  string active = sheet.CellAt(row, 6).StringValue.Trim();
 
-        }
-        else
-        {
-          var nameMatches = members.Where(f => (f.LastName == last || f.LastName.StartsWith(last + ",")) && f.FirstName == first);
+      //  if (wacRank == "Canine")
+      //  {
 
-          // Not super efficient, but works ok.
-          if (nameMatches.Count() > 1)
-          {
-            nameMatches = members.Where(f => f.LastName == last && f.FirstName == first && f.DEM == dem);
-            if (nameMatches.Count() == 0)
-            {
-              nameMatches = members.Where(f => f.LastName == last && f.FirstName == first);
-            }
-          }
+      //  }
+      //  else
+      //  {
+      //    var nameMatches = members.Where(f => (f.LastName == last || f.LastName.StartsWith(last + ",")) && f.FirstName == first);
 
-          string result = dem + " " + last + ", " + first;
-          if (nameMatches.Count() == 0)
-          {
-            model.NoMatch.Add(result + " - Not found");
-          }
-          else if (nameMatches.Count() > 1)
-          {
-            model.NoMatch.Add(string.Format("{0} - {1} possible matches", result, nameMatches.Count()));
-          }
-          else
-          {
-            var member = nameMatches.First();
-            seen.Add(member.Id);
+      //    // Not super efficient, but works ok.
+      //    if (nameMatches.Count() > 1)
+      //    {
+      //      nameMatches = members.Where(f => f.LastName == last && f.FirstName == first && f.DEM == dem);
+      //      if (nameMatches.Count() == 0)
+      //      {
+      //        nameMatches = members.Where(f => f.LastName == last && f.FirstName == first);
+      //      }
+      //    }
 
-            var trainingStatus = CompositeTrainingStatus.Compute(member, courses, now);
+      //    string result = dem + " " + last + ", " + first;
+      //    if (nameMatches.Count() == 0)
+      //    {
+      //      model.NoMatch.Add(result + " - Not found");
+      //    }
+      //    else if (nameMatches.Count() > 1)
+      //    {
+      //      model.NoMatch.Add(string.Format("{0} - {1} possible matches", result, nameMatches.Count()));
+      //    }
+      //    else
+      //    {
+      //      var member = nameMatches.First();
+      //      seen.Add(member.Id);
 
-            var units = member.Memberships.Where(f => f.Status.IsActive && f.Activated < now && (f.EndTime == null || f.EndTime.Value > now)).Select(f => f.Unit.DisplayName).Distinct().ToList();
-            if (units.Count == 0)
-            {
-              model.NoMatch.Add(result + " - found in KCSARA database, but has no active unit");
-            }
+      //      var trainingStatus = CompositeTrainingStatus.Compute(member, courses, now);
 
-            units.ForEach(f => ReconcileEmergencyWorkersAddMember(model, f,
-                new ReconcileEmergencyWorkersRow
-                    {
-                      Id = member.Id,
-                      Name = last + ", " + first,
-                      DEM = dem,
-                      DemIsNew = (dem != member.DEM),
-                      WacIsNew = (wacRank != member.WacLevel.ToString()),
-                      WacLevel = wacRank + ((wacRank != member.WacLevel.ToString()) ? ("/" + member.WacLevel.ToString()) : ""),
-                      UnitStatus = member.Memberships.Where(g => g.Unit.DisplayName == f).OrderByDescending(g => g.Activated).First().Status.StatusName,
-                      IsOldNovice = (wacRank == "Novice" && member.WacLevel == WacLevel.Novice && member.WacLevelDate.AddYears(1) < now),
-                      TrainingCurrent = trainingStatus.IsGood,
-                      MissionCount = this.db.MissionRosters.Where(g => g.Person.Id == member.Id && g.Mission.StartTime > eighteenMonths).Select(g => g.Mission.Id).Distinct().Count(),
-                      TrainingCount = this.db.TrainingRosters.Where(g => g.Person.Id == member.Id && g.Training.StartTime > eighteenMonths).Select(g => g.Training.Id).Distinct().Count()
-                    }));
-          }
-        }
-        model.RowCount++;
-        row++;
-      }
+      //      var units = member.Memberships.Where(f => f.Status.IsActive && f.Activated < now && (f.EndTime == null || f.EndTime.Value > now)).Select(f => f.Unit.DisplayName).Distinct().ToList();
+      //      if (units.Count == 0)
+      //      {
+      //        model.NoMatch.Add(result + " - found in KCSARA database, but has no active unit");
+      //      }
 
-      foreach (var member in members.Where(f => f.Memberships.Any(g => g.Status.IsActive && g.Activated < now && (g.EndTime == null || g.EndTime.Value > now)) && !seen.Contains(f.Id)).OrderBy(f => f.LastName).ThenBy(f => f.FirstName))
-      {
-        var units = member.Memberships.Where(f => f.Status.WacLevel != WacLevel.None && f.Activated < now && (f.EndTime == null || f.EndTime.Value > now)).Select(f => f.Unit.DisplayName).Distinct().ToList();
-        units.ForEach(f => ReconcileEmergencyWorkersAddMember(model, f,
-            new ReconcileEmergencyWorkersRow
-            {
-              Name = member.ReverseName,
-              DEM = "",
-              DemIsNew = !string.IsNullOrWhiteSpace(member.DEM),
-              WacIsNew = (member.WacLevel != WacLevel.None),
-              WacLevel = WacLevel.None.ToString(),
-              UnitStatus = member.Memberships.Where(g => g.Unit.DisplayName == f).OrderByDescending(g => g.Activated).First().Status.StatusName,
-              TrainingCurrent = null,
-              MissionCount = this.db.MissionRosters.Where(g => g.Person.Id == member.Id && g.Mission.StartTime > eighteenMonths).Select(g => g.Mission.Id).Distinct().Count(),
-              TrainingCount = this.db.TrainingRosters.Where(g => g.Person.Id == member.Id && g.Training.StartTime > eighteenMonths).Select(g => g.Training.Id).Distinct().Count()
-            }));
-      }
+      //      units.ForEach(f => ReconcileEmergencyWorkersAddMember(model, f,
+      //          new ReconcileEmergencyWorkersRow
+      //              {
+      //                Id = member.Id,
+      //                Name = last + ", " + first,
+      //                DEM = dem,
+      //                DemIsNew = (dem != member.DEM),
+      //                WacIsNew = (wacRank != member.WacLevel.ToString()),
+      //                WacLevel = wacRank + ((wacRank != member.WacLevel.ToString()) ? ("/" + member.WacLevel.ToString()) : ""),
+      //                UnitStatus = member.Memberships.Where(g => g.Unit.DisplayName == f).OrderByDescending(g => g.Activated).First().Status.StatusName,
+      //                IsOldNovice = (wacRank == "Novice" && member.WacLevel == WacLevel.Novice && member.WacLevelDate.AddYears(1) < now),
+      //                TrainingCurrent = trainingStatus.IsGood,
+      //                MissionCount = this.db.MissionRosters.Where(g => g.Person.Id == member.Id && g.Mission.StartTime > eighteenMonths).Select(g => g.Mission.Id).Distinct().Count(),
+      //                TrainingCount = this.db.TrainingRosters.Where(g => g.Person.Id == member.Id && g.Training.StartTime > eighteenMonths).Select(g => g.Training.Id).Distinct().Count()
+      //              }));
+      //    }
+      //  }
+      //  model.RowCount++;
+      //  row++;
+      //}
 
-      return View("ReconcileEmergencyWorkerResults", model);
+      //foreach (var member in members.Where(f => f.Memberships.Any(g => g.Status.IsActive && g.Activated < now && (g.EndTime == null || g.EndTime.Value > now)) && !seen.Contains(f.Id)).OrderBy(f => f.LastName).ThenBy(f => f.FirstName))
+      //{
+      //  var units = member.Memberships.Where(f => f.Status.WacLevel != WacLevel.None && f.Activated < now && (f.EndTime == null || f.EndTime.Value > now)).Select(f => f.Unit.DisplayName).Distinct().ToList();
+      //  units.ForEach(f => ReconcileEmergencyWorkersAddMember(model, f,
+      //      new ReconcileEmergencyWorkersRow
+      //      {
+      //        Name = member.ReverseName,
+      //        DEM = "",
+      //        DemIsNew = !string.IsNullOrWhiteSpace(member.DEM),
+      //        WacIsNew = (member.WacLevel != WacLevel.None),
+      //        WacLevel = WacLevel.None.ToString(),
+      //        UnitStatus = member.Memberships.Where(g => g.Unit.DisplayName == f).OrderByDescending(g => g.Activated).First().Status.StatusName,
+      //        TrainingCurrent = null,
+      //        MissionCount = this.db.MissionRosters.Where(g => g.Person.Id == member.Id && g.Mission.StartTime > eighteenMonths).Select(g => g.Mission.Id).Distinct().Count(),
+      //        TrainingCount = this.db.TrainingRosters.Where(g => g.Person.Id == member.Id && g.Training.StartTime > eighteenMonths).Select(g => g.Training.Id).Distinct().Count()
+      //      }));
+      //}
+
+      //return View("ReconcileEmergencyWorkerResults", model);
     }
 
     private void ReconcileEmergencyWorkersAddMember(ReconcileEmergencyWorkersViewModel model, string unit, ReconcileEmergencyWorkersRow row)

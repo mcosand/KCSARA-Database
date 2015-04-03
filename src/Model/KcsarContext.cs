@@ -34,7 +34,7 @@ namespace Kcsar.Database.Model
     public IDbSet<PersonAddress> PersonAddress { get; set; }
     public IDbSet<PersonContact> PersonContact { get; set; }
     public IDbSet<MemberUnitDocument> MemberUnitDocuments { get; set; }
-    //       public IDbSet<PersonSubscription> PersonSubscription { get; set; }
+  //         public IDbSet<PersonSubscription> PersonSubscription { get; set; }
     public IDbSet<Subject> Subjects { get; set; }
     public IDbSet<SubjectGroup> SubjectGroups { get; set; }
     public IDbSet<SubjectGroupLink> SubjectGroupLinks { get; set; }
@@ -80,8 +80,8 @@ namespace Kcsar.Database.Model
     {
       base.OnModelCreating(modelBuilder);
       modelBuilder.Entity<SarEvent>().HasMany(f => f.Roster).WithRequired(f => f.Event).WillCascadeOnDelete(false);
-      modelBuilder.Entity<Participant>().HasOptional(f => f.Member).WithMany().WillCascadeOnDelete(false);
-      modelBuilder.Entity<ParticipatingUnit>().HasOptional(f => f.MemberUnit).WithMany().WillCascadeOnDelete(false);
+      modelBuilder.Entity<Participant>().HasOptional(f => f.Member).WithMany(f => f.Participation).WillCascadeOnDelete(false);
+      modelBuilder.Entity<ParticipatingUnit>().HasOptional(f => f.MemberUnit).WithMany(f => f.Participation).WillCascadeOnDelete(false);
       modelBuilder.Entity<EventRoster>().HasRequired(f => f.Participant).WithMany().WillCascadeOnDelete(false);
       modelBuilder.Entity<EventRoster>().HasOptional(f => f.Unit).WithMany().WillCascadeOnDelete(false);
       modelBuilder.Entity<ParticipantStatus>().HasRequired(f => f.Participant).WithMany().WillCascadeOnDelete(false);
@@ -89,8 +89,9 @@ namespace Kcsar.Database.Model
       modelBuilder.Entity<EventLog>().HasOptional(f => f.Participant).WithMany().WillCascadeOnDelete(false);
       modelBuilder.Entity<ParticipantEventTimeline>().HasOptional(f => f.Participant).WithMany().WillCascadeOnDelete(false);
 
-      modelBuilder.Entity<Mission>().HasOptional(f => f.Details).WithRequired(f => f.Mission).WillCascadeOnDelete();
+      modelBuilder.Entity<SarEvent>().HasOptional(f => f.Details).WithRequired(f => f.Event).WillCascadeOnDelete();
       modelBuilder.Entity<Mission>().HasMany(f => f.Log).WithRequired(f => f.Mission).WillCascadeOnDelete();
+      modelBuilder.Entity<Training2>().HasMany(f => f.OfferedCourses).WithMany(f => f.Trainings2);
       modelBuilder.Entity<Member>().HasOptional(f => f.MedicalInfo).WithRequired(f => f.Member);
       modelBuilder.Entity<Member>().HasMany(f => f.Memberships).WithRequired(f => f.Person).WillCascadeOnDelete();
       modelBuilder.Entity<Member>().HasMany(f => f.Addresses).WithRequired(f => f.Person).WillCascadeOnDelete();
@@ -414,40 +415,41 @@ namespace Kcsar.Database.Model
 
             if (fields[0].StartsWith("Mission"))
             {
-              //Mission(12:%:36)
-              Match match = Regex.Match(fields[0], @"Mission\((\d+):([^:]+):(\d+)\)", RegexOptions.IgnoreCase);
-              if (match.Success == false)
-              {
-                throw new InvalidOperationException("Can't understand rule: " + fields[0]);
-              }
+              throw new NotImplementedException("reimplement");
+              ////Mission(12:%:36)
+              //Match match = Regex.Match(fields[0], @"Mission\((\d+):([^:]+):(\d+)\)", RegexOptions.IgnoreCase);
+              //if (match.Success == false)
+              //{
+              //  throw new InvalidOperationException("Can't understand rule: " + fields[0]);
+              //}
 
-              int requiredHours = int.Parse(match.Groups[1].Value);
-              string missionType = match.Groups[2].Value;
-              int monthSpan = int.Parse(match.Groups[3].Value);
+              //int requiredHours = int.Parse(match.Groups[1].Value);
+              //string missionType = match.Groups[2].Value;
+              //int monthSpan = int.Parse(match.Groups[3].Value);
 
-              var missions = (from r in this.MissionRosters where r.Person.Id == m.Id && r.TimeIn < time select r);
-              if (missionType != "%")
-              {
-                missions = missions.Where(x => x.Mission.MissionType.Contains(missionType));
-              }
-              missions = missions.OrderByDescending(x => x.TimeIn);
+              //var missions = (from r in this.MissionRosters where r.Person.Id == m.Id && r.TimeIn < time select r);
+              //if (missionType != "%")
+              //{
+              //  missions = missions.Where(x => x.Mission.MissionType.Contains(missionType));
+              //}
+              //missions = missions.OrderByDescending(x => x.TimeIn);
 
-              double sum = 0;
-              DateTime startDate = DateTime.Now;
-              foreach (MissionRoster roster in missions)
-              {
-                if (roster.TimeIn.HasValue && (roster.InternalRole != MissionRoster.ROLE_IN_TOWN && roster.InternalRole != MissionRoster.ROLE_NO_ROLE))
-                {
-                  startDate = roster.TimeIn.Value;
-                  sum += roster.Hours ?? 0.0;
+              //double sum = 0;
+              //DateTime startDate = DateTime.Now;
+              //foreach (MissionRoster roster in missions)
+              //{
+              //  if (roster.TimeIn.HasValue && (roster.InternalRole != MissionRoster.ROLE_IN_TOWN && roster.InternalRole != MissionRoster.ROLE_NO_ROLE))
+              //  {
+              //    startDate = roster.TimeIn.Value;
+              //    sum += roster.Hours ?? 0.0;
 
-                  if (sum > requiredHours)
-                  {
-                    awardInLoop |= RewardTraining(m, courses, awards, rule, startDate, startDate.AddMonths(monthSpan), fields[1]);
-                    break;
-                  }
-                }
-              }
+              //    if (sum > requiredHours)
+              //    {
+              //      awardInLoop |= RewardTraining(m, courses, awards, rule, startDate, startDate.AddMonths(monthSpan), fields[1]);
+              //      break;
+              //    }
+              //  }
+              //}
             }
             else
             {

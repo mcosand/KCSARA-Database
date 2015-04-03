@@ -33,45 +33,49 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize(Roles = "cdb.users")]
     public ActionResult ReportStatus()
     {
-      IEnumerable<EventReportStatusView> model;
-      IQueryable<Training> source = this.db.Trainings;
+      throw new NotImplementedException("reimplement");
 
-      var docCount = (from d in this.db.Documents group d by d.ReferenceId into g select new { Id = g.Key, Count = g.Count() }).ToDictionary(f => f.Id, f => f.Count);
+      //IEnumerable<EventReportStatusView> model;
+      //IQueryable<Training> source = this.db.Trainings;
 
-      model = (from m in source
-               select new EventReportStatusView
-               {
-                 Id = m.Id,
-                 Title = m.Title,
-                 Number = m.StateNumber,
-                 StartTime = m.StartTime,
-                 Persons = m.Roster.Select(f => f.Person.Id).Distinct().Count()
-               }).OrderByDescending(f => f.StartTime).ToArray();
+      //var docCount = (from d in this.db.Documents group d by d.ReferenceId into g select new { Id = g.Key, Count = g.Count() }).ToDictionary(f => f.Id, f => f.Count);
 
-      foreach (var r in model)
-      {
-        int count;
-        if (docCount.TryGetValue(r.Id, out count))
-        {
-          r.DocumentCount = count;
-        }
-      }
+      //model = (from m in source
+      //         select new EventReportStatusView
+      //         {
+      //           Id = m.Id,
+      //           Title = m.Title,
+      //           Number = m.StateNumber,
+      //           StartTime = m.StartTime,
+      //           Persons = m.Roster.Select(f => f.Person.Id).Distinct().Count()
+      //         }).OrderByDescending(f => f.StartTime).ToArray();
 
-      return View(model);
+      //foreach (var r in model)
+      //{
+      //  int count;
+      //  if (docCount.TryGetValue(r.Id, out count))
+      //  {
+      //    r.DocumentCount = count;
+      //  }
+      //}
+
+      //return View(model);
     }
 
     protected override void DeleteDependentObjects(Training evt)
     {
       base.DeleteDependentObjects(evt);
-      foreach (var roster in this.db.TrainingRosters.Include("TrainingAwards").Where(f => f.Training.Id == evt.Id))
-      {
-        List<TrainingAward> copy = new List<TrainingAward>(roster.TrainingAwards);
-        foreach (var award in copy)
-        {
-          this.db.TrainingAward.Remove(award);
-        }
-        this.db.TrainingRosters.Remove(roster);
-      }
+      throw new NotImplementedException("reimplement");
+
+      //foreach (var roster in this.db.TrainingRosters.Include("TrainingAwards").Where(f => f.Training.Id == evt.Id))
+      //{
+      //  List<TrainingAward> copy = new List<TrainingAward>(roster.TrainingAwards);
+      //  foreach (var award in copy)
+      //  {
+      //    this.db.TrainingAward.Remove(award);
+      //  }
+      //  this.db.TrainingRosters.Remove(roster);
+      //}
     }
 
     #region Training Awards
@@ -237,78 +241,80 @@ namespace Kcsara.Database.Web.Controllers
     [HttpPost]
     public ActionResult GetCourseHours(Guid id, DateTime? begin, DateTime? end)
     {
-      if (!User.IsInRole("cdb.users")) return GetLoginError();
+      throw new NotImplementedException("reimplement");
 
-      DateTime e = end ?? DateTime.Now;
-      DateTime b = begin ?? e.AddYears(-1);
+      //if (!User.IsInRole("cdb.users")) return GetLoginError();
 
-      Dictionary<Guid, MemberRosterRow> memberHours = new Dictionary<Guid, MemberRosterRow>();
-      var traineeQuery = (from tr in this.db.TrainingRosters.Include("TrainingAwards.Member").Include("TrainingAwards.Course") where tr.TrainingAwards.Count > 0 && tr.TimeIn >= b && tr.TimeIn < e select tr).ToArray();
-      var traineeAwards = traineeQuery.SelectMany(f => f.TrainingAwards).GroupBy(f => new { P = f.Member, Course = f.Course })
-          .Select(f => new { Person = f.Key.P, Course = f.Key.Course, Hours = f.Sum(g => g.Roster.Hours), Count = f.Count() });
+      //DateTime e = end ?? DateTime.Now;
+      //DateTime b = begin ?? e.AddYears(-1);
 
-      var rules = this.db.TrainingRules.ToArray();
+      //Dictionary<Guid, MemberRosterRow> memberHours = new Dictionary<Guid, MemberRosterRow>();
+      //var traineeQuery = (from tr in this.db.TrainingRosters.Include("TrainingAwards.Member").Include("TrainingAwards.Course") where tr.TrainingAwards.Count > 0 && tr.TimeIn >= b && tr.TimeIn < e select tr).ToArray();
+      //var traineeAwards = traineeQuery.SelectMany(f => f.TrainingAwards).GroupBy(f => new { P = f.Member, Course = f.Course })
+      //    .Select(f => new { Person = f.Key.P, Course = f.Key.Course, Hours = f.Sum(g => g.Roster.Hours), Count = f.Count() });
 
-
-      foreach (var award in traineeAwards)
-      {
-        bool doAward = false;
-        if (award.Course.Id == id)
-        {
-          doAward = true;
-        }
-        else
-        {
-          List<Guid> trickleDowns = new List<Guid>(new[] { award.Course.Id });
-          int trickleCount = trickleDowns.Count - 1;
-          while (trickleCount != trickleDowns.Count)
-          {
-            trickleCount = trickleDowns.Count;
-
-            foreach (TrainingRule rule in rules)
-            {
-              if (trickleDowns.Any(f => rule.RuleText.StartsWith(f.ToString() + ">", StringComparison.OrdinalIgnoreCase)))
-              {
-                foreach (Guid newCourse in rule.RuleText.Split('>')[1].Split('+').Select(f => new Guid(f.Split(':')[0])))
-                {
-                  if (!trickleDowns.Contains(newCourse)) trickleDowns.Add(newCourse);
-                }
-              }
-            }
-          }
-          doAward = trickleDowns.Any(f => f == id);
-        }
-
-        if (doAward == true)
-        {
-          if (!memberHours.ContainsKey(award.Person.Id))
-          {
-            memberHours.Add(award.Person.Id, new MemberRosterRow
-            {
-              Person = new ApiModels.MemberSummary { Id = award.Person.Id, Name = award.Person.ReverseName, WorkerNumber = award.Person.DEM },
-              Count = 0,
-              Hours = 0
-            });
-          }
-          memberHours[award.Person.Id].Count += award.Count;
-          memberHours[award.Person.Id].Hours += award.Hours ?? 0.0;
-        }
-      }
+      //var rules = this.db.TrainingRules.ToArray();
 
 
-      //var query = (from tr in ctx.TrainingRosters.Include("Person") where tr.TrainingAwards.Any(f => f.Course.Id == id) && tr.TimeIn > b && tr.TimeIn < e select tr).ToArray();
-      //rows = query.GroupBy(f => new { P = f.Person }).Select(f => new MemberRosterRow
+      //foreach (var award in traineeAwards)
       //{
-      //    Person = new MemberSummaryRow
+      //  bool doAward = false;
+      //  if (award.Course.Id == id)
+      //  {
+      //    doAward = true;
+      //  }
+      //  else
+      //  {
+      //    List<Guid> trickleDowns = new List<Guid>(new[] { award.Course.Id });
+      //    int trickleCount = trickleDowns.Count - 1;
+      //    while (trickleCount != trickleDowns.Count)
       //    {
-      //        Id = f.Key.P.Id,
-      //        Name = f.Key.P.ReverseName,
-      //        WorkerNumber = f.Key.P.DEM
-      //    },
-      //    Count = f.Count(),
-      //    Hours = f.Sum(g => g.Hours)
-      //}).OrderByDescending(f => f.Hours).ThenBy(f => f.Person.Name).ToList();
-      return Data(memberHours.Values.OrderByDescending(f => f.Hours).ThenBy(f => f.Person.Name));
+      //      trickleCount = trickleDowns.Count;
+
+      //      foreach (TrainingRule rule in rules)
+      //      {
+      //        if (trickleDowns.Any(f => rule.RuleText.StartsWith(f.ToString() + ">", StringComparison.OrdinalIgnoreCase)))
+      //        {
+      //          foreach (Guid newCourse in rule.RuleText.Split('>')[1].Split('+').Select(f => new Guid(f.Split(':')[0])))
+      //          {
+      //            if (!trickleDowns.Contains(newCourse)) trickleDowns.Add(newCourse);
+      //          }
+      //        }
+      //      }
+      //    }
+      //    doAward = trickleDowns.Any(f => f == id);
+      //  }
+
+      //  if (doAward == true)
+      //  {
+      //    if (!memberHours.ContainsKey(award.Person.Id))
+      //    {
+      //      memberHours.Add(award.Person.Id, new MemberRosterRow
+      //      {
+      //        Person = new ApiModels.MemberSummary { Id = award.Person.Id, Name = award.Person.ReverseName, WorkerNumber = award.Person.DEM },
+      //        Count = 0,
+      //        Hours = 0
+      //      });
+      //    }
+      //    memberHours[award.Person.Id].Count += award.Count;
+      //    memberHours[award.Person.Id].Hours += award.Hours ?? 0.0;
+      //  }
+      //}
+
+
+      ////var query = (from tr in ctx.TrainingRosters.Include("Person") where tr.TrainingAwards.Any(f => f.Course.Id == id) && tr.TimeIn > b && tr.TimeIn < e select tr).ToArray();
+      ////rows = query.GroupBy(f => new { P = f.Person }).Select(f => new MemberRosterRow
+      ////{
+      ////    Person = new MemberSummaryRow
+      ////    {
+      ////        Id = f.Key.P.Id,
+      ////        Name = f.Key.P.ReverseName,
+      ////        WorkerNumber = f.Key.P.DEM
+      ////    },
+      ////    Count = f.Count(),
+      ////    Hours = f.Sum(g => g.Hours)
+      ////}).OrderByDescending(f => f.Hours).ThenBy(f => f.Person.Name).ToList();
+      //return Data(memberHours.Values.OrderByDescending(f => f.Hours).ThenBy(f => f.Person.Name));
     }
 
     //public ActionResult RequiredTrainingForecast()
@@ -614,14 +620,17 @@ namespace Kcsara.Database.Web.Controllers
 
     protected override TrainingRoster AddNewRow(Guid id)
     {
-      TrainingRoster row = new TrainingRoster { Id = id };
-      this.db.TrainingRosters.Add(row);
-      return row;
+      throw new NotImplementedException("reimplement");
+
+      //TrainingRoster row = new TrainingRoster { Id = id };
+      //this.db.TrainingRosters.Add(row);
+      //return row;
     }
 
     protected override void AddEventToContext(Training newEvent)
     {
-      this.db.Trainings.Add(newEvent);
+      throw new NotImplementedException("reimplement");
+      //this.db.Trainings.Add(newEvent);
     }
 
     private List<Guid> dirtyAwardMembers = new List<Guid>();
@@ -1208,17 +1217,20 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
 
     protected override void RemoveEvent(Training oldEvent)
     {
-      this.db.Trainings.Remove(oldEvent);
+      throw new NotImplementedException("reimplement");
+      //this.db.Trainings.Remove(oldEvent);
     }
 
     protected override void RemoveRosterRow(TrainingRoster row)
     {
-      this.db.TrainingRosters.Remove(row);
+      throw new NotImplementedException("reimplement");
+      //this.db.TrainingRosters.Remove(row);
     }
 
     protected override IQueryable<Training> GetEventSource()
     {
-      return this.db.Trainings.Include("OfferedCourses").Include("Roster.TrainingAwards");
+      throw new NotImplementedException("reimplement");
+//      return this.db.Trainings.Include("OfferedCourses").Include("Roster.TrainingAwards");
     }
   }
 

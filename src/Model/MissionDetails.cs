@@ -8,6 +8,7 @@ namespace Kcsar.Database.Model
   using System.Collections.Generic;
   using System.Linq;
   using System.Text.RegularExpressions;
+  using Kcsar.Database.Model.Events;
 
   public class MissionDetails : ModelObject
   {
@@ -36,7 +37,7 @@ namespace Kcsar.Database.Model
     public string Comments { get; set; }
     public string EquipmentNotes { get; set; }
     public int? Topography { get; set; }
-    public virtual Mission Mission { get; set; }
+    public virtual SarEvent Event { get; set; }
     public virtual Member Person { get; set; }
 
     public override string ToString()
@@ -46,7 +47,7 @@ namespace Kcsar.Database.Model
 
     public override string GetReportHtml()
     {
-      return string.Format("Details of [<b>{0}</b>]", this.Mission.Title);
+      return string.Format("Details of [<b>{0}</b>]", this.Event.Title);
     }
   }
 }
