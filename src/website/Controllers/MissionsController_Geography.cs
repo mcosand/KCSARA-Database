@@ -16,6 +16,7 @@ namespace Kcsara.Database.Web.Controllers
   using System.Xml;
   using System.Xml.Linq;
   using Kcsar.Database.Model;
+  using Kcsar.Database.Model.Events;
   using Kcsara.Database.Geo;
   using Kcsara.Database.Web.Model;
   using Microsoft.SqlServer.Types;
@@ -364,29 +365,29 @@ namespace Kcsara.Database.Web.Controllers
       var query = (from g in this.db.MissionGeography.Include("Mission") select g);
       if (start.HasValue)
       {
-        query = query.Where(f => f.Mission.StartTime >= start.Value);
+        query = query.Where(f => f.Event.StartTime >= start.Value);
       }
       if (stop.HasValue)
       {
-        query = query.Where(f => f.Mission.StopTime < stop.Value);
+        query = query.Where(f => f.Event.StopTime < stop.Value);
       }
 
       Guid lastMission = Guid.Empty;
       int excluded = 0;
 
-      Dictionary<Mission, GeographyView> views = new Dictionary<Mission, GeographyView>();
+      Dictionary<SarEvent, GeographyView> views = new Dictionary<SarEvent, GeographyView>();
 
-      foreach (MissionGeography geo in query.ToList().OrderBy(f => f.Mission.StartTime).ThenBy(f => f.Mission.StateNumber).ThenBy(f => f.Mission.Id).ThenBy(f => f.Geography.STDimension()).ThenByDescending(f => f.Kind))
+      foreach (EventGeography geo in query.ToList().OrderBy(f => f.Event.StartTime).ThenBy(f => f.Event.StateNumber).ThenBy(f => f.EventId).ThenBy(f => f.Geography.STDimension()).ThenByDescending(f => f.Kind))
       {
-        if (geo.Mission.Id == lastMission)
+        if (geo.EventId == lastMission)
         {
           continue;
         }
 
-        if (!User.IsInRole("cdb.users") && (geo.Mission.MissionType.ToLowerInvariant().Contains("urban") || geo.Mission.MissionType.ToLowerInvariant().Contains("evidence")))
+        if (!User.IsInRole("cdb.users") && (geo.Event.MissionType.ToLowerInvariant().Contains("urban") || geo.Event.MissionType.ToLowerInvariant().Contains("evidence")))
         {
           excluded++;
-          lastMission = geo.Mission.Id;
+          lastMission = geo.EventId;
           continue;
         }
 
@@ -403,16 +404,16 @@ namespace Kcsara.Database.Web.Controllers
         GeographyView view = GeographyView.BuildGeographyView(geo);
 
         view.Description = string.Format("{0:yyyy-MM-dd}, #{1}<br/>{2}<br/>{3}",
-            geo.Mission.StartTime.Date,
-            geo.Mission.StateNumber,
-            geo.Mission.Title,
-            User.IsInRole("cdb.users") ? "<a target=\"_blank\" href=\"" + Url.Action("geography", new { id = geo.Mission.Id }) + "\">View Details</a>" : ""
+            geo.Event.StartTime.Date,
+            geo.Event.StateNumber,
+            geo.Event.Title,
+            User.IsInRole("cdb.users") ? "<a target=\"_blank\" href=\"" + Url.Action("geography", new { id = geo.Event.Id }) + "\">View Details</a>" : ""
             );
-        view.EventId = geo.Mission.Id;
+        view.EventId = geo.Event.Id;
 
         model.Items.Add(view);
 
-        lastMission = geo.Mission.Id;
+        lastMission = geo.Event.Id;
       }
 
       if (excluded > 0)
@@ -434,7 +435,7 @@ namespace Kcsara.Database.Web.Controllers
       if (!User.IsInRole("cdb.users")) return GetLoginError();
 
       MapDataView model = new MapDataView();
-      var query = (from g in this.db.MissionGeography where g.Mission.Id == id select g);
+      var query = (from g in this.db.MissionGeography where g.Event.Id == id select g);
       if (overview.HasValue && overview.Value)
       {
         query = query.Where(f => f.Kind == "found" || f.Kind == "base" || f.Kind == "cluLkp").OrderByDescending(f => f.Kind).Take(1);
@@ -450,7 +451,7 @@ namespace Kcsara.Database.Web.Controllers
       List<GeographyView> items = ((MapDataView)GetGeographies(begin, end, false).Data).Items;
       items.Reverse();
 
-      Dictionary<Guid, Tuple<int, int>> detailCounts = (from mg in this.db.MissionGeography group mg by mg.Mission.Id into g select new { Id = g.Key, Points = g.Count(f => !f.Kind.EndsWith("trk")), Tracks = g.Count(f => f.Kind.EndsWith("trk")) }).ToDictionary(f => f.Id, f => new Tuple<int, int>(f.Points, f.Tracks));
+      Dictionary<Guid, Tuple<int, int>> detailCounts = (from mg in this.db.MissionGeography group mg by mg.Event.Id into g select new { Id = g.Key, Points = g.Count(f => !f.Kind.EndsWith("trk")), Tracks = g.Count(f => f.Kind.EndsWith("trk")) }).ToDictionary(f => f.Id, f => new Tuple<int, int>(f.Points, f.Tracks));
 
       KmlBuilder kml = (new KmlBuilder { Name = "Mission Data", Description = "Mission data from KCSARA ()" }).AddIconStyles(this.AbsoluteUrl(Url.Content("~/content/images/maps")));
 
@@ -551,7 +552,7 @@ namespace Kcsara.Database.Web.Controllers
       Dictionary<Guid, string> result = null;
       if (kind == "found" || kind == "extract" || kind == "cluLkp")
       {
-        result = (from g in this.db.SubjectGroups where g.Mission.Id == missionId select g).ToDictionary(f => f.Id, f => "Group " + (f.Number - 1));
+        result = (from g in this.db.SubjectGroups where g.Event.Id == missionId select g).ToDictionary(f => f.Id, f => "Group " + (f.Number - 1));
       }
       return Data(new SubmitResult<Dictionary<Guid, string>> { Result = result });
     }

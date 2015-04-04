@@ -19,8 +19,9 @@ namespace Kcsara.Database.Web.Controllers
   using System.Text.RegularExpressions;
   using System.Web.Mvc;
   using System.Xml;
+  using Kcsar.Database.Model.Events;
 
-  public partial class TrainingController : SarEventController<Training, TrainingRoster>
+  public partial class TrainingController : SarEventController<Training>
   {
     public TrainingController(IKcsarContext db) : base(db) { }
 
@@ -618,7 +619,7 @@ namespace Kcsara.Database.Web.Controllers
 
     #endregion
 
-    protected override TrainingRoster AddNewRow(Guid id)
+    protected override EventRoster AddNewRow(Guid id)
     {
       throw new NotImplementedException("reimplement");
 
@@ -635,76 +636,78 @@ namespace Kcsara.Database.Web.Controllers
 
     private List<Guid> dirtyAwardMembers = new List<Guid>();
 
-    protected override void OnProcessingRosterInput(TrainingRoster row, FormCollection fields)
+    protected override void OnProcessingRosterInput(EventRoster row, FormCollection fields)
     {
-      base.OnProcessingRosterInput(row, fields);
+      throw new NotImplementedException("reimplement");
 
-      string coursesKey = "courses_" + row.Id.ToString();
-      string loweredCourses = (fields[coursesKey] ?? "").ToLower();
+      //base.OnProcessingRosterInput(row, fields);
 
-      if (!string.IsNullOrEmpty(loweredCourses))
-      {
-        ModelState.SetModelValue(coursesKey, new ValueProviderResult(fields[coursesKey], fields[coursesKey], CultureInfo.CurrentUICulture));
-      }
+      //string coursesKey = "courses_" + row.Id.ToString();
+      //string loweredCourses = (fields[coursesKey] ?? "").ToLower();
 
-      TrainingAward[] tmp = row.TrainingAwards.ToArray();
+      //if (!string.IsNullOrEmpty(loweredCourses))
+      //{
+      //  ModelState.SetModelValue(coursesKey, new ValueProviderResult(fields[coursesKey], fields[coursesKey], CultureInfo.CurrentUICulture));
+      //}
 
-      Dictionary<string, TrainingAward> currentAwards = row.TrainingAwards.ToDictionary(f => f.Course.Id.ToString().ToLower(), f => f);
-      bool awardsDirty = false;
+      //TrainingAward[] tmp = row.TrainingAwards.ToArray();
 
-      foreach (string award in currentAwards.Keys)
-      {
-        string lowered = award.ToLower();
-        if (loweredCourses.Contains(lowered))
-        {
-          loweredCourses = loweredCourses.Replace(lowered, "");
-        }
-        else
-        {
-          awardsDirty = true;
-          this.db.TrainingAward.Remove(currentAwards[award]);
-        }
-      }
+      //Dictionary<string, TrainingAward> currentAwards = row.TrainingAwards.ToDictionary(f => f.Course.Id.ToString().ToLower(), f => f);
+      //bool awardsDirty = false;
 
-      foreach (string key in loweredCourses.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-      {
-        if (!row.TimeOut.HasValue)
-        {
-          ModelState.AddModelError(coursesKey, "Time out required when awarding courses");
-          return;
-          //ModelState.AddModelError("TimeOut", "Time out is required if course is awarded.");
-          //throw new InvalidOperationException("row's timeout is null");
-        }
+      //foreach (string award in currentAwards.Keys)
+      //{
+      //  string lowered = award.ToLower();
+      //  if (loweredCourses.Contains(lowered))
+      //  {
+      //    loweredCourses = loweredCourses.Replace(lowered, "");
+      //  }
+      //  else
+      //  {
+      //    awardsDirty = true;
+      //    this.db.TrainingAward.Remove(currentAwards[award]);
+      //  }
+      //}
 
-        if (row.Person == null)
-        {
-          return;
-        }
+      //foreach (string key in loweredCourses.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+      //{
+      //  if (!row.TimeOut.HasValue)
+      //  {
+      //    ModelState.AddModelError(coursesKey, "Time out required when awarding courses");
+      //    return;
+      //    //ModelState.AddModelError("TimeOut", "Time out is required if course is awarded.");
+      //    //throw new InvalidOperationException("row's timeout is null");
+      //  }
 
-        if (!ModelState.IsValid)
-        {
-          return;
-        }
+      //  if (row.Person == null)
+      //  {
+      //    return;
+      //  }
 
-        TrainingCourse course = GetCourse(new Guid(key));
+      //  if (!ModelState.IsValid)
+      //  {
+      //    return;
+      //  }
 
-        TrainingAward newAward = new TrainingAward()
-        {
-          Member = row.Person,
-          Roster = row,
-          Completed = row.TimeOut.Value,
-          Course = course,
-          Expiry = course.ValidMonths.HasValue ? row.TimeOut.Value.AddMonths(course.ValidMonths.Value) : (DateTime?)null
-        };
+      //  TrainingCourse course = GetCourse(new Guid(key));
 
-        awardsDirty = true;
-        row.TrainingAwards.Add(newAward);
-      }
+      //  TrainingAward newAward = new TrainingAward()
+      //  {
+      //    Member = row.Person,
+      //    Roster = row,
+      //    Completed = row.TimeOut.Value,
+      //    Course = course,
+      //    Expiry = course.ValidMonths.HasValue ? row.TimeOut.Value.AddMonths(course.ValidMonths.Value) : (DateTime?)null
+      //  };
 
-      if (awardsDirty && row.Person != null && !dirtyAwardMembers.Contains(row.Person.Id))
-      {
-        dirtyAwardMembers.Add(row.Person.Id);
-      }
+      //  awardsDirty = true;
+      //  row.TrainingAwards.Add(newAward);
+      //}
+
+      //if (awardsDirty && row.Person != null && !dirtyAwardMembers.Contains(row.Person.Id))
+      //{
+      //  dirtyAwardMembers.Add(row.Person.Id);
+      //}
     }
 
     protected override void OnRosterPostProcessing()
@@ -718,24 +721,26 @@ namespace Kcsara.Database.Web.Controllers
       this.db.SaveChanges();
     }
 
-    protected override void OnDeletingRosterRow(TrainingRoster row)
+    protected override void OnDeletingRosterRow(EventRoster row)
     {
-      base.OnDeletingRosterRow(row);
+      throw new NotImplementedException("reimplement");
 
-      Member member = null;
+      //base.OnDeletingRosterRow(row);
 
-      // Take away any rewards that may have come with this roster row.
-      while (row.TrainingAwards.Count > 0)
-      {
-        this.db.TrainingAward.Remove(row.TrainingAwards.First());
-        member = row.Person;
-      }
+      //Member member = null;
 
-      // Figure out what this means for the rest of the member's training
-      if (member != null)
-      {
-        this.db.RecalculateTrainingAwards(member.Id);
-      }
+      //// Take away any rewards that may have come with this roster row.
+      //while (row.TrainingAwards.Count > 0)
+      //{
+      //  this.db.TrainingAward.Remove(row.TrainingAwards.First());
+      //  member = row.Person;
+      //}
+
+      //// Figure out what this means for the rest of the member's training
+      //if (member != null)
+      //{
+      //  this.db.RecalculateTrainingAwards(member.Id);
+      //}
     }
 
     protected override ActionResult InternalEdit(Training evt)
@@ -974,80 +979,11 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
     [Authorize(Roles = "cdb.users")]
     public FileStreamResult IstTrainingReport(Guid? id, DateTime? date)
     {
-      id = id ?? new Guid("c118ce30-cd28-4635-ba3d-adf7c21358e2");
+      throw new NotImplementedException("reimplement");
 
-      DateTime today = date ?? DateTime.Today;
-      // Take current month and subtract 1 to move to Jan = 0 counting system
-      // Take away one more so that reports run during the first month of a new quarter report on last quarter.
-      // Then, convert -1 to 12 with +12,%12
-      // Divide by 3 months to get the quarter
-      int quarter = ((today.Month + 10) % 12) / 3;
-      DateTime quarterStart = new DateTime(today.AddMonths(-1).Year, 1, 1).AddMonths(quarter * 3);
-      DateTime quarterStop = quarterStart.AddMonths(3);
+      //id = id ?? new Guid("c118ce30-cd28-4635-ba3d-adf7c21358e2");
 
-
-      ExcelFile file = ExcelService.Create(ExcelFileType.XLS);
-      ExcelSheet sheet = file.CreateSheet("IST Members");
-
-      var members = this.db.GetActiveMembers(id, today, "ContactNumbers", "Memberships").OrderBy(f => f.LastName).ThenBy(f => f.FirstName);
-
-      var istCourses = new[] { "ICS-300", "ICS-400", "ICS-200", "ICS-800" };
-      var courses = this.db.TrainingCourses.Where(f => istCourses.Contains(f.DisplayName) || f.WacRequired > 0).OrderBy(f => f.DisplayName);
-
-      sheet.CellAt(0, 0).SetValue(today.ToString());
-      sheet.CellAt(0, 0).SetBold(true);
-
-      var headers = new[] { "Last Name", "First Name", "Ham Call", "Card Type", "Status", "Missing Training", "Mission Ready", string.Format("Q{0} Missions", quarter + 1), string.Format("Q{0} Meetings", quarter + 1) };
-      for (int i = 0; i < headers.Length; i++)
-      {
-        sheet.CellAt(2, i).SetValue(headers[i]);
-        sheet.CellAt(2, i).SetBold(true);
-      }
-
-      int row = 3;
-      foreach (var member in members)
-      {
-        sheet.CellAt(row, 0).SetValue(member.LastName);
-        sheet.CellAt(row, 1).SetValue(member.FirstName);
-        sheet.CellAt(row, 2).SetValue(member.ContactNumbers.Where(f => f.Type == "hamcall").Select(f => f.Value).FirstOrDefault());
-        sheet.CellAt(row, 3).SetValue(member.WacLevel.ToString());
-        sheet.CellAt(row, 4).SetValue(member.Memberships.Where(f => f.Unit.Id == id.Value && f.EndTime == null).Select(f => f.Status.StatusName).FirstOrDefault());
-
-
-        var expires = CompositeTrainingStatus.Compute(member, courses, today);
-
-        List<string> missingCourses = new List<string>();
-        foreach (var course in courses)
-        {
-          if (!expires.Expirations[course.Id].Completed.HasValue) missingCourses.Add(course.DisplayName);
-        }
-
-        sheet.CellAt(row, 5).SetValue(string.Join(", ", missingCourses));
-
-
-
-        sheet.CellAt(row, 7).SetValue(member.MissionRosters.Where(f => f.Unit.Id == id && f.TimeIn >= quarterStart && f.TimeIn < quarterStop).Select(f => f.Mission.Id).Distinct().Count());
-        var trainingRosters = member.TrainingRosters.Where(f => f.TimeIn >= quarterStart && f.TimeIn < quarterStop).ToList();
-        sheet.CellAt(row, 8).SetValue(trainingRosters.Where(f => Regex.IsMatch(f.Training.Title, "IST .*Meeting.*", RegexOptions.IgnoreCase)).Select(f => f.Training.Id).Distinct().Count());
-
-        row++;
-      }
-
-
-      string filename = string.Format("ist-training-{0:yyMMdd}.xls", today);
-
-      MemoryStream ms = new MemoryStream();
-      file.Save(ms);
-      ms.Seek(0, SeekOrigin.Begin);
-      return this.File(ms, "application/vnd.ms-excel", filename);
-    }
-
-    [Authorize(Roles = "cdb.users")]
-    public FileStreamResult SpartTrainingReport(Guid? id, DateTime? date)
-    {
-      id = id ?? new Guid("574cb2fe-1acc-4e04-919c-030546b0e7bd");
-
-      DateTime today = date ?? DateTime.Today;
+      //DateTime today = date ?? DateTime.Today;
       //// Take current month and subtract 1 to move to Jan = 0 counting system
       //// Take away one more so that reports run during the first month of a new quarter report on last quarter.
       //// Then, convert -1 to 12 with +12,%12
@@ -1057,67 +993,140 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
       //DateTime quarterStop = quarterStart.AddMonths(3);
 
 
-      ExcelFile file = ExcelService.Create(ExcelFileType.XLS);
-      ExcelSheet sheet = file.CreateSheet("SPART Members");
+      //ExcelFile file = ExcelService.Create(ExcelFileType.XLS);
+      //ExcelSheet sheet = file.CreateSheet("IST Members");
 
-      var members = this.db.GetActiveMembers(id, today, "Memberships").OrderBy(f => f.LastName).ThenBy(f => f.FirstName);
+      //var members = this.db.GetActiveMembers(id, today, "ContactNumbers", "Memberships").OrderBy(f => f.LastName).ThenBy(f => f.FirstName);
 
-      var spartCourses = new[] { "OEC", "Avalanche I", "Avalanche II", "MT&R", "MT&R 2" };
-      var courses = this.db.TrainingCourses.Where(f => spartCourses.Contains(f.DisplayName) || f.WacRequired > 0);
-      var spartCourseGuids = new Guid[spartCourses.Length];
-      for (int i = 0; i < spartCourses.Length; i++)
-      {
-        string courseName = spartCourses[i];
-        spartCourseGuids[i] = courses.Where(f => f.DisplayName == courseName).Select(f => f.Id).SingleOrDefault();
-      }
+      //var istCourses = new[] { "ICS-300", "ICS-400", "ICS-200", "ICS-800" };
+      //var courses = this.db.TrainingCourses.Where(f => istCourses.Contains(f.DisplayName) || f.WacRequired > 0).OrderBy(f => f.DisplayName);
 
-      var headers = new[] { "Last Name", "First Name", "OEC", "Avalanche I", "Avalanche II", "MT&R", "MT&R 2", "Missions This Year", "Missions Last Year" };
-      for (int i = 0; i < headers.Length; i++)
-      {
-        sheet.CellAt(0, i).SetValue(headers[i]);
-        sheet.CellAt(0, i).SetBold(true);
-      }
+      //sheet.CellAt(0, 0).SetValue(today.ToString());
+      //sheet.CellAt(0, 0).SetBold(true);
 
-      int row = 1;
-      foreach (var member in members)
-      {
-        var expires = CompositeTrainingStatus.Compute(member, courses, today);
+      //var headers = new[] { "Last Name", "First Name", "Ham Call", "Card Type", "Status", "Missing Training", "Mission Ready", string.Format("Q{0} Missions", quarter + 1), string.Format("Q{0} Meetings", quarter + 1) };
+      //for (int i = 0; i < headers.Length; i++)
+      //{
+      //  sheet.CellAt(2, i).SetValue(headers[i]);
+      //  sheet.CellAt(2, i).SetBold(true);
+      //}
 
-        int col = 0;
-        sheet.CellAt(row, col++).SetValue(member.LastName);
-        sheet.CellAt(row, col++).SetValue(member.FirstName);
-
-        foreach (var courseId in spartCourseGuids)
-        {
-          if (courseId != Guid.Empty)
-          {
-            var expire = expires.Expirations[(Guid)courseId];
-            if (expire.CourseName.StartsWith("Avalanche") && expire.Completed.HasValue)
-            {
-              expire.Expires = expire.Completed.Value.AddYears(3);
-            }
-            sheet.CellAt(row, col).SetValue(expire.ToString());
-          }
-          col++;
-        }
-
-        var now = DateTime.Now;
-        var yearStart = new DateTime(now.Year, 1, 1);
-        var lastYear = new DateTime(now.Year - 1, 1, 1);
-
-        sheet.CellAt(row, col++).SetValue(member.MissionRosters.Where(f => f.Unit.Id == id && f.TimeIn >= yearStart).Select(f => f.Mission.Id).Distinct().Count());
-        sheet.CellAt(row, col++).SetValue(member.MissionRosters.Where(f => f.Unit.Id == id && f.TimeIn >= lastYear && f.TimeIn < yearStart).Select(f => f.Mission.Id).Distinct().Count());
-
-        row++;
-      }
+      //int row = 3;
+      //foreach (var member in members)
+      //{
+      //  sheet.CellAt(row, 0).SetValue(member.LastName);
+      //  sheet.CellAt(row, 1).SetValue(member.FirstName);
+      //  sheet.CellAt(row, 2).SetValue(member.ContactNumbers.Where(f => f.Type == "hamcall").Select(f => f.Value).FirstOrDefault());
+      //  sheet.CellAt(row, 3).SetValue(member.WacLevel.ToString());
+      //  sheet.CellAt(row, 4).SetValue(member.Memberships.Where(f => f.Unit.Id == id.Value && f.EndTime == null).Select(f => f.Status.StatusName).FirstOrDefault());
 
 
-      string filename = string.Format("spart-training-{0:yyMMdd}.xls", today);
+      //  var expires = CompositeTrainingStatus.Compute(member, courses, today);
 
-      MemoryStream ms = new MemoryStream();
-      file.Save(ms);
-      ms.Seek(0, SeekOrigin.Begin);
-      return this.File(ms, "application/vnd.ms-excel", filename);
+      //  List<string> missingCourses = new List<string>();
+      //  foreach (var course in courses)
+      //  {
+      //    if (!expires.Expirations[course.Id].Completed.HasValue) missingCourses.Add(course.DisplayName);
+      //  }
+
+      //  sheet.CellAt(row, 5).SetValue(string.Join(", ", missingCourses));
+
+
+
+      //  sheet.CellAt(row, 7).SetValue(member.MissionRosters.Where(f => f.Unit.Id == id && f.TimeIn >= quarterStart && f.TimeIn < quarterStop).Select(f => f.Mission.Id).Distinct().Count());
+      //  var trainingRosters = member.TrainingRosters.Where(f => f.TimeIn >= quarterStart && f.TimeIn < quarterStop).ToList();
+      //  sheet.CellAt(row, 8).SetValue(trainingRosters.Where(f => Regex.IsMatch(f.Training.Title, "IST .*Meeting.*", RegexOptions.IgnoreCase)).Select(f => f.Training.Id).Distinct().Count());
+
+      //  row++;
+      //}
+
+
+      //string filename = string.Format("ist-training-{0:yyMMdd}.xls", today);
+
+      //MemoryStream ms = new MemoryStream();
+      //file.Save(ms);
+      //ms.Seek(0, SeekOrigin.Begin);
+      //return this.File(ms, "application/vnd.ms-excel", filename);
+    }
+
+    [Authorize(Roles = "cdb.users")]
+    public FileStreamResult SpartTrainingReport(Guid? id, DateTime? date)
+    {
+      throw new NotImplementedException("reimplement");
+
+      //id = id ?? new Guid("574cb2fe-1acc-4e04-919c-030546b0e7bd");
+
+      //DateTime today = date ?? DateTime.Today;
+      ////// Take current month and subtract 1 to move to Jan = 0 counting system
+      ////// Take away one more so that reports run during the first month of a new quarter report on last quarter.
+      ////// Then, convert -1 to 12 with +12,%12
+      ////// Divide by 3 months to get the quarter
+      ////int quarter = ((today.Month + 10) % 12) / 3;
+      ////DateTime quarterStart = new DateTime(today.AddMonths(-1).Year, 1, 1).AddMonths(quarter * 3);
+      ////DateTime quarterStop = quarterStart.AddMonths(3);
+
+
+      //ExcelFile file = ExcelService.Create(ExcelFileType.XLS);
+      //ExcelSheet sheet = file.CreateSheet("SPART Members");
+
+      //var members = this.db.GetActiveMembers(id, today, "Memberships").OrderBy(f => f.LastName).ThenBy(f => f.FirstName);
+
+      //var spartCourses = new[] { "OEC", "Avalanche I", "Avalanche II", "MT&R", "MT&R 2" };
+      //var courses = this.db.TrainingCourses.Where(f => spartCourses.Contains(f.DisplayName) || f.WacRequired > 0);
+      //var spartCourseGuids = new Guid[spartCourses.Length];
+      //for (int i = 0; i < spartCourses.Length; i++)
+      //{
+      //  string courseName = spartCourses[i];
+      //  spartCourseGuids[i] = courses.Where(f => f.DisplayName == courseName).Select(f => f.Id).SingleOrDefault();
+      //}
+
+      //var headers = new[] { "Last Name", "First Name", "OEC", "Avalanche I", "Avalanche II", "MT&R", "MT&R 2", "Missions This Year", "Missions Last Year" };
+      //for (int i = 0; i < headers.Length; i++)
+      //{
+      //  sheet.CellAt(0, i).SetValue(headers[i]);
+      //  sheet.CellAt(0, i).SetBold(true);
+      //}
+
+      //int row = 1;
+      //foreach (var member in members)
+      //{
+      //  var expires = CompositeTrainingStatus.Compute(member, courses, today);
+
+      //  int col = 0;
+      //  sheet.CellAt(row, col++).SetValue(member.LastName);
+      //  sheet.CellAt(row, col++).SetValue(member.FirstName);
+
+      //  foreach (var courseId in spartCourseGuids)
+      //  {
+      //    if (courseId != Guid.Empty)
+      //    {
+      //      var expire = expires.Expirations[(Guid)courseId];
+      //      if (expire.CourseName.StartsWith("Avalanche") && expire.Completed.HasValue)
+      //      {
+      //        expire.Expires = expire.Completed.Value.AddYears(3);
+      //      }
+      //      sheet.CellAt(row, col).SetValue(expire.ToString());
+      //    }
+      //    col++;
+      //  }
+
+      //  var now = DateTime.Now;
+      //  var yearStart = new DateTime(now.Year, 1, 1);
+      //  var lastYear = new DateTime(now.Year - 1, 1, 1);
+
+      //  sheet.CellAt(row, col++).SetValue(member.MissionRosters.Where(f => f.Unit.Id == id && f.TimeIn >= yearStart).Select(f => f.Mission.Id).Distinct().Count());
+      //  sheet.CellAt(row, col++).SetValue(member.MissionRosters.Where(f => f.Unit.Id == id && f.TimeIn >= lastYear && f.TimeIn < yearStart).Select(f => f.Mission.Id).Distinct().Count());
+
+      //  row++;
+      //}
+
+
+      //string filename = string.Format("spart-training-{0:yyMMdd}.xls", today);
+
+      //MemoryStream ms = new MemoryStream();
+      //file.Save(ms);
+      //ms.Seek(0, SeekOrigin.Begin);
+      //return this.File(ms, "application/vnd.ms-excel", filename);
     }
 
 
@@ -1221,7 +1230,7 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
       //this.db.Trainings.Remove(oldEvent);
     }
 
-    protected override void RemoveRosterRow(TrainingRoster row)
+    protected override void RemoveRosterRow(EventRoster row)
     {
       throw new NotImplementedException("reimplement");
       //this.db.TrainingRosters.Remove(row);

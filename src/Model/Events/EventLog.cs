@@ -2,13 +2,18 @@
  * Copyright 2015 Matthew Cosand
  */
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace Kcsar.Database.Model.Events
 {
   public class EventLog : ParticipantEventTimeline
   {
     [NotMapped]
-    public string Message { get; set; }
+    public string Message
+    {
+      get { return JsonConvert.DeserializeObject<string>(this.JsonData); }
+      set { this.JsonData = JsonConvert.SerializeObject(value); }
+    }
 
     public override string GetReportHtml()
     {

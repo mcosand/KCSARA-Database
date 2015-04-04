@@ -33,10 +33,9 @@ namespace Kcsar.Database.Model
     public string Cause { get; set; }
     public string Behavior { get; set; }
     public string Comments { get; set; }
-    public virtual Mission Mission { get; set; }
     [ForeignKey("EventId")]
     public virtual SarEvent Event { get; set; }
-    public Guid? EventId { get; set; }
+    public Guid EventId { get; set; }
 
     public virtual ICollection<SubjectGroupLink> SubjectLinks { get; set; }
 

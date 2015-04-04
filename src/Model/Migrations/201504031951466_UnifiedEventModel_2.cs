@@ -27,7 +27,10 @@ FROM EventRosters er JOIN Participants p ON er.ParticipantId=p.Id JOIN MissionRo
       Sql(@"UPDATE dbo.SubjectGroups SET EventId = Mission_Id");
       Sql(@"UPDATE ComputedTrainingAwards
 SET AttendanceId=p.Id
-FROM ComputedTrainingAwards cta JOIN Participants p ON cta.Member_Id = p.MemberId AND cta.Roster_Id = p.EventId");
+FROM ComputedTrainingAwards cta JOIN TrainingRosters tr ON cta.Roster_Id=tr.id JOIN Participants p ON cta.Member_Id = p.MemberId AND tr.Training_Id = p.eventId");
+      Sql(@"UPDATE TrainingAwards
+SET AttendanceId=p.Id
+FROM TrainingAwards cta JOIN TrainingRosters tr ON cta.Roster_Id=tr.id JOIN Participants p ON cta.Member_Id = p.MemberId AND tr.Training_Id = p.eventId");
 
       AddForeignKey("dbo.MissionDetails", "Id", "dbo.SarEvents", "Id", cascadeDelete: true);
       AddForeignKey("dbo.MissionGeographies", "EventId", "dbo.SarEvents", "Id");

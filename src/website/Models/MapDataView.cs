@@ -13,6 +13,7 @@ namespace Kcsara.Database.Web.Model
     using System.Web;
     using Microsoft.SqlServer.Types;
     using System.Runtime.Serialization;
+  using Kcsar.Database.Model.Events;
 
     [DataContract(Namespace = "")]
     [KnownType(typeof(WaypointView))]
@@ -55,7 +56,7 @@ namespace Kcsara.Database.Web.Model
             return view;
         }
 
-        public static GeographyView BuildGeographyView(MissionGeography geog)
+        public static GeographyView BuildGeographyView(EventGeography geog)
         {
             GeographyView view = BuildGeographyView(geog.Geography);
             view.Id = geog.Id;

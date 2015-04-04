@@ -27,8 +27,6 @@ namespace Kcsar.Database.Model
     [ForeignKey("AttendanceId")]
     public virtual Participant Attendance { get; set; }
     public Guid? AttendanceId { get; set; }
-    public virtual TrainingRoster Roster { get; set; }
-
 
     [NotMapped]
     public bool UploadsPending { get; set; }

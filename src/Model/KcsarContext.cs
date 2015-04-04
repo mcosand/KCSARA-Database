@@ -22,27 +22,21 @@ namespace Kcsar.Database.Model
   public class KcsarContext : DbContext, IKcsarContext
   {
     public IDbSet<Animal> Animals { get; set; }
-    public IDbSet<AnimalMission> AnimalMissions { get; set; }
+    public IDbSet<AnimalEvents> AnimalMissions { get; set; }
     public IDbSet<AnimalOwner> AnimalOwners { get; set; }
     public IDbSet<SarEvent> Events { get; set; }
-    public IDbSet<Mission> Missions { get; set; }
-    public IDbSet<MissionDetails> MissionDetails { get; set; }
-    public IDbSet<MissionLog> MissionLog { get; set; }
-    public IDbSet<MissionRoster> MissionRosters { get; set; }
-    public IDbSet<MissionGeography> MissionGeography { get; set; }
+    public IDbSet<EventDetails> MissionDetails { get; set; }
+    public IDbSet<EventGeography> MissionGeography { get; set; }
     public IDbSet<Member> Members { get; set; }
     public IDbSet<PersonAddress> PersonAddress { get; set; }
     public IDbSet<PersonContact> PersonContact { get; set; }
     public IDbSet<MemberUnitDocument> MemberUnitDocuments { get; set; }
-  //         public IDbSet<PersonSubscription> PersonSubscription { get; set; }
     public IDbSet<Subject> Subjects { get; set; }
     public IDbSet<SubjectGroup> SubjectGroups { get; set; }
     public IDbSet<SubjectGroupLink> SubjectGroupLinks { get; set; }
-    public IDbSet<Training> Trainings { get; set; }
     public IDbSet<TrainingAward> TrainingAward { get; set; }
     public IDbSet<TrainingCourse> TrainingCourses { get; set; }
     public IDbSet<Document> Documents { get; set; }
-    public IDbSet<TrainingRoster> TrainingRosters { get; set; }
     public IDbSet<TrainingRule> TrainingRules { get; set; }
     public IDbSet<SarUnit> Units { get; set; }
     public IDbSet<UnitApplicant> UnitApplicants { get; set; }
@@ -52,7 +46,6 @@ namespace Kcsar.Database.Model
     public IDbSet<ComputedTrainingAward> ComputedTrainingAwards { get; set; }
     public IDbSet<TrainingExpirationSummary> TrainingExpirationSummaries { get; set; }
     public IDbSet<CurrentMemberIds> CurrentMemberIds { get; set; }
-    public IDbSet<xref_county_id> xref_county_id { get; set; }
     protected IDbSet<AuditLog> AuditLog { get; set; }
     public IDbSet<SensitiveInfoAccess> SensitiveInfoLog { get; set; }
 
@@ -90,8 +83,7 @@ namespace Kcsar.Database.Model
       modelBuilder.Entity<ParticipantEventTimeline>().HasOptional(f => f.Participant).WithMany().WillCascadeOnDelete(false);
 
       modelBuilder.Entity<SarEvent>().HasOptional(f => f.Details).WithRequired(f => f.Event).WillCascadeOnDelete();
-      modelBuilder.Entity<Mission>().HasMany(f => f.Log).WithRequired(f => f.Mission).WillCascadeOnDelete();
-      modelBuilder.Entity<Training2>().HasMany(f => f.OfferedCourses).WithMany(f => f.Trainings2);
+      modelBuilder.Entity<Training>().HasMany(f => f.OfferedCourses).WithMany(f => f.Trainings);
       modelBuilder.Entity<Member>().HasOptional(f => f.MedicalInfo).WithRequired(f => f.Member);
       modelBuilder.Entity<Member>().HasMany(f => f.Memberships).WithRequired(f => f.Person).WillCascadeOnDelete();
       modelBuilder.Entity<Member>().HasMany(f => f.Addresses).WithRequired(f => f.Person).WillCascadeOnDelete();

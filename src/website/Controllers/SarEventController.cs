@@ -14,10 +14,10 @@ namespace Kcsara.Database.Web.Controllers
   using System.Text.RegularExpressions;
   using System.Web.Mvc;
   using System.Data.Entity.Validation;
+  using Kcsar.Database.Model.Events;
 
-  public abstract class SarEventController<E, R> : BaseController, IEventController
-    where R : class, IRosterEntry<E, R>, new()
-    where E : class, IRosterEvent<E, R>, new()
+  public abstract class SarEventController<E> : BaseController, IEventController
+    where E : SarEvent, new()
   {
     public SarEventController(IKcsarContext db) : base(db) { }
 
@@ -305,7 +305,7 @@ namespace Kcsara.Database.Web.Controllers
 
       for (int i = 0; i < 10; i++)
       {
-        rows.Rows.Add(new R());
+        rows.Rows.Add(new EventRoster());
       }
 
       return View(rows);
@@ -322,11 +322,11 @@ namespace Kcsara.Database.Web.Controllers
 
     protected abstract void AddEventToContext(E newEvent);
     protected abstract void RemoveEvent(E oldEvent);
-    protected abstract R AddNewRow(Guid id);
-    protected abstract void RemoveRosterRow(R row);
+    protected abstract EventRoster AddNewRow(Guid id);
+    protected abstract void RemoveRosterRow(EventRoster row);
     protected virtual void OnBuildingRosterModel(Guid id) { }
-    protected virtual void OnDeletingRosterRow(R row) { }
-    protected virtual void OnProcessingRosterInput(R row, FormCollection fields) { }
+    protected virtual void OnDeletingRosterRow(EventRoster row) { }
+    protected virtual void OnProcessingRosterInput(EventRoster row, FormCollection fields) { }
     protected virtual void OnRosterPostProcessing() { }
 
     //     protected abstract ObjectQuery<R> RostersQuery { get; }
@@ -335,190 +335,192 @@ namespace Kcsara.Database.Web.Controllers
     [AcceptVerbs(HttpVerbs.Post)]
     public ActionResult EditRoster(Guid id, FormCollection fields)
     {
-      if (!this.CanDoAction(SarEventActions.UpdateRosterRow, null))
-      {
-        return this.CreateLoginRedirect();
-      }
+      throw new NotImplementedException("reimplement");
+      //if (!this.CanDoAction(SarEventActions.UpdateRosterRow, null))
+      //{
+      //  return this.CreateLoginRedirect();
+      //}
 
-      ExpandedRowsContext rows = BuildRosterModel(id);
+      //ExpandedRowsContext rows = BuildRosterModel(id);
 
-      rows.RosterStart = DateTime.Parse(fields["StartDay"]);
-      rows.NumDays = int.Parse(fields["DayCount"]);
+      //rows.RosterStart = DateTime.Parse(fields["StartDay"]);
+      //rows.NumDays = int.Parse(fields["DayCount"]);
 
-      // Because we're using a SubmitImage, the field is sent twice, with .x and .y suffixes.
-      if (!string.IsNullOrEmpty(fields["AddDayRight.x"]))
-      {
-        rows.NumDays++;
-      }
-      else if (!string.IsNullOrEmpty(fields["AddDayLeft.x"]))
-      {
-        rows.NumDays++;
-        rows.RosterStart = rows.RosterStart.AddDays(-1);
-      }
-      else
-      {
-        // Get the model of the roster - already in 'rows'
-        // Foreach roster row in input data
-        foreach (string key in fields.AllKeys)
-        {
-          Match m = Regex.Match(key, @"^id_([a-fA-F\-\d]+)$", RegexOptions.IgnoreCase);
+      //// Because we're using a SubmitImage, the field is sent twice, with .x and .y suffixes.
+      //if (!string.IsNullOrEmpty(fields["AddDayRight.x"]))
+      //{
+      //  rows.NumDays++;
+      //}
+      //else if (!string.IsNullOrEmpty(fields["AddDayLeft.x"]))
+      //{
+      //  rows.NumDays++;
+      //  rows.RosterStart = rows.RosterStart.AddDays(-1);
+      //}
+      //else
+      //{
+      //  // Get the model of the roster - already in 'rows'
+      //  // Foreach roster row in input data
+      //  foreach (string key in fields.AllKeys)
+      //  {
+      //    Match m = Regex.Match(key, @"^id_([a-fA-F\-\d]+)$", RegexOptions.IgnoreCase);
 
-          if (!m.Success)
-          {
-            continue;
-          }
+      //    if (!m.Success)
+      //    {
+      //      continue;
+      //    }
 
-          Guid rowId = new Guid(fields[key]);
-          bool isNewRow = false;
-          string nameKey = "name_" + rowId.ToString();
+      //    Guid rowId = new Guid(fields[key]);
+      //    bool isNewRow = false;
+      //    string nameKey = "name_" + rowId.ToString();
 
-          // Skip new rows without information (name is blank)
-          // New rows without a person name won't be parsed.
-          if (string.IsNullOrEmpty(fields[nameKey]))
-          {
-            continue;
-          }
-
-
-          // If the row isn't in the model, then it's one we're adding.
-          R row = (R)rows.Rows.Where(x => x.Id == rowId).FirstOrDefault();
-          if (row == null)
-          {
-            row = this.AddNewRow(rowId);
-            row.SetEvent(rows.SarEvent);
-            rows.Rows.Add(row);
-            isNewRow = true;
-          }
-
-          // Now have a model for the row itself
-
-          // If the row is to be deleted (box is checked), then delete it.
-          bool delete = false;
-          if (bool.TryParse(fields["del_" + rowId.ToString()].Split(',')[0], out delete))
-          {
-            if (delete)
-            {
-              ModelState.SetModelValue("del_" + rowId.ToString(), new ValueProviderResult(delete.ToString(), delete.ToString(), CultureInfo.CurrentUICulture));
-              OnDeletingRosterRow(row);
-              RemoveRosterRow(row);
-              rows.Rows.Remove(row);
-              continue;
-            }
-          }
-          // Update the row model with values from the POST
-          DateTime? newTime;
-          if (ParseDateValue(rows.RosterStart, rows.NumDays, rowId, "in", fields, out newTime) && (newTime != row.TimeIn))
-          {
-            row.TimeIn = newTime.Value;
-          }
-
-          if (ParseDateValue(rows.RosterStart, rows.NumDays, rowId, "out", fields, out newTime) && (newTime != row.TimeOut))
-          {
-            row.TimeOut = newTime;
-          }
-
-          int? newMiles;
-          string milesKey = "miles_" + rowId.ToString();
-          if (ParseMiles(milesKey, fields[milesKey], out newMiles) && newMiles != row.Miles)
-          {
-            row.Miles = newMiles;
-          }
+      //    // Skip new rows without information (name is blank)
+      //    // New rows without a person name won't be parsed.
+      //    if (string.IsNullOrEmpty(fields[nameKey]))
+      //    {
+      //      continue;
+      //    }
 
 
-          Guid personId = new Guid(fields["pid_" + rowId.ToString()]);
+      //    // If the row isn't in the model, then it's one we're adding.
+      //    EventRoster row = rows.Rows.Where(x => x.Id == rowId).FirstOrDefault();
+      //    if (row == null)
+      //    {
+      //      row = this.AddNewRow(rowId);
+      //      throw new NotImplementedException("reimplement");
+      //      // row.SetEvent(rows.SarEvent);
+      //      rows.Rows.Add(row);
+      //      isNewRow = true;
+      //    }
 
-          if (!isNewRow && personId == row.Person.Id && fields[nameKey] == row.Person.ReverseName)
-          {
-            // No change
-          }
-          else if (isNewRow || personId != row.Person.Id)
-          {
-            Member person = (from mbr in this.db.Members where mbr.Id == personId select mbr).FirstOrDefault();
-            if (person != null && person.ReverseName == fields[nameKey])
-            {
-              row.Person = person;
-            }
-            else
-            {
-              // Unrecognized name
-              ModelState.AddModelError(nameKey, "Non-members not supported. Please pick from the list");
-              ModelState.SetModelValue(nameKey, new ValueProviderResult(fields[nameKey], fields[nameKey], CultureInfo.CurrentUICulture));
-            }
-          }
-          else
-          {
-            // ids are same, but name doesn't match -
-            ModelState.AddModelError(nameKey, "Non-members not supported. Please pick from the list");
-            ModelState.SetModelValue(nameKey, new ValueProviderResult(fields[nameKey], fields[nameKey], CultureInfo.CurrentUICulture));
-          }
+      //    // Now have a model for the row itself
 
-          // Ask derived classes to further update the model
-          OnProcessingRosterInput(row, fields);
+      //    // If the row is to be deleted (box is checked), then delete it.
+      //    bool delete = false;
+      //    if (bool.TryParse(fields["del_" + rowId.ToString()].Split(',')[0], out delete))
+      //    {
+      //      if (delete)
+      //      {
+      //        ModelState.SetModelValue("del_" + rowId.ToString(), new ValueProviderResult(delete.ToString(), delete.ToString(), CultureInfo.CurrentUICulture));
+      //        OnDeletingRosterRow(row);
+      //        RemoveRosterRow(row);
+      //        rows.Rows.Remove(row);
+      //        continue;
+      //      }
+      //    }
+      //    // Update the row model with values from the POST
+      //    DateTime? newTime;
+      //    if (ParseDateValue(rows.RosterStart, rows.NumDays, rowId, "in", fields, out newTime) && (newTime != row.TimeIn))
+      //    {
+      //      row.TimeIn = newTime.Value;
+      //    }
 
-        }
+      //    if (ParseDateValue(rows.RosterStart, rows.NumDays, rowId, "out", fields, out newTime) && (newTime != row.TimeOut))
+      //    {
+      //      row.TimeOut = newTime;
+      //    }
 
-        ViewData["error"] = "Please correct errors";
-        // Try to commit changes to the store
-        if (ModelState.IsValid)
-        {
-          try
-          {
-            this.db.SaveChanges();
+      //    int? newMiles;
+      //    string milesKey = "miles_" + rowId.ToString();
+      //    if (ParseMiles(milesKey, fields[milesKey], out newMiles) && newMiles != row.Miles)
+      //    {
+      //      row.Miles = newMiles;
+      //    }
 
-            OnRosterPostProcessing();
 
-            // Return to editing more rows.
-            ViewData["error"] = null;
-            ViewData["success"] = "Roster saved.";
+      //    Guid personId = new Guid(fields["pid_" + rowId.ToString()]);
 
-            if (!string.IsNullOrEmpty(fields["button"]) && ((string)fields["button"]).Equals(Strings.FinishRoster, StringComparison.OrdinalIgnoreCase))
-            {
-              return RedirectToAction("Roster", new { id = rows.EventId });
-            }
-          }
-          catch (DbEntityValidationException ex)
-          {
-            foreach (var entry in ex.EntityValidationErrors.Where(f => !f.IsValid))
-            {
-              foreach (var err in entry.ValidationErrors)
-              {
-                if (err.PropertyName == "TimeIn" || err.PropertyName == "TimeOut")
-                {
-                  bool flagged = false;
-                  for (int i = 0; i < rows.NumDays; i++)
-                  {
-                    string key = err.PropertyName.Substring(4).ToLower() + rows.RosterStart.AddDays(i).ToString("yyMMdd") + "_" + ((IModelObject)entry.Entry.Entity).Id.ToString();
+      //    if (!isNewRow && personId == row.Person.Id && fields[nameKey] == row.Person.ReverseName)
+      //    {
+      //      // No change
+      //    }
+      //    else if (isNewRow || personId != row.Person.Id)
+      //    {
+      //      Member person = (from mbr in this.db.Members where mbr.Id == personId select mbr).FirstOrDefault();
+      //      if (person != null && person.ReverseName == fields[nameKey])
+      //      {
+      //        row.Person = person;
+      //      }
+      //      else
+      //      {
+      //        // Unrecognized name
+      //        ModelState.AddModelError(nameKey, "Non-members not supported. Please pick from the list");
+      //        ModelState.SetModelValue(nameKey, new ValueProviderResult(fields[nameKey], fields[nameKey], CultureInfo.CurrentUICulture));
+      //      }
+      //    }
+      //    else
+      //    {
+      //      // ids are same, but name doesn't match -
+      //      ModelState.AddModelError(nameKey, "Non-members not supported. Please pick from the list");
+      //      ModelState.SetModelValue(nameKey, new ValueProviderResult(fields[nameKey], fields[nameKey], CultureInfo.CurrentUICulture));
+      //    }
 
-                    // Only flag the boxes with text in them.
-                    // If none have text, mark the last one in the row.
-                    if (!string.IsNullOrEmpty(fields[key]) || (!flagged && i == (rows.NumDays - 1)))
-                    {
-                      ModelState.SetModelValue(key, new ValueProviderResult(fields[key], fields[key], CultureInfo.CurrentUICulture));
-                      ModelState.AddModelError(key, err.ErrorMessage);
-                      flagged = true;
-                    }
-                  }
-                }
-                else
-                {
-                  string key = err.PropertyName + "_" + ((IModelObject)entry.Entry.Entity).Id.ToString();
-                  ModelState.SetModelValue(key, new ValueProviderResult(fields[key], fields[key], CultureInfo.CurrentUICulture));
-                  ModelState.AddModelError(key, err.ErrorMessage);
-                }
-              }
-            }
-          }
+      //    // Ask derived classes to further update the model
+      //    OnProcessingRosterInput(row, fields);
 
-          // Return to editing view
-        }
-      }
+      //  }
 
-      for (int i = 0; i < 10; i++)
-      {
-        rows.Rows.Add(new R());
-      }
+      //  ViewData["error"] = "Please correct errors";
+      //  // Try to commit changes to the store
+      //  if (ModelState.IsValid)
+      //  {
+      //    try
+      //    {
+      //      this.db.SaveChanges();
 
-      return View(rows);
+      //      OnRosterPostProcessing();
+
+      //      // Return to editing more rows.
+      //      ViewData["error"] = null;
+      //      ViewData["success"] = "Roster saved.";
+
+      //      if (!string.IsNullOrEmpty(fields["button"]) && ((string)fields["button"]).Equals(Strings.FinishRoster, StringComparison.OrdinalIgnoreCase))
+      //      {
+      //        return RedirectToAction("Roster", new { id = rows.EventId });
+      //      }
+      //    }
+      //    catch (DbEntityValidationException ex)
+      //    {
+      //      foreach (var entry in ex.EntityValidationErrors.Where(f => !f.IsValid))
+      //      {
+      //        foreach (var err in entry.ValidationErrors)
+      //        {
+      //          if (err.PropertyName == "TimeIn" || err.PropertyName == "TimeOut")
+      //          {
+      //            bool flagged = false;
+      //            for (int i = 0; i < rows.NumDays; i++)
+      //            {
+      //              string key = err.PropertyName.Substring(4).ToLower() + rows.RosterStart.AddDays(i).ToString("yyMMdd") + "_" + ((IModelObject)entry.Entry.Entity).Id.ToString();
+
+      //              // Only flag the boxes with text in them.
+      //              // If none have text, mark the last one in the row.
+      //              if (!string.IsNullOrEmpty(fields[key]) || (!flagged && i == (rows.NumDays - 1)))
+      //              {
+      //                ModelState.SetModelValue(key, new ValueProviderResult(fields[key], fields[key], CultureInfo.CurrentUICulture));
+      //                ModelState.AddModelError(key, err.ErrorMessage);
+      //                flagged = true;
+      //              }
+      //            }
+      //          }
+      //          else
+      //          {
+      //            string key = err.PropertyName + "_" + ((IModelObject)entry.Entry.Entity).Id.ToString();
+      //            ModelState.SetModelValue(key, new ValueProviderResult(fields[key], fields[key], CultureInfo.CurrentUICulture));
+      //            ModelState.AddModelError(key, err.ErrorMessage);
+      //          }
+      //        }
+      //      }
+      //    }
+
+      //    // Return to editing view
+      //  }
+      //}
+
+      //for (int i = 0; i < 10; i++)
+      //{
+      //  rows.Rows.Add(new R());
+      //}
+
+      //return View(rows);
     }
 
     private E GetEvent(Guid id)
@@ -608,40 +610,41 @@ namespace Kcsara.Database.Web.Controllers
 
     private ExpandedRowsContext GetRosterRows(E sarEvent)
     {
-      DateTime goodBegin = sarEvent.StartTime.AddDays(-7);
-      DateTime goodEnd = sarEvent.StartTime.AddDays(14);
+      throw new NotImplementedException("reimplement");
+      //DateTime goodBegin = sarEvent.StartTime.AddDays(-7);
+      //DateTime goodEnd = sarEvent.StartTime.AddDays(14);
 
-      IEnumerable<IRosterEntry> goodRows = sarEvent.Roster.Where(mr => mr.TimeIn > goodBegin && mr.TimeIn < goodEnd && (!mr.TimeOut.HasValue || mr.TimeOut.Value < mr.TimeIn.Value.AddDays(10))).Cast<IRosterEntry>().OrderBy(f => f.TimeIn).OrderBy(f => f.Person.ReverseName);
+      //IEnumerable<IRosterEntry> goodRows = sarEvent.Roster.Where(mr => mr.TimeIn > goodBegin && mr.TimeIn < goodEnd && (!mr.TimeOut.HasValue || mr.TimeOut.Value < mr.TimeIn.Value.AddDays(10))).Cast<IRosterEntry>().OrderBy(f => f.TimeIn).OrderBy(f => f.Person.ReverseName);
 
-      IEnumerable<IRosterEntry> badRows = sarEvent.Roster.Where(mr => !(mr.TimeIn > goodBegin && mr.TimeIn < goodEnd && (!mr.TimeOut.HasValue || mr.TimeOut.Value < mr.TimeIn.Value.AddDays(10)))).Cast<IRosterEntry>();
+      //IEnumerable<IRosterEntry> badRows = sarEvent.Roster.Where(mr => !(mr.TimeIn > goodBegin && mr.TimeIn < goodEnd && (!mr.TimeOut.HasValue || mr.TimeOut.Value < mr.TimeIn.Value.AddDays(10)))).Cast<IRosterEntry>();
 
 
-      DateTime earliest = sarEvent.StartTime.Date;
-      DateTime? maxTime = null;
+      //DateTime earliest = sarEvent.StartTime.Date;
+      //DateTime? maxTime = null;
 
-      if (goodRows.Count() > 0)
-      {
-        DateTime tmp = goodRows.Min(x => x.TimeIn).Value.Date;
-        if (sarEvent.StartTime > tmp)
-        {
-          earliest = tmp;
-        }
+      //if (goodRows.Count() > 0)
+      //{
+      //  DateTime tmp = goodRows.Min(x => x.TimeIn).Value.Date;
+      //  if (sarEvent.StartTime > tmp)
+      //  {
+      //    earliest = tmp;
+      //  }
 
-        maxTime = goodRows.Max(x => x.TimeOut);
-      }
+      //  maxTime = goodRows.Max(x => x.TimeOut);
+      //}
 
-      int numDays = maxTime.HasValue ? (maxTime.Value.Date - earliest).Days + 1 : 2;
+      //int numDays = maxTime.HasValue ? (maxTime.Value.Date - earliest).Days + 1 : 2;
 
-      return new ExpandedRowsContext
-      {
-        Type = (typeof(E) == typeof(Mission)) ? RosterType.Mission : RosterType.Training,
-        EventId = sarEvent.Id,
-        NumDays = numDays,
-        Rows = goodRows.OrderBy(f => (f.Person == null) ? "" : f.Person.ReverseName).ToList(),
-        BadRows = badRows.ToList(),
-        RosterStart = earliest.Date,
-        SarEvent = sarEvent
-      };
+      //return new ExpandedRowsContext
+      //{
+      //  Type = (typeof(E) == typeof(Mission)) ? RosterType.Mission : RosterType.Training,
+      //  EventId = sarEvent.Id,
+      //  NumDays = numDays,
+      //  Rows = goodRows.OrderBy(f => (f.Person == null) ? "" : f.Person.ReverseName).ToList(),
+      //  BadRows = badRows.ToList(),
+      //  RosterStart = earliest.Date,
+      //  SarEvent = sarEvent
+      //};
 
     }
 
@@ -677,240 +680,244 @@ namespace Kcsara.Database.Web.Controllers
     [HttpPost]
     public ActionResult Review4x4Roster(bool? bot)
     {
-      if (!Has4x4RosterPermissions()) return CreateLoginRedirect();
+      throw new NotImplementedException("reimplement");
 
-      // Value is pre-incremented in while loop.
-      int startRow = 13;
+      //if (!Has4x4RosterPermissions()) return CreateLoginRedirect();
 
-      if (Request.Files.Count != 1)
-      {
-        throw new InvalidOperationException("Can only submit one roster");
-      }
+      //// Value is pre-incremented in while loop.
+      //int startRow = 13;
 
-      var postedFile = Request.Files[0];
+      //if (Request.Files.Count != 1)
+      //{
+      //  throw new InvalidOperationException("Can only submit one roster");
+      //}
 
-      byte[] fileData = new byte[postedFile.ContentLength];
-      postedFile.InputStream.Read(fileData, 0, fileData.Length);
+      //var postedFile = Request.Files[0];
 
-      var stream = new System.IO.MemoryStream(fileData);
-      stream.Position = 0;
+      //byte[] fileData = new byte[postedFile.ContentLength];
+      //postedFile.InputStream.Read(fileData, 0, fileData.Length);
 
-      ExcelFile xl = null; // new ExcelFile();
-      if (postedFile.FileName.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase))
-      {
-        xl = ExcelService.Read(postedFile.InputStream, ExcelFileType.XLSX);
-      }
-      else
-      {
-        xl = ExcelService.Read(postedFile.InputStream, ExcelFileType.XLS);
-      }
-      ExcelSheet sheet = xl.GetSheet(0);
+      //var stream = new System.IO.MemoryStream(fileData);
+      //stream.Position = 0;
 
-      object start = sheet.CellAt(13, 4).StringValue.ToUpperInvariant().Replace("DATE", "").Replace("TIME", "").Replace("IN", "").Replace("OUT", "").Trim();
-      DateTime startDate = DateTime.Parse(start.ToString());
+      //ExcelFile xl = null; // new ExcelFile();
+      //if (postedFile.FileName.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase))
+      //{
+      //  xl = ExcelService.Read(postedFile.InputStream, ExcelFileType.XLSX);
+      //}
+      //else
+      //{
+      //  xl = ExcelService.Read(postedFile.InputStream, ExcelFileType.XLS);
+      //}
+      //ExcelSheet sheet = xl.GetSheet(0);
 
-      ExpandedRowsContext model = new ExpandedRowsContext();
-      model.EventId = Guid.NewGuid();
-      if (typeof(E) == typeof(Mission))
-      {
-        model.Type = RosterType.Mission;
-        model.SarEvent = new Mission { Id = model.EventId };
-      }
-      else
-      {
-        model.Type = RosterType.Training;
-        model.SarEvent = new Training { Id = model.EventId };
-      }
-      model.SarEvent.StateNumber = sheet.CellAt(9, 2).StringValue.Split(' ')[0];
-      model.SarEvent.Title = sheet.CellAt(10, 2).StringValue;
-      model.SarEvent.Location = sheet.CellAt(11, 2).StringValue;
-      model.SarEvent.County = sheet.CellAt(9, 10).StringValue.ToLowerInvariant();
+      //object start = sheet.CellAt(13, 4).StringValue.ToUpperInvariant().Replace("DATE", "").Replace("TIME", "").Replace("IN", "").Replace("OUT", "").Trim();
+      //DateTime startDate = DateTime.Parse(start.ToString());
 
-      model.BadRows = new List<IRosterEntry>();
-      model.Rows = new List<IRosterEntry>();
-      model.NumDays = 3;
-      model.RosterStart = startDate;
+      //ExpandedRowsContext model = new ExpandedRowsContext();
+      //model.EventId = Guid.NewGuid();
+      //if (typeof(E) == typeof(Mission))
+      //{
+      //  model.Type = RosterType.Mission;
+      //  model.SarEvent = new Mission { Id = model.EventId };
+      //}
+      //else
+      //{
+      //  model.Type = RosterType.Training;
+      //  model.SarEvent = new Training { Id = model.EventId };
+      //}
+      //model.SarEvent.StateNumber = sheet.CellAt(9, 2).StringValue.Split(' ')[0];
+      //model.SarEvent.Title = sheet.CellAt(10, 2).StringValue;
+      //model.SarEvent.Location = sheet.CellAt(11, 2).StringValue;
+      //model.SarEvent.County = sheet.CellAt(9, 10).StringValue.ToLowerInvariant();
+
+      //model.BadRows = new List<IRosterEntry>();
+      //model.Rows = new List<IRosterEntry>();
+      //model.NumDays = 3;
+      //model.RosterStart = startDate;
 
 
-      SarUnit unit = this.db.Units.Where(f => f.DisplayName == "4x4").Single();
-      //ctx.Detach(unit);
+      //SarUnit unit = this.db.Units.Where(f => f.DisplayName == "4x4").Single();
+      ////ctx.Detach(unit);
 
-      while (!string.IsNullOrWhiteSpace((sheet.CellAt(++startRow, 1).StringValue ?? "").ToString()))
-      {
-        R roster = new R();
-        string name = sheet.CellAt(startRow, 1).StringValue;
-        string dem = sheet.CellAt(startRow, 2).StringValue.PadLeft(4, '0');
-        var member = this.db.Members
-            .Where(f => f.LastName + ", " + f.FirstName == name && f.DEM == dem)
-            .SingleOrDefault();
+      //while (!string.IsNullOrWhiteSpace((sheet.CellAt(++startRow, 1).StringValue ?? "").ToString()))
+      //{
+      //  R roster = new R();
+      //  string name = sheet.CellAt(startRow, 1).StringValue;
+      //  string dem = sheet.CellAt(startRow, 2).StringValue.PadLeft(4, '0');
+      //  var member = this.db.Members
+      //      .Where(f => f.LastName + ", " + f.FirstName == name && f.DEM == dem)
+      //      .SingleOrDefault();
 
-        if (member == null)
-        {
-          //throw new InvalidOperationException(string.Format("Member {0} not found", sheet.CellAt(startRow, 1]));
-          continue;
-        }
+      //  if (member == null)
+      //  {
+      //    //throw new InvalidOperationException(string.Format("Member {0} not found", sheet.CellAt(startRow, 1]));
+      //    continue;
+      //  }
 
-        //                    ctx.Detach(member);
-        roster.Person = member;
+      //  //                    ctx.Detach(member);
+      //  roster.Person = member;
 
-        for (int i = 0; i < 3; i++)
-        {
-          string v = (sheet.CellAt(startRow, 8 - i * 2).StringValue ?? "").ToString();
-          if (!string.IsNullOrWhiteSpace(v))
-          {
-            v = v.PadLeft(4, '0');
-            int hours = int.Parse(v.Substring(0, 2));
-            int minutes = int.Parse(v.Substring(2, 2));
-            roster.TimeIn = startDate.AddDays(2 - i).AddHours(hours).AddMinutes(minutes);
-          }
-          v = (sheet.CellAt(startRow, 5 + i * 2).StringValue ?? "").ToString();
-          if (!string.IsNullOrWhiteSpace(v))
-          {
-            v = v.PadLeft(4, '0');
-            int hours = int.Parse(v.Substring(0, 2));
-            int minutes = int.Parse(v.Substring(2, 2));
-            roster.TimeOut = startDate.AddDays(i).AddHours(hours).AddMinutes(minutes);
-          }
-        }
+      //  for (int i = 0; i < 3; i++)
+      //  {
+      //    string v = (sheet.CellAt(startRow, 8 - i * 2).StringValue ?? "").ToString();
+      //    if (!string.IsNullOrWhiteSpace(v))
+      //    {
+      //      v = v.PadLeft(4, '0');
+      //      int hours = int.Parse(v.Substring(0, 2));
+      //      int minutes = int.Parse(v.Substring(2, 2));
+      //      roster.TimeIn = startDate.AddDays(2 - i).AddHours(hours).AddMinutes(minutes);
+      //    }
+      //    v = (sheet.CellAt(startRow, 5 + i * 2).StringValue ?? "").ToString();
+      //    if (!string.IsNullOrWhiteSpace(v))
+      //    {
+      //      v = v.PadLeft(4, '0');
+      //      int hours = int.Parse(v.Substring(0, 2));
+      //      int minutes = int.Parse(v.Substring(2, 2));
+      //      roster.TimeOut = startDate.AddDays(i).AddHours(hours).AddMinutes(minutes);
+      //    }
+      //  }
 
-        string miles = (sheet.CellAt(startRow, 11).StringValue ?? "").ToString();
-        if (miles != "")
-        {
-          double numericMiles;
-          if (double.TryParse(miles, out numericMiles))
-          {
-            roster.Miles = (int)Math.Ceiling(numericMiles);
-          }
-        }
+      //  string miles = (sheet.CellAt(startRow, 11).StringValue ?? "").ToString();
+      //  if (miles != "")
+      //  {
+      //    double numericMiles;
+      //    if (double.TryParse(miles, out numericMiles))
+      //    {
+      //      roster.Miles = (int)Math.Ceiling(numericMiles);
+      //    }
+      //  }
 
-        MissionRoster missionRoster = roster as MissionRoster;
-        if (missionRoster != null)
-        {
-          missionRoster.Unit = unit;
+      //  MissionRoster missionRoster = roster as MissionRoster;
+      //  if (missionRoster != null)
+      //  {
+      //    missionRoster.Unit = unit;
 
-          if ("CO".Equals(sheet.CellAt(startRow, 3).StringValue))
-          {
-            missionRoster.InternalRole = "InTown";
-          }
-          else if ("OL".Equals(sheet.CellAt(startRow, 3).StringValue))
-          {
-            missionRoster.InternalRole = "OL";
-          }
-          else if (new[] { "AS", "ATL", "OUA", "TL", "TLT", "TM" }.Contains(sheet.CellAt(startRow, 3).StringValue))
-          {
-            missionRoster.InternalRole = "Field";
-          }
-          else if ("VAN".Equals(sheet.CellAt(startRow, 3).StringValue))
-          {
-            missionRoster.InternalRole = "Base";
-          }
-          else
-          {
-            missionRoster.InternalRole = "Responder";
-          }
-        }
-        model.Rows.Add(roster);
-      }
+      //    if ("CO".Equals(sheet.CellAt(startRow, 3).StringValue))
+      //    {
+      //      missionRoster.InternalRole = "InTown";
+      //    }
+      //    else if ("OL".Equals(sheet.CellAt(startRow, 3).StringValue))
+      //    {
+      //      missionRoster.InternalRole = "OL";
+      //    }
+      //    else if (new[] { "AS", "ATL", "OUA", "TL", "TLT", "TM" }.Contains(sheet.CellAt(startRow, 3).StringValue))
+      //    {
+      //      missionRoster.InternalRole = "Field";
+      //    }
+      //    else if ("VAN".Equals(sheet.CellAt(startRow, 3).StringValue))
+      //    {
+      //      missionRoster.InternalRole = "Base";
+      //    }
+      //    else
+      //    {
+      //      missionRoster.InternalRole = "Responder";
+      //    }
+      //  }
+      //  model.Rows.Add(roster);
+      //}
 
-      if (model.Rows.Count > 0)
-      {
-        model.SarEvent.StartTime = model.Rows.Min(f => f.TimeIn).Value;
-        model.SarEvent.StopTime = model.Rows.Max(f => f.TimeOut).Value;
-      }
+      //if (model.Rows.Count > 0)
+      //{
+      //  model.SarEvent.StartTime = model.Rows.Min(f => f.TimeIn).Value;
+      //  model.SarEvent.StopTime = model.Rows.Max(f => f.TimeOut).Value;
+      //}
 
-      DateTime early = model.SarEvent.StartTime.AddDays(-1);
-      DateTime late = model.SarEvent.StartTime.AddDays(1);
-      E[] alternates = this.GetEventSource().Where(f => f.StateNumber == model.SarEvent.StateNumber || (f.StartTime > early && f.StartTime < late)).OrderBy(f => f.StartTime).ToArray();
+      //DateTime early = model.SarEvent.StartTime.AddDays(-1);
+      //DateTime late = model.SarEvent.StartTime.AddDays(1);
+      //E[] alternates = this.GetEventSource().Where(f => f.StateNumber == model.SarEvent.StateNumber || (f.StartTime > early && f.StartTime < late)).OrderBy(f => f.StartTime).ToArray();
 
-      ViewData["alternateMissions"] = alternates;
+      //ViewData["alternateMissions"] = alternates;
 
-      ViewData["CanEditRoster"] = false;
-      ViewData["IsTemp"] = true;
+      //ViewData["CanEditRoster"] = false;
+      //ViewData["IsTemp"] = true;
 
-      SetSessionValue("reviewRosterBot", bot);
-      SetSessionValue("reviewRoster", model);
-      SetSessionValue("reviewRosterData", fileData);
-      SetSessionValue("reviewRosterName", postedFile.FileName);
-      return View(model);
+      //SetSessionValue("reviewRosterBot", bot);
+      //SetSessionValue("reviewRoster", model);
+      //SetSessionValue("reviewRosterData", fileData);
+      //SetSessionValue("reviewRosterName", postedFile.FileName);
+      //return View(model);
     }
 
     [HttpPost]
     public ActionResult Submit4x4Roster(Guid missionId)
     {
-      if (!Has4x4RosterPermissions()) return CreateLoginRedirect();
+      throw new NotImplementedException("reimplement");
 
-      ExpandedRowsContext model = (ExpandedRowsContext)GetSessionValue("reviewRoster");
-      if (model == null)
-      {
-        throw new InvalidOperationException("Lost temporary roster data. Please start over.");
-      }
+      //if (!Has4x4RosterPermissions()) return CreateLoginRedirect();
 
-      bool errors = false;
-      StringBuilder results = new StringBuilder();
-      //using (var ctx = GetContext())
+      //ExpandedRowsContext model = (ExpandedRowsContext)GetSessionValue("reviewRoster");
+      //if (model == null)
       //{
-      SarUnit unit = this.db.Units.Where(f => f.DisplayName == "4x4").Single();
+      //  throw new InvalidOperationException("Lost temporary roster data. Please start over.");
+      //}
 
-      if (model.EventId == missionId)
-      {
-        AddEventToContext((E)model.SarEvent);
-      }
-      else
-      {
-        model.SarEvent = GetEvent(missionId);
-      }
+      //bool errors = false;
+      //StringBuilder results = new StringBuilder();
+      ////using (var ctx = GetContext())
+      ////{
+      //SarUnit unit = this.db.Units.Where(f => f.DisplayName == "4x4").Single();
 
-      results.AppendLine(Url.Action("Roster", new { id = model.EventId }));
+      //if (model.EventId == missionId)
+      //{
+      //  AddEventToContext((E)model.SarEvent);
+      //}
+      //else
+      //{
+      //  model.SarEvent = GetEvent(missionId);
+      //}
 
-      foreach (var row in model.Rows)
-      {
-        AddRosterRowFrom4x4Sheet(model, unit, row);
-      }
+      //results.AppendLine(Url.Action("Roster", new { id = model.EventId }));
 
-      try
-      {
-        this.db.SaveChanges();
+      //foreach (var row in model.Rows)
+      //{
+      //  AddRosterRowFrom4x4Sheet(model, unit, row);
+      //}
 
-        byte[] fileData = (byte[])GetSessionValue("reviewRosterData");
-        string filename = (string)GetSessionValue("reviewRosterName");
+      //try
+      //{
+      //  this.db.SaveChanges();
 
-        Document doc = new Document
-        {
-          Size = fileData.Length,
-          FileName = System.IO.Path.GetFileName(filename),
-          Contents = fileData,
-          ReferenceId = missionId,
-          MimeType = Documents.GuessMime(filename),
-          Type = "roster"
-        };
-        this.db.Documents.Add(doc);
-        this.db.SaveChanges();
-      }
-      catch (DbEntityValidationException ex)
-      {
-        errors = true;
-        foreach (var entry in ex.EntityValidationErrors)
-        {
-          foreach (var err in entry.ValidationErrors)
-          {
-            var modelRow = model.Rows.SingleOrDefault(f => f.Id == ((IModelObject)entry.Entry.Entity).Id);
-            results.AppendFormat("\"error\",\"{0}\",\"{1}\",\"{2}\",\"{3}\"\n",
-              (modelRow == null) ? "" : modelRow.Person.ReverseName,
-              (modelRow == null) ? err.PropertyName : modelRow.TimeIn.ToString(),
-              (modelRow == null) ? entry.Entry.CurrentValues[err.PropertyName] : modelRow.TimeOut.ToString(),
-              err.ErrorMessage);
-          }
-        }
-      }
+      //  byte[] fileData = (byte[])GetSessionValue("reviewRosterData");
+      //  string filename = (string)GetSessionValue("reviewRosterName");
+
+      //  Document doc = new Document
+      //  {
+      //    Size = fileData.Length,
+      //    FileName = System.IO.Path.GetFileName(filename),
+      //    Contents = fileData,
+      //    ReferenceId = missionId,
+      //    MimeType = Documents.GuessMime(filename),
+      //    Type = "roster"
+      //  };
+      //  this.db.Documents.Add(doc);
+      //  this.db.SaveChanges();
+      //}
+      //catch (DbEntityValidationException ex)
+      //{
+      //  errors = true;
+      //  foreach (var entry in ex.EntityValidationErrors)
+      //  {
+      //    foreach (var err in entry.ValidationErrors)
+      //    {
+      //      var modelRow = model.Rows.SingleOrDefault(f => f.Id == ((IModelObject)entry.Entry.Entity).Id);
+      //      results.AppendFormat("\"error\",\"{0}\",\"{1}\",\"{2}\",\"{3}\"\n",
+      //        (modelRow == null) ? "" : modelRow.Person.ReverseName,
+      //        (modelRow == null) ? err.PropertyName : modelRow.TimeIn.ToString(),
+      //        (modelRow == null) ? entry.Entry.CurrentValues[err.PropertyName] : modelRow.TimeOut.ToString(),
+      //        err.ErrorMessage);
+      //    }
+      //  }
+      //}
       
-      bool? bot = (bool?)GetSessionValue("reviewRosterBot") ?? false;
+      //bool? bot = (bool?)GetSessionValue("reviewRosterBot") ?? false;
 
-      return (bot.Value || errors) ?
-          (ActionResult)(new ContentResult { Content = results.ToString(), ContentType = "text/plain" }) :
-          new RedirectResult(Url.Action("Roster", new { id = missionId }));
+      //return (bot.Value || errors) ?
+      //    (ActionResult)(new ContentResult { Content = results.ToString(), ContentType = "text/plain" }) :
+      //    new RedirectResult(Url.Action("Roster", new { id = missionId }));
     }
 
-    protected abstract void AddRosterRowFrom4x4Sheet(ExpandedRowsContext model, SarUnit unit, IRosterEntry row);
+    protected abstract void AddRosterRowFrom4x4Sheet(ExpandedRowsContext model, SarUnit unit, EventRoster row);
   }
 
   public enum SarEventActions

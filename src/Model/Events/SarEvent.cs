@@ -35,9 +35,9 @@ namespace Kcsar.Database.Model.Events
     public virtual ICollection<Participant> Participants { get; set; }
     public virtual ICollection<ParticipatingUnit> Units { get; set; }
 
-    public virtual MissionDetails Details { get; set; }
+    public virtual EventDetails Details { get; set; }
     public virtual ICollection<SubjectGroup> SubjectGroups { get; set; }
-    public virtual ICollection<MissionGeography> MissionGeography { get; set; }
+    public virtual ICollection<EventGeography> MissionGeography { get; set; }
 
     public override string GetReportHtml()
     {

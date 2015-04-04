@@ -34,7 +34,7 @@ namespace Internal.Database.Model
     [Test]
     public void Validate()
     {
-      var am = new AnimalMission();
+      var am = new AnimalEvents();
       Assert.AreEqual(0, am.Validate(null).Count());
     }
   }

@@ -19,7 +19,7 @@ namespace Kcsar.Database.Model
     public string Type { get; set; }
     public string Comments { get; set; }
     public virtual ICollection<AnimalOwner> Owners { get; set; }
-    public virtual ICollection<AnimalMission> MissionRosters { get; set; }
+    public virtual ICollection<AnimalEvents> MissionRosters { get; set; }
     public string PhotoFile { get; set; }
 
     public Animal()
@@ -27,7 +27,7 @@ namespace Kcsar.Database.Model
     {
       this.Type = Animal.AllowedTypes[0];
       this.Owners = new List<AnimalOwner>();
-      this.MissionRosters = new List<AnimalMission>();
+      this.MissionRosters = new List<AnimalEvents>();
     }
 
     public Member GetPrimaryOwner()

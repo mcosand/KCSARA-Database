@@ -13,11 +13,11 @@ namespace Kcsar.Database.Model
   public interface IKcsarContext : IDisposable
   {
     IDbSet<Animal> Animals { get; set; }
-    IDbSet<AnimalMission> AnimalMissions { get; set; }
+    IDbSet<AnimalEvents> AnimalMissions { get; set; }
     IDbSet<AnimalOwner> AnimalOwners { get; set; }
     IDbSet<SarEvent> Events { get; set; }
-    IDbSet<MissionDetails> MissionDetails { get; set; }
-    IDbSet<MissionGeography> MissionGeography { get; set; }
+    IDbSet<EventDetails> MissionDetails { get; set; }
+    IDbSet<EventGeography> MissionGeography { get; set; }
     IDbSet<Member> Members { get; set; }
     IDbSet<PersonAddress> PersonAddress { get; set; }
     IDbSet<PersonContact> PersonContact { get; set; }

@@ -19,6 +19,7 @@ namespace Kcsara.Database.Web.Controllers
   using iTextSharp.text.pdf;
   using System.IO;
   using iTextSharp.text;
+  using Kcsar.Database.Model.Events;
 
   public partial class MissionsController
   {
@@ -147,7 +148,7 @@ namespace Kcsara.Database.Web.Controllers
       //}
     }
 
-    Queue<Tuple<string, string, string>> Fill109Rows(IEnumerable<MissionLog> logs, AcroFields fields, string fieldName)
+    Queue<Tuple<string, string, string>> Fill109Rows(IEnumerable<EventLog> logs, AcroFields fields, string fieldName)
     {
       AcroFields.Item item = fields.GetFieldItem(fieldName);
       PdfDictionary merged = item.GetMerged(0);
@@ -160,12 +161,12 @@ namespace Kcsara.Database.Web.Controllers
 
       foreach (var log in logs)
       {
-        if (log.Data == null) continue;
+        if (log.Message == null) continue;
 
         string formTime = log.Time.ToString("HHmm");
-        string formOperator = (log.Person ?? new Member()).LastName;
+        string formOperator = log.ParticipantId == null ? string.Empty : log.Participant.Lastname;
 
-        foreach (var logMsg in log.Data.Replace("\r", "").Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
+        foreach (var logMsg in log.Message.Replace("\r", "").Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
         {
           int left = 0;
           int right = logMsg.Length - 1;
@@ -277,7 +278,7 @@ namespace Kcsara.Database.Web.Controllers
       return User.IsInRole("cdb.missioneditors");
     }
 
-    protected override void AddRosterRowFrom4x4Sheet(ExpandedRowsContext model, SarUnit unit, IRosterEntry row)
+    protected override void AddRosterRowFrom4x4Sheet(ExpandedRowsContext model, SarUnit unit, EventRoster row)
     {
       throw new NotImplementedException("reimplement");
 

@@ -24,8 +24,6 @@ namespace Kcsar.Database.Model
     public virtual Member Member { get; set; }
     public DateTime? Completed { get; set; }
 
-    public virtual TrainingRoster Roster { get; set; }
-
     [ForeignKey("AttendanceId")]
     public virtual Participant Attendance { get; set; }
     public Guid? AttendanceId { get; set; }

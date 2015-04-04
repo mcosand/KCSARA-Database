@@ -17,6 +17,7 @@ namespace Kcsara.Database.Web.Controllers
   using System.Collections.Generic;
   using System.IO;
   using System.Data.Entity;
+  using Kcsar.Database.Model.Events;
 
   public partial class TrainingController
   {
@@ -141,7 +142,7 @@ namespace Kcsara.Database.Web.Controllers
       return User.IsInRole("cdb.trainingeditors");
     }
 
-    protected override void AddRosterRowFrom4x4Sheet(ExpandedRowsContext model, SarUnit unit, IRosterEntry row)
+    protected override void AddRosterRowFrom4x4Sheet(ExpandedRowsContext model, SarUnit unit, EventRoster row)
     {
       throw new NotImplementedException("reimplement");
       //TrainingRoster mrow = (TrainingRoster)row;

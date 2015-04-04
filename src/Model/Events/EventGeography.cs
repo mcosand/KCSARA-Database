@@ -2,18 +2,14 @@
  * Copyright 2010-2014 Matthew Cosand
  */
 
-namespace Kcsar.Database.Model
+namespace Kcsar.Database.Model.Events
 {
   using System;
-  using System.Collections.Generic;
-  using System.Linq;
-  using System.Text.RegularExpressions;
-  using Microsoft.SqlServer.Types;
-  using System.Data.SqlTypes;
   using System.ComponentModel.DataAnnotations.Schema;
-  using Kcsar.Database.Model.Events;
+  using System.Data.SqlTypes;
+  using Microsoft.SqlServer.Types;
 
-  public class MissionGeography : ModelObject
+  public class EventGeography : ModelObject
   {
     public Guid? InstanceId { get; set; }
     public string Kind { get; set; }
@@ -21,10 +17,9 @@ namespace Kcsar.Database.Model
     public string Description { get; set; }
     public string LocationBinary { get; set; }
     public string LocationText { get; set; }
-    public virtual Mission Mission { get; set; }
     [ForeignKey("EventId")]
     public virtual SarEvent Event { get; set; }
-    public Guid? EventId { get; set; }
+    public Guid EventId { get; set; }
 
     private SqlGeography geog = null;
     [NotMapped]

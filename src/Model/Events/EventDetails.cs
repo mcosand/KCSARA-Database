@@ -1,8 +1,8 @@
 ﻿/*
- * Copyright 2009-2014 Matthew Cosand
+ * Copyright 2009-2015 Matthew Cosand
  */
 
-namespace Kcsar.Database.Model
+namespace Kcsar.Database.Model.Events
 {
   using System;
   using System.Collections.Generic;
@@ -10,7 +10,7 @@ namespace Kcsar.Database.Model
   using System.Text.RegularExpressions;
   using Kcsar.Database.Model.Events;
 
-  public class MissionDetails : ModelObject
+  public class EventDetails : ModelObject
   {
     public string Clouds { get; set; }
     public double? TempLow { get; set; }

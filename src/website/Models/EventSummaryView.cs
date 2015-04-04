@@ -10,6 +10,7 @@ namespace Kcsara.Database.Web.Model
 {
     using System.Runtime.Serialization;
     using Kcsar.Database.Model;
+  using Kcsar.Database.Model.Events;
 
     [DataContract]
     public class EventSummaryView
@@ -40,7 +41,7 @@ namespace Kcsara.Database.Web.Model
 
         public EventSummaryView() { }
 
-        public EventSummaryView(IRosterEvent sarEvent)
+        public EventSummaryView(SarEvent sarEvent)
         {
             this.Id = sarEvent.Id;
             this.Title = sarEvent.Title;
