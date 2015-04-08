@@ -1,12 +1,13 @@
 ﻿/*
  * Copyright 2014 Matthew Cosand
  */
-namespace Internal.Database.Model
+namespace Internal.Database.Data
 {
   using System;
   using System.Data.Entity.Migrations;
   using System.Diagnostics;
-  using Kcsar.Database.Model;
+  using System.IO;
+  using Kcsar.Database.Data;
   using Microsoft.Win32;
 
   public static class DatabaseTestHelpers
@@ -19,7 +20,7 @@ namespace Internal.Database.Model
       {
         try
         {
-          RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions\11.0");
+          RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions\12.0");
 
           localDbAvailable = key != null;
         }
@@ -43,11 +44,12 @@ namespace Internal.Database.Model
         throw new InvalidOperationException("Can't create a new test database when localDb is not available");
       }
 
-      string dbPrefix = Guid.NewGuid().ToString().ToLowerInvariant().Substring(0, 30);
-      
-      string connString = @"Data Source=(LocalDB)\v11.0;Initial Catalog=" + dbPrefix + @";Integrated Security=True;Connect Timeout=30";
-      Console.WriteLine("Using local database: " + connString);
+      //string dbPrefix = Guid.NewGuid().ToString().ToLowerInvariant().Substring(0, 30);
 
+      AppDomain.CurrentDomain.SetData("DataDirectory", Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ""));
+      string connString = @"Data Source=(LocalDB)\ProjectsV12;AttachDbFilename=|DataDirectory|\foo.mdf;Integrated Security=True;Connect Timeout=30";
+      Console.WriteLine("Using local database: " + connString);
+      Console.WriteLine(System.IO.Directory.GetCurrentDirectory());
       Stopwatch timer = new Stopwatch();
       timer.Start();
 

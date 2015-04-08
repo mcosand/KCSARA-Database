@@ -1,13 +1,10 @@
 ﻿namespace Kcsara.Database.Services.Accounts
 {
-  using Kcsar.Database.Model;
-  using log4net;
   using System;
-  using System.Collections.Generic;
   using System.Linq;
-  using System.Text;
   using System.Text.RegularExpressions;
-  using System.Threading.Tasks;
+  using Kcsar.Database.Data;
+  using log4net;
 
   public class AccountsService
   {

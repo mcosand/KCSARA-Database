@@ -3,13 +3,12 @@
  */
 namespace Kcsara.Database.Services
 {
-  using System;
   using System.IO;
-  using Kcsar.Database.Model;
+  using Kcsar.Database.Data;
 
   public interface IReportsService
   {
-    Stream GetMissionReadyList(SarUnit unit);
+    Stream GetMissionReadyList(UnitRow unit);
     Stream GetMembershipReport();
   }
 }

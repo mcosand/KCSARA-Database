@@ -1,4 +1,4 @@
-namespace Kcsar.Database.Model.Migrations
+namespace Kcsar.Database.Data.Migrations
 {
   using System;
   using System.Data.Entity.Migrations;
@@ -48,7 +48,6 @@ namespace Kcsar.Database.Model.Migrations
       CreateIndex("dbo.AnimalMissions", "RosterId");
       CreateIndex("dbo.SubjectGroups", "EventId");
       CreateIndex("dbo.MissionGeographies", "EventId");
-      AddForeignKey("dbo.AnimalMissions", "RosterId", "dbo.EventRosters", "Id", cascadeDelete: true);
       AddForeignKey("dbo.SubjectGroups", "EventId", "dbo.SarEvents", "Id", cascadeDelete: true);
       AddForeignKey("dbo.MissionGeographies", "EventId", "dbo.SarEvents", "Id", cascadeDelete: true);
       DropColumn("dbo.MissionGeographies", "Mission_Id");
@@ -66,6 +65,8 @@ namespace Kcsar.Database.Model.Migrations
       RenameTable("dbo.MissionGeographies", "EventGeographies");
       RenameTable("dbo.AnimalMissions", "AnimalEvents");
       RenameTable("dbo.MissionDetails", "EventDetails");
+
+      AddForeignKey("dbo.AnimalEvents", "RosterId", "dbo.EventRosters", "Id", cascadeDelete: true);
 
       Sql(@"UPDATE SarEvents SET Discriminator=Replace(Discriminator,'2','')");
 

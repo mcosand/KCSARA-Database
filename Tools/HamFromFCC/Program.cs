@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Kcsar.Database.Model;
-
+﻿/*
+ * Copyright 2012-2015 Matthew Cosand
+ */
 namespace HamFromFCC
 {
+  using System;
+  using System.Linq;
+  using System.Net;
+  using System.Text.RegularExpressions;
+  using Kcsar.Database.Data;
+
   class Program
   {
     static void Main(string[] args)
@@ -20,8 +20,8 @@ namespace HamFromFCC
         var course = db.TrainingCourses.Single(f => f.DisplayName == "HAM License");
 
         var hams = db.PersonContact.Where(f => f.Type == "hamcall")
-          .Where(f => ! f.Person.ComputedAwards.Any(g => g.Expiry > cutoff && g.Course.Id == course.Id))
-          .Select(f => new { Member = f.Person, Call = f.Value })
+          .Where(f => !f.Member.ComputedAwards.Any(g => g.Expiry > cutoff && g.Course.Id == course.Id))
+          .Select(f => new { Member = f.Member, Call = f.Value })
           .OrderBy(f => f.Member.LastName).ThenBy(f => f.Member.FirstName).ToArray();
 
         foreach (var ham in hams)
@@ -39,8 +39,8 @@ namespace HamFromFCC
           {
             // probably a match
             Console.WriteLine("Grant HAM to {0}, effective {1:yyyy-MM-dd}, expires {2:yyyy-MM-dd}", ham.Member.FullName, lic.Issued, lic.Expires);
-            TrainingAward ta = new TrainingAward { Completed = lic.Issued, Course = course, Expiry = lic.Expires, Member = ham.Member, metadata = "Via FCC: " + lic.Url, LastChanged = DateTime.Now, ChangedBy = "HamFromFCC" };
-            db.TrainingAward.Add(ta);
+            TrainingRecordRow ta = new TrainingRecordRow { Completed = lic.Issued, Course = course, Expiry = lic.Expires, Member = ham.Member, metadata = "Via FCC: " + lic.Url, LastChanged = DateTime.Now, ChangedBy = "HamFromFCC" };
+            db.TrainingRecords.Add(ta);
             db.SaveChanges();
             db.RecalculateTrainingAwards(ham.Member.Id);
             db.SaveChanges();
@@ -70,7 +70,7 @@ namespace HamFromFCC
       var blockEnd = page.IndexOf("</td>", blockStart);
       var block = page.Substring(blockStart, blockEnd - blockStart);
 
-     // match = Regex.Match(block, @"^ +([a-zA-Z ,\\-]+)\<br\>");
+      // match = Regex.Match(block, @"^ +([a-zA-Z ,\\-]+)\<br\>");
       match = Regex.Match(page, @"<title>ULS License \- Amateur License \- [A-Z0-9 ]+ \- ([^<]+)</title>");
       if (!match.Success) return null;
 
@@ -78,7 +78,7 @@ namespace HamFromFCC
 
       match = Regex.Match(page, @"Grant</td>\s+<td[^>]+>\s+([\d/]{10})", RegexOptions.Multiline);
       lic.Issued = DateTime.Parse(match.Groups[1].Value);
-      
+
       match = Regex.Match(page, @"Expiration</td>\s+<td[^>]+>\s+([\d/]{10})", RegexOptions.Multiline);
       lic.Expires = DateTime.Parse(match.Groups[1].Value);
 

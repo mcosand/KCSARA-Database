@@ -1,24 +1,25 @@
 ﻿/*
- * Copyright 2014 Matthew Cosand
+ * Copyright 2014-2015 Matthew Cosand
  */
 namespace ESAR.Extensions
 {
   using System;
   using System.Collections.Generic;
   using System.Linq;
+  using Kcsar.Database.Data;
   using Kcsar.Database.Model;
   using Kcsara.Database.Services.Reports;
 
   public class MissionReadyExtension : IMissionReadyPlugin
   {
-    private readonly SarUnit unit;
+    private readonly UnitRow unit;
 
-    public MissionReadyExtension(SarUnit unit)
+    public MissionReadyExtension(UnitRow unit)
     {
       this.unit = unit;
     }
 
-    public IEnumerable<string> GetColumnsAfter(MissionReadyColumns column, Member member)
+    public IEnumerable<string> GetColumnsAfter(MissionReadyColumns column, MemberRow member)
     {
       if (column == MissionReadyColumns.WorkerType)
       {

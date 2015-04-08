@@ -1,8 +1,7 @@
-﻿
-/*
- * Copyright 2009-2014 Matthew Cosand
+﻿/*
+ * Copyright 2009-2015 Matthew Cosand
  */
-namespace Kcsar.Database.Model
+namespace Kcsar.Database.Data
 {
   using System;
   using System.Collections.Generic;
@@ -10,51 +9,47 @@ namespace Kcsar.Database.Model
   using System.Data.Entity;
   using System.Data.Entity.Core;
   using System.Data.Entity.Core.Objects;
-  using System.Data.Entity.Core.Objects.DataClasses;
   using System.Data.Entity.Infrastructure;
   using System.IO;
   using System.Linq;
   using System.Reflection;
-  using System.Text.RegularExpressions;
   using System.Threading;
-  using Kcsar.Database.Model.Events;
+  using Kcsar.Database.Data.Events;
 
   public class KcsarContext : DbContext, IKcsarContext
   {
-    public IDbSet<Animal> Animals { get; set; }
-    public IDbSet<AnimalEvents> AnimalMissions { get; set; }
-    public IDbSet<AnimalOwner> AnimalOwners { get; set; }
-    public IDbSet<SarEvent> Events { get; set; }
-    public IDbSet<EventDetails> MissionDetails { get; set; }
-    public IDbSet<EventGeography> MissionGeography { get; set; }
-    public IDbSet<Member> Members { get; set; }
-    public IDbSet<PersonAddress> PersonAddress { get; set; }
-    public IDbSet<PersonContact> PersonContact { get; set; }
-    public IDbSet<MemberUnitDocument> MemberUnitDocuments { get; set; }
-    public IDbSet<Subject> Subjects { get; set; }
-    public IDbSet<SubjectGroup> SubjectGroups { get; set; }
-    public IDbSet<SubjectGroupLink> SubjectGroupLinks { get; set; }
-    public IDbSet<TrainingAward> TrainingAward { get; set; }
-    public IDbSet<TrainingCourse> TrainingCourses { get; set; }
-    public IDbSet<Document> Documents { get; set; }
-    public IDbSet<TrainingRule> TrainingRules { get; set; }
-    public IDbSet<SarUnit> Units { get; set; }
-    public IDbSet<UnitApplicant> UnitApplicants { get; set; }
-    public IDbSet<UnitMembership> UnitMemberships { get; set; }
-    public IDbSet<UnitStatus> UnitStatusTypes { get; set; }
-    public IDbSet<UnitDocument> UnitDocuments { get; set; }
-    public IDbSet<ComputedTrainingAward> ComputedTrainingAwards { get; set; }
-    public IDbSet<TrainingExpirationSummary> TrainingExpirationSummaries { get; set; }
-    public IDbSet<CurrentMemberIds> CurrentMemberIds { get; set; }
-    protected IDbSet<AuditLog> AuditLog { get; set; }
-    public IDbSet<SensitiveInfoAccess> SensitiveInfoLog { get; set; }
+    public IDbSet<AnimalRow> Animals { get; set; }
+    public IDbSet<AnimalEventRow> AnimalMissions { get; set; }
+    public IDbSet<AnimalOwnerRow> AnimalOwners { get; set; }
+    public IDbSet<SarEventRow> Events { get; set; }
+    public IDbSet<EventDetailRow> MissionDetails { get; set; }
+    public IDbSet<EventGeographyRow> MissionGeography { get; set; }
+    public IDbSet<MemberRow> Members { get; set; }
+    public IDbSet<MemberAddressRow> PersonAddress { get; set; }
+    public IDbSet<MemberContactRow> PersonContact { get; set; }
+    public IDbSet<MemberUnitDocumentRow> MemberUnitDocuments { get; set; }
+    public IDbSet<SubjectRow> Subjects { get; set; }
+    public IDbSet<SubjectGroupRow> SubjectGroups { get; set; }
+    public IDbSet<SubjectGroupLinkRow> SubjectGroupLinks { get; set; }
+    public IDbSet<TrainingRecordRow> TrainingRecords { get; set; }
+    public IDbSet<TrainingCourseRow> TrainingCourses { get; set; }
+    public IDbSet<DocumentRow> Documents { get; set; }
+    public IDbSet<TrainingRuleRow> TrainingRules { get; set; }
+    public IDbSet<UnitRow> Units { get; set; }
+    public IDbSet<UnitApplicantRow> UnitApplicants { get; set; }
+    public IDbSet<UnitMembershipRow> UnitMemberships { get; set; }
+    public IDbSet<UnitStatusRow> UnitStatusTypes { get; set; }
+    public IDbSet<UnitDocumentRow> UnitDocuments { get; set; }
+    public IDbSet<ComputedTrainingRecordRow> ComputedTrainingAwards { get; set; }
+    protected IDbSet<AuditLogRow> AuditLog { get; set; }
+    public IDbSet<SensitiveInfoAccessRow> SensitiveInfoLog { get; set; }
 
     public KcsarContext() : this("DataStore") { }
 
     public KcsarContext(string connName)
       : base(connName)
     {
-      this.AuditLog = this.Set<AuditLog>();
+      this.AuditLog = this.Set<AuditLogRow>();
     }
 
     public KcsarContext(string connName, Action<string> logMethod)
@@ -72,27 +67,28 @@ namespace Kcsar.Database.Model
     protected override void OnModelCreating(DbModelBuilder modelBuilder)
     {
       base.OnModelCreating(modelBuilder);
-      modelBuilder.Entity<SarEvent>().HasMany(f => f.Roster).WithRequired(f => f.Event).WillCascadeOnDelete(false);
-      modelBuilder.Entity<Participant>().HasOptional(f => f.Member).WithMany(f => f.Participation).WillCascadeOnDelete(false);
-      modelBuilder.Entity<ParticipatingUnit>().HasOptional(f => f.MemberUnit).WithMany(f => f.Participation).WillCascadeOnDelete(false);
-      modelBuilder.Entity<EventRoster>().HasRequired(f => f.Participant).WithMany().WillCascadeOnDelete(false);
-      modelBuilder.Entity<EventRoster>().HasOptional(f => f.Unit).WithMany().WillCascadeOnDelete(false);
-      modelBuilder.Entity<ParticipantStatus>().HasRequired(f => f.Participant).WithMany().WillCascadeOnDelete(false);
-      modelBuilder.Entity<ParticipantStatus>().HasOptional(f => f.Unit).WithMany().WillCascadeOnDelete(false);
-      modelBuilder.Entity<EventLog>().HasOptional(f => f.Participant).WithMany().WillCascadeOnDelete(false);
+      modelBuilder.Entity<SarEventRow>().HasMany(f => f.Roster).WithRequired(f => f.Event).WillCascadeOnDelete(false);
+      modelBuilder.Entity<ParticipantRow>().HasOptional(f => f.Member).WithMany(f => f.Participation).WillCascadeOnDelete(false);
+      modelBuilder.Entity<ParticipatingUnitRow>().HasOptional(f => f.MemberUnit).WithMany(f => f.Participation).WillCascadeOnDelete(false);
+      modelBuilder.Entity<EventRosterRow>().HasRequired(f => f.Participant).WithMany().WillCascadeOnDelete(false);
+      modelBuilder.Entity<EventRosterRow>().HasOptional(f => f.Unit).WithMany().WillCascadeOnDelete(false);
+      modelBuilder.Entity<ParticipantStatusRow>().HasRequired(f => f.Participant).WithMany().WillCascadeOnDelete(false);
+      modelBuilder.Entity<ParticipantStatusRow>().HasOptional(f => f.Unit).WithMany().WillCascadeOnDelete(false);
+      modelBuilder.Entity<EventLogRow>().HasOptional(f => f.Participant).WithMany().WillCascadeOnDelete(false);
       modelBuilder.Entity<ParticipantEventTimeline>().HasOptional(f => f.Participant).WithMany().WillCascadeOnDelete(false);
-
-      modelBuilder.Entity<SarEvent>().HasOptional(f => f.Details).WithRequired(f => f.Event).WillCascadeOnDelete();
-      modelBuilder.Entity<Training>().HasMany(f => f.OfferedCourses).WithMany(f => f.Trainings);
-      modelBuilder.Entity<Member>().HasOptional(f => f.MedicalInfo).WithRequired(f => f.Member);
-      modelBuilder.Entity<Member>().HasMany(f => f.Memberships).WithRequired(f => f.Person).WillCascadeOnDelete();
-      modelBuilder.Entity<Member>().HasMany(f => f.Addresses).WithRequired(f => f.Person).WillCascadeOnDelete();
-      modelBuilder.Entity<Member>().HasMany(f => f.ContactNumbers).WithRequired(f => f.Person).WillCascadeOnDelete();
-      modelBuilder.Entity<Animal>().HasMany(f => f.Owners).WithRequired(f => f.Animal).WillCascadeOnDelete();
-      modelBuilder.Entity<Member>().HasMany(f => f.Animals).WithRequired(f => f.Owner).WillCascadeOnDelete();
+      modelBuilder.Entity<EventDetailRow>().HasOptional(f => f.Member).WithMany(f => f.MissionDetails).WillCascadeOnDelete(false);
+      modelBuilder.Entity<SarEventRow>().HasOptional(f => f.Details).WithRequired(f => f.Event).WillCascadeOnDelete();
+      modelBuilder.Entity<TrainingRow>().HasMany(f => f.OfferedCourses).WithMany(f => f.Trainings);
+      modelBuilder.Entity<MemberRow>().HasOptional(f => f.MedicalInfo).WithRequired(f => f.Member);
+      modelBuilder.Entity<MemberRow>().HasMany(f => f.Memberships).WithRequired(f => f.Member).WillCascadeOnDelete();
+      modelBuilder.Entity<MemberRow>().HasMany(f => f.Addresses).WithRequired(f => f.Member).WillCascadeOnDelete();
+      modelBuilder.Entity<MemberRow>().HasMany(f => f.ContactNumbers).WithRequired(f => f.Member).WillCascadeOnDelete();
+      modelBuilder.Entity<AnimalRow>().HasMany(f => f.Owners).WithRequired(f => f.Animal).WillCascadeOnDelete();
+      modelBuilder.Entity<MemberRow>().HasMany(f => f.Animals).WithRequired(f => f.Owner).WillCascadeOnDelete();
+      modelBuilder.Entity<UnitStatusRow>().HasMany(f => f.Memberships).WithRequired(f => f.Status).WillCascadeOnDelete(false);
     }
 
-    public Func<UnitMembership, bool> GetActiveMembershipFilter(Guid? unit, DateTime time)
+    public Func<UnitMembershipRow, bool> GetActiveMembershipFilter(Guid? unit, DateTime time)
     {
       // Keep this expression in sync with the one in GetActiveMembers
       return
@@ -100,9 +96,9 @@ namespace Kcsar.Database.Model
     }
 
     // Gets members that are active with at least one unit at a specific time, sorted by lastname,firstname
-    public IQueryable<Member> GetActiveMembers(Guid? unit, DateTime time, params string[] includes)
+    public IQueryable<MemberRow> GetActiveMembers(Guid? unit, DateTime time, params string[] includes)
     {
-      IQueryable<Member> source = this.Members.Include(includes);
+      IQueryable<MemberRow> source = this.Members.Include(includes);
 
       var active = source.OrderBy(f => f.LastName).ThenBy(f => f.FirstName).Where(
           f => f.Memberships.Any(
@@ -133,10 +129,10 @@ namespace Kcsar.Database.Model
 
     private void AuditChange(ObjectStateEntry entry)
     {
-      var obj = entry.Entity as IModelObject;
+      var obj = entry.Entity as IModelObjectRow;
       if (obj == null) return;
 
-      var audit = new AuditLog
+      var audit = new AuditLogRow
       {
         Action = entry.State.ToString(),
         Changed = DateTime.Now,
@@ -170,7 +166,7 @@ namespace Kcsar.Database.Model
         case EntityState.Deleted:
           object original;
           this.ComparisonContext.TryGetObjectByKey(entry.EntityKey, out original);
-          audit.Comment = ((IModelObject)original).GetReportHtml();
+          audit.Comment = ((IModelObjectRow)original).GetReportHtml();
           break;
 
         default:
@@ -186,15 +182,15 @@ namespace Kcsar.Database.Model
 
       oc.DetectChanges();
 
-      Dictionary<string, IModelObject> updatedRelations = new Dictionary<string, IModelObject>();
+      Dictionary<string, IModelObjectRow> updatedRelations = new Dictionary<string, IModelObjectRow>();
 
       // Deleted objects - we need to fetch more data before we can report what the change was in readable form.
       foreach (ObjectStateEntry entry in osm.GetObjectStateEntries(EntityState.Deleted))
       {
         if (entry.IsRelationship)
         {
-          IModelObject obj1 = oc.GetObjectByKey((EntityKey)entry.OriginalValues[0]) as IModelObject;
-          IModelObject obj2 = oc.GetObjectByKey((EntityKey)entry.OriginalValues[1]) as IModelObject;
+          IModelObjectRow obj1 = oc.GetObjectByKey((EntityKey)entry.OriginalValues[0]) as IModelObjectRow;
+          IModelObjectRow obj2 = oc.GetObjectByKey((EntityKey)entry.OriginalValues[1]) as IModelObjectRow;
           if (obj1 == null || obj2 == null)
           {
             continue;
@@ -223,14 +219,14 @@ namespace Kcsar.Database.Model
 
           var key2 = ((EntityKey)entry.CurrentValues[1]);
 
-          IModelObject obj1 = oc.GetObjectByKey(key1) as IModelObject;
-          IModelObject obj2 = oc.GetObjectByKey(key2) as IModelObject;
+          IModelObjectRow obj1 = oc.GetObjectByKey(key1) as IModelObjectRow;
+          IModelObjectRow obj2 = oc.GetObjectByKey(key2) as IModelObjectRow;
           if (obj1 == null || obj2 == null)
           {
             continue;
           }
 
-          var audit = new AuditLog
+          var audit = new AuditLogRow
             {
               Action = "Modified",
               Changed = DateTime.Now,
@@ -241,7 +237,7 @@ namespace Kcsar.Database.Model
             };
 
           string key = string.Format("{0}{1}", obj1.Id, obj2.Id);
-          IModelObject original = null;
+          IModelObjectRow original = null;
           if (updatedRelations.TryGetValue(key, out original))
           {
             audit.Collection = key2.EntitySetName;
@@ -249,16 +245,16 @@ namespace Kcsar.Database.Model
             this.AuditLog.Add(audit);
           }
         }
-        else if (entry.Entity is IModelObject)
+        else if (entry.Entity is IModelObjectRow)
         {
-          IModelObject obj = (IModelObject)entry.Entity;
+          IModelObjectRow obj = (IModelObjectRow)entry.Entity;
 
           // Keep track of the change for reporting.
           obj.LastChanged = DateTime.Now;
           obj.ChangedBy = Thread.CurrentPrincipal.Identity.Name;
 
           AuditChange(entry);
-          Document doc = obj as Document;
+          DocumentRow doc = obj as DocumentRow;
           if (doc != null)
           {
             SaveDocumentFile(doc);
@@ -273,23 +269,23 @@ namespace Kcsar.Database.Model
     /// 
     /// </summary>
     /// <param name="d"></param>
-    private void SaveDocumentFile(Document d)
+    private void SaveDocumentFile(DocumentRow d)
     {
       if (string.IsNullOrWhiteSpace(d.StorePath))
       {
         string path = string.Empty;
-        for (int i = 0; i < Document.StorageTreeDepth; i++)
+        for (int i = 0; i < DocumentRow.StorageTreeDepth; i++)
         {
-          path += ((i > 0) ? "\\" : "") + rand.Next(Document.StorageTreeSpan).ToString();
+          path += ((i > 0) ? "\\" : "") + rand.Next(DocumentRow.StorageTreeSpan).ToString();
         }
-        if (!System.IO.Directory.Exists(Document.StorageRoot + path))
+        if (!System.IO.Directory.Exists(DocumentRow.StorageRoot + path))
         {
-          System.IO.Directory.CreateDirectory(Document.StorageRoot + path);
+          System.IO.Directory.CreateDirectory(DocumentRow.StorageRoot + path);
         }
         path += "\\" + d.Id.ToString();
         d.StorePath = path;
       }
-      System.IO.File.WriteAllBytes(Document.StorageRoot + d.StorePath, d.Contents);
+      System.IO.File.WriteAllBytes(DocumentRow.StorageRoot + d.StorePath, d.Contents);
     }
 
     public void RemoveStaleDocumentFiles()
@@ -299,15 +295,15 @@ namespace Kcsar.Database.Model
         .Select(f => f.StorePath).Distinct()
         .AsNoTracking().AsEnumerable());
 
-      int rootLength = Document.StorageRoot.Length;
-      foreach (var file in Directory.GetFiles(Document.StorageRoot, "*.*", SearchOption.AllDirectories))
+      int rootLength = DocumentRow.StorageRoot.Length;
+      foreach (var file in Directory.GetFiles(DocumentRow.StorageRoot, "*.*", SearchOption.AllDirectories))
       {
         if (dbFiles.Contains(file.Substring(rootLength)))
           continue;
 
         File.Delete(file);
         string path = file;
-        for (int i = 0; i < Document.StorageTreeDepth; i++)
+        for (int i = 0; i < DocumentRow.StorageTreeDepth; i++)
         {
           path = Path.GetDirectoryName(path);
           if (Directory.GetDirectories(path).Length + Directory.GetFiles(path).Length == 0)
@@ -341,35 +337,35 @@ namespace Kcsar.Database.Model
       RecalculateTrainingAwards(from m in this.Members where m.Id == memberId select m, time);
     }
 
-    public void RecalculateTrainingAwards(IEnumerable<Member> members)
+    public void RecalculateTrainingAwards(IEnumerable<MemberRow> members)
     {
       RecalculateTrainingAwards(members, DateTime.Now);
     }
 
-    public List<ComputedTrainingAward[]> RecalculateTrainingAwards(IEnumerable<Member> members, DateTime time)
+    public List<ComputedTrainingRecordRow[]> RecalculateTrainingAwards(IEnumerable<MemberRow> members, DateTime time)
     {
-      List<ComputedTrainingAward[]> retVal = new List<ComputedTrainingAward[]>();
+      List<ComputedTrainingRecordRow[]> retVal = new List<ComputedTrainingRecordRow[]>();
 
       // TODO: only use the rules in effect at time 'time'
-      List<TrainingRule> rules = (from r in this.TrainingRules select r).ToList();
+      List<TrainingRuleRow> rules = (from r in this.TrainingRules select r).ToList();
 
-      Dictionary<Guid, TrainingCourse> courses = (from c in this.TrainingCourses select c).ToDictionary(x => x.Id);
+      Dictionary<Guid, TrainingCourseRow> courses = (from c in this.TrainingCourses select c).ToDictionary(x => x.Id);
 
-      foreach (Member m in members)
+      foreach (MemberRow m in members)
       {
-        foreach (ComputedTrainingAward award in (from a in this.ComputedTrainingAwards where a.Member.Id == m.Id select a))
+        foreach (ComputedTrainingRecordRow award in (from a in this.ComputedTrainingAwards where a.Member.Id == m.Id select a))
         {
           this.ComputedTrainingAwards.Remove(award);
         }
 
         // Sort by expiry and completed dates to handle the case of re-taking a course that doesn't expire.
-        var direct = (from a in this.TrainingAward.Include("Course") where a.Member.Id == m.Id && a.Completed <= time select a)
+        var direct = (from a in this.TrainingRecords.Include("Course") where a.Member.Id == m.Id && a.Completed <= time select a)
             .OrderBy(f => f.Course.Id).ThenByDescending(f => f.Expiry).ThenByDescending(f => f.Completed);
 
-        Dictionary<Guid, ComputedTrainingAward> awards = new Dictionary<Guid, ComputedTrainingAward>();
+        Dictionary<Guid, ComputedTrainingRecordRow> awards = new Dictionary<Guid, ComputedTrainingRecordRow>();
 
         Guid lastCourse = Guid.Empty;
-        foreach (TrainingAward a in direct)
+        foreach (TrainingRecordRow a in direct)
         {
           if (this.Entry(a).State == EntityState.Deleted)
           {
@@ -378,7 +374,7 @@ namespace Kcsar.Database.Model
 
           if (a.Course.Id != lastCourse)
           {
-            var ca = new ComputedTrainingAward(a);
+            var ca = new ComputedTrainingRecordRow(a);
             awards.Add(a.Course.Id, ca);
             this.ComputedTrainingAwards.Add(ca);
             lastCourse = a.Course.Id;
@@ -390,7 +386,7 @@ namespace Kcsar.Database.Model
         {
           awardInLoop = false;
 
-          foreach (TrainingRule rule in rules)
+          foreach (TrainingRuleRow rule in rules)
           {
             //  source>result>prerequisite
             string[] fields = rule.RuleText.Split('>');
@@ -482,7 +478,7 @@ namespace Kcsar.Database.Model
       return retVal;
     }
 
-    private bool RewardTraining(Member m, Dictionary<Guid, TrainingCourse> courses, Dictionary<Guid, ComputedTrainingAward> awards, TrainingRule rule, DateTime? completed, DateTime? expiry, string newAwardsString)
+    private bool RewardTraining(MemberRow m, Dictionary<Guid, TrainingCourseRow> courses, Dictionary<Guid, ComputedTrainingRecordRow> awards, TrainingRuleRow rule, DateTime? completed, DateTime? expiry, string newAwardsString)
     {
       IEnumerable<string> results = newAwardsString.Split('+');
       bool awarded = false;
@@ -532,7 +528,7 @@ namespace Kcsar.Database.Model
         }
         else if (!awards.ContainsKey(course))
         {
-          ComputedTrainingAward newAward = new ComputedTrainingAward { Course = courses[course], Member = m, Completed = completed, Expiry = expiry, Rule = rule };
+          ComputedTrainingRecordRow newAward = new ComputedTrainingRecordRow { Course = courses[course], Member = m, Completed = completed, Expiry = expiry, Rule = rule };
           awards.Add(course, newAward);
           this.ComputedTrainingAwards.Add(newAward);
           awarded = true;
@@ -543,7 +539,7 @@ namespace Kcsar.Database.Model
     }
     #endregion
 
-    public AuditLog[] GetLog(DateTime since)
+    public AuditLogRow[] GetLog(DateTime since)
     {
       var log = this.AuditLog.AsNoTracking().Where(f => f.Changed >= since).OrderByDescending(f => f.Changed).AsEnumerable();
       return log.Select(f => f.GetCopy()).ToArray();

@@ -1,14 +1,12 @@
 ﻿/*
- * Copyright 2009-2014 Matthew Cosand
+ * Copyright 2009-2015 Matthew Cosand
  */
 namespace Kcsara.Database.Web.Controllers
 {
   using System;
   using System.Collections.Generic;
   using System.Web.Mvc;
-  using System.IO;
-
-  using Kcsar.Database.Model;
+  using Kcsar.Database.Data;
 
   public class LogController : BaseController
   {
@@ -36,7 +34,7 @@ namespace Kcsara.Database.Web.Controllers
       DateTime start = DateTime.Now.AddHours(-25);
 
 
-      IList<AuditLog> rows = this.db.GetLog(start);
+      IList<AuditLogRow> rows = this.db.GetLog(start);
       ViewResult table = View("LogTable", rows);
 
 

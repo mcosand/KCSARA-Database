@@ -1,20 +1,17 @@
 ﻿/*
- * Copyright 2013-2014 Matthew Cosand
+ * Copyright 2013-2015 Matthew Cosand
  */
-using Kcsar.Database.Model;
-using Kcsara.Database.Web.Model;
-using Kcsara.Database.Web.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
-using log4net;
-using Kcsara.Database.Services;
 
 namespace Kcsara.Database.Web.api
 {
+  using System;
+  using System.Collections.Generic;
+  using System.Web.Http;
+  using Kcsar.Database.Data;
+  using Kcsara.Database.Services;
+  using Kcsara.Database.Web.Model;
+  using log4net;
+
   public class MissionsController : BaseApiController
   {
     public MissionsController(IKcsarContext db, IAuthService auth, ILog log)

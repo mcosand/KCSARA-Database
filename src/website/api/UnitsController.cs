@@ -1,32 +1,24 @@
 ﻿/*
- * Copyright 2013-2014 Matthew Cosand
+ * Copyright 2013-2015 Matthew Cosand
  */
 
 namespace Kcsara.Database.Web.api
 {
-  using Newtonsoft.Json;
   using System;
   using System.Collections.Generic;
-  using System.Linq;
-  using System.Linq.Expressions;
-  using System.Web.Http;
-  using System.Text.RegularExpressions;
-  using Kcsara.Database.Web.api.Models;
-  using Kcsar.Membership;
-  using System.Web.Profile;
-  using System.Threading;
   using System.Configuration;
-  using System.IO;
-  using Kcsara.Database.Web.Services;
-  using System.Web.Helpers;
-  using Model = Kcsar.Database.Model;
-  using log4net;
+  using System.Linq;
+  using System.Web.Http;
+  using Kcsar.Database.Model;
   using Kcsara.Database.Services;
+  using Kcsara.Database.Web.api.Models;
+  using log4net;
+  using Data = Kcsar.Database.Data;
 
   [ModelValidationFilter]
   public class UnitsController : BaseApiController
   {
-    public UnitsController(Model.IKcsarContext db, ILog log)
+    public UnitsController(Data.IKcsarContext db, ILog log)
       : base(db, log)
     { }
 
@@ -47,7 +39,7 @@ namespace Kcsara.Database.Web.api
     {
       try
       {
-        Model.UnitApplicant application = db.UnitApplicants.Include("Applicant", "Unit").Single(f => f.Id == id);
+        Data.UnitApplicantRow application = db.UnitApplicants.Include("Applicant", "Unit").Single(f => f.Id == id);
 
         if (!CanEditApplication(Permissions, application.Applicant.Id, application.Unit.Id)) ThrowAuthError();
 
@@ -69,9 +61,9 @@ namespace Kcsara.Database.Web.api
       return false;
     }
 
-    internal static void RegisterApplication(Model.IKcsarContext db, Guid id, Model.Member member)
+    internal static void RegisterApplication(Data.IKcsarContext db, Guid id, Data.MemberRow member)
     {
-      Model.UnitApplicant application = new Model.UnitApplicant
+      Data.UnitApplicantRow application = new Data.UnitApplicantRow
       {
         Unit = db.Units.Single(f => f.Id == id),
         Applicant = member,
@@ -107,7 +99,7 @@ namespace Kcsara.Database.Web.api
 
       MembersController members = new MembersController(this.db, this.log);
 
-      var notDoneDocs = new[] { Model.DocumentStatus.NotApplicable.ToString(), Model.DocumentStatus.NotStarted.ToString() };
+      var notDoneDocs = new[] { DocumentStatus.NotApplicable.ToString(), DocumentStatus.NotStarted.ToString() };
 
       return query.OrderBy(f => f.Applicant.LastName).ThenBy(f => f.Applicant.FirstName).AsEnumerable().Select(f =>
       {
@@ -149,14 +141,14 @@ namespace Kcsara.Database.Web.api
       if (!CanEditDocuments(Permissions, id))
         ThrowAuthError();
 
-      Model.SarUnit unit = db.Units.Include("Documents").Single(f => f.Id == id);
+      Data.UnitRow unit = db.Units.Include("Documents").Single(f => f.Id == id);
 
       var existingDocuments = db.UnitDocuments.Where(f => f.Unit.Id == id).ToDictionary(f => f.Id, f => f);
 
       List<UnitDocument> desiredDocuments = new List<UnitDocument>(data);
       foreach (var document in desiredDocuments)
       {
-        Model.UnitDocument unitDocument;
+        Data.UnitDocumentRow unitDocument;
         if (existingDocuments.TryGetValue(document.Id, out unitDocument))
         {
           existingDocuments.Remove(document.Id);
@@ -177,9 +169,9 @@ namespace Kcsara.Database.Web.api
 
         if (unitDocument == null)
         {
-          unitDocument = new Model.UnitDocument()
+          unitDocument = new Data.UnitDocumentRow()
           {
-            Type = Model.UnitDocumentType.Application
+            Type = UnitDocumentType.Application
           };
           unit.Documents.Add(unitDocument);
         }

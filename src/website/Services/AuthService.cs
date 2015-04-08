@@ -14,6 +14,7 @@ namespace Kcsara.Database.Services
   using System.Web.Profile;
   using Kcsar.Membership;
   using Kcsar.Database.Model;
+  using Kcsar.Database.Data;
 
   public class AuthService : IAuthService
   {
@@ -90,13 +91,13 @@ namespace Kcsara.Database.Services
 
     public bool IsRoleForPerson(string role, Guid personId)
     {
-      Member member = (from m in context.Members.Include("Memberships.Status").Include("Memberships.Unit") where m.Id == personId select m).FirstOrDefault();
+      MemberRow member = (from m in context.Members.Include("Memberships.Status").Include("Memberships.Unit") where m.Id == personId select m).FirstOrDefault();
       if (member == null)
       {
         return false;
       }
 
-      foreach (UnitMembership um in member.GetActiveUnits())
+      foreach (UnitMembershipRow um in member.GetActiveUnits())
       {
         if (this.IsInRole(um.Unit.DisplayName.Replace(" ", "").ToLowerInvariant() + "." + role))
         {
@@ -117,10 +118,10 @@ namespace Kcsara.Database.Services
       return IsRoleForUnit("membership", id);
     }
 
-    public SarUnit[] GetUnitsIManage()
+    public UnitRow[] GetUnitsIManage()
     {
-      List<SarUnit> list = new List<SarUnit>();
-      foreach (SarUnit u in (from unit in context.Units select unit))
+      List<UnitRow> list = new List<UnitRow>();
+      foreach (UnitRow u in (from unit in context.Units select unit))
       {
         if (this.IsInRole(u.DisplayName.Replace(" ", "").ToLowerInvariant() + ".membership"))
         {

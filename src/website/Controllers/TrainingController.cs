@@ -1,27 +1,24 @@
 ﻿/*
- * Copyright 2009-2014 Matthew Cosand
+ * Copyright 2009-2015 Matthew Cosand
  */
 
 namespace Kcsara.Database.Web.Controllers
 {
-  using Kcsar.Database;
-  using Kcsar.Database.Model;
-  using Kcsara.Database.Web.Model;
-  using ApiModels = Kcsara.Database.Web.api.Models;
   using System;
   using System.Collections.Generic;
   using System.Configuration;
   using System.Data.Entity.Infrastructure;
-  using System.Globalization;
   using System.IO;
   using System.Linq;
-  using System.Text;
-  using System.Text.RegularExpressions;
   using System.Web.Mvc;
-  using System.Xml;
-  using Kcsar.Database.Model.Events;
+  using Kcsar.Database;
+  using Kcsar.Database.Data;
+  using Kcsar.Database.Data.Events;
+  using Kcsar.Database.Model;
+  using Kcsara.Database.Web.Model;
+  using ApiModels = Kcsara.Database.Web.api.Models;
 
-  public partial class TrainingController : SarEventController<Training>
+  public partial class TrainingController : SarEventController<TrainingRow>
   {
     public TrainingController(IKcsarContext db) : base(db) { }
 
@@ -63,7 +60,7 @@ namespace Kcsara.Database.Web.Controllers
       //return View(model);
     }
 
-    protected override void DeleteDependentObjects(Training evt)
+    protected override void DeleteDependentObjects(TrainingRow evt)
     {
       base.DeleteDependentObjects(evt);
       throw new NotImplementedException("reimplement");
@@ -91,7 +88,7 @@ namespace Kcsara.Database.Web.Controllers
       }
 
       ApiModels.TrainingRecord award;
-      award = (from a in this.db.TrainingAward
+      award = (from a in this.db.TrainingRecords
                where a.Id == id
                select new
                {
@@ -130,14 +127,14 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize(Roles = "cdb.users")]
     public ActionResult Rules()
     {
-      Dictionary<Guid, TrainingCourse> courses = (from c in this.db.TrainingCourses select c).ToDictionary(x => x.Id);
+      Dictionary<Guid, TrainingCourseRow> courses = (from c in this.db.TrainingCourses select c).ToDictionary(x => x.Id);
 
-      List<TrainingRule> rules = (from r in this.db.TrainingRules select r).ToList();
+      List<TrainingRuleRow> rules = (from r in this.db.TrainingRules select r).ToList();
       string text = "Rules for Training equivalencies\n=========================\n[]'s after course indicate howmany months" +
       " the equivalency is good for. 'default' means as long as the resultant course is good for.\n" +
       "Mission equivalency indicated by (<required hours>:<of mission type>:<within # months>), '%' means any mission type\n\n\n";
       List<string> lines = new List<string>();
-      foreach (TrainingRule rule in rules)
+      foreach (TrainingRuleRow rule in rules)
       {
         string line = "";
         string[] fields = rule.RuleText.Split('>');
@@ -332,19 +329,19 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize(Roles = "cdb.users")]
     public ActionResult CoreCompReport(Guid? id)
     {
-      IQueryable<UnitMembership> memberships = this.db.UnitMemberships.Include("Person.ComputedAwards.Course").Include("Status");
+      IQueryable<UnitMembershipRow> memberships = this.db.UnitMemberships.Include("Person.ComputedAwards.Course").Include("Status");
       string unitShort = ConfigurationManager.AppSettings["dbNameShort"];
       string unitLong = Strings.GroupName;
       if (id.HasValue)
       {
         memberships = memberships.Where(um => um.Unit.Id == id.Value);
-        SarUnit sarUnit = (from u in this.db.Units where u.Id == id.Value select u).First();
+        UnitRow sarUnit = (from u in this.db.Units where u.Id == id.Value select u).First();
         unitShort = sarUnit.DisplayName;
         unitLong = sarUnit.LongName;
 
       }
       memberships = memberships.Where(um => um.EndTime == null && um.Status.IsActive);
-      var members = memberships.Select(f => f.Person).Distinct().OrderBy(f => f.LastName).ThenBy(f => f.FirstName);
+      var members = memberships.Select(f => f.Member).Distinct().OrderBy(f => f.LastName).ThenBy(f => f.FirstName);
 
       var courses = this.db.GetCoreCompetencyCourses();
 
@@ -402,10 +399,10 @@ namespace Kcsara.Database.Web.Controllers
     public ActionResult RequiredTrainingReport()
     {
       DateTime perfStart = DateTime.Now;
-      Dictionary<Member, CompositeTrainingStatus> model = new Dictionary<Member, CompositeTrainingStatus>();
-      IDictionary<SarUnit, IList<Member>> unitLookup = new Dictionary<SarUnit, IList<Member>>();
+      Dictionary<MemberRow, CompositeTrainingStatus> model = new Dictionary<MemberRow, CompositeTrainingStatus>();
+      IDictionary<UnitRow, IList<MemberRow>> unitLookup = new Dictionary<UnitRow, IList<MemberRow>>();
 
-      var members = (from um in this.db.UnitMemberships.Include("Person").Include("Status") where um.EndTime == null select um.Person).Distinct().OrderBy(x => x.LastName + ", " + x.FirstName);
+      var members = (from um in this.db.UnitMemberships.Include("Person").Include("Status") where um.EndTime == null select um.Member).Distinct().OrderBy(x => x.LastName + ", " + x.FirstName);
 
       var courses = (from c in this.db.TrainingCourses where c.WacRequired > 0 select c).OrderBy(x => x.DisplayName).ToList();
 
@@ -415,9 +412,9 @@ namespace Kcsara.Database.Web.Controllers
       ViewData["Title"] = "Training Expiration Report";
       ViewData["UnitTable"] = unitLookup;
 
-      foreach (Member m in members)
+      foreach (MemberRow m in members)
       {
-        UnitMembership[] units = m.GetActiveUnits();
+        UnitMembershipRow[] units = m.GetActiveUnits();
         if (units.Length == 0)
         {
           continue;
@@ -431,12 +428,12 @@ namespace Kcsara.Database.Web.Controllers
           //}
           if (!unitLookup.ContainsKey(u.Unit))
           {
-            unitLookup.Add(u.Unit, new List<Member>());
+            unitLookup.Add(u.Unit, new List<MemberRow>());
           }
           unitLookup[u.Unit].Add(m);
         }
-
-        model.Add(m, CompositeTrainingStatus.Compute(m, (from e in expirations where e.memberId == m.Id select e.Award), courses, DateTime.Now));
+        // TODO: reimplement
+   //     model.Add(m, CompositeTrainingStatus.Compute(m, (from e in expirations where e.memberId == m.Id select e.Award), courses, DateTime.Now));
       }
       ViewData["perf"] = (DateTime.Now - perfStart).TotalSeconds;
       return View(model);
@@ -454,69 +451,71 @@ namespace Kcsara.Database.Web.Controllers
     [HttpPost]
     public DataActionResult GetMemberExpirations(Guid id)
     {
-      if (!Permissions.IsUser && !Permissions.IsSelf(id)) return GetLoginError();
+      throw new NotImplementedException("reimplement");
+      //if (!Permissions.IsUser && !Permissions.IsSelf(id)) return GetLoginError();
 
-      ApiModels.CompositeExpiration model;
-      var courses = (from c in this.db.TrainingCourses where c.WacRequired > 0 select c).OrderBy(x => x.DisplayName).ToDictionary(f => f.Id, f => f);
+      //ApiModels.CompositeExpiration model;
+      //var courses = (from c in this.db.TrainingCourses where c.WacRequired > 0 select c).OrderBy(x => x.DisplayName).ToDictionary(f => f.Id, f => f);
 
-      Member m = this.db.Members.Include("ComputedAwards.Course").FirstOrDefault(f => f.Id == id);
+      //MemberRow m = this.db.Members.Include("ComputedAwards.Course").FirstOrDefault(f => f.Id == id);
 
-      CompositeTrainingStatus stats = CompositeTrainingStatus.Compute(m, courses.Values, DateTime.Now);
+      //CompositeTrainingStatus stats = CompositeTrainingStatus.Compute(m, courses.Values, DateTime.Now);
 
-      model = new ApiModels.CompositeExpiration
-      {
-        Goodness = stats.IsGood,
-        Expirations = stats.Expirations.Select(f => new ApiModels.TrainingExpiration
-        {
-          Completed = string.Format(GetDateFormat(), f.Value.Completed),
-          Course = new ApiModels.TrainingCourse
-          {
-            Id = f.Value.CourseId,
-            Required = courses[f.Value.CourseId].WacRequired,
-            Title = courses[f.Value.CourseId].DisplayName
-          },
-          Expires = string.Format(GetDateFormat(), f.Value.Expires),
-          Status = f.Value.Status.ToString(),
-          ExpiryText = f.Value.ToString()
-        }).OrderBy(f => f.Course.Title).ToArray()
-      };
+      //model = new ApiModels.CompositeExpiration
+      //{
+      //  Goodness = stats.IsGood,
+      //  Expirations = stats.Expirations.Select(f => new ApiModels.TrainingExpiration
+      //  {
+      //    Completed = string.Format(GetDateFormat(), f.Value.Completed),
+      //    Course = new ApiModels.TrainingCourse
+      //    {
+      //      Id = f.Value.CourseId,
+      //      Required = courses[f.Value.CourseId].WacRequired,
+      //      Title = courses[f.Value.CourseId].DisplayName
+      //    },
+      //    Expires = string.Format(GetDateFormat(), f.Value.Expires),
+      //    Status = f.Value.Status.ToString(),
+      //    ExpiryText = f.Value.ToString()
+      //  }).OrderBy(f => f.Course.Title).ToArray()
+      //};
 
 
-      return Data(model);
+      //return Data(model);
     }
 
     public ActionResult GetRequiredTrainingExpirations(Guid? id)
     {
-      if (!Permissions.IsUserOrLocal(Request)) return GetLoginError();
+      throw new NotImplementedException("reimplement");
+      //if (!Permissions.IsUserOrLocal(Request)) return GetLoginError();
 
-      XmlDocument doc = new XmlDocument();
-      XmlElement root = doc.CreateElement("Expirations");
-      root.SetAttribute("generated", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss"));
-      doc.AppendChild(root);
+      //XmlDocument doc = new XmlDocument();
+      //XmlElement root = doc.CreateElement("Expirations");
+      //root.SetAttribute("generated", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss"));
+      //doc.AppendChild(root);
 
-      var courses = (from c in this.db.TrainingCourses where c.WacRequired > 0 select c).OrderBy(x => x.DisplayName).ToList();
+      //var courses = (from c in this.db.TrainingCourses where c.WacRequired > 0 select c).OrderBy(x => x.DisplayName).ToList();
 
-      var source = this.db.GetActiveMembers(id, DateTime.Now, "ComputedAwards.Course");
+      //var source = this.db.GetActiveMembers(id, DateTime.Now, "ComputedAwards.Course");
 
-      foreach (Member m in source)
-      {
-        XmlElement person = doc.CreateElement("Member");
-        person.SetAttribute("id", m.Id.ToString());
-        person.SetAttribute("last", m.LastName);
-        person.SetAttribute("first", m.FirstName);
-        person.SetAttribute("dem", m.DEM);
-        person.SetAttribute("card", m.WacLevel.ToString());
-        root.AppendChild(person);
-        CompositeTrainingStatus stats = CompositeTrainingStatus.Compute(m, courses, DateTime.Now);
-        person.SetAttribute("current", stats.IsGood ? "yes" : "no");
-        foreach (TrainingCourse c in courses)
-        {
-          person.SetAttribute(Regex.Replace(c.DisplayName, "[^a-zA-Z0-9]", ""), stats.Expirations[c.Id].ToString().ToXmlAttr());
-        }
-      }
+      //foreach (MemberRow m in source)
+      //{
+      //  XmlElement person = doc.CreateElement("Member");
+      //  person.SetAttribute("id", m.Id.ToString());
+      //  person.SetAttribute("last", m.LastName);
+      //  person.SetAttribute("first", m.FirstName);
+      //  person.SetAttribute("dem", m.DEM);
+      //  person.SetAttribute("card", m.WacLevel.ToString());
+      //  root.AppendChild(person);
+      //  CompositeTrainingStatus stats = CompositeTrainingStatus.Compute(m, courses, DateTime.Now);
+      //  person.SetAttribute("current", stats.IsGood ? "yes" : "no");
+      //  foreach (TrainingCourseRow c in courses)
+      //  {
+      //    person.SetAttribute(Regex.Replace(c.DisplayName, "[^a-zA-Z0-9]", ""), stats.Expirations[c.Id].ToString().ToXmlAttr());
+      //  }
+      //}
 
 
-      return new ContentResult { Content = doc.OuterXml, ContentType = "application/xml" };
+      //return new ContentResult { Content = doc.OuterXml, ContentType = "application/xml" };
     }
 
     [Authorize(Roles = "cdb.admins")]
@@ -550,14 +549,14 @@ namespace Kcsara.Database.Web.Controllers
       // Run through the list, and pull out the earlier records for this person and course.
 
       Guid lastId = Guid.Empty;
-      IQueryable<ComputedTrainingAward> src = this.db.ComputedTrainingAwards.Include("Member").Include("Course").Include("Member.Memberships.Unit").Include("Member.Memberships.Status");
+      IQueryable<ComputedTrainingRecordRow> src = this.db.ComputedTrainingAwards.Include("Member").Include("Course").Include("Member.Memberships.Unit").Include("Member.Memberships.Status");
 
       var model = (from ta in src where ta.Course.Id == id select ta);
       if (!(bool)ViewData["expired"])
       {
         model = model.Where(ta => (ta.Expiry == null || ta.Expiry >= DateTime.Today));
       }
-      List<ComputedTrainingAward> awards = model.OrderBy(ta => ta.Member.LastName).ThenBy(f => f.Member.FirstName).ThenBy(f => f.Member.Id).ThenByDescending(f => f.Expiry).ToList();
+      List<ComputedTrainingRecordRow> awards = model.OrderBy(ta => ta.Member.LastName).ThenBy(f => f.Member.FirstName).ThenBy(f => f.Member.Id).ThenByDescending(f => f.Expiry).ToList();
 
       if (unit.HasValue)
       {
@@ -578,16 +577,16 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize(Roles = "cdb.users")]
     public ActionResult Eligible(Guid id)
     {
-      TrainingCourse course = (from c in this.db.TrainingCourses where c.Id == id select c).First();
+      TrainingCourseRow course = (from c in this.db.TrainingCourses where c.Id == id select c).First();
 
       ViewData["Course"] = course;
 
-      IEnumerable<Member> memberList = course.GetEligibleMembers(
+      IEnumerable<MemberRow> memberList = course.GetEligibleMembers(
           this.db.Members.Include("ComputedAwards").Include("ComputedAwards.Course").Include("ContactNumbers").OrderBy(f => f.LastName + f.FirstName),
           false);
 
       List<string> emailList = new List<string>();
-      foreach (Member m in memberList)
+      foreach (MemberRow m in memberList)
       {
         var emails = (from c in m.ContactNumbers where c.Type == "email" select c.Value);
         foreach (string email in emails)
@@ -619,24 +618,9 @@ namespace Kcsara.Database.Web.Controllers
 
     #endregion
 
-    protected override EventRoster AddNewRow(Guid id)
-    {
-      throw new NotImplementedException("reimplement");
-
-      //TrainingRoster row = new TrainingRoster { Id = id };
-      //this.db.TrainingRosters.Add(row);
-      //return row;
-    }
-
-    protected override void AddEventToContext(Training newEvent)
-    {
-      throw new NotImplementedException("reimplement");
-      //this.db.Trainings.Add(newEvent);
-    }
-
     private List<Guid> dirtyAwardMembers = new List<Guid>();
 
-    protected override void OnProcessingRosterInput(EventRoster row, FormCollection fields)
+    protected override void OnProcessingRosterInput(EventRosterRow row, FormCollection fields)
     {
       throw new NotImplementedException("reimplement");
 
@@ -721,7 +705,7 @@ namespace Kcsara.Database.Web.Controllers
       this.db.SaveChanges();
     }
 
-    protected override void OnDeletingRosterRow(EventRoster row)
+    protected override void OnDeletingRosterRow(EventRosterRow row)
     {
       throw new NotImplementedException("reimplement");
 
@@ -743,7 +727,7 @@ namespace Kcsara.Database.Web.Controllers
       //}
     }
 
-    protected override ActionResult InternalEdit(Training evt)
+    protected override ActionResult InternalEdit(TrainingRow evt)
     {
       var courses = (from c in this.db.TrainingCourses orderby c.DisplayName select c);
 
@@ -755,7 +739,7 @@ namespace Kcsara.Database.Web.Controllers
       return base.InternalEdit(evt);
     }
 
-    protected override void OnProcessingEventModel(Training evt, FormCollection fields)
+    protected override void OnProcessingEventModel(TrainingRow evt, FormCollection fields)
     {
       base.OnProcessingEventModel(evt, fields);
 
@@ -763,7 +747,7 @@ namespace Kcsara.Database.Web.Controllers
 
       if (fields["OfferedCourses"] != null)
       {
-        foreach (TrainingCourse course in (from c in this.db.TrainingCourses select c))
+        foreach (TrainingCourseRow course in (from c in this.db.TrainingCourses select c))
         {
           if (fields["OfferedCourses"].ToLower().Contains(course.Id.ToString()))
           {
@@ -852,7 +836,7 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
     {
       ViewData["PageTitle"] = "New Training Course";
 
-      TrainingCourse c = new TrainingCourse();
+      TrainingCourseRow c = new TrainingCourseRow();
       //UnitMembership s = new UnitMembership();
       //s.Person = (from p in this.db.Members where p.Id == personId select p).First();
       //s.Activated = DateTime.Today;
@@ -887,13 +871,13 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
     [Authorize(Roles = "cdb.admins")]
     public ActionResult EditCourse(Guid id)
     {
-      TrainingCourse c = GetCourse(id);
+      TrainingCourseRow c = GetCourse(id);
       ViewData["HideFrame"] = true;
 
       return InternalEditCourse(c);
     }
 
-    private ActionResult InternalEditCourse(TrainingCourse um)
+    private ActionResult InternalEditCourse(TrainingCourseRow um)
     {
       //SarUnit[] units = (from u in this.db.Units orderby u.DisplayName select u).ToArray();
 
@@ -921,12 +905,12 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
     public ActionResult EditCourse(Guid id, FormCollection fields)
     {
       ViewData["HideFrame"] = true;
-      TrainingCourse c = GetCourse(id);
+      TrainingCourseRow c = GetCourse(id);
       return InternalSaveCourse(c, fields);
     }
 
 
-    private ActionResult InternalSaveCourse(TrainingCourse c, FormCollection fields)
+    private ActionResult InternalSaveCourse(TrainingCourseRow c, FormCollection fields)
     {
       TryUpdateModel(c, new string[] { "DisplayName", "FullName", "OfferedFrom", "OfferedTo", "ValidMonths", "ShowOnCard", "WacRequired" });
 
@@ -950,27 +934,27 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
     [Authorize(Roles = "cdb.admins")]
     public ActionResult DeleteCourse(Guid id, FormCollection fields)
     {
-      TrainingCourse c = GetCourse(id);
+      TrainingCourseRow c = GetCourse(id);
       this.db.TrainingCourses.Remove(c);
       this.db.SaveChanges();
 
       return RedirectToAction("ClosePopup");
     }
 
-    private TrainingCourse GetCourse(Guid id)
+    private TrainingCourseRow GetCourse(Guid id)
     {
       return GetCourse(this.db.TrainingCourses, id);
     }
 
-    private TrainingCourse GetCourse(IEnumerable<TrainingCourse> context, Guid id)
+    private TrainingCourseRow GetCourse(IEnumerable<TrainingCourseRow> context, Guid id)
     {
-      List<TrainingCourse> courses = (from m in context where m.Id == id select m).ToList();
+      List<TrainingCourseRow> courses = (from m in context where m.Id == id select m).ToList();
       if (courses.Count != 1)
       {
         throw new ApplicationException(string.Format("{0} training courses found with ID = {1}", courses.Count, id.ToString()));
       }
 
-      TrainingCourse course = courses[0];
+      TrainingCourseRow course = courses[0];
       return course;
     }
 
@@ -1155,12 +1139,12 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
 
         foreach (var traineeRow in (from um in this.db.UnitMemberships.Include("Person.ComputedAwards.Course").Include("Person.ContactNumbers")
                                     where um.Unit.DisplayName == "ESAR" && um.Status.StatusName == "trainee" && um.EndTime == null
-                                    orderby um.Person.FirstName
-                                    orderby um.Person.LastName
-                                    select new { p = um.Person, a = um.Person.ComputedAwards, n = um.Person.ContactNumbers }))
+                                    orderby um.Member.FirstName
+                                    orderby um.Member.LastName
+                                    select new { p = um.Member, a = um.Member.ComputedAwards, n = um.Member.ContactNumbers }))
         {
           row++;
-          Member trainee = traineeRow.p;
+          MemberRow trainee = traineeRow.p;
           //trainee.ContactNumbers.Add(traineeRow.n);
           //trainee.ComputedAwards.Add(traineeRow.
           //trainee.ContactNumbers.Attach(traineeRow.n);
@@ -1220,32 +1204,11 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
       ms.Seek(0, SeekOrigin.Begin);
       return this.File(ms, "application/vnd.ms-excel", filename);
     }
-
-
-
-
-    protected override void RemoveEvent(Training oldEvent)
-    {
-      throw new NotImplementedException("reimplement");
-      //this.db.Trainings.Remove(oldEvent);
-    }
-
-    protected override void RemoveRosterRow(EventRoster row)
-    {
-      throw new NotImplementedException("reimplement");
-      //this.db.TrainingRosters.Remove(row);
-    }
-
-    protected override IQueryable<Training> GetEventSource()
-    {
-      throw new NotImplementedException("reimplement");
-//      return this.db.Trainings.Include("OfferedCourses").Include("Roster.TrainingAwards");
-    }
   }
 
   public class TrainingCourseSummary
   {
-    public TrainingCourse Course { get; set; }
+    public TrainingCourseRow Course { get; set; }
     public int CurrentCount { get; set; }
     public int UpcomingCount { get; set; }
     public int RecentCount { get; set; }

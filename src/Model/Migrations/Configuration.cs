@@ -1,21 +1,21 @@
 ﻿/*
- * Copyright 2012-2014 Matthew Cosand
+ * Copyright 2012-2015 Matthew Cosand
  */
-namespace Kcsar.Database.Model.Migrations
+namespace Kcsar.Database.Data.Migrations
 {
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<Kcsar.Database.Model.KcsarContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<Kcsar.Database.Data.KcsarContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(Kcsar.Database.Model.KcsarContext context)
+        protected override void Seed(Kcsar.Database.Data.KcsarContext context)
         {
             //  This method will be called after migrating to the latest version.
 

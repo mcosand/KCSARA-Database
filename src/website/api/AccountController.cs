@@ -4,23 +4,23 @@
 
 namespace Kcsara.Database.Web.api
 {
-  using Kcsar.Database.Model;
-  using SarMembership = Kcsar.Membership;
-  using Kcsara.Database.Web.api.Models;
-  using Kcsara.Database.Web.Services;
   using System;
   using System.Configuration;
+  using System.Data.SqlClient;
   using System.IO;
   using System.Linq;
   using System.Text.RegularExpressions;
   using System.Threading;
   using System.Web.Http;
   using System.Web.Profile;
-  using Model = Kcsar.Database.Model;
-  using log4net;
   using System.Web.Security;
+  using Kcsar.Database.Data;
+  using Kcsar.Database.Model;
   using Kcsara.Database.Services.Accounts;
-  using System.Data.SqlClient;
+  using Kcsara.Database.Web.api.Models;
+  using Kcsara.Database.Web.Services;
+  using log4net;
+  using SarMembership = Kcsar.Membership;
 
   [ModelValidationFilter]
   public class AccountController : BaseApiController
@@ -103,7 +103,7 @@ namespace Kcsara.Database.Web.api
       Guid memberId = Guid.Empty;
       var result = AddNewMember(data, () =>
       {
-        var member = db.PersonContact.Where(f => f.Type == "email" && f.Value == data.Email).Select(f => f.Person).Single();
+        var member = db.PersonContact.Where(f => f.Type == "email" && f.Value == data.Email).Select(f => f.Member).Single();
         memberId = member.Id;
 
         var now = DateTime.Now;
@@ -186,7 +186,7 @@ namespace Kcsara.Database.Web.api
 
       return AddNewMember(data, () =>
       {
-        Member newMember = new Member
+        MemberRow newMember = new MemberRow
         {
           FirstName = data.Firstname,
           MiddleName = data.Middlename,
@@ -200,9 +200,9 @@ namespace Kcsara.Database.Web.api
         };
         db.Members.Add(newMember);
 
-        PersonContact email = new PersonContact
+        MemberContactRow email = new MemberContactRow
         {
-          Person = newMember,
+          Member = newMember,
           Type = "email",
           Value = data.Email,
           Priority = 0
@@ -224,7 +224,7 @@ namespace Kcsara.Database.Web.api
       }, "new-account-verification.html");
     }
 
-    private string AddNewMember(AccountRegistration data, Func<Member> memberCallback, string noticeTemplate)
+    private string AddNewMember(AccountRegistration data, Func<MemberRow> memberCallback, string noticeTemplate)
     {
       if (string.IsNullOrWhiteSpace(data.Email))
         return "Email is required";

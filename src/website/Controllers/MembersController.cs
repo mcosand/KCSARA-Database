@@ -24,6 +24,7 @@ namespace Kcsara.Database.Web.Controllers
   using IO = System.IO;
   using Kcsara.Database.Web.Services;
   using System.Data.Entity.Validation;
+  using Kcsar.Database.Data;
 
   public class MembersController : BaseController
   {
@@ -73,7 +74,7 @@ namespace Kcsara.Database.Web.Controllers
 
       ViewData["HideMenu"] = Permissions.IsUser ? null : new object();
 
-      Member member = (from m in this.db.Members.Include("Memberships.Unit").Include("Memberships.Status")
+      MemberRow member = (from m in this.db.Members.Include("Memberships.Unit").Include("Memberships.Status")
               .Include("Addresses").Include("MissionRosters").Include("MissionRosters.Mission").Include("MissionRosters.Unit")
               .Include("TrainingRosters").Include("TrainingRosters.Training").Include("Animals").Include("Animals.Animal")
                        where m.Id == id
@@ -88,7 +89,8 @@ namespace Kcsara.Database.Web.Controllers
       }
 
       var courses = this.db.GetCoreCompetencyCourses();
-      ViewData["CoreStatus"] = CompositeTrainingStatus.Compute(member, courses, DateTime.Now).Expirations.ToDictionary(f => f.Value.CourseName, f => f.Value);
+ // TODO: reimplement
+      //     ViewData["CoreStatus"] = CompositeTrainingStatus.Compute(member, courses, DateTime.Now).Expirations.ToDictionary(f => f.Value.CourseName, f => f.Value);
       return View(member);
     }
 
@@ -97,7 +99,7 @@ namespace Kcsara.Database.Web.Controllers
     [AcceptVerbs(HttpVerbs.Get)]
     public ActionResult Awards(Guid id)
     {
-      Member member = GetMember(this.db.Members.Include("TrainingAwards").Include("TrainingAwards.Course"), id);
+      MemberRow member = GetMember(this.db.Members.Include("TrainingAwards").Include("TrainingAwards.Course"), id);
 
       return View(member);
     }
@@ -128,7 +130,7 @@ namespace Kcsara.Database.Web.Controllers
     {
       if (!Permissions.IsAdmin && !Permissions.IsInRole("esar.trainingdirectors")) return this.CreateLoginRedirect();
 
-      Member m = NewEsarTrainee_Internal(fields);
+      MemberRow m = NewEsarTrainee_Internal(fields);
       if (ModelState.IsValid)
       {
         this.db.SaveChanges();
@@ -144,7 +146,7 @@ namespace Kcsara.Database.Web.Controllers
       return View();
     }
 
-    private Member NewEsarTrainee_Internal(FormCollection fields)
+    private MemberRow NewEsarTrainee_Internal(FormCollection fields)
     {
       throw new NotImplementedException("reimplement");
 
@@ -272,7 +274,7 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize(Roles = "cdb.admins")]
     public ActionResult Delete(Guid id, FormCollection fields)
     {
-      Member m = GetMember(id);
+      MemberRow m = GetMember(id);
       this.db.Members.Remove(m);
       this.db.SaveChanges();
 
@@ -453,7 +455,7 @@ namespace Kcsara.Database.Web.Controllers
 
       ViewData["PageTitle"] = "New Member";
 
-      Member m = new Member();
+      MemberRow m = new MemberRow();
       m.WacLevel = WacLevel.None;
       Session["NewUserGuid"] = Guid.NewGuid();
       ViewData["NewUserGuid"] = Session["NewUserGuid"];
@@ -474,7 +476,7 @@ namespace Kcsara.Database.Web.Controllers
 
       ViewData["PageTitle"] = "New Member";
 
-      Member m = new Member();
+      MemberRow m = new MemberRow();
       this.db.Members.Add(m);
       return InternalSave(m, fields, RedirectToAction("Detail", new { id = m.Id }));
     }
@@ -486,11 +488,11 @@ namespace Kcsara.Database.Web.Controllers
       if (!(Permissions.IsAdmin || Permissions.IsMembershipForPerson(id))) return this.CreateLoginRedirect();
 
 
-      Member m = GetMember(id);
+      MemberRow m = GetMember(id);
       return InternalEdit(m);
     }
 
-    private ActionResult InternalEdit(Member m)
+    private ActionResult InternalEdit(MemberRow m)
     {
       ViewData["AdminEdit"] = Permissions.IsAdmin;
 
@@ -509,7 +511,7 @@ namespace Kcsara.Database.Web.Controllers
       return InternalSave(GetMember(id), fields, RedirectToAction("ClosePopup"));
     }
 
-    private ActionResult InternalSave(Member m, FormCollection fields, ActionResult successAction)
+    private ActionResult InternalSave(MemberRow m, FormCollection fields, ActionResult successAction)
     {
       if (Permissions.IsAdmin)
       {
@@ -557,7 +559,7 @@ namespace Kcsara.Database.Web.Controllers
 
       if (ids.Count == 0 && !Permissions.IsAdmin) return this.CreateLoginRedirect();
 
-      var x = this.db.Members.Where(GetSelectorPredicate<Member>(ids)).OrderBy(f => f.LastName + "," + f.FirstName);
+      var x = this.db.Members.Where(GetSelectorPredicate<MemberRow>(ids)).OrderBy(f => f.LastName + "," + f.FirstName);
 
       return View(x);
     }
@@ -610,7 +612,7 @@ namespace Kcsara.Database.Web.Controllers
         Session["photoPreview"] = images;
       }
 
-      var m = this.db.Members.Where(GetSelectorPredicate<Member>(images.Keys)).OrderBy(f => f.LastName + "," + f.FirstName);
+      var m = this.db.Members.Where(GetSelectorPredicate<MemberRow>(images.Keys)).OrderBy(f => f.LastName + "," + f.FirstName);
 
       return View(m);
     }
@@ -629,13 +631,13 @@ namespace Kcsara.Database.Web.Controllers
       {
         Dictionary<Guid, Bitmap> images = (Dictionary<Guid, Bitmap>)Session["photoPreview"];
 
-        var members = this.db.Members.Where(GetSelectorPredicate<Member>(images.Keys)).OrderBy(f => f.LastName + "," + f.FirstName);
+        var members = this.db.Members.Where(GetSelectorPredicate<MemberRow>(images.Keys)).OrderBy(f => f.LastName + "," + f.FirstName);
 
         string keepImages = (fields["keep"] ?? "").ToLowerInvariant();
 
         char[] badChars = IO.Path.GetInvalidFileNameChars();
 
-        foreach (Member m in members)
+        foreach (MemberRow m in members)
         {
           // Permissions check
           if (!(Permissions.IsAdmin || Permissions.IsInRole(new[] { "cdb.photos" }) || Permissions.IsMembershipForPerson(m.Id))) return this.CreateLoginRedirect();
@@ -705,7 +707,7 @@ namespace Kcsara.Database.Web.Controllers
 
       string query = q;
 
-      IEnumerable<Member> results = null;
+      IEnumerable<MemberRow> results = null;
       results = (from m in this.db.Members
                  where (m.FirstName + " " + m.LastName).ToLower().Contains(query)
                    || (m.LastName + ", " + m.FirstName).ToLower().Contains(query)
@@ -749,8 +751,8 @@ namespace Kcsara.Database.Web.Controllers
     {
       if (!Permissions.IsUser) return this.CreateLoginRedirect();
 
-      Member m = GetMember(this.db.Members.Include("Memberships").Include("Memberships.Status").Include("Memberships.Unit"), id);
-      UnitMembership[] ums = m.GetActiveUnits();
+      MemberRow m = GetMember(this.db.Members.Include("Memberships").Include("Memberships.Status").Include("Memberships.Unit"), id);
+      UnitMembershipRow[] ums = m.GetActiveUnits();
 
       return new JsonResult { Data = ums.Select(f => new { Id = f.Unit.Id }).ToArray(), JsonRequestBehavior = JsonRequestBehavior.AllowGet };
     }
@@ -800,9 +802,9 @@ namespace Kcsara.Database.Web.Controllers
       sb.AppendLine("<CardData>");
       sb.AppendLine("<Version>1</Version>");
       sb.AppendLine("<Data>");
-      foreach (Member member in members)
+      foreach (MemberRow member in members)
       {
-        UnitMembership[] units = member.GetActiveUnits();
+        UnitMembershipRow[] units = member.GetActiveUnits();
         if (units.Length == 0)
         {
           continue;
@@ -853,17 +855,17 @@ namespace Kcsara.Database.Web.Controllers
 
       var links = (from ol in this.db.AnimalOwners.Include("Animal").Include("Owner").Include("Owner.Memberships.Unit").Include("Owner.Memberships.Status") where ol.IsPrimary && ol.Ending == null orderby ol.Animal.Id select ol);
       Guid lastAnimalId = Guid.Empty;
-      foreach (AnimalOwner ownerLink in links)
+      foreach (AnimalOwnerRow ownerLink in links)
       {
-        Animal animal = ownerLink.Animal;
+        AnimalRow animal = ownerLink.Animal;
         if (animal.Id == lastAnimalId)
         {
           continue;
         }
         lastAnimalId = animal.Id;
 
-        Member owner = ownerLink.Owner;
-        UnitMembership[] units = owner.GetActiveUnits();
+        MemberRow owner = ownerLink.Owner;
+        UnitMembershipRow[] units = owner.GetActiveUnits();
         if (units.Length == 0)
         {
           continue;
@@ -910,29 +912,29 @@ namespace Kcsara.Database.Web.Controllers
     }
 
 
-    public static IEnumerable<Member> FilterPersonal(IEnumerable<Member> members)
+    public static IEnumerable<MemberRow> FilterPersonal(IEnumerable<MemberRow> members)
     {
-      foreach (Member m in members)
+      foreach (MemberRow m in members)
       {
         FilterPersonal(m);
       }
       return members;
     }
 
-    public static Member FilterPersonal(Member member)
+    public static MemberRow FilterPersonal(MemberRow member)
     {
       member.BirthDate = null;
       return member;
     }
 
-    private Member GetMember(Guid id)
+    private MemberRow GetMember(Guid id)
     {
       return GetMember(this.db.Members, id);
     }
 
-    private Member GetMember(IEnumerable<Member> context, Guid id)
+    private MemberRow GetMember(IEnumerable<MemberRow> context, Guid id)
     {
-      List<Member> members = (from m in context where m.Id == id select m).ToList();
+      List<MemberRow> members = (from m in context where m.Id == id select m).ToList();
       if (members.Count != 1)
       {
         throw new ApplicationException(string.Format("{0} members found with ID = {1}", members.Count, id.ToString()));
@@ -944,7 +946,7 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize]
     public DataActionResult GetMemberData(Guid id)
     {
-      Member m = GetMember(id);
+      MemberRow m = GetMember(id);
       if (!Permissions.IsAdmin) { FilterPersonal(m); }
       return Data(m);
     }
@@ -956,8 +958,8 @@ namespace Kcsara.Database.Web.Controllers
     {
       ViewData["PageTitle"] = "New Unit Membership";
 
-      UnitMembership s = new UnitMembership();
-      s.Person = (from p in this.db.Members where p.Id == personId select p).First();
+      UnitMembershipRow s = new UnitMembershipRow();
+      s.Member = (from p in this.db.Members where p.Id == personId select p).First();
       s.Activated = DateTime.Today;
 
       Session.Add("NewMembershipGuid", s.Id);
@@ -978,8 +980,8 @@ namespace Kcsara.Database.Web.Controllers
 
       ViewData["PageTitle"] = "New Unit Membership";
 
-      UnitMembership um = new UnitMembership();
-      um.Person = (from p in this.db.Members where p.Id == personId select p).First();
+      UnitMembershipRow um = new UnitMembershipRow();
+      um.Member = (from p in this.db.Members where p.Id == personId select p).First();
       this.db.UnitMemberships.Add(um);
       return InternalSaveMembership(um, fields);
     }
@@ -989,14 +991,14 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize(Roles = "cdb.admins")]
     public ActionResult EditMembership(Guid id)
     {
-      UnitMembership m = GetUnitMembership(id);
+      UnitMembershipRow m = GetUnitMembership(id);
       ViewData["showEditWarning"] = true;
       return InternalEditMembership(m);
     }
 
-    private ActionResult InternalEditMembership(UnitMembership um)
+    private ActionResult InternalEditMembership(UnitMembershipRow um)
     {
-      SarUnit[] units = (from u in this.db.Units orderby u.DisplayName select u).ToArray();
+      UnitRow[] units = (from u in this.db.Units orderby u.DisplayName select u).ToArray();
 
       Guid selectedUnit = (um.Unit != null) ? um.Unit.Id : Guid.Empty;
 
@@ -1021,32 +1023,32 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize(Roles = "cdb.admins")]
     public ActionResult EditMembership(Guid id, FormCollection fields)
     {
-      UnitMembership um = GetUnitMembership(id);
+      UnitMembershipRow um = GetUnitMembership(id);
       return InternalSaveMembership(um, fields);
     }
 
 
-    private ActionResult InternalSaveMembership(UnitMembership um, FormCollection fields)
+    private ActionResult InternalSaveMembership(UnitMembershipRow um, FormCollection fields)
     {
       TryUpdateModel(um, new string[] { "Activated", "Comments" });
 
       Guid unitId = new Guid(fields["Unit"]);
-      SarUnit unit = (from u in this.db.Units where u.Id == unitId select u).First();
+      UnitRow unit = (from u in this.db.Units where u.Id == unitId select u).First();
       um.Unit = unit;
 
       Guid statusId = new Guid(fields["Status"]);
-      UnitStatus status = (from s in this.db.UnitStatusTypes where s.Id == statusId select s).First();
+      UnitStatusRow status = (from s in this.db.UnitStatusTypes where s.Id == statusId select s).First();
       um.Status = status;
 
       Guid personId = new Guid(fields["Person"]);
-      Member person = (from m in this.db.Members where m.Id == personId select m).First();
-      um.Person = person;
+      MemberRow person = (from m in this.db.Members where m.Id == personId select m).First();
+      um.Member = person;
 
       if (ModelState.IsValid)
       {
         this.db.SaveChanges();
         TempData["message"] = "Saved";
-        UpdateMemberships(um.Person.Id);
+        UpdateMemberships(um.Member.Id);
 
         return RedirectToAction("ClosePopup");
       }
@@ -1056,8 +1058,8 @@ namespace Kcsara.Database.Web.Controllers
 
     private void UpdateMemberships(Guid personId)
     {
-      UnitMembership lastUm = null;
-      foreach (Kcsar.Database.Model.UnitMembership um in (from u in this.db.UnitMemberships.Include("Person").Include("Unit") where u.Person.Id == personId select u).OrderBy(f => f.Unit.Id).ThenBy(f => f.Activated))
+      UnitMembershipRow lastUm = null;
+      foreach (UnitMembershipRow um in (from u in this.db.UnitMemberships.Include("Person").Include("Unit") where u.Member.Id == personId select u).OrderBy(f => f.Unit.Id).ThenBy(f => f.Activated))
       {
         if (lastUm != null)
         {
@@ -1096,8 +1098,8 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize(Roles = "cdb.admins")]
     public ActionResult DeleteMembership(Guid id, FormCollection fields)
     {
-      UnitMembership um = GetUnitMembership(id);
-      Guid personId = um.Person.Id;
+      UnitMembershipRow um = GetUnitMembership(id);
+      Guid personId = um.Member.Id;
 
       this.db.UnitMemberships.Remove(um);
       this.db.SaveChanges();
@@ -1106,20 +1108,20 @@ namespace Kcsara.Database.Web.Controllers
       return RedirectToAction("ClosePopup");
     }
 
-    private UnitMembership GetUnitMembership(Guid id)
+    private UnitMembershipRow GetUnitMembership(Guid id)
     {
       return GetUnitMembership(this.db.UnitMemberships.Include("Person").Include("Unit").Include("Status"), id);
     }
 
-    private UnitMembership GetUnitMembership(IEnumerable<UnitMembership> context, Guid id)
+    private UnitMembershipRow GetUnitMembership(IEnumerable<UnitMembershipRow> context, Guid id)
     {
-      List<UnitMembership> memberships = (from m in context where m.Id == id select m).ToList();
+      List<UnitMembershipRow> memberships = (from m in context where m.Id == id select m).ToList();
       if (memberships.Count != 1)
       {
         throw new ApplicationException(string.Format("{0} memberships found with ID = {1}", memberships.Count, id.ToString()));
       }
 
-      UnitMembership membership = memberships[0];
+      UnitMembershipRow membership = memberships[0];
       return membership;
     }
 
@@ -1134,8 +1136,8 @@ namespace Kcsara.Database.Web.Controllers
 
       ViewData["PageTitle"] = "New Address";
 
-      PersonAddress address = new PersonAddress { State = "WA" };
-      address.Person = (from p in this.db.Members where p.Id == personId select p).First();
+      MemberAddressRow address = new MemberAddressRow { State = "WA" };
+      address.Member = (from p in this.db.Members where p.Id == personId select p).First();
 
       Session.Add("NewAddressGuid", address.Id);
       ViewData["NewAddressGuid"] = Session["NewAddressGuid"];
@@ -1157,8 +1159,8 @@ namespace Kcsara.Database.Web.Controllers
 
       ViewData["PageTitle"] = "New Address";
 
-      PersonAddress address = new PersonAddress();
-      address.Person = (from p in this.db.Members where p.Id == personId select p).First();
+      MemberAddressRow address = new MemberAddressRow();
+      address.Member = (from p in this.db.Members where p.Id == personId select p).First();
       this.db.PersonAddress.Add(address);
       return InternalSaveAddress(address, fields);
     }
@@ -1168,14 +1170,14 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize]
     public ActionResult EditAddress(Guid id)
     {
-      PersonAddress address = (from a in this.db.PersonAddress.Include("Person") where a.Id == id select a).First();
+      MemberAddressRow address = (from a in this.db.PersonAddress.Include("Person") where a.Id == id select a).First();
 
-      if (!Permissions.IsAdmin && !Permissions.IsSelf(address.Person.Id)) return this.CreateLoginRedirect();
+      if (!Permissions.IsAdmin && !Permissions.IsSelf(address.Member.Id)) return this.CreateLoginRedirect();
 
       return InternalEditAddress(address);
     }
 
-    private ActionResult InternalEditAddress(PersonAddress address)
+    private ActionResult InternalEditAddress(MemberAddressRow address)
     {
       ViewData["State"] = new SelectList(new string[] { "AL", "AK", "AS", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FM", "FL", "GA", "GU", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MH", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "MP", "OH", "OK", "OR", "PW", "PA", "PR", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VI", "VA", "WA", "WV", "WI", "WY" }, address.State.ToUpperInvariant());
 
@@ -1188,21 +1190,21 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize]
     public ActionResult EditAddress(Guid id, FormCollection fields)
     {
-      PersonAddress address = (from a in this.db.PersonAddress.Include("Person") where a.Id == id select a).First();
+      MemberAddressRow address = (from a in this.db.PersonAddress.Include("Person") where a.Id == id select a).First();
 
-      if (!Permissions.IsAdmin && !Permissions.IsSelf(address.Person.Id)) return this.CreateLoginRedirect();
+      if (!Permissions.IsAdmin && !Permissions.IsSelf(address.Member.Id)) return this.CreateLoginRedirect();
 
       return InternalSaveAddress(address, fields);
     }
 
 
-    private ActionResult InternalSaveAddress(PersonAddress address, FormCollection fields)
+    private ActionResult InternalSaveAddress(MemberAddressRow address, FormCollection fields)
     {
       TryUpdateModel(address, new string[] { "Street", "City", "State", "Zip", "Type" });
 
       Guid personId = new Guid(fields["Person"]);
-      Member person = (from m in this.db.Members where m.Id == personId select m).First();
-      address.Person = person;
+      MemberRow person = (from m in this.db.Members where m.Id == personId select m).First();
+      address.Member = person;
       address.Quality = 0;
       address.Location = null;
 
@@ -1221,9 +1223,9 @@ namespace Kcsara.Database.Web.Controllers
     public ActionResult DeleteAddress(Guid id)
     {
       ViewData["HideFrame"] = true;
-      PersonAddress address = (from a in this.db.PersonAddress.Include("Person") where a.Id == id select a).First();
+      MemberAddressRow address = (from a in this.db.PersonAddress.Include("Person") where a.Id == id select a).First();
 
-      if (!Permissions.IsAdmin && !Permissions.IsSelf(address.Person.Id)) return this.CreateLoginRedirect();
+      if (!Permissions.IsAdmin && !Permissions.IsSelf(address.Member.Id)) return this.CreateLoginRedirect();
 
       return View(address);
     }
@@ -1233,9 +1235,9 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize]
     public ActionResult DeleteAddress(Guid id, FormCollection fields)
     {
-      PersonAddress address = (from a in this.db.PersonAddress.Include("Person") where a.Id == id select a).First();
+      MemberAddressRow address = (from a in this.db.PersonAddress.Include("Person") where a.Id == id select a).First();
 
-      if (!Permissions.IsAdmin && !Permissions.IsSelf(address.Person.Id)) return this.CreateLoginRedirect();
+      if (!Permissions.IsAdmin && !Permissions.IsSelf(address.Member.Id)) return this.CreateLoginRedirect();
 
       this.db.PersonAddress.Remove(address);
       this.db.SaveChanges();
@@ -1252,11 +1254,11 @@ namespace Kcsara.Database.Web.Controllers
       List<MemberContactView> model = null;
 
       model = (from c in this.db.PersonContact
-               where c.Person.Id == id
+               where c.Member.Id == id
                select new MemberContactView
                {
                  Id = c.Id,
-                 MemberId = c.Person.Id,
+                 MemberId = c.Member.Id,
                  Type = c.Type,
                  SubType = c.Subtype,
                  Value = c.Value,
@@ -1272,10 +1274,10 @@ namespace Kcsara.Database.Web.Controllers
       var promotee = (from c in this.db.PersonContact.Include("Person") where c.Id == id select c).FirstOrDefault();
       // TODO: Error if the contact isn't found.
 
-      if (!Permissions.IsAdmin && !Permissions.IsSelf(promotee.Person.Id) && !Permissions.IsMembershipForPerson(promotee.Person.Id)) return GetLoginError();
+      if (!Permissions.IsAdmin && !Permissions.IsSelf(promotee.Member.Id) && !Permissions.IsMembershipForPerson(promotee.Member.Id)) return GetLoginError();
 
       promotee.Priority = 0;
-      foreach (var contact in (from c in this.db.PersonContact where c.Person.Id == promotee.Person.Id && c.Type == promotee.Type && c.Priority == 0 select c))
+      foreach (var contact in (from c in this.db.PersonContact where c.Member.Id == promotee.Member.Id && c.Type == promotee.Type && c.Priority == 0 select c))
       {
         contact.Priority = 1;
       }
@@ -1289,7 +1291,7 @@ namespace Kcsara.Database.Web.Controllers
         {
           foreach (var err in entry.ValidationErrors)
           {
-            errors.Add(new SubmitError { Error = err.ErrorMessage, Property = err.PropertyName, Id = new[] { ((IModelObject)entry.Entry.Entity).Id } });
+            errors.Add(new SubmitError { Error = err.ErrorMessage, Property = err.PropertyName, Id = new[] { ((IModelObjectRow)entry.Entry.Entity).Id } });
           }
         }
       }
@@ -1303,12 +1305,12 @@ namespace Kcsara.Database.Web.Controllers
 
       List<SubmitError> errors = new List<SubmitError>();
 
-      PersonContact model = (from c in this.db.PersonContact.Include("Person") where c.Id == view.Id select c).FirstOrDefault();
+      MemberContactRow model = (from c in this.db.PersonContact.Include("Person") where c.Id == view.Id select c).FirstOrDefault();
       if (model == null)
       {
-        model = new PersonContact();
+        model = new MemberContactRow();
         model.Priority = 0;
-        if ((from c in this.db.PersonContact where c.Person.Id == view.MemberId && c.Type == view.Type select c.Id).Count() > 0)
+        if ((from c in this.db.PersonContact where c.Member.Id == view.MemberId && c.Type == view.Type select c.Id).Count() > 0)
         {
           model.Priority = 1;
         }
@@ -1320,7 +1322,7 @@ namespace Kcsara.Database.Web.Controllers
         if (model.Type != view.Type) model.Type = view.Type;
         if (model.Subtype != view.SubType) model.Subtype = view.SubType;
         if (model.Value != view.Value) model.Value = view.Value;
-        if (model.Person == null || model.Person.Id != view.MemberId) model.Person = (from m in this.db.Members where m.Id == view.MemberId select m).FirstOrDefault();
+        if (model.Member == null || model.Member.Id != view.MemberId) model.Member = (from m in this.db.Members where m.Id == view.MemberId select m).FirstOrDefault();
 
         this.db.SaveChanges();
 
@@ -1333,7 +1335,7 @@ namespace Kcsara.Database.Web.Controllers
         {
           foreach (var err in entry.ValidationErrors)
           {
-            errors.Add(new SubmitError { Error = err.ErrorMessage, Property = err.PropertyName, Id = new[] { ((IModelObject)entry.Entry.Entity).Id } });
+            errors.Add(new SubmitError { Error = err.ErrorMessage, Property = err.PropertyName, Id = new[] { ((IModelObjectRow)entry.Entry.Entity).Id } });
           }
         }
       }
@@ -1354,11 +1356,11 @@ namespace Kcsara.Database.Web.Controllers
         return GetLoginError();
       }
 
-      var match = (from c in this.db.PersonContact where c.Id == id select new { Id = c.Person.Id, Type = c.Type }).First();
+      var match = (from c in this.db.PersonContact where c.Id == id select new { Id = c.Member.Id, Type = c.Type }).First();
 
-      var contacts = (from c in this.db.PersonContact.Include("Person") where c.Person.Id == match.Id && c.Type == match.Type select c).ToList();
+      var contacts = (from c in this.db.PersonContact.Include("Person") where c.Member.Id == match.Id && c.Type == match.Type select c).ToList();
 
-      if (!Permissions.IsAdmin && !Permissions.IsSelf(contacts[0].Person.Id) && !Permissions.IsMembershipForPerson(contacts[0].Person.Id)) return GetLoginError();
+      if (!Permissions.IsAdmin && !Permissions.IsSelf(contacts[0].Member.Id) && !Permissions.IsMembershipForPerson(contacts[0].Member.Id)) return GetLoginError();
 
       // Get a hold of the contact to delete.
       var contact = contacts.Where(f => f.Id == id).Single();
@@ -1383,7 +1385,7 @@ namespace Kcsara.Database.Web.Controllers
     [HttpPost]
     public DataActionResult GetContactInfoSubTypes(string type)
     {
-      return Data(PersonContact.GetSubTypes(type));
+      return Data(MemberContactRow.GetSubTypes(type));
     }
 
     [HttpPost]
@@ -1407,31 +1409,31 @@ namespace Kcsara.Database.Web.Controllers
 
       foreach (var row in geographies)
       {
-        //Guid personRef = (Guid)row.PersonReference.EntityKey.EntityKeyValues.Single().Value;
+        //Guid personRef = (Guid)row.MemberReference.EntityKey.EntityKeyValues.Single().Value;
         //if (personRef == lastPerson || !members.ContainsKey(personRef))
-        if (row.Person.Id == lastPerson)
+        if (row.Member.Id == lastPerson)
         {
           continue;
         }
         //lastPerson = personRef;
-        lastPerson = row.Person.Id;
+        lastPerson = row.Member.Id;
 
         if (row.Geo == lastGeo)
         {
-          view.Description = PersonDescription(row.Person, this.db) + view.Description;
+          view.Description = PersonDescription(row.Member, this.db) + view.Description;
           continue;
         }
         lastGeo = row.Geo;
 
         view = GeographyView.BuildGeographyView(row);
         string[] parts = view.Description.Split('\n');
-        view.Description = PersonDescription(row.Person, this.db) + string.Join("<br/>", parts.Skip(1));
+        view.Description = PersonDescription(row.Member, this.db) + string.Join("<br/>", parts.Skip(1));
         model.Items.Add(view);
       }
       return Data(model);
     }
 
-    private string PersonDescription(Member m, IKcsarContext ctx)
+    private string PersonDescription(MemberRow m, IKcsarContext ctx)
     {
       return string.Format("{0} [{1}] <a href=\"{2}\" target=\"_blank\">Detail</a><br/>",
                       m.FullName,
@@ -1465,7 +1467,7 @@ namespace Kcsara.Database.Web.Controllers
 
       //var courses = (from c in this.db.TrainingCourses where c.Unit.Id == esar && c.Categories.Contains("leadership") select c);
 
-      //var responses = this.db.MissionRosters.WhereIn(f => f.Person.Id, m).Where(f => f.InternalRole == "field" || f.InternalRole == "ol").Where(f => f.TimeIn != null && f.TimeOut != null).OrderBy(f => f.Person.LastName).ThenBy(f => f.Person.FirstName).ThenBy(f => f.Person.Id).ThenBy(f => f.TimeIn);
+      //var responses = this.db.MissionRosters.WhereIn(f => f.Member.Id, m).Where(f => f.InternalRole == "field" || f.InternalRole == "ol").Where(f => f.TimeIn != null && f.TimeOut != null).OrderBy(f => f.Member.LastName).ThenBy(f => f.Member.FirstName).ThenBy(f => f.Member.Id).ThenBy(f => f.TimeIn);
 
       //Guid lastId = Guid.Empty;
       //Dictionary<DateTime, int> hours = new Dictionary<DateTime, int>();
@@ -1477,8 +1479,8 @@ namespace Kcsara.Database.Web.Controllers
       //List<TrainingAward> records = null;
       //foreach (var row in responses)
       //{
-      //  //Guid personId = (Guid)row.PersonReference.EntityKey.EntityKeyValues.First().Value;
-      //  Guid personId = row.Person.Id;
+      //  //Guid personId = (Guid)row.MemberReference.EntityKey.EntityKeyValues.First().Value;
+      //  Guid personId = row.Member.Id;
       //  if (personId != lastId)
       //  {
       //    if (lastId != Guid.Empty)
@@ -1633,7 +1635,7 @@ namespace Kcsara.Database.Web.Controllers
       //      }
 
       //      DateTime missionCutoff = DateTime.Today.AddYears(-2);
-      //      int missions = this.db.MissionRosters.Where(f => f.Person.Id == m.Id && f.TimeIn > missionCutoff && f.InternalRole != "Responder").Count();
+      //      int missions = this.db.MissionRosters.Where(f => f.Member.Id == m.Id && f.TimeIn > missionCutoff && f.InternalRole != "Responder").Count();
 
       //      if (missions == 0)
       //      {
@@ -1831,8 +1833,8 @@ namespace Kcsara.Database.Web.Controllers
       //                UnitStatus = member.Memberships.Where(g => g.Unit.DisplayName == f).OrderByDescending(g => g.Activated).First().Status.StatusName,
       //                IsOldNovice = (wacRank == "Novice" && member.WacLevel == WacLevel.Novice && member.WacLevelDate.AddYears(1) < now),
       //                TrainingCurrent = trainingStatus.IsGood,
-      //                MissionCount = this.db.MissionRosters.Where(g => g.Person.Id == member.Id && g.Mission.StartTime > eighteenMonths).Select(g => g.Mission.Id).Distinct().Count(),
-      //                TrainingCount = this.db.TrainingRosters.Where(g => g.Person.Id == member.Id && g.Training.StartTime > eighteenMonths).Select(g => g.Training.Id).Distinct().Count()
+      //                MissionCount = this.db.MissionRosters.Where(g => g.Member.Id == member.Id && g.Mission.StartTime > eighteenMonths).Select(g => g.Mission.Id).Distinct().Count(),
+      //                TrainingCount = this.db.TrainingRosters.Where(g => g.Member.Id == member.Id && g.Training.StartTime > eighteenMonths).Select(g => g.Training.Id).Distinct().Count()
       //              }));
       //    }
       //  }
@@ -1853,8 +1855,8 @@ namespace Kcsara.Database.Web.Controllers
       //        WacLevel = WacLevel.None.ToString(),
       //        UnitStatus = member.Memberships.Where(g => g.Unit.DisplayName == f).OrderByDescending(g => g.Activated).First().Status.StatusName,
       //        TrainingCurrent = null,
-      //        MissionCount = this.db.MissionRosters.Where(g => g.Person.Id == member.Id && g.Mission.StartTime > eighteenMonths).Select(g => g.Mission.Id).Distinct().Count(),
-      //        TrainingCount = this.db.TrainingRosters.Where(g => g.Person.Id == member.Id && g.Training.StartTime > eighteenMonths).Select(g => g.Training.Id).Distinct().Count()
+      //        MissionCount = this.db.MissionRosters.Where(g => g.Member.Id == member.Id && g.Mission.StartTime > eighteenMonths).Select(g => g.Mission.Id).Distinct().Count(),
+      //        TrainingCount = this.db.TrainingRosters.Where(g => g.Member.Id == member.Id && g.Training.StartTime > eighteenMonths).Select(g => g.Training.Id).Distinct().Count()
       //      }));
       //}
 

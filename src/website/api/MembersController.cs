@@ -19,13 +19,14 @@ namespace Kcsara.Database.Web.api
   using System.IO;
   using Kcsara.Database.Web.Services;
   using System.Web.Helpers;
-  using Model = Kcsar.Database.Model;
+  using Data = Kcsar.Database.Data;
   using log4net;
+  using Kcsar.Database.Model;
   
   [ModelValidationFilter]
   public class MembersController : BaseApiController
   {
-    public MembersController(Model.IKcsarContext db, ILog log)
+    public MembersController(Data.IKcsarContext db, ILog log)
       : base(db, log)
     { }
 
@@ -75,7 +76,7 @@ namespace Kcsara.Database.Web.api
       var appDocs = db.Units
           .Where(f => applyingToUnits.Contains(f.Id))
           .SelectMany(f => f.Documents.Where(g => (
-              (g.Type & Model.UnitDocumentType.Application) == Model.UnitDocumentType.Application)
+              (g.Type & UnitDocumentType.Application) == UnitDocumentType.Application)
               && (g.ForMembersYounger == null || !knowAge || g.ForMembersYounger > yearsOld)
               && (g.ForMembersOlder == null || !knowAge || g.ForMembersOlder <= yearsOld)))
           .Select(MemberUnitDocument.UnitDocumentConversion);
@@ -130,13 +131,13 @@ namespace Kcsara.Database.Web.api
     [HttpPost]
     public bool SignUnitDocument(Guid id, Guid docId, Guid? mDocId = null)
     {
-      return _SetUnitDocumentState(id, docId, mDocId, MemberUnitDocumentActions.UserReview, Model.DocumentStatus.Complete, Permissions.IsSelf(id));
+      return _SetUnitDocumentState(id, docId, mDocId, MemberUnitDocumentActions.UserReview, DocumentStatus.Complete, Permissions.IsSelf(id));
     }
 
     [HttpPost]
     public bool SubmitUnitDocument(Guid id, Guid docId, Guid? mDocId = null)
     {
-      return _SetUnitDocumentState(id, docId, mDocId, MemberUnitDocumentActions.Submit, Model.DocumentStatus.Submitted, Permissions.IsSelf(id));
+      return _SetUnitDocumentState(id, docId, mDocId, MemberUnitDocumentActions.Submit, DocumentStatus.Submitted, Permissions.IsSelf(id));
     }
 
     [HttpPost]
@@ -147,14 +148,14 @@ namespace Kcsara.Database.Web.api
           docId,
           mDocId,
           approve ? MemberUnitDocumentActions.Complete : MemberUnitDocumentActions.Reject,
-          approve ? Model.DocumentStatus.Complete : Model.DocumentStatus.NotStarted,
+          approve ? DocumentStatus.Complete : DocumentStatus.NotStarted,
           false);
     }
 
-    private bool _SetUnitDocumentState(Guid id, Guid docId, Guid? mDocId, MemberUnitDocumentActions allowedActions, Model.DocumentStatus targetState, bool fromUser)
+    private bool _SetUnitDocumentState(Guid id, Guid docId, Guid? mDocId, MemberUnitDocumentActions allowedActions, DocumentStatus targetState, bool fromUser)
     {
       MemberUnitDocument doc = null;
-      Model.MemberUnitDocument modelDoc = null;
+      Data.MemberUnitDocumentRow modelDoc = null;
       if (mDocId.HasValue)
       {
         modelDoc = db.MemberUnitDocuments.Include("Document.Unit", "Member").Single(f => f.Id == mDocId);
@@ -164,11 +165,11 @@ namespace Kcsara.Database.Web.api
       {
         var unitDoc = db.UnitDocuments.Include("Unit").Single(f => f.Id == docId);
         var member = db.Members.Single(f => f.Id == id);
-        modelDoc = new Model.MemberUnitDocument
+        modelDoc = new Data.MemberUnitDocumentRow
         {
           Member = member,
           Document = unitDoc,
-          Status = Model.DocumentStatus.NotStarted,
+          Status = DocumentStatus.NotStarted,
         };
         member.UnitDocuments.Add(modelDoc);
         doc = db.UnitDocuments.Where(f => f.Id == docId).Select(MemberUnitDocument.UnitDocumentConversion).Single();
@@ -215,7 +216,7 @@ namespace Kcsara.Database.Web.api
         {
           if (string.IsNullOrWhiteSpace(reason)) ThrowSubmitErrors(new[] { new Web.Model.SubmitError { Error = "Reason not specified", Property = "reason" } });
 
-          Model.SensitiveInfoAccess infoAccess = new Model.SensitiveInfoAccess
+          Data.SensitiveInfoAccessRow infoAccess = new Data.SensitiveInfoAccessRow
           {
             Owner = db.Members.Single(f => f.Id == id),
             Action = "Read Medical Information",
@@ -279,11 +280,11 @@ namespace Kcsara.Database.Web.api
         ThrowAuthError();
 
 
-      Model.Member member = db.Members.Include("MedicalInfo", "EmergencyContacts").Single(f => f.Id == data.Member.Id);
-      Model.MemberMedical medical = member.MedicalInfo;
+      Data.MemberRow member = db.Members.Include("MedicalInfo", "EmergencyContacts").Single(f => f.Id == data.Member.Id);
+      Data.MemberMedicalRow medical = member.MedicalInfo;
       if (medical == null)
       {
-        medical = new Model.MemberMedical();
+        medical = new Data.MemberMedicalRow();
         member.MedicalInfo = medical;
       }
 
@@ -296,7 +297,7 @@ namespace Kcsara.Database.Web.api
       List<EmergencyContact> desiredContacts = new List<EmergencyContact>(data.Contacts);
       foreach (var contact in desiredContacts)
       {
-        var cData = new Model.EmergencyContactData
+        var cData = new EmergencyContactData
         {
           Name = contact.Name,
           Relation = contact.Relation,
@@ -304,7 +305,7 @@ namespace Kcsara.Database.Web.api
           Number = contact.Number
         };
 
-        Model.MemberEmergencyContact memberContact;
+        Data.MemberEmergencyContactRow memberContact;
         if (existingContacts.TryGetValue(contact.Id, out memberContact))
         {
           existingContacts.Remove(contact.Id);
@@ -325,7 +326,7 @@ namespace Kcsara.Database.Web.api
 
         if (memberContact == null)
         {
-          memberContact = new Model.MemberEmergencyContact();
+          memberContact = new Data.MemberEmergencyContactRow();
           member.EmergencyContacts.Add(memberContact);
         }
 

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2008-2014 Matthew Cosand
+ * Copyright 2008-2015 Matthew Cosand
  */
 
 namespace Kcsara.Database.Web.Controllers
@@ -8,17 +8,14 @@ namespace Kcsara.Database.Web.Controllers
   using System.Collections.Generic;
   using System.Configuration;
   using System.Data.Entity;
-  using System.Data.Entity.SqlServer;
-  using System.Data.Entity.Validation;
-  using System.Globalization;
   using System.Linq;
   using System.Web.Mvc;
+  using Kcsar.Database.Data;
+  using Kcsar.Database.Data.Events;
   using Kcsar.Database.Model;
-  using Kcsar.Database.Model.Events;
   using Kcsara.Database.Web.Model;
-  using ApiModels = Kcsara.Database.Web.api.Models;
 
-  public partial class MissionsController : SarEventController<Mission>
+  public partial class MissionsController : SarEventController<MissionRow>
   {
     public MissionsController(IKcsarContext db) : base(db) { }
 
@@ -173,12 +170,12 @@ namespace Kcsara.Database.Web.Controllers
     public ActionResult EditSubject(Guid id)
     {
       // MissionLog log = (from a in this.db.MissionLog.Include("Mission") where a.Id == id select a).First();
-      Subject subject = (from s in this.db.Subjects where s.Id == id select s).First();
+      SubjectRow subject = (from s in this.db.Subjects where s.Id == id select s).First();
 
       return InternalEditSubject(subject);
     }
 
-    private ActionResult InternalEditSubject(Subject subject)
+    private ActionResult InternalEditSubject(SubjectRow subject)
     {
       ViewData["Gender"] = new SelectList(Enum.GetNames(typeof(Gender)), subject.Gender.ToString());
       return View("EditSubject", subject);
@@ -190,7 +187,7 @@ namespace Kcsara.Database.Web.Controllers
     {
       //  MissionLog log = (from a in this.db.MissionLog.Include("Mission") where a.Id == id select a).First();
       //  return InternalSaveLog(log, fields);
-      Subject subject = (from s in this.db.Subjects where s.Id == id select s).First();
+      SubjectRow subject = (from s in this.db.Subjects where s.Id == id select s).First();
       return InternalSaveSubject(subject, fields);
     }
 
@@ -234,7 +231,7 @@ namespace Kcsara.Database.Web.Controllers
     [AcceptVerbs(HttpVerbs.Post)]
     public ActionResult EditDetails(Guid id, FormCollection fields)
     {
-      EventDetails details = GetDetails(id);
+      EventDetailRow details = GetDetails(id);
 
       TryUpdateModel(details, new[] { "Clouds", "RainInches", "RainType", "SnowType", "SnowInches", "TempHigh", "TempLow", "Visibility", "WindHigh", "WindLow" });
       TryUpdateModel(details, new[] { "Terrain", "Topography", "GroundCoverDensity", "GroundCoverHeight", "TimberType", "WaterType", "ElevationLow", "ElevationHigh" });
@@ -253,7 +250,7 @@ namespace Kcsara.Database.Web.Controllers
       return EditDetails(details.Event.Id);
     }
 
-    private EventDetails GetDetails(Guid missionId)
+    private EventDetailRow GetDetails(Guid missionId)
     {
       throw new NotImplementedException("reimplement");
 
@@ -359,7 +356,7 @@ namespace Kcsara.Database.Web.Controllers
     //    return View();
     //}
 
-    private ActionResult InternalSaveSubject(Subject subject, FormCollection fields)
+    private ActionResult InternalSaveSubject(SubjectRow subject, FormCollection fields)
     {
       //try
       //{
@@ -408,7 +405,7 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize(Roles = "cdb.missioneditors")]
     public ActionResult DeleteSubject(Guid id)
     {
-      SubjectGroupLink link = (from l in this.db.SubjectGroupLinks.Include(f => f.Group.Event).Include(f => f.Subject) where l.Id == id select l).First();
+      SubjectGroupLinkRow link = (from l in this.db.SubjectGroupLinks.Include(f => f.Group.Event).Include(f => f.Subject) where l.Id == id select l).First();
       return View(link);
     }
 
@@ -423,15 +420,15 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize(Roles = "cdb.missioneditors")]
     public ActionResult DeleteSubject(Guid id, FormCollection fields)
     {
-      SubjectGroupLink link = (from l in this.db.SubjectGroupLinks.Include(f => f.Group.Event).Include(f => f.Group.SubjectLinks).Include(f => f.Subject.GroupLinks) where l.Id == id select l).First();
-      SarEvent m = link.Group.Event;
+      SubjectGroupLinkRow link = (from l in this.db.SubjectGroupLinks.Include(f => f.Group.Event).Include(f => f.Group.SubjectLinks).Include(f => f.Subject.GroupLinks) where l.Id == id select l).First();
+      SarEventRow m = link.Group.Event;
 
       if (link.Subject.GroupLinks.Count == 1)
       {
         this.db.Subjects.Remove(link.Subject);
       }
 
-      SubjectGroup group = link.Group;
+      SubjectGroupRow group = link.Group;
       if (link.Group.SubjectLinks.Count == 1)
       {
         this.db.SubjectGroups.Remove(link.Group);
@@ -455,7 +452,7 @@ namespace Kcsara.Database.Web.Controllers
     [AcceptVerbs(HttpVerbs.Get)]
     public ActionResult MoveSubjectOrder(Guid id, int direction)
     {
-      SubjectGroupLink link = (from l in this.db.SubjectGroupLinks.Include(f => f.Group.Event) where l.Id == id select l).First();
+      SubjectGroupLinkRow link = (from l in this.db.SubjectGroupLinks.Include(f => f.Group.Event) where l.Id == id select l).First();
 
       foreach (var x in (from l in this.db.SubjectGroupLinks where l.Group.Id == link.Group.Id && l.Number == (link.Number + direction) select l))
       {
@@ -480,9 +477,9 @@ namespace Kcsara.Database.Web.Controllers
     [AcceptVerbs(HttpVerbs.Get)]
     public ActionResult MoveSubjectToGroup(Guid id, int newGroup)
     {
-      SubjectGroupLink link = (from l in this.db.SubjectGroupLinks.Include(f => f.Group.Event) where l.Id == id select l).First();
-      SarEvent m = link.Group.Event;
-      SubjectGroup oldGroup = link.Group;
+      SubjectGroupLinkRow link = (from l in this.db.SubjectGroupLinks.Include(f => f.Group.Event) where l.Id == id select l).First();
+      SarEventRow m = link.Group.Event;
+      SubjectGroupRow oldGroup = link.Group;
 
       link.Group = (from b in this.db.SubjectGroups where b.Event.Id == link.Group.Event.Id && b.Number == newGroup select b).FirstOrDefault();
       if (link.Group == null)
@@ -507,25 +504,25 @@ namespace Kcsara.Database.Web.Controllers
       return RedirectToAction("Subjects", new { id = m.Id });
     }
 
-    private void RenumberSubjects(SubjectGroup group)
+    private void RenumberSubjects(SubjectGroupRow group)
     {
       var navProp = this.db.Entry(group).Reference(f => f.SubjectLinks);
       if (!navProp.IsLoaded) navProp.Load();
 
       int number = 1;
-      foreach (SubjectGroupLink link in group.SubjectLinks.OrderBy(f => f.Number))
+      foreach (SubjectGroupLinkRow link in group.SubjectLinks.OrderBy(f => f.Number))
       {
         link.Number = number++;
       }
     }
 
-    private void RenumberSubjectGroups(SarEvent mission)
+    private void RenumberSubjectGroups(SarEventRow mission)
     {
       //var navProp = this.db.SubjectGroups.l.Entry(mission).Reference(f => f.SubjectGroups);
       //if (!navProp.IsLoaded) navProp.Load();
 
       int number = 1;
-      foreach (SubjectGroup group in mission.SubjectGroups.OrderBy(f => f.Number))
+      foreach (SubjectGroupRow group in mission.SubjectGroups.OrderBy(f => f.Number))
       {
         group.Number = number++;
       }
@@ -538,7 +535,7 @@ namespace Kcsara.Database.Web.Controllers
     public ActionResult EditSummary(Guid id)
     {
       ViewData["missionId"] = id;
-      EventDetails details = GetDetails(id);
+      EventDetailRow details = GetDetails(id);
 
       return View(details);
     }
@@ -547,7 +544,7 @@ namespace Kcsara.Database.Web.Controllers
     [AcceptVerbs(HttpVerbs.Post)]
     public ActionResult EditSummary(Guid id, FormCollection fields)
     {
-      EventDetails details = GetDetails(id);
+      EventDetailRow details = GetDetails(id);
 
       //try
       //{
@@ -573,7 +570,7 @@ namespace Kcsara.Database.Web.Controllers
     public ActionResult EditExpenses(Guid id)
     {
       ViewData["missionId"] = id;
-      EventDetails details = GetDetails(id);
+      EventDetailRow details = GetDetails(id);
 
       return View(details);
     }
@@ -582,7 +579,7 @@ namespace Kcsara.Database.Web.Controllers
     [AcceptVerbs(HttpVerbs.Post)]
     public ActionResult EditExpenses(Guid id, FormCollection fields)
     {
-      EventDetails details = GetDetails(id);
+      EventDetailRow details = GetDetails(id);
 
       //try
       //{
@@ -609,7 +606,7 @@ namespace Kcsara.Database.Web.Controllers
     public ActionResult ResponderEmails(Guid id, Guid? unitId)
     {
       ViewData["missionId"] = id;
-      SarEvent m = this.GetEvent(GetEventSource(), id);
+      SarEventRow m = this.GetEvent(this.db.Events.OfType<MissionRow>(), id);
 
       ViewData["title"] = string.Format("Responder Emails :: {0} {1}", m.StateNumber, m.Title);
 
@@ -742,7 +739,7 @@ namespace Kcsara.Database.Web.Controllers
       //return InternalEditLog(log);
     }
 
-    private ActionResult InternalEditLog(EventLog log)
+    private ActionResult InternalEditLog(EventLogRow log)
     {
       return View("EditLog", log);
     }
@@ -757,7 +754,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
 
-    private ActionResult InternalSaveLog(EventLog log, FormCollection fields)
+    private ActionResult InternalSaveLog(EventLogRow log, FormCollection fields)
     {
       throw new NotImplementedException("reimplement");
 
@@ -860,7 +857,7 @@ namespace Kcsara.Database.Web.Controllers
       return this.UserInRole("cdb.missioneditors");
     }
 
-    protected override void OnProcessingEventModel(Mission evt, FormCollection fields)
+    protected override void OnProcessingEventModel(MissionRow evt, FormCollection fields)
     {
       base.OnProcessingEventModel(evt, fields);
       TryUpdateModel(evt, new string[] { "CountyNumber" }, fields.ToValueProvider());
@@ -870,7 +867,7 @@ namespace Kcsara.Database.Web.Controllers
       }
     }
 
-    protected override ActionResult InternalEdit(Mission evt)
+    protected override ActionResult InternalEdit(MissionRow evt)
     {
       ViewData["MissionType"] = new MultiSelectList(ConfigurationManager.AppSettings["EnumMissionType"].Split(','), (evt.MissionType ?? "").Split(','));
       return base.InternalEdit(evt);
@@ -879,74 +876,72 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize(Roles = "cdb.users")]
     public override ActionResult List(string id)
     {
-      throw new NotImplementedException("reimplement");
+      int year;
+      bool useDate = true;
+      if ((id ?? "").Equals("all", StringComparison.OrdinalIgnoreCase))
+      {
+        useDate = false;
+      }
+      year = int.TryParse(id, out year) ? year : DateTime.Today.Year;
 
-      //int year;
-      //bool useDate = true;
-      //if ((id ?? "").Equals("all", StringComparison.OrdinalIgnoreCase))
-      //{
-      //  useDate = false;
-      //}
-      //year = int.TryParse(id, out year) ? year : DateTime.Today.Year;
+      Guid? unit = null;
+      if (!string.IsNullOrEmpty(Request.Params["unit"]))
+      {
+        unit = new Guid(Request.Params["unit"]);
+      }
 
-      //Guid? unit = null;
-      //if (!string.IsNullOrEmpty(Request.Params["unit"]))
-      //{
-      //  unit = new Guid(Request.Params["unit"]);
-      //}
+      IEnumerable<EventSummaryView> model;
+      DateTime eon = new DateTime(1940, 1, 1);
+      var yearsData = this.db.Events.OfType<MissionRow>().Where(f => f.StartTime > eon).Select(f => f.StartTime.Year).Distinct().OrderByDescending(f => f).ToArray();
+      ViewData["years"] = yearsData;
+      if (yearsData.Length > 0)
+      {
+        ViewData["minYear"] = this.db.Events.OfType<MissionRow>().Where(f => f.StartTime > eon).Min(f => f.StartTime).Year;
+        ViewData["maxYear"] = this.db.Events.OfType<MissionRow>().Max(f => f.StartTime).Year;
+      }
+      else
+      {
+        ViewData["minYear"] = DateTime.Now.Year;
+        ViewData["maxYear"] = DateTime.Now.Year;
+      }
 
-      //IEnumerable<EventSummaryView> model;
-      //DateTime eon = new DateTime(1940, 1, 1);
-      //var yearsData = this.db.Missions.Where(f => f.StartTime > eon).Select(f => f.StartTime.Year).Distinct().OrderByDescending(f => f).ToArray();
-      //ViewData["years"] = yearsData;
-      //if (yearsData.Length > 0)
-      //{
-      //  ViewData["minYear"] = this.db.Missions.Where(f => f.StartTime > eon).Min(f => f.StartTime).Year;
-      //  ViewData["maxYear"] = this.db.Missions.Max(f => f.StartTime).Year;
-      //}
-      //else
-      //{
-      //  ViewData["minYear"] = DateTime.Now.Year;
-      //  ViewData["maxYear"] = DateTime.Now.Year;
-      //}
+      IQueryable<MissionRow> source = this.db.Events.OfType<MissionRow>();
+      if (unit.HasValue)
+      {
+        source = source.Where(f => f.Units.Any(g => g.MemberUnitId == unit.Value));
+      }
 
-      //IQueryable<Mission> source = this.db.Missions;
-      //if (unit.HasValue)
-      //{
-      //  source = source.Where(f => f.Roster.Any(g => g.Unit.Id == unit.Value));
-      //}
+      if (useDate)
+      {
+        DateTime left = new DateTime(year, 1, 1);
+        DateTime right = new DateTime(year + 1, 1, 1);
+        source = source.Where(f => f.StartTime > left && f.StartTime < right);
+        ViewData["year"] = year;
+      }
 
-      //if (useDate)
-      //{
-      //  DateTime left = new DateTime(year, 1, 1);
-      //  DateTime right = new DateTime(year + 1, 1, 1);
-      //  source = source.Where(f => f.StartTime > left && f.StartTime < right);
-      //  ViewData["year"] = year;
-      //}
-
-      //DateTime recent = DateTime.Now.AddHours(-12);
-      //model = (from m in source
-      //         join mr in this.db.MissionRosters on m.Id equals mr.Mission.Id into Joined
-      //         from mr in Joined.DefaultIfEmpty()
-      //         select m).Distinct().Select(
-      //          m => new EventSummaryView
-      //          {
-      //            Id = m.Id,
-      //            Title = m.Title,
-      //            Number = m.StateNumber,
-      //            StartTime = m.StartTime,
-      //            Persons = m.Roster.Select(f => f.Person.Id).Distinct().Count(),
-      //            Hours = m.Roster.Sum(f => SqlFunctions.DateDiff("minute", f.TimeIn, f.TimeOut)) / 60.0,
-      //            Miles = m.Roster.Sum(f => f.Miles),
-      //            IsActive = (m.StopTime == null || m.StopTime > recent)
-      //          }).OrderByDescending(f => f.StartTime).ToArray();
+      DateTime recent = DateTime.Now.AddHours(-12);
+      model = (from m in source
+               //join mr in this.db.MissionRosters on m.Id equals mr.Mission.Id into Joined
+               //from mr in Joined.DefaultIfEmpty()
+               select m).Distinct().Select(
+                m => new EventSummaryView
+                {
+                  Id = m.Id,
+                  Title = m.Title,
+                  Number = m.StateNumber,
+                  StartTime = m.StartTime,
+                  Persons = m.Participants.Count(),
+                  Hours = m.Roster.Sum(f => f.Hours),
+                  Miles = m.Roster.Sum(f => f.Miles),
+                  IsActive = (m.StopTime == null || m.StopTime > recent)
+                }).OrderByDescending(f => f.StartTime).ToArray();
 
 
-      //ViewData["unit"] = UnitsController.GetUnitSelectList(this.db, unit);
+      ViewData["unit"] = UnitsController.GetUnitSelectList(this.db, unit);
 
-      //ViewData["filtered"] = unit.HasValue;
+      ViewData["filtered"] = unit.HasValue;
 
-      //return View("List", model);
+      return View("List", model);
     }
 
     /// <summary>
@@ -1123,7 +1118,7 @@ namespace Kcsara.Database.Web.Controllers
 
     }
 
-    protected override void OnDeletingRosterRow(EventRoster row)
+    protected override void OnDeletingRosterRow(EventRosterRow row)
     {
       throw new NotImplementedException("reimplement");
 
@@ -1135,7 +1130,7 @@ namespace Kcsara.Database.Web.Controllers
       //base.OnDeletingRosterRow(row);
     }
 
-    protected override void OnProcessingRosterInput(EventRoster row, FormCollection fields)
+    protected override void OnProcessingRosterInput(EventRosterRow row, FormCollection fields)
     {
       throw new NotImplementedException("reimplement");
 
@@ -1224,21 +1219,6 @@ namespace Kcsara.Database.Web.Controllers
       //}
 
 
-    }
-
-    protected override EventRoster AddNewRow(Guid id)
-    {
-      throw new NotImplementedException("reimplement");
-
-      //MissionRoster row = new MissionRoster { Id = id };
-      //this.db.MissionRosters.Add(row);
-      //return row;
-    }
-
-    protected override void RemoveRosterRow(EventRoster row)
-    {
-      throw new NotImplementedException("reimplement");
-      //this.db.MissionRosters.Remove(row);
     }
 
     [Authorize(Roles = "cdb.users")]
@@ -1591,24 +1571,6 @@ namespace Kcsara.Database.Web.Controllers
       //  }
       //}
       //return Data(rows.ToArray());
-    }
-
-    protected override IQueryable<Mission> GetEventSource()
-    {
-      throw new NotImplementedException("reimplement");
-//      return this.db.Missions.Include(f => f.Roster.Select(g => g.Unit)).Include(f => f.Roster.Select(g => g.Animals)).Include(f => f.Roster.Select(g => g.Person.Animals.Select(h => h.Animal)));
-    }
-
-    protected override void AddEventToContext(Mission newEvent)
-    {
-      throw new NotImplementedException("reimplement");
-//      this.db.Missions.Add(newEvent);
-    }
-
-    protected override void RemoveEvent(Mission oldEvent)
-    {
-      throw new NotImplementedException("reimplement");
-//      this.db.Missions.Remove(oldEvent);
     }
   }
 }

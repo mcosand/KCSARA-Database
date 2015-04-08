@@ -1,20 +1,21 @@
 ﻿/*
  * Copyright 2012-2014 Matthew Cosand
  */
-using Kcsar.Database.Model;
-using Kcsara.Database.Web.Model;
-using log4net;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
-using Kcsara.Database.Services;
 
 namespace Kcsara.Database.Web.api
 {
+  using System;
+  using System.Collections.Generic;
+  using System.Linq;
+  using System.Net;
+  using System.Net.Http;
+  using System.Web.Http;
+  using Kcsar.Database.Data;
+  using Kcsara.Database.Services;
+  using Kcsara.Database.Web.Model;
+  using log4net;
+  using Newtonsoft.Json;
+
   public abstract class BaseApiController : ApiController, IDisposable
   {
     //static BaseApiController()

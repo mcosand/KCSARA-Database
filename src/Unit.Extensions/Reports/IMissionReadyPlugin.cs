@@ -4,14 +4,14 @@
 namespace Kcsara.Database.Services.Reports
 {
   using System.Collections.Generic;
-  using Kcsar.Database.Model;
+  using Kcsar.Database.Data;
   using Kcsara.Database.Extensions;
 
   [ExtensionInterface]
   public interface IMissionReadyPlugin
   {
     IEnumerable<string> GetHeadersAfter(MissionReadyColumns column);
-    IEnumerable<string> GetColumnsAfter(MissionReadyColumns column, Member member);
+    IEnumerable<string> GetColumnsAfter(MissionReadyColumns column, MemberRow member);
   }
 
   public enum MissionReadyColumns

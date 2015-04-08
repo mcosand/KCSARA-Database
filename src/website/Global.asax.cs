@@ -1,26 +1,26 @@
 ﻿/*
- * Copyright 2008-2014 Matthew Cosand
+ * Copyright 2008-2015 Matthew Cosand
  */
-using System;
-using System.Security.Principal;
-using System.Threading;
-using System.Web.Http;
-using System.Web.Mvc;
-using System.Web.Optimization;
-using System.Web.Routing;
-using System.Web.Security;
-using Kcsar.Database.Model;
-using Kcsara.Database.Extensions;
-using Kcsara.Database.Services;
-using Kcsara.Database.Web.api;
-using Kcsara.Database.Web.Controllers;
-using log4net;
-using Ninject;
-using Ninject.Web.Common;
-using Kcsara.Database.Services.Accounts;
 
 namespace Kcsara.Database.Web
 {
+  using System;
+  using System.Security.Principal;
+  using System.Threading;
+  using System.Web.Http;
+  using System.Web.Mvc;
+  using System.Web.Optimization;
+  using System.Web.Routing;
+  using System.Web.Security;
+  using Kcsar.Database.Data;
+  using Kcsara.Database.Extensions;
+  using Kcsara.Database.Services;
+  using Kcsara.Database.Services.Accounts;
+  using Kcsara.Database.Web.api;
+  using log4net;
+  using Ninject;
+  using Ninject.Web.Common;
+
   // Note: For instructions on enabling IIS6 or IIS7 classic mode, 
   // visit http://go.microsoft.com/?LinkId=9394801
 
@@ -69,7 +69,7 @@ namespace Kcsara.Database.Web
       FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
       RouteConfig.RegisterRoutes(RouteTable.Routes);
       BundleConfig.RegisterBundles(BundleTable.Bundles);
-      Kcsar.Database.Model.Document.StorageRoot = Server.MapPath("~/content/auth/documents/");
+      DocumentRow.StorageRoot = Server.MapPath("~/content/auth/documents/");
     }
 
     protected override Ninject.IKernel CreateKernel()

@@ -15,8 +15,8 @@ namespace Kcsara.Database.Web.Controllers
   using System.Web.Mvc;
   using System.Xml;
   using System.Xml.Linq;
+  using Kcsar.Database.Data.Events;
   using Kcsar.Database.Model;
-  using Kcsar.Database.Model.Events;
   using Kcsara.Database.Geo;
   using Kcsara.Database.Web.Model;
   using Microsoft.SqlServer.Types;
@@ -375,9 +375,9 @@ namespace Kcsara.Database.Web.Controllers
       Guid lastMission = Guid.Empty;
       int excluded = 0;
 
-      Dictionary<SarEvent, GeographyView> views = new Dictionary<SarEvent, GeographyView>();
+      Dictionary<SarEventRow, GeographyView> views = new Dictionary<SarEventRow, GeographyView>();
 
-      foreach (EventGeography geo in query.ToList().OrderBy(f => f.Event.StartTime).ThenBy(f => f.Event.StateNumber).ThenBy(f => f.EventId).ThenBy(f => f.Geography.STDimension()).ThenByDescending(f => f.Kind))
+      foreach (EventGeographyRow geo in query.ToList().OrderBy(f => f.Event.StartTime).ThenBy(f => f.Event.StateNumber).ThenBy(f => f.EventId).ThenBy(f => f.Geography.STDimension()).ThenByDescending(f => f.Kind))
       {
         if (geo.EventId == lastMission)
         {

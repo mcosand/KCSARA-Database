@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2014 Matthew Cosand
+ * Copyright 2014-2015 Matthew Cosand
  */
 namespace Kcsara.Database.Web
 {
@@ -9,7 +9,7 @@ namespace Kcsara.Database.Web
   using System.IO;
   using System.Linq;
   using System.Reflection;
-  using Kcsar.Database.Model;
+  using Kcsar.Database.Data;
   using Kcsara.Database.Extensions;
   using log4net;
   using Ninject;
@@ -33,7 +33,7 @@ namespace Kcsara.Database.Web
     {
       var extensionTypes = ExtensionList.GetExtensionInterfaces();
 
-      IDbSet<SarUnit> units = this.db.Units;
+      IDbSet<UnitRow> units = this.db.Units;
       int unitCount = 0;
       try
       {
@@ -70,7 +70,7 @@ namespace Kcsara.Database.Web
       }
     }
 
-    public T For<T>(SarUnit unit)
+    public T For<T>(UnitRow unit)
     {
       Dictionary<Type, Type> unitExtentions;
       if (this.extensions.TryGetValue(unit.Id, out unitExtentions))

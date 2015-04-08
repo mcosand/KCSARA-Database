@@ -1,17 +1,13 @@
 ﻿/*
- * Copyright 2012-2014 Matthew Cosand
+ * Copyright 2012-2015 Matthew Cosand
  */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
-using Kcsar.Database.Model;
-using log4net;
 
 namespace Kcsara.Database.Web.api
 {
+  using System;
+  using Kcsar.Database.Data;
+  using log4net;
+
   public class TrainingDocumentsController : DocumentsController
   {
     public TrainingDocumentsController(IKcsarContext db, ILog log)

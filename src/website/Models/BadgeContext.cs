@@ -1,18 +1,13 @@
 ﻿/*
- * Copyright 2008-2014 Matthew Cosand
+ * Copyright 2008-2015 Matthew Cosand
  */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
 namespace Kcsara.Database.Web.Model
 {
-    using Kcsar.Database.Model;
+  using Kcsar.Database.Data;
 
-    public class BadgeContext
+  public class BadgeContext
     {
-        public Member Member { get; set; }
+        public MemberRow Member { get; set; }
         public bool IsPassport { get; set; }
     }
 }

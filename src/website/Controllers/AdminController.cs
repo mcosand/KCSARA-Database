@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2009-2014 Matthew Cosand
+ * Copyright 2009-2015 Matthew Cosand
  */
 namespace Kcsara.Database.Web.Controllers
 {
@@ -7,22 +7,21 @@ namespace Kcsara.Database.Web.Controllers
   using System.Collections.Generic;
   using System.Configuration;
   using System.Data.Entity;
+  using System.Data.Entity.Validation;
   using System.Data.SqlClient;
   using System.Globalization;
   using System.Linq;
   using System.Text;
-  using System.Text.RegularExpressions;
   using System.Web;
   using System.Web.Mvc;
   using System.Web.Profile;
   using System.Web.Security;
-  using Kcsar.Database.Model;
+  using Kcsar.Database.Data;
   using Kcsar.Membership;
   using Kcsara.Database.Geo;
   using Kcsara.Database.Web.Model;
-  using ApiModels = Kcsara.Database.Web.api.Models;
-  using System.Data.Entity.Validation;
   using log4net;
+  using ApiModels = Kcsara.Database.Web.api.Models;
 
   public partial class AdminController : BaseController
   {
@@ -79,7 +78,7 @@ namespace Kcsara.Database.Web.Controllers
 
         result.AppendLine("Starting DataStore Migrations ...");
         result.AppendLine(dataStore);
-        Kcsar.Database.Model.Migrations.Migrator.UpdateDatabase(dataStore);
+        Kcsar.Database.Data.Migrations.Migrator.UpdateDatabase(dataStore);
         result.AppendLine("Migrations complete.");
 
         KcsarContext testContext = new KcsarContext();
@@ -181,7 +180,7 @@ namespace Kcsara.Database.Web.Controllers
       KcsarUserProfile profile = ProfileBase.Create(acct) as KcsarUserProfile;
       profile.LinkKey = id.ToString();
       profile.Save();
-      Member m = this.db.Members.Where(x => x.Id == id).FirstOrDefault();
+      MemberRow m = this.db.Members.Where(x => x.Id == id).FirstOrDefault();
       if (m != null && string.IsNullOrWhiteSpace(m.Username))
       {
         m.Username = acct;
@@ -370,7 +369,7 @@ namespace Kcsara.Database.Web.Controllers
       var groups = Kcsar.Membership.RoleProvider.GetRoles().OrderBy(x => x.Name);
       List<GroupView> model = new List<GroupView>();
       Guid[] owners = groups.SelectMany(f => f.Owners).Distinct().ToArray();
-      var ownerDetails = (owners.Length > 0) ? this.db.Members.Where(GetSelectorPredicate<Member>(owners)).ToDictionary(f => f.Id, f => f) : new Dictionary<Guid, Member>();
+      var ownerDetails = (owners.Length > 0) ? this.db.Members.Where(GetSelectorPredicate<MemberRow>(owners)).ToDictionary(f => f.Id, f => f) : new Dictionary<Guid, MemberRow>();
 
       foreach (var group in groups)
       {
@@ -378,7 +377,7 @@ namespace Kcsara.Database.Web.Controllers
         List<ApiModels.MemberSummary> ownersView = new List<ApiModels.MemberSummary>();
         foreach (Guid owner in group.Owners)
         {
-          Member m = ownerDetails[owner];
+          MemberRow m = ownerDetails[owner];
           ownersView.Add(new ApiModels.MemberSummary
           {
             Name = m.FullName,
@@ -753,7 +752,7 @@ namespace Kcsara.Database.Web.Controllers
         Guid unitId = UnitsController.ResolveUnit(this.db.Units, unit).Id;
         query = query.Where(f => f.Unit.Id == unitId);
       }
-      List<string> desiredUsers = query.Select(f => f.Person.Username ?? ("*" + f.Person.FirstName + " " + f.Person.LastName)).ToList();
+      List<string> desiredUsers = query.Select(f => f.Member.Username ?? ("*" + f.Member.FirstName + " " + f.Member.LastName)).ToList();
       List<string> usersToRemove = new List<string>();
       List<string> forceKeep = new List<string>();
 
@@ -945,11 +944,11 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize(Roles = "cdb.admins")]
     public ActionResult FixUnitMemberships()
     {
-      Kcsar.Database.Model.UnitMembership lastUm = null;
+      UnitMembershipRow lastUm = null;
 
-      foreach (Kcsar.Database.Model.UnitMembership um in (from u in this.db.UnitMemberships.Include("Person").Include("Unit") select u).OrderBy(f => f.Person.Id).ThenBy(f => f.Unit.Id).ThenBy(f => f.Activated))
+      foreach (UnitMembershipRow um in (from u in this.db.UnitMemberships.Include("Member").Include("Unit") select u).OrderBy(f => f.Member.Id).ThenBy(f => f.Unit.Id).ThenBy(f => f.Activated))
       {
-        if (lastUm != null && um.Person.Id == lastUm.Person.Id && um.Unit.Id == lastUm.Unit.Id)
+        if (lastUm != null && um.Member.Id == lastUm.Member.Id && um.Unit.Id == lastUm.Unit.Id)
         {
           lastUm.EndTime = um.Activated;
         }
@@ -966,14 +965,14 @@ namespace Kcsara.Database.Web.Controllers
 
       string data = "<table>";
       int pageSize = 40;
-      foreach (var addr in (from a in this.db.PersonAddress.Include("Person") where a.Quality == (int)GeocodeQuality.Unknown select a).OrderBy(f => f.Person.LastName).ThenBy(f => f.Person.FirstName).Skip(id.Value * pageSize).Take(pageSize))
+      foreach (var addr in (from a in this.db.PersonAddress.Include("Member") where a.Quality == (int)GeocodeQuality.Unknown select a).OrderBy(f => f.Member.LastName).ThenBy(f => f.Member.FirstName).Skip(id.Value * pageSize).Take(pageSize))
       {
         string oldAddr = addr.Street + "<br/>" + addr.City + " " + addr.State + " " + addr.Zip;
 
         GeographyServices.RefineAddressWithGeography(addr);
 
         data += string.Format("<tr><td><b>{0}</b></td><td style=\"white-space:nowrap\">{1}</td><td>{2}</td></tr>",
-                            addr.Person.ReverseName,
+                            addr.Member.ReverseName,
                             oldAddr,
                             string.Format("Quality: {0}<br/>{2}",
                                 addr.Quality,
@@ -1038,7 +1037,7 @@ namespace Kcsara.Database.Web.Controllers
       }
       string result = "";
 
-      SarUnit unit = UnitsController.ResolveUnit(this.db.Units, id);
+      UnitRow unit = UnitsController.ResolveUnit(this.db.Units, id);
       if (string.IsNullOrEmpty(group))
       {
         group = UnitNameAsGroupName(unit.DisplayName) + ".members";
@@ -1046,7 +1045,7 @@ namespace Kcsara.Database.Web.Controllers
 
       var unitMembers = (from m in this.db.UnitMemberships
                          where m.Unit.Id == unit.Id && m.EndTime == null && m.Status.GetsAccount
-                         select m.Person).OrderBy(f => f.LastName).ThenBy(f => f.FirstName).Distinct().ToArray();
+                         select m.Member).OrderBy(f => f.LastName).ThenBy(f => f.FirstName).Distinct().ToArray();
 
       var usersInGroup = Roles.GetUsersInRole(group).ToList();
 
@@ -1168,7 +1167,7 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize(Roles = "cdb.admins")]
     public DataActionResult GetInactiveMembersWithAccounts()
     {
-      Member[] model;
+      MemberRow[] model;
       model = this.db.Members
           .Where(f => f.Username != null && !f.Memberships.Any(g => g.EndTime == null && g.Status.IsActive == true))
           .ToArray();

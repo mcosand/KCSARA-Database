@@ -1,12 +1,12 @@
 ﻿/*
- * Copyright 2010-2014 Matthew Cosand
+ * Copyright 2010-2015 Matthew Cosand
  */
 namespace Kcsara.Database.Web.Controllers
 {
   using System;
   using System.Collections.Generic;
   using System.Web.Mvc;
-  using Kcsar.Database.Model;
+  using Kcsar.Database.Data;
   using Kcsara.Database.Geo;
 
   [Flags]

@@ -1,20 +1,18 @@
 ﻿/*
- * Copyright 2008-2014 Matthew Cosand
+ * Copyright 2008-2015 Matthew Cosand
  */
 
 namespace Kcsara.Database.Web.Controllers
 {
-  using System.Collections.Generic;
   using System;
-  using System.Web.Mvc;
-  using Kcsar.Database.Model;
-  using Kcsara.Database.Web.Model;
-  using System.Xml.Linq;
-  using System.Linq;
-  using Kcsara.Database.Geo;
-  using System.IO;
   using System.Data.Entity.Spatial;
+  using System.Linq;
+  using System.Web.Mvc;
+  using System.Xml.Linq;
+  using Kcsar.Database.Data;
+  using Kcsara.Database.Geo;
   using Kcsara.Database.Services;
+  using Kcsara.Database.Web.Model;
 
   public class HomeController : BaseController
   {

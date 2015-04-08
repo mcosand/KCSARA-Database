@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2009-2014 Matthew Cosand
+ * Copyright 2009-2015 Matthew Cosand
  */
 
 namespace Kcsara.Database.Web.Controllers
@@ -12,7 +12,7 @@ namespace Kcsara.Database.Web.Controllers
   using System.Linq;
   using System.Web;
   using System.Web.Mvc;
-  using Kcsar.Database.Model;
+  using Kcsar.Database.Data;
   using Kcsara.Database.Web.Model;
   using IO = System.IO;
 
@@ -46,7 +46,7 @@ namespace Kcsara.Database.Web.Controllers
     [AcceptVerbs(HttpVerbs.Get)]
     public ActionResult Detail(Guid id)
     {
-      Animal animal = (from a in this.db.Animals.Include("Owners").Include("Owners.Owner").Include("MissionRosters").Include("MissionRosters.MissionRoster").Include("MissionRosters.MissionRoster.Mission") where a.Id == id select a).First();
+      AnimalRow animal = (from a in this.db.Animals.Include("Owners").Include("Owners.Owner").Include("MissionRosters").Include("MissionRosters.MissionRoster").Include("MissionRosters.MissionRoster.Mission") where a.Id == id select a).First();
 
       ViewData["PageTitle"] = "Animal Detail: " + animal.Name;
 
@@ -60,7 +60,7 @@ namespace Kcsara.Database.Web.Controllers
     {
       ViewData["PageTitle"] = "New Animal";
 
-      Animal a = new Animal();
+      AnimalRow a = new AnimalRow();
 
       Session.Add("NewAnimalGuid", a.Id);
       ViewData["NewAnimalGuid"] = Session["NewAnimalGuid"];
@@ -80,7 +80,7 @@ namespace Kcsara.Database.Web.Controllers
 
       ViewData["PageTitle"] = "New Animal";
 
-      Animal a = new Animal();
+      AnimalRow a = new AnimalRow();
       this.db.Animals.Add(a);
       return InternalSave(a, fields);
     }
@@ -90,7 +90,7 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize(Roles = "cdb.admins")]
     public ActionResult Edit(Guid id)
     {
-      Animal animal = (from a in this.db.Animals where a.Id == id select a).First();
+      AnimalRow animal = (from a in this.db.Animals where a.Id == id select a).First();
       return InternalEdit(animal);
     }
 
@@ -98,18 +98,18 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize(Roles = "cdb.admins")]
     public ActionResult Edit(Guid id, FormCollection fields)
     {
-      Animal animal = (from a in this.db.Animals where a.Id == id select a).First();
+      AnimalRow animal = (from a in this.db.Animals where a.Id == id select a).First();
       return InternalSave(animal, fields);
     }
 
-    private ActionResult InternalEdit(Animal a)
+    private ActionResult InternalEdit(AnimalRow a)
     {
-      ViewData["TypeList"] = new SelectList(Animal.AllowedTypes, a.Type);
+      ViewData["TypeList"] = new SelectList(AnimalRow.AllowedTypes, a.Type);
 
       return View("Edit", a);
     }
 
-    private ActionResult InternalSave(Animal a, FormCollection fields)
+    private ActionResult InternalSave(AnimalRow a, FormCollection fields)
     {
       TryUpdateModel(a, new string[] { "Name", "DemSuffix", "Comments", "Type" });
       if (ModelState.IsValid)
@@ -134,7 +134,7 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize(Roles = "cdb.admins")]
     public ActionResult Delete(Guid id, FormCollection fields)
     {
-      Animal animal = (from a in this.db.Animals where a.Id == id select a).First();
+      AnimalRow animal = (from a in this.db.Animals where a.Id == id select a).First();
       this.db.Animals.Remove(animal);
       this.db.SaveChanges();
 
@@ -149,7 +149,7 @@ namespace Kcsara.Database.Web.Controllers
     {
       ViewData["PageTitle"] = "New Owner";
 
-      AnimalOwner o = new AnimalOwner();
+      AnimalOwnerRow o = new AnimalOwnerRow();
       o.Animal = (from a in this.db.Animals where a.Id == id select a).First();
       o.Starting = DateTime.Today;
       //s.Person = (from p in this.db.Members where p.Id == personId select p).First();
@@ -173,7 +173,7 @@ namespace Kcsara.Database.Web.Controllers
 
       ViewData["PageTitle"] = "New Owner";
 
-      AnimalOwner o = new AnimalOwner();
+      AnimalOwnerRow o = new AnimalOwnerRow();
       o.Animal = (from a in this.db.Animals where a.Id == id select a).First();
       //    um.Person = (from p in this.db.Members where p.Id == personId select p).First();
       this.db.AnimalOwners.Add(o);
@@ -185,7 +185,7 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize(Roles = "cdb.admins")]
     public ActionResult EditOwner(Guid id)
     {
-      AnimalOwner o = (from ao in this.db.AnimalOwners.Include("Animal").Include("Owner") where ao.Id == id select ao).First();
+      AnimalOwnerRow o = (from ao in this.db.AnimalOwners.Include("Animal").Include("Owner") where ao.Id == id select ao).First();
       return InternalEditOwner(o);
     }
 
@@ -193,16 +193,16 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize(Roles = "cdb.admins")]
     public ActionResult EditOwner(Guid id, FormCollection fields)
     {
-      AnimalOwner o = (from ao in this.db.AnimalOwners.Include("Animal").Include("Owner") where ao.Id == id select ao).First();
+      AnimalOwnerRow o = (from ao in this.db.AnimalOwners.Include("Animal").Include("Owner") where ao.Id == id select ao).First();
       return InternalSaveOwner(o, fields);
     }
 
-    private ActionResult InternalEditOwner(AnimalOwner o)
+    private ActionResult InternalEditOwner(AnimalOwnerRow o)
     {
       return View("EditOwner", o);
     }
 
-    private ActionResult InternalSaveOwner(AnimalOwner o, FormCollection fields)
+    private ActionResult InternalSaveOwner(AnimalOwnerRow o, FormCollection fields)
     {
       TryUpdateModel(o, new string[] { "IsPrimary", "Starting", "Ending" });
 
@@ -214,7 +214,7 @@ namespace Kcsara.Database.Web.Controllers
       else
       {
         Guid personId = new Guid(fields["pid_a"]);
-        Member member = (from m in this.db.Members where m.Id == personId select m).First();
+        MemberRow member = (from m in this.db.Members where m.Id == personId select m).First();
         o.Owner = member;
       }
 
@@ -241,7 +241,7 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize(Roles = "cdb.admins")]
     public ActionResult DeleteOwner(Guid id, FormCollection fields)
     {
-      AnimalOwner o = (from ao in this.db.AnimalOwners where ao.Id == id select ao).First();
+      AnimalOwnerRow o = (from ao in this.db.AnimalOwners where ao.Id == id select ao).First();
       this.db.AnimalOwners.Remove(o);
       this.db.SaveChanges();
 
@@ -265,7 +265,7 @@ namespace Kcsara.Database.Web.Controllers
         finally { }
       }
 
-      var x = this.db.Animals.Where(GetSelectorPredicate<Animal>(ids)).OrderBy(f => f.Name);
+      var x = this.db.Animals.Where(GetSelectorPredicate<AnimalRow>(ids)).OrderBy(f => f.Name);
 
       return View(x);
     }
@@ -316,7 +316,7 @@ namespace Kcsara.Database.Web.Controllers
         Session["photoPreview"] = images;
       }
 
-      var m = this.db.Animals.Where(GetSelectorPredicate<Animal>(images.Keys)).OrderBy(f => f.Name);
+      var m = this.db.Animals.Where(GetSelectorPredicate<AnimalRow>(images.Keys)).OrderBy(f => f.Name);
 
       return View(m);
     }
@@ -335,13 +335,13 @@ namespace Kcsara.Database.Web.Controllers
       {
         Dictionary<Guid, Bitmap> images = (Dictionary<Guid, Bitmap>)Session["photoPreview"];
 
-        var Animals = this.db.Animals.Where(GetSelectorPredicate<Animal>(images.Keys)).OrderBy(f => f.Name);
+        var Animals = this.db.Animals.Where(GetSelectorPredicate<AnimalRow>(images.Keys)).OrderBy(f => f.Name);
 
         string keepImages = (fields["keep"] ?? "").ToLowerInvariant();
 
         char[] badChars = IO.Path.GetInvalidFileNameChars();
 
-        foreach (Animal m in Animals)
+        foreach (AnimalRow m in Animals)
         {
           string storePath = Server.MapPath(AnimalsController.PhotosStoreRelativePath);
 

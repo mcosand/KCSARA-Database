@@ -679,6 +679,10 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DomainModel\DomainModel.csproj">
+      <Project>{ee7eb89e-9ab9-4a46-b130-901a900aa027}</Project>
+      <Name>DomainModel</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Model\Model.csproj">
       <Project>{eae01ec9-f91d-4b72-a648-6ac96e688cce}</Project>
       <Name>Model</Name>

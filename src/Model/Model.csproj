@@ -8,8 +8,8 @@
     <ProjectGuid>{EAE01EC9-F91D-4B72-A648-6AC96E688CCE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Kcsar.Database.Model</RootNamespace>
-    <AssemblyName>Kcsar.Database.Model</AssemblyName>
+    <RootNamespace>Kcsar.Database.Data</RootNamespace>
+    <AssemblyName>Kcsar.Database.DataModel</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
@@ -101,105 +101,126 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes.cs" />
-    <Compile Include="AuditLog.cs" />
-    <Compile Include="ComputedTrainingAward.cs" />
-    <Compile Include="ContactInfoSubType.cs" />
-    <Compile Include="Animal.cs" />
-    <Compile Include="AnimalOwner.cs" />
-    <Compile Include="AnimalEvents.cs" />
-    <Compile Include="Events\EventGeography.cs" />
-    <Compile Include="Events\EventLog.cs" />
-    <Compile Include="Events\EventRoster.cs" />
-    <Compile Include="Events\EventTimeline.cs" />
-    <Compile Include="Events\ParticipantStatus.cs" />
-    <Compile Include="Events\Mission.cs" />
-    <Compile Include="Events\Participant.cs" />
-    <Compile Include="Events\ParticipatingUnit.cs" />
-    <Compile Include="Events\SarEvent.cs" />
+    <Compile Include="AuditLogRow.cs" />
+    <Compile Include="ComputedTrainingRecordRow.cs" />
+    <Compile Include="AnimalRow.cs" />
+    <Compile Include="AnimalOwnerRow.cs" />
+    <Compile Include="AnimalEventRow.cs" />
+    <Compile Include="Events\EventGeographyRow.cs" />
+    <Compile Include="Events\EventLogRow.cs" />
+    <Compile Include="Events\EventRosterRow.cs" />
+    <Compile Include="Events\EventTimelineRow.cs" />
+    <Compile Include="Events\ParticipantStatusRow.cs" />
+    <Compile Include="Events\ParticipantRow.cs" />
+    <Compile Include="Events\ParticipatingUnitRow.cs" />
+    <Compile Include="Events\SarEventRow.cs" />
     <Compile Include="IKcsarContext.cs" />
-    <Compile Include="Migrations\201403040055520_RefactorValidate.cs" />
-    <Compile Include="Migrations\201403040055520_RefactorValidate.Designer.cs">
-      <DependentUpon>201403040055520_RefactorValidate.cs</DependentUpon>
+    <Compile Include="Migrations\201208302058166_InitialCreate.cs">
+      <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Migrations\201504031640202_UnifiedEventModel_1.cs" />
-    <Compile Include="Migrations\201504031640202_UnifiedEventModel_1.Designer.cs">
-      <DependentUpon>201504031640202_UnifiedEventModel_1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201504031951466_UnifiedEventModel_2.cs" />
-    <Compile Include="Migrations\201504031951466_UnifiedEventModel_2.Designer.cs">
-      <DependentUpon>201504031951466_UnifiedEventModel_2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201504032215416_UnifiedEventModel_3.cs" />
-    <Compile Include="Migrations\201504032215416_UnifiedEventModel_3.Designer.cs">
-      <DependentUpon>201504032215416_UnifiedEventModel_3.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Migrator.cs" />
-    <Compile Include="MemberUnitDocument.cs" />
-    <Compile Include="MemberMedical.cs" />
-    <Compile Include="EmergencyContact.cs" />
-    <Compile Include="MemberEmergencyContact.cs" />
-    <Compile Include="Migrations\201309050314287_UnitDocuments.cs" />
-    <Compile Include="Migrations\201309050314287_UnitDocuments.Designer.cs">
-      <DependentUpon>201309050314287_UnitDocuments.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SensitiveInfoAccess.cs" />
-    <Compile Include="UnitApplicant.cs" />
-    <Compile Include="UnitContact.cs" />
-    <Compile Include="UnitDocument.cs" />
-    <Compile Include="CurrentMemberIds.cs" />
-    <Compile Include="Document.cs" />
-    <Compile Include="Extensions.cs" />
-    <Compile Include="IDocument.cs" />
-    <Compile Include="KcsarContext.cs" />
-    <Compile Include="Migrations\201208302058166_InitialCreate.cs" />
     <Compile Include="Migrations\201208302058166_InitialCreate.Designer.cs">
       <DependentUpon>201208302058166_InitialCreate.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201209070517147_Member_SheriffApp.cs" />
+    <Compile Include="Migrations\201209070517147_Member_SheriffApp.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Migrations\201209070517147_Member_SheriffApp.Designer.cs">
       <DependentUpon>201209070517147_Member_SheriffApp.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201302080725191_MissionRosterRequired.cs" />
+    <Compile Include="Migrations\201302080725191_MissionRosterRequired.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Migrations\201302080725191_MissionRosterRequired.Designer.cs">
       <DependentUpon>201302080725191_MissionRosterRequired.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201307200720558_MemberExternalKey.cs" />
+    <Compile Include="Migrations\201307200720558_MemberExternalKey.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Migrations\201307200720558_MemberExternalKey.Designer.cs">
       <DependentUpon>201307200720558_MemberExternalKey.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201308090456333_MemberStatus.cs" />
+    <Compile Include="Migrations\201308090456333_MemberStatus.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Migrations\201308090456333_MemberStatus.Designer.cs">
       <DependentUpon>201308090456333_MemberStatus.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201309050314287_UnitDocuments.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Migrations\201309050314287_UnitDocuments.Designer.cs">
+      <DependentUpon>201309050314287_UnitDocuments.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201403040055520_RefactorValidate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Migrations\201403040055520_RefactorValidate.Designer.cs">
+      <DependentUpon>201403040055520_RefactorValidate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201504031640202_UnifiedEventModel_1.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Migrations\201504031640202_UnifiedEventModel_1.Designer.cs">
+      <DependentUpon>201504031640202_UnifiedEventModel_1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201504031951466_UnifiedEventModel_2.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Migrations\201504031951466_UnifiedEventModel_2.Designer.cs">
+      <DependentUpon>201504031951466_UnifiedEventModel_2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201504032215416_UnifiedEventModel_3.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Migrations\201504032215416_UnifiedEventModel_3.Designer.cs">
+      <DependentUpon>201504032215416_UnifiedEventModel_3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201504040626075_DataModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Migrations\201504040626075_DataModel.Designer.cs">
+      <DependentUpon>201504040626075_DataModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Migrator.cs" />
+    <Compile Include="MemberUnitDocumentRow.cs" />
+    <Compile Include="MemberMedicalRow.cs" />
+    <Compile Include="MemberEmergencyContactRow.cs" />
+    <Compile Include="SensitiveInfoAccessRow.cs" />
+    <Compile Include="UnitApplicantRow.cs" />
+    <Compile Include="UnitContactRow.cs" />
+    <Compile Include="UnitDocumentRow.cs" />
+    <Compile Include="DocumentRow.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="IDocumentRow.cs" />
+    <Compile Include="KcsarContext.cs" />
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="ModelObject.cs" />
+    <Compile Include="ModelObjectRow.cs" />
     <Compile Include="IAddress.cs" />
-    <Compile Include="Events\EventDetails.cs" />
-    <Compile Include="Subject.cs" />
-    <Compile Include="SubjectGroup.cs" />
-    <Compile Include="SubjectGroupLink.cs" />
-    <Compile Include="TrainingCourse.cs" />
-    <Compile Include="PersonContact.cs" />
-    <Compile Include="ITrainingAward.cs" />
-    <Compile Include="SarUnit.cs" />
-    <Compile Include="TrainingAward.cs" />
-    <Compile Include="TrainingExpirationSummary.cs" />
-    <Compile Include="PersonAddress.cs" />
-    <Compile Include="Enums.cs" />
-    <Compile Include="IModelObject.cs" />
-    <Compile Include="Member.cs" />
+    <Compile Include="Events\EventDetailRow.cs" />
+    <Compile Include="SubjectRow.cs" />
+    <Compile Include="SubjectGroupRow.cs" />
+    <Compile Include="SubjectGroupLinkRow.cs" />
+    <Compile Include="TrainingCourseRow.cs" />
+    <Compile Include="MemberContactRow.cs" />
+    <Compile Include="ITrainingAwardRow.cs" />
+    <Compile Include="UnitRow.cs" />
+    <Compile Include="TrainingRecordRow.cs" />
+    <Compile Include="MemberAddressRow.cs" />
+    <Compile Include="IModelObjectRow.cs" />
+    <Compile Include="MemberRow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TrainingRule.cs" />
-    <Compile Include="TrainingStatus.cs" />
-    <Compile Include="UnitMembership.cs" />
-    <Compile Include="UnitStatus.cs" />
+    <Compile Include="TrainingRuleRow.cs" />
+    <Compile Include="UnitMembershipRow.cs" />
+    <Compile Include="UnitStatusRow.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.Config" />
+    <None Include="App.Config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -221,6 +242,12 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DomainModel\DomainModel.csproj">
+      <Project>{ee7eb89e-9ab9-4a46-b130-901a900aa027}</Project>
+      <Name>DomainModel</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201209070517147_Member_SheriffApp.resx">
@@ -249,6 +276,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201504032215416_UnifiedEventModel_3.resx">
       <DependentUpon>201504032215416_UnifiedEventModel_3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201504040626075_DataModel.resx">
+      <DependentUpon>201504040626075_DataModel.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

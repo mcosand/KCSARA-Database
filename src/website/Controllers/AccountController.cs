@@ -1,26 +1,24 @@
 ﻿/*
- * Copyright 2008-2014 Matthew Cosand
+ * Copyright 2008-2015 Matthew Cosand
  */
 namespace Kcsara.Database.Web.Controllers
 {
   using System;
   using System.Collections.Generic;
+  using System.Data.SqlClient;
+  using System.Globalization;
+  using System.Linq;
   using System.Security.Principal;
   using System.Threading;
   using System.Web.Mvc;
+  using System.Web.Profile;
   using System.Web.Security;
   using System.Web.UI;
-  using System.Linq;
-  using System.Data.SqlClient;
-  using Config = System.Configuration;
-  using Kcsar.Database.Model;
-  using Kcsar.Database;
-  using Kcsara.Database.Web.Controllers;
-  using System.Globalization;
+  using Kcsar.Database.Data;
   using Kcsar.Membership;
   using Kcsara.Database.Web;
-  using System.Web.Profile;
   using Kcsara.Database.Web.Model;
+  using Config = System.Configuration;
 
   [OutputCache(Location = OutputCacheLocation.None)]
   public sealed class AccountController : BaseController

@@ -1,25 +1,26 @@
 ﻿/*
- * Copyright 2012-2014 Matthew Cosand
+ * Copyright 2012-2015 Matthew Cosand
  */
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Formatting;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using System.Web;
-using System.Web.Http;
-using Kcsar.Database.Model;
-using Kcsara.Database.Web.Model;
-using log4net;
 
 namespace Kcsara.Database.Web.api
 {
+  using System;
+  using System.Collections.Generic;
+  using System.Drawing;
+  using System.Drawing.Imaging;
+  using System.IO;
+  using System.Linq;
+  using System.Net;
+  using System.Net.Http;
+  using System.Net.Http.Formatting;
+  using System.Net.Http.Headers;
+  using System.Threading.Tasks;
+  using System.Web;
+  using System.Web.Http;
+  using Kcsar.Database.Data;
+  using Kcsara.Database.Web.Model;
+  using log4net;
+
   public abstract class DocumentsController : BaseApiController
   {
     public DocumentsController(IKcsarContext db, ILog log)
@@ -34,7 +35,7 @@ namespace Kcsara.Database.Web.api
       return model;
     }
 
-    private DocumentView GetView(Document d, Guid reference)
+    private DocumentView GetView(DocumentRow d, Guid reference)
     {
       return new DocumentView
           {
@@ -60,7 +61,7 @@ namespace Kcsara.Database.Web.api
       mime = string.IsNullOrWhiteSpace(doc.MimeType) ? Kcsara.Database.Web.Documents.GuessMime(name) : doc.MimeType;
 
       var response = new HttpResponseMessage();
-      response.Content = new StreamContent(new FileStream(Document.StorageRoot + doc.StorePath, FileMode.Open, FileAccess.Read));
+      response.Content = new StreamContent(new FileStream(DocumentRow.StorageRoot + doc.StorePath, FileMode.Open, FileAccess.Read));
       response.Content.Headers.ContentType = new MediaTypeHeaderValue(mime);
       response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("inline") { FileName = name };
 
@@ -75,7 +76,7 @@ namespace Kcsara.Database.Web.api
 
       var thumb = (from d in db.Documents where d.Id == id select new { file = d.FileName, store = d.StorePath, type = d.MimeType }).First();
 
-      string file = Document.StorageRoot + thumb.store;
+      string file = DocumentRow.StorageRoot + thumb.store;
       string mime = thumb.type ?? Documents.GuessMime(thumb.file);
       if (mime.StartsWith("image", StringComparison.OrdinalIgnoreCase))
       {

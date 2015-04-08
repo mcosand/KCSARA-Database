@@ -1,22 +1,21 @@
 ﻿/*
- * Copyright 2008-2014 Matthew Cosand
+ * Copyright 2008-2015 Matthew Cosand
  */
-
 namespace Kcsara.Database.Web.Controllers
 {
-  using Kcsar.Database;
-  using Kcsar.Database.Model;
-  using Kcsara.Database.Web.Model;
   using System;
   using System.Collections.Generic;
   using System.Configuration;
-  using System.Drawing;
   using System.IO;
   using System.Linq;
   using System.Text;
   using System.Web.Mvc;
   using System.Xml;
+  using Kcsar.Database;
+  using Kcsar.Database.Data;
+  using Kcsar.Database.Model;
   using Kcsara.Database.Services;
+  using Kcsara.Database.Web.Model;
 
   /// <summary>Views related to SAR units.</summary>
   public class UnitsController : BaseController
@@ -65,11 +64,11 @@ namespace Kcsara.Database.Web.Controllers
 
       ViewData["Title"] = "Unit Roster";
 
-      SarUnit unit = (from u in this.db.Units where u.Id == id select u).First();
+      UnitRow unit = (from u in this.db.Units where u.Id == id select u).First();
       ViewData["Unit"] = unit;
 
       var members = this.db.UnitMemberships.Include("Person").Include("Status").Where(um => um.Unit.Id == id && um.EndTime == null);
-      members = members.OrderBy(f => f.Person.LastName).ThenBy(f => f.Person.FirstName);
+      members = members.OrderBy(f => f.Member.LastName).ThenBy(f => f.Member.FirstName);
 
       return View(members);
 
@@ -86,7 +85,7 @@ namespace Kcsara.Database.Web.Controllers
     {
       Guid unitId = UnitsController.ResolveUnit(ctx.Units, id).Id;
 
-      Member[] members = (from m in ctx.GetActiveMembers(unitId, DateTime.Now, "ContactNumbers", "Memberships.Unit", "Memberships.Status") select m).ToArray();
+      MemberRow[] members = (from m in ctx.GetActiveMembers(unitId, DateTime.Now, "ContactNumbers", "Memberships.Unit", "Memberships.Status") select m).ToArray();
       MemberDetailView[] model = members
           .Where(f => f.Memberships.Any(g => g.Unit.Id == unitId && g.Status.IsActive && g.Status.StatusName != "trainee")
                       && f.ContactNumbers.Count(g => g.Type == "email") > 0)
@@ -108,7 +107,7 @@ namespace Kcsara.Database.Web.Controllers
     {
       if (!Permissions.IsUserOrLocal(Request)) return this.CreateLoginRedirect();
 
-      SarUnit unit = (from u in this.db.Units where u.Id == id select u).FirstOrDefault();
+      UnitRow unit = (from u in this.db.Units where u.Id == id select u).FirstOrDefault();
 
       Stream result = this.reports.GetMissionReadyList(unit);
 
@@ -235,19 +234,19 @@ namespace Kcsara.Database.Web.Controllers
       ExcelSheet ws = xl.GetSheet(0);
 
       string filename = string.Format("roster-{0:yyMMdd}.xls", DateTime.Now);
-      IQueryable<UnitMembership> memberships = this.db.UnitMemberships.Include("Person").Include("Person.Addresses").Include("Person.ContactNumbers").Include("Status");
+      IQueryable<UnitMembershipRow> memberships = this.db.UnitMemberships.Include("Person").Include("Person.Addresses").Include("Person.ContactNumbers").Include("Status");
       string unitShort = ConfigurationManager.AppSettings["dbNameShort"];
       string unitLong = Strings.GroupName;
       if (id.HasValue)
       {
         memberships = memberships.Where(um => um.Unit.Id == id.Value);
-        SarUnit sarUnit = (from u in this.db.Units where u.Id == id.Value select u).First();
+        UnitRow sarUnit = (from u in this.db.Units where u.Id == id.Value select u).First();
         unitShort = sarUnit.DisplayName;
         unitLong = sarUnit.LongName;
 
       }
       memberships = memberships.Where(um => um.EndTime == null && um.Status.IsActive);
-      memberships = memberships.OrderBy(f => f.Person.LastName).ThenBy(f => f.Person.FirstName);
+      memberships = memberships.OrderBy(f => f.Member.LastName).ThenBy(f => f.Member.FirstName);
 
       ws.Header = unitLong + " Active Roster";
       ws.Footer = DateTime.Now.ToShortDateString();
@@ -257,9 +256,9 @@ namespace Kcsara.Database.Web.Controllers
       {
         int idx = 1;
         int c = 0;
-        foreach (UnitMembership membership in memberships)
+        foreach (UnitMembershipRow membership in memberships)
         {
-          Member member = membership.Person;
+          MemberRow member = membership.Member;
           c = 0;
           wrap.SetCellValue(string.Format("{0:0000}", member.DEM), idx, c++);
           wrap.SetCellValue(member.LastName, idx, c++);
@@ -299,11 +298,11 @@ namespace Kcsara.Database.Web.Controllers
     [AcceptVerbs(HttpVerbs.Get)]
     public ActionResult Detail(Guid id)
     {
-      SarUnit unit = (from u in this.db.Units.Include("StatusTypes") where u.Id == id select u).First();
+      UnitRow unit = (from u in this.db.Units.Include("StatusTypes") where u.Id == id select u).First();
 
       ViewData["Title"] = "Unit Detail: " + unit.DisplayName;
 
-      Member actor = this.db.Members.Include("Memberships.Status").SingleOrDefault(f => f.Username == User.Identity.Name);
+      MemberRow actor = this.db.Members.Include("Memberships.Status").SingleOrDefault(f => f.Username == User.Identity.Name);
 
       ViewBag.CanApply = string.IsNullOrEmpty(unit.NoApplicationsText)
           && actor != null
@@ -330,12 +329,12 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize(Roles = "cdb.admins")]
     public ActionResult CreateStatus(Guid unitId)
     {
-      SarUnit unit = (from u in this.db.Units where u.Id == unitId select u).FirstOrDefault();
+      UnitRow unit = (from u in this.db.Units where u.Id == unitId select u).FirstOrDefault();
 
 
       ViewData["Title"] = "New Unit Status for " + unit.DisplayName;
 
-      UnitStatus status = new UnitStatus() { Unit = unit };
+      UnitStatusRow status = new UnitStatusRow() { Unit = unit };
 
       Session.Add("NewStatusGuid", status.Id);
       ViewData["NewStatusGuid"] = Session["NewStatusGuid"];
@@ -353,10 +352,10 @@ namespace Kcsara.Database.Web.Controllers
       }
       Session.Remove("NewStatusGuid");
 
-      SarUnit unit = (from u in this.db.Units where u.Id == unitId select u).FirstOrDefault();
+      UnitRow unit = (from u in this.db.Units where u.Id == unitId select u).FirstOrDefault();
       ViewData["Title"] = "New Unit Status for " + unit.DisplayName;
 
-      UnitStatus status = new UnitStatus();
+      UnitStatusRow status = new UnitStatusRow();
       status.Unit = unit;
       this.db.UnitStatusTypes.Add(status);
       return InternalSaveStatus(status, fields);
@@ -366,7 +365,7 @@ namespace Kcsara.Database.Web.Controllers
     [AcceptVerbs(HttpVerbs.Get)]
     public ActionResult EditStatus(Guid id)
     {
-      UnitStatus status = (from s in this.db.UnitStatusTypes.Include("Unit") where s.Id == id select s).First();
+      UnitStatusRow status = (from s in this.db.UnitStatusTypes.Include("Unit") where s.Id == id select s).First();
 
       return InternalEditStatus(status);
     }
@@ -375,12 +374,12 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize(Roles = "cdb.admins")]
     public ActionResult EditStatus(Guid id, FormCollection fields)
     {
-      UnitStatus status = (from s in this.db.UnitStatusTypes where s.Id == id select s).FirstOrDefault();
+      UnitStatusRow status = (from s in this.db.UnitStatusTypes where s.Id == id select s).FirstOrDefault();
 
       return InternalSaveStatus(status, fields);
     }
 
-    private ActionResult InternalEditStatus(UnitStatus s)
+    private ActionResult InternalEditStatus(UnitStatusRow s)
     {
       List<WacLevel> values = new List<WacLevel>();
       foreach (object o in Enum.GetValues(typeof(WacLevel)))
@@ -393,7 +392,7 @@ namespace Kcsara.Database.Web.Controllers
       return View("EditStatus", s);
     }
 
-    private ActionResult InternalSaveStatus(UnitStatus status, FormCollection fields)
+    private ActionResult InternalSaveStatus(UnitStatusRow status, FormCollection fields)
     {
       TryUpdateModel(status, new string[] { "StatusName", "IsActive", "WacLevel", "GetsAccount" });
 
@@ -433,7 +432,7 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize(Roles = "cdb.admins")]
     public ActionResult DeleteStatus(Guid id, FormCollection fields)
     {
-      UnitStatus status = (from s in this.db.UnitStatusTypes where s.Id == id select s).FirstOrDefault();
+      UnitStatusRow status = (from s in this.db.UnitStatusTypes where s.Id == id select s).FirstOrDefault();
       this.db.UnitStatusTypes.Remove(status);
       this.db.SaveChanges();
 
@@ -448,9 +447,9 @@ namespace Kcsara.Database.Web.Controllers
     }
 
 
-    public static SarUnit ResolveUnit(IQueryable<SarUnit> units, string id)
+    public static UnitRow ResolveUnit(IQueryable<UnitRow> units, string id)
     {
-      SarUnit unit = null;
+      UnitRow unit = null;
       Guid gID;
       if (Guid.TryParse(id, out gID))
       {

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2010-2014 Matthew Cosand
+ * Copyright 2010-2015 Matthew Cosand
  */
 
 namespace Kcsara.Database.Web.Controllers
@@ -7,19 +7,12 @@ namespace Kcsara.Database.Web.Controllers
   using System;
   using System.Collections.Generic;
   using System.Data.Entity;
-  using System.Drawing;
-  using System.Drawing.Imaging;
   using System.Linq;
-  using System.Text;
-  using System.Web;
   using System.Web.Mvc;
-  using System.Windows.Media.Imaging;
-  using Kcsar.Database.Model;
-  using Kcsara.Database.Web.Model;
   using iTextSharp.text.pdf;
-  using System.IO;
-  using iTextSharp.text;
-  using Kcsar.Database.Model.Events;
+  using Kcsar.Database.Data;
+  using Kcsar.Database.Data.Events;
+  using Kcsara.Database.Web.Model;
 
   public partial class MissionsController
   {
@@ -148,7 +141,7 @@ namespace Kcsara.Database.Web.Controllers
       //}
     }
 
-    Queue<Tuple<string, string, string>> Fill109Rows(IEnumerable<EventLog> logs, AcroFields fields, string fieldName)
+    Queue<Tuple<string, string, string>> Fill109Rows(IEnumerable<EventLogRow> logs, AcroFields fields, string fieldName)
     {
       AcroFields.Item item = fields.GetFieldItem(fieldName);
       PdfDictionary merged = item.GetMerged(0);
@@ -278,7 +271,7 @@ namespace Kcsara.Database.Web.Controllers
       return User.IsInRole("cdb.missioneditors");
     }
 
-    protected override void AddRosterRowFrom4x4Sheet(ExpandedRowsContext model, SarUnit unit, EventRoster row)
+    protected override void AddRosterRowFrom4x4Sheet(ExpandedRowsContext model, UnitRow unit, EventRosterRow row)
     {
       throw new NotImplementedException("reimplement");
 

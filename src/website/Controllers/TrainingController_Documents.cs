@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2011-2014 Matthew Cosand
+ * Copyright 2011-2015 Matthew Cosand
  */
 
 namespace Kcsara.Database.Web.Controllers
@@ -17,7 +17,8 @@ namespace Kcsara.Database.Web.Controllers
   using System.Collections.Generic;
   using System.IO;
   using System.Data.Entity;
-  using Kcsar.Database.Model.Events;
+  using Kcsar.Database.Data;
+  using Kcsar.Database.Data.Events;
 
   public partial class TrainingController
   {
@@ -110,7 +111,7 @@ namespace Kcsara.Database.Web.Controllers
 
       List<RecentDocumentsView> result = new List<RecentDocumentsView>();
       var results = (from u in this.db.Members
-                      join ta in this.db.TrainingAward on u.Id equals ta.Member.Id
+                      join ta in this.db.TrainingRecords on u.Id equals ta.Member.Id
                       join tc in this.db.TrainingCourses on ta.Course.Id equals tc.Id
                       join d in this.db.Documents on ta.Id equals d.ReferenceId
                       where (tc.ShowOnCard || tc.WacRequired > 0) && (ta.Completed >= since || d.LastChanged >= since)
@@ -142,7 +143,7 @@ namespace Kcsara.Database.Web.Controllers
       return User.IsInRole("cdb.trainingeditors");
     }
 
-    protected override void AddRosterRowFrom4x4Sheet(ExpandedRowsContext model, SarUnit unit, EventRoster row)
+    protected override void AddRosterRowFrom4x4Sheet(ExpandedRowsContext model, UnitRow unit, EventRosterRow row)
     {
       throw new NotImplementedException("reimplement");
       //TrainingRoster mrow = (TrainingRoster)row;

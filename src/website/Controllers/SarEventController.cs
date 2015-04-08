@@ -1,23 +1,20 @@
 ﻿/*
- * Copyright 2009-2014 Matthew Cosand
+ * Copyright 2009-2015 Matthew Cosand
  */
 namespace Kcsara.Database.Web.Controllers
 {
-  using Kcsar.Database.Model;
-  using Kcsara.Database.Web.Model;
   using System;
   using System.Collections.Generic;
-  using System.Data.Entity;
   using System.Globalization;
   using System.Linq;
-  using System.Text;
   using System.Text.RegularExpressions;
   using System.Web.Mvc;
-  using System.Data.Entity.Validation;
-  using Kcsar.Database.Model.Events;
+  using Kcsar.Database.Data;
+  using Kcsar.Database.Data.Events;
+  using Kcsara.Database.Web.Model;
 
   public abstract class SarEventController<E> : BaseController, IEventController
-    where E : SarEvent, new()
+    where E : SarEventRow, new()
   {
     public SarEventController(IKcsarContext db) : base(db) { }
 
@@ -30,7 +27,7 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize(Roles = "cdb.users")]
     public virtual ActionResult List(string id)
     {
-      IEnumerable<E> list = (from e in GetEventSource() orderby e.StartTime descending select e);
+      IEnumerable<E> list = (from e in this.db.Events.OfType<E>() orderby e.StartTime descending select e);
       ApplyListFilter(ref list);
       return View("List", list);
     }
@@ -77,7 +74,7 @@ namespace Kcsara.Database.Web.Controllers
       ViewData["PageTitle"] = "New " + this.EventType;
 
       E evt = new E();
-      this.AddEventToContext(evt);
+      this.db.Events.Add(evt);
 
       return InternalSave(evt, fields, RedirectToAction("Roster", new { id = evt.Id, edit = true }));
     }
@@ -180,11 +177,11 @@ namespace Kcsara.Database.Web.Controllers
       {
         return InternalEdit(evt);
       }
-      //catch (RuleViolationsException ex)
-      //{
-      //  this.CollectRuleViolations(ex, fields);
-        return InternalEdit(evt);
-      //}
+      ////catch (RuleViolationsException ex)
+      ////{
+      ////  this.CollectRuleViolations(ex, fields);
+      //  return InternalEdit(evt);
+      ////}
     }
 
     private bool TryParseSarDate(string s, out DateTime date)
@@ -245,7 +242,7 @@ namespace Kcsara.Database.Web.Controllers
 
       DeleteDependentObjects(evt);
 
-      RemoveEvent(evt);
+      this.db.Events.Remove(evt);
       this.db.SaveChanges();
 
       return RedirectToAction("ClosePopup");
@@ -260,10 +257,6 @@ namespace Kcsara.Database.Web.Controllers
     protected abstract string EventType { get; }
     protected abstract bool CanDoAction(SarEventActions action, object context);
 
-
-    //        protected abstract ObjectQuery<E> GetSummarySource();
-    protected abstract IQueryable<E> GetEventSource();
-
     /// <summary>
     /// Retrieves all of the details for a user.
     /// </summary>
@@ -274,6 +267,7 @@ namespace Kcsara.Database.Web.Controllers
     public ActionResult Roster(Guid id)
     {
       var model = BuildRosterModel(id);
+      
       ViewData["TargetController"] = (string)this.RouteData.Values["controller"];
       ViewData["CanEdit"] = CanDoAction(SarEventActions.UpdateEvent, model.SarEvent);
 
@@ -305,7 +299,7 @@ namespace Kcsara.Database.Web.Controllers
 
       for (int i = 0; i < 10; i++)
       {
-        rows.Rows.Add(new EventRoster());
+        rows.Rows.Add(new EventRosterRow());
       }
 
       return View(rows);
@@ -313,20 +307,16 @@ namespace Kcsara.Database.Web.Controllers
 
     protected ExpandedRowsContext BuildRosterModel(Guid eventId)
     {
-      E sarEvent = GetEvent(GetEventSource().Include("Roster").Include("Roster.Person"), eventId);
+      E sarEvent = GetEvent(this.db.Events/*.Include("Roster").Include("Roster.Person")*/.OfType<E>(), eventId);
       ExpandedRowsContext rows = GetRosterRows(sarEvent);
 
       OnBuildingRosterModel(eventId);
       return rows;
     }
 
-    protected abstract void AddEventToContext(E newEvent);
-    protected abstract void RemoveEvent(E oldEvent);
-    protected abstract EventRoster AddNewRow(Guid id);
-    protected abstract void RemoveRosterRow(EventRoster row);
     protected virtual void OnBuildingRosterModel(Guid id) { }
-    protected virtual void OnDeletingRosterRow(EventRoster row) { }
-    protected virtual void OnProcessingRosterInput(EventRoster row, FormCollection fields) { }
+    protected virtual void OnDeletingRosterRow(EventRosterRow row) { }
+    protected virtual void OnProcessingRosterInput(EventRosterRow row, FormCollection fields) { }
     protected virtual void OnRosterPostProcessing() { }
 
     //     protected abstract ObjectQuery<R> RostersQuery { get; }
@@ -525,7 +515,7 @@ namespace Kcsara.Database.Web.Controllers
 
     private E GetEvent(Guid id)
     {
-      return GetEvent(GetEventSource(), id);
+      return GetEvent(this.db.Events.OfType<E>(), id);
     }
 
     protected E GetEvent(IQueryable<E> context, Guid id)
@@ -610,13 +600,13 @@ namespace Kcsara.Database.Web.Controllers
 
     private ExpandedRowsContext GetRosterRows(E sarEvent)
     {
-      throw new NotImplementedException("reimplement");
+      throw new NotImplementedException();
       //DateTime goodBegin = sarEvent.StartTime.AddDays(-7);
       //DateTime goodEnd = sarEvent.StartTime.AddDays(14);
 
-      //IEnumerable<IRosterEntry> goodRows = sarEvent.Roster.Where(mr => mr.TimeIn > goodBegin && mr.TimeIn < goodEnd && (!mr.TimeOut.HasValue || mr.TimeOut.Value < mr.TimeIn.Value.AddDays(10))).Cast<IRosterEntry>().OrderBy(f => f.TimeIn).OrderBy(f => f.Person.ReverseName);
+      //IEnumerable<EventRoster> goodRows = sarEvent.Roster.Where(mr => mr.TimeIn > goodBegin && mr.TimeIn < goodEnd && (!mr.TimeOut.HasValue || mr.TimeOut.Value < mr.TimeIn.Value.AddDays(10))).Cast<IRosterEntry>().OrderBy(f => f.TimeIn).OrderBy(f => f.Person.ReverseName);
 
-      //IEnumerable<IRosterEntry> badRows = sarEvent.Roster.Where(mr => !(mr.TimeIn > goodBegin && mr.TimeIn < goodEnd && (!mr.TimeOut.HasValue || mr.TimeOut.Value < mr.TimeIn.Value.AddDays(10)))).Cast<IRosterEntry>();
+      //IEnumerable<EventRoster> badRows = sarEvent.Roster.Where(mr => !(mr.TimeIn > goodBegin && mr.TimeIn < goodEnd && (!mr.TimeOut.HasValue || mr.TimeOut.Value < mr.TimeIn.Value.AddDays(10)))).Cast<IRosterEntry>();
 
 
       //DateTime earliest = sarEvent.StartTime.Date;
@@ -645,7 +635,6 @@ namespace Kcsara.Database.Web.Controllers
       //  RosterStart = earliest.Date,
       //  SarEvent = sarEvent
       //};
-
     }
 
     public ActionResult ICS211(Guid id)
@@ -917,7 +906,7 @@ namespace Kcsara.Database.Web.Controllers
       //    new RedirectResult(Url.Action("Roster", new { id = missionId }));
     }
 
-    protected abstract void AddRosterRowFrom4x4Sheet(ExpandedRowsContext model, SarUnit unit, EventRoster row);
+    protected abstract void AddRosterRowFrom4x4Sheet(ExpandedRowsContext model, UnitRow unit, EventRosterRow row);
   }
 
   public enum SarEventActions

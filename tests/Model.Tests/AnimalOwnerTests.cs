@@ -1,11 +1,11 @@
 ﻿/*
  * Copyright 2014 Matthew Cosand
  */
-namespace Internal.Database.Model
+namespace Internal.Database.Data
 {
   using System;
   using System.Linq;
-  using Kcsar.Database.Model;
+  using Kcsar.Database.Data;
   using NUnit.Framework;
 
   [TestFixture]
@@ -17,10 +17,10 @@ namespace Internal.Database.Model
       string animalName = "Animal Bob";
       DateTime starting = DateTime.Now;
       DateTime? ending = null;
-      var owner = new Member { FirstName = "Fred", LastName = "Rider" };
-      var ao = new AnimalOwner {
+      var owner = new MemberRow { FirstName = "Fred", LastName = "Rider" };
+      var ao = new AnimalOwnerRow {
         Owner = owner,
-        Animal = new Animal { Name = animalName },
+        Animal = new AnimalRow { Name = animalName },
         Starting = starting,
         Ending = ending
       };
@@ -34,7 +34,7 @@ namespace Internal.Database.Model
     [Test]
     public void Validate()
     {
-      var am = new AnimalEvents();
+      var am = new AnimalEventRow();
       Assert.AreEqual(0, am.Validate(null).Count());
     }
   }

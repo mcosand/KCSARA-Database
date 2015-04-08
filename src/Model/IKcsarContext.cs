@@ -1,51 +1,49 @@
 ﻿/*
- * Copyright 2013-2014 Matthew Cosand
+ * Copyright 2013-2015 Matthew Cosand
  */
-namespace Kcsar.Database.Model
+namespace Kcsar.Database.Data
 {
   using System;
   using System.Collections.Generic;
   using System.Data.Entity;
   using System.Data.Entity.Infrastructure;
   using System.Linq;
-  using Kcsar.Database.Model.Events;
+  using Kcsar.Database.Data.Events;
 
   public interface IKcsarContext : IDisposable
   {
-    IDbSet<Animal> Animals { get; set; }
-    IDbSet<AnimalEvents> AnimalMissions { get; set; }
-    IDbSet<AnimalOwner> AnimalOwners { get; set; }
-    IDbSet<SarEvent> Events { get; set; }
-    IDbSet<EventDetails> MissionDetails { get; set; }
-    IDbSet<EventGeography> MissionGeography { get; set; }
-    IDbSet<Member> Members { get; set; }
-    IDbSet<PersonAddress> PersonAddress { get; set; }
-    IDbSet<PersonContact> PersonContact { get; set; }
-    IDbSet<MemberUnitDocument> MemberUnitDocuments { get; set; }
-    IDbSet<Subject> Subjects { get; set; }
-    IDbSet<SubjectGroup> SubjectGroups { get; set; }
-    IDbSet<SubjectGroupLink> SubjectGroupLinks { get; set; }
-    IDbSet<TrainingAward> TrainingAward { get; set; }
-    IDbSet<TrainingCourse> TrainingCourses { get; set; }
-    IDbSet<Document> Documents { get; set; }
-    IDbSet<TrainingRule> TrainingRules { get; set; }
-    IDbSet<SarUnit> Units { get; set; }
-    IDbSet<UnitApplicant> UnitApplicants { get; set; }
-    IDbSet<UnitMembership> UnitMemberships { get; set; }
-    IDbSet<UnitStatus> UnitStatusTypes { get; set; }
-    IDbSet<UnitDocument> UnitDocuments { get; set; }
-    IDbSet<ComputedTrainingAward> ComputedTrainingAwards { get; set; }
-    IDbSet<TrainingExpirationSummary> TrainingExpirationSummaries { get; set; }
-    IDbSet<CurrentMemberIds> CurrentMemberIds { get; set; }
-    IDbSet<SensitiveInfoAccess> SensitiveInfoLog { get; set; }
+    IDbSet<AnimalRow> Animals { get; set; }
+    IDbSet<AnimalEventRow> AnimalMissions { get; set; }
+    IDbSet<AnimalOwnerRow> AnimalOwners { get; set; }
+    IDbSet<SarEventRow> Events { get; set; }
+    IDbSet<EventDetailRow> MissionDetails { get; set; }
+    IDbSet<EventGeographyRow> MissionGeography { get; set; }
+    IDbSet<MemberRow> Members { get; set; }
+    IDbSet<MemberAddressRow> PersonAddress { get; set; }
+    IDbSet<MemberContactRow> PersonContact { get; set; }
+    IDbSet<MemberUnitDocumentRow> MemberUnitDocuments { get; set; }
+    IDbSet<SubjectRow> Subjects { get; set; }
+    IDbSet<SubjectGroupRow> SubjectGroups { get; set; }
+    IDbSet<SubjectGroupLinkRow> SubjectGroupLinks { get; set; }
+    IDbSet<TrainingRecordRow> TrainingRecords { get; set; }
+    IDbSet<TrainingCourseRow> TrainingCourses { get; set; }
+    IDbSet<DocumentRow> Documents { get; set; }
+    IDbSet<TrainingRuleRow> TrainingRules { get; set; }
+    IDbSet<UnitRow> Units { get; set; }
+    IDbSet<UnitApplicantRow> UnitApplicants { get; set; }
+    IDbSet<UnitMembershipRow> UnitMemberships { get; set; }
+    IDbSet<UnitStatusRow> UnitStatusTypes { get; set; }
+    IDbSet<UnitDocumentRow> UnitDocuments { get; set; }
+    IDbSet<ComputedTrainingRecordRow> ComputedTrainingAwards { get; set; }
+    IDbSet<SensitiveInfoAccessRow> SensitiveInfoLog { get; set; }
 
     void RecalculateTrainingAwards();
     void RecalculateTrainingAwards(Guid memberId);
-    void RecalculateTrainingAwards(IEnumerable<Member> members);
+    void RecalculateTrainingAwards(IEnumerable<MemberRow> members);
 
-    AuditLog[] GetLog(DateTime since);
-    Func<UnitMembership, bool> GetActiveMembershipFilter(Guid? unit, DateTime time);
-    IQueryable<Member> GetActiveMembers(Guid? unit, DateTime time, params string[] includes);
+    AuditLogRow[] GetLog(DateTime since);
+    Func<UnitMembershipRow, bool> GetActiveMembershipFilter(Guid? unit, DateTime time);
+    IQueryable<MemberRow> GetActiveMembers(Guid? unit, DateTime time, params string[] includes);
     int SaveChanges();
 
     DbEntityEntry<TEntity> Entry<TEntity>(TEntity entity) where TEntity : class;
@@ -53,7 +51,7 @@ namespace Kcsar.Database.Model
 
   public static class IKcsarContextExtensions
   {
-    public static IList<TrainingCourse> GetCoreCompetencyCourses(this IKcsarContext context)
+    public static IList<TrainingCourseRow> GetCoreCompetencyCourses(this IKcsarContext context)
     {
       var courses = new [] {
                 "Clues.WE",

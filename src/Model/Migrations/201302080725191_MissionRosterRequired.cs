@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright 2013-2014 Matthew Cosand
  */
-namespace Kcsar.Database.Model.Migrations
+namespace Kcsar.Database.Data.Migrations
 {
     using System;
     using System.Data.Entity.Migrations;

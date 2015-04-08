@@ -1,10 +1,10 @@
 ﻿/*
  * Copyright 2014 Matthew Cosand
  */
-namespace Internal.Database.Model
+namespace Internal.Database.Data
 {
   using System.Linq;
-  using Kcsar.Database.Model;
+  using Kcsar.Database.Data;
   using NUnit.Framework;
 
   [TestFixture]
@@ -13,8 +13,8 @@ namespace Internal.Database.Model
     [Test]
     public void Initialization()
     {
-      Animal animal = new Animal();
-      Assert.AreEqual(Animal.AllowedTypes[0], animal.Type, "type");
+      AnimalRow animal = new AnimalRow();
+      Assert.AreEqual(AnimalRow.AllowedTypes[0], animal.Type, "type");
       Assert.IsEmpty(animal.Owners, "owners");
       Assert.IsEmpty(animal.MissionRosters, "missionrosters");
     }
@@ -22,11 +22,11 @@ namespace Internal.Database.Model
     [Test]
     public void GetPrimaryOwner()
     {
-      var owner = new Member { FirstName = "Mary", LastName = "Smith" };
-      var animal = new Animal();
+      var owner = new MemberRow { FirstName = "Mary", LastName = "Smith" };
+      var animal = new AnimalRow();
 
-      animal.Owners.Add(new AnimalOwner { Animal = animal, Owner = new Member { FirstName = "Joe", LastName = "Smith" } });
-      animal.Owners.Add(new AnimalOwner { Animal = animal, Owner = owner, IsPrimary = true });
+      animal.Owners.Add(new AnimalOwnerRow { Animal = animal, Owner = new MemberRow { FirstName = "Joe", LastName = "Smith" } });
+      animal.Owners.Add(new AnimalOwnerRow { Animal = animal, Owner = owner, IsPrimary = true });
 
       var primary = animal.GetPrimaryOwner();
       Assert.AreSame(owner, primary);
@@ -35,15 +35,15 @@ namespace Internal.Database.Model
     [Test]
     public void GetPrimaryOwner_none()
     {
-      var animal = new Animal();
+      var animal = new AnimalRow();
       Assert.IsNull(animal.GetPrimaryOwner());
     }
 
     [Test]
     public void Report()
     {
-      var animal = new Animal { Name = "testName", DemSuffix = "H", Comments = "Comments go here" };
-      Assert.AreEqual(string.Format(Animal.ReportFormat, animal.Name, animal.DemSuffix, animal.Type, animal.Comments), animal.GetReportHtml());
+      var animal = new AnimalRow { Name = "testName", DemSuffix = "H", Comments = "Comments go here" };
+      Assert.AreEqual(string.Format(AnimalRow.ReportFormat, animal.Name, animal.DemSuffix, animal.Type, animal.Comments), animal.GetReportHtml());
     }
 
     [Test]
@@ -93,9 +93,9 @@ namespace Internal.Database.Model
       Assert.AreEqual("Must be one of", result.Single().ErrorMessage.Split(':')[0]);
     }
 
-    private Animal GetValidAnimal()
+    private AnimalRow GetValidAnimal()
     {
-      return new Animal { Name = "TestName", DemSuffix = "H" };
+      return new AnimalRow { Name = "TestName", DemSuffix = "H" };
     }
   }
 }

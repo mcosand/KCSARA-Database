@@ -1,20 +1,21 @@
 ﻿/*
- * Copyright 2012-2014 Matthew Cosand
+ * Copyright 2012-2015 Matthew Cosand
  */
-using Data = Kcsar.Database.Model;
-using Kcsara.Database.Web.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
-using log4net;
-using Kcsara.Database.Web.api.Models;
 
 namespace Kcsara.Database.Web.api
 {
+  using Data = Kcsar.Database.Data;
+  using Kcsara.Database.Web.Model;
+  using System;
+  using System.Collections.Generic;
+  using System.Linq;
+  using System.Linq.Expressions;
+  using System.Net;
+  using System.Net.Http;
+  using System.Web.Http;
+  using log4net;
+  using Kcsara.Database.Web.api.Models;
+
   public class TrainingCoursesController : BaseApiController
   {
     public TrainingCoursesController(Data.IKcsarContext db, ILog log)
@@ -35,7 +36,7 @@ namespace Kcsara.Database.Web.api
       return GetCourseViews(f => true, now);
     }
 
-    private IEnumerable<TrainingCourse> GetCourseViews(Expression<Func<Data.TrainingCourse, bool>> whereClause, DateTime when)
+    private IEnumerable<TrainingCourse> GetCourseViews(Expression<Func<Data.TrainingCourseRow, bool>> whereClause, DateTime when)
     {
       return db.TrainingCourses
          .Where(whereClause)

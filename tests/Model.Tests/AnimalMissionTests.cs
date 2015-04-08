@@ -1,12 +1,10 @@
 ﻿/*
  * Copyright 2014 Matthew Cosand
  */
-namespace Internal.Database.Model
+namespace Internal.Database.Data
 {
-  using System;
   using System.Linq;
-  using Kcsar.Database.Model;
-  using Kcsar.Database.Model.Events;
+  using Kcsar.Database.Data;
   using NUnit.Framework;
 
   [TestFixture]
@@ -15,7 +13,7 @@ namespace Internal.Database.Model
     [Test]
     public void Validate()
     {
-      var am = new AnimalEvents();
+      var am = new AnimalEventRow();
       Assert.AreEqual(0, am.Validate(null).Count());
     }
   }

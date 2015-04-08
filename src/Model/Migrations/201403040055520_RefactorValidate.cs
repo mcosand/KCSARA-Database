@@ -1,4 +1,4 @@
-namespace Kcsar.Database.Model.Migrations
+namespace Kcsar.Database.Data.Migrations
 {
     using System;
     using System.Data.Entity.Migrations;

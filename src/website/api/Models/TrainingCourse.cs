@@ -10,7 +10,7 @@ namespace Kcsara.Database.Web.api.Models
     using System.Web;
     using System.Runtime.Serialization;
     using System.Linq.Expressions;
-    using Model = Kcsar.Database.Model;
+    using Data = Kcsar.Database.Data;
     
     [DataContract(Namespace="")]
     public class TrainingCourse
@@ -27,7 +27,7 @@ namespace Kcsara.Database.Web.api.Models
         [DataMember]
         public bool? Offered { get; set; }
 
-        public static Expression<Func<Model.TrainingCourse, TrainingCourse>> GetTrainingCourseConversion(DateTime? when)
+        public static Expression<Func<Data.TrainingCourseRow, TrainingCourse>> GetTrainingCourseConversion(DateTime? when)
         {
             return f => new TrainingCourse
             {

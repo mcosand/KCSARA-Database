@@ -4,7 +4,7 @@
 
 namespace Kcsara.Database.Web.api
 {
-  using Data = Kcsar.Database.Model;
+  using Data = Kcsar.Database.Data;
   using Kcsara.Database.Web.Model;
   using Newtonsoft.Json;
   using System;
@@ -14,6 +14,7 @@ namespace Kcsara.Database.Web.api
   using System.Web.Http;
   using log4net;
   using Kcsara.Database.Web.api.Models;
+  using Kcsar.Database.Model;
 
   [ModelValidationFilter]
   public class TrainingRecordsController : BaseApiController
@@ -35,14 +36,14 @@ namespace Kcsara.Database.Web.api
     {
       if (!User.IsInRole("cdb.users")) ThrowAuthError();
 
-      Data.Member m = GetObjectOrNotFound(() => db.Members.SingleOrDefault(f => f.Id == id));
+      Data.MemberRow m = GetObjectOrNotFound(() => db.Members.SingleOrDefault(f => f.Id == id));
 
       var model = GetComputedTrainingRecordViews(f => f.Member.Id == id, false, m.WacLevel);
 
       return model;
     }
 
-    private IEnumerable<TrainingRecord> GetComputedTrainingRecordViews(Expression<Func<Data.ComputedTrainingAward, bool>> whereClause, bool includeMember, Data.WacLevel? levelForRequired)
+    private IEnumerable<TrainingRecord> GetComputedTrainingRecordViews(Expression<Func<Data.ComputedTrainingRecordRow, bool>> whereClause, bool includeMember, WacLevel? levelForRequired)
     {
       //int mask = (1 << (((int)(levelForRequired ?? Data.WacLevel.None) - 1) * 2 + 1));
       //string dateFormat = GetDateFormat();
@@ -84,7 +85,7 @@ namespace Kcsara.Database.Web.api
 
     }
 
-    private IEnumerable<TrainingRecord> GetTrainingRecords(Expression<Func<Data.TrainingAward, bool>> whereClause, bool includeMember, Data.WacLevel? levelForRequired)
+    private IEnumerable<TrainingRecord> GetTrainingRecords(Expression<Func<Data.TrainingRecordRow, bool>> whereClause, bool includeMember, WacLevel? levelForRequired)
     {
       throw new NotImplementedException("reimplement");
 
@@ -124,7 +125,7 @@ namespace Kcsara.Database.Web.api
     {
       if (!User.IsInRole("cdb.users")) ThrowAuthError();
 
-      Data.Member m = GetObjectOrNotFound(() => db.Members.SingleOrDefault(f => f.Id == id));
+      Data.MemberRow m = GetObjectOrNotFound(() => db.Members.SingleOrDefault(f => f.Id == id));
 
       int mask = (1 << (((int)m.WacLevel - 1) * 2 + 1));
 
@@ -147,19 +148,19 @@ namespace Kcsara.Database.Web.api
         ThrowSubmitErrors(new[] { new SubmitError { Error = Strings.API_Required, Property = "Member" } });
       }
 
-      Data.TrainingAward model;
-      model = (from a in db.TrainingAward.Include("Member").Include("Course") where a.Id == view.ReferenceId select a).FirstOrDefault();
+      Data.TrainingRecordRow model;
+      model = (from a in db.TrainingRecords.Include("Member").Include("Course") where a.Id == view.ReferenceId select a).FirstOrDefault();
 
       if (model == null)
       {
-        model = new Data.TrainingAward();
+        model = new Data.TrainingRecordRow();
         model.Member = db.Members.Where(f => f.Id == view.Member.Id).FirstOrDefault();
         if (model.Member == null)
         {
           errors.Add(new SubmitError { Property = "Member", Error = Strings.API_NotFound });
           ThrowSubmitErrors(errors);
         }
-        db.TrainingAward.Add(model);
+        db.TrainingRecords.Add(model);
       }
 
  //     try
@@ -223,7 +224,7 @@ namespace Kcsara.Database.Web.api
         }
 
         // Prevent duplicate records
-        if (db.TrainingAward.Where(f => f.Id != model.Id && f.Completed == model.Completed && f.Course.Id == model.Course.Id && f.Member.Id == model.Member.Id).Count() > 0)
+        if (db.TrainingRecords.Where(f => f.Id != model.Id && f.Completed == model.Completed && f.Course.Id == model.Course.Id && f.Member.Id == model.Member.Id).Count() > 0)
         {
           ThrowSubmitErrors(new[] { new SubmitError { Error = Strings.API_TrainingRecord_Duplicate, Id = new[] { model.Id }, Property = BaseApiController.ModelRootNodeName } });
         }
@@ -262,10 +263,10 @@ namespace Kcsara.Database.Web.api
 
       List<string> files = new List<string>();
 
-      var item = GetObjectOrNotFound(() => db.TrainingAward.FirstOrDefault(f => f.Id == id));
+      var item = GetObjectOrNotFound(() => db.TrainingRecords.FirstOrDefault(f => f.Id == id));
       var memberId = item.Member.Id;
 
-      db.TrainingAward.Remove(item);
+      db.TrainingRecords.Remove(item);
       db.SaveChanges();
       db.RecalculateTrainingAwards(memberId);
       db.SaveChanges();

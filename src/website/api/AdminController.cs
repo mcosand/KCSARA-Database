@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2013-2014 Matthew Cosand
+ * Copyright 2013-2015 Matthew Cosand
  */
 namespace Kcsara.Database.Web.api
 {
@@ -9,7 +9,7 @@ namespace Kcsara.Database.Web.api
   using System.Text;
   using System.Text.RegularExpressions;
   using System.Web.Http;
-  using Kcsar.Database.Model;
+  using Kcsar.Database.Data;
   using log4net;
 
   [ModelValidationFilter]
