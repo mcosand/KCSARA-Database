@@ -131,6 +131,7 @@ namespace Kcsar.Database.Data.Migrations
       AddForeignKey("dbo.MemberContacts", "MemberId", "dbo.Members", cascadeDelete: true);
       CreateIndex("dbo.MemberContacts", "MemberId");
       RenameColumn("dbo.MemberEmergencyContacts", "Member_Id", "MemberId");
+      Sql(@"DELETE FROM dbo.MemberEmergencyContacts WHERE MemberId IS NULL");
       AlterColumn("dbo.MemberEmergencyContacts", "MemberId", c => c.Guid(nullable: false));
       AddForeignKey("dbo.MemberEmergencyContacts", "MemberId", "dbo.Members", cascadeDelete: true);
       CreateIndex("dbo.MemberEmergencyContacts", "MemberId");
@@ -153,6 +154,8 @@ namespace Kcsar.Database.Data.Migrations
       RenameColumn("dbo.SarEvents", "Previous_Id", "PreviousId");
       AddForeignKey("dbo.SarEvents", "PreviousId", "dbo.SarEvents");
       CreateIndex("dbo.SarEvents", "PreviousId");
+      Sql(@"UPDATE dbo.SarEvents SET Discriminator='MissionRow' WHERE Discriminator='Mission'");
+      Sql(@"UPDATE dbo.SarEvents SET Discriminator='TrainingRow' WHERE Discriminator='Training'");
       Sql(@"EXECUTE sp_rename '[PK_dbo.SarUnits]', 'PK_dbo.Units'");
       RenameColumn("dbo.SubjectGroupLinks", "Subject_Id", "SubjectId");
       RenameColumn("dbo.SubjectGroupLinks", "Group_Id", "GroupId");
