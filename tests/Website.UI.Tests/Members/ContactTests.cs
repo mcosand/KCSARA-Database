@@ -2,6 +2,7 @@
 {
   using System;
   using System.Linq;
+  using Kcsar.Database.Data;
   using Kcsar.Database.Model;
   using NUnit.Framework;
   using OpenQA.Selenium;
@@ -18,7 +19,7 @@
 
       using (var db = context.GetDb())
       {
-        Member a = new Member { FirstName = name, LastName = "TestUser" };
+        MemberRow a = new MemberRow { FirstName = name, LastName = "TestUser" };
         db.Members.Add(a);
         db.SaveChanges();
         memberId = a.Id;
@@ -64,10 +65,10 @@
 
       using (var db = context.GetDb())
       {
-        Member a = new Member { FirstName = name, LastName = "TestUser" };
+        MemberRow a = new MemberRow { FirstName = name, LastName = "TestUser" };
         db.Members.Add(a);
-        a.ContactNumbers.Add(new PersonContact { Type = "email", Value = "a@example.com", Priority = 0 });
-        a.ContactNumbers.Add(new PersonContact { Type = "email", Value = "b@example.com", Priority = 1 });
+        a.ContactNumbers.Add(new MemberContactRow { Type = "email", Value = "a@example.com", Priority = 0 });
+        a.ContactNumbers.Add(new MemberContactRow { Type = "email", Value = "b@example.com", Priority = 1 });
         db.SaveChanges();
         memberId = a.Id;
       }

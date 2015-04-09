@@ -1,8 +1,16 @@
 run.log*
+tests/website.qunit/prod/
 
 # Build Folders (you can keep bin if you'd like, to store dlls and pdbs)
 [Bb]in/
 [Oo]bj/
+coverage-*/
+cover.json
+
+# npm / grunt
+node_modules/
+_SpecRunner.html
+.grunt/
 
 # mstest test results
 TestResults

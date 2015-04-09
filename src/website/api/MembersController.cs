@@ -4,25 +4,25 @@
 
 namespace Kcsara.Database.Web.api
 {
-  using Newtonsoft.Json;
   using System;
   using System.Collections.Generic;
-  using System.Linq;
-  using System.Linq.Expressions;
-  using System.Web.Http;
-  using System.Text.RegularExpressions;
-  using Kcsara.Database.Web.api.Models;
-  using Kcsar.Membership;
-  using System.Web.Profile;
-  using System.Threading;
   using System.Configuration;
+  using System.Drawing.Imaging;
   using System.IO;
+  using System.Linq;
+  using System.Net;
+  using System.Net.Http;
+  using System.Net.Http.Headers;
+  using System.Web.Hosting;
+  using System.Web.Http;
+  using Kcsara.Database.Web.api.Models;
   using Kcsara.Database.Web.Services;
   using System.Web.Helpers;
   using Data = Kcsar.Database.Data;
   using log4net;
   using Kcsar.Database.Model;
-  
+  using Newtonsoft.Json;
+
   [ModelValidationFilter]
   public class MembersController : BaseApiController
   {
@@ -362,5 +362,39 @@ namespace Kcsara.Database.Web.api
         });
       return result;
     }
+
+    [HttpGet]
+    [Authorize(Roles = "cdb.users")]
+    public HttpResponseMessage GetThumbnail(Guid id, int width)
+    {
+      var member = this.db.Members.Find(id);
+      var filename = HostingEnvironment.MapPath(MembersController.GetPhotoOrFillInPath(member.PhotoFile));
+
+      HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK);
+      var ms = new MemoryStream();
+      var imgSvc = new ImageService();
+      using (var fileStream = new FileStream(filename, FileMode.Open, FileAccess.Read))
+      {
+        using (var thumbnail = imgSvc.GetResized(fileStream, width, (int)(width * 1.3333)))
+        {
+          thumbnail.Save(ms, ImageFormat.Png);
+        }
+      }
+
+      ms.Position = 0;
+      result.Content = new StreamContent(ms);
+      result.Content.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+
+      return result;
+    }
+
+    /// <summary>Vdir-relative directory to the meber's photo store. Includes trailing-slash.</summary>
+    public const string PhotosStoreRelativePath = "~/Content/auth/members/";
+    public const string StandInPhotoFile = "none.jpg";
+    public static string GetPhotoOrFillInPath(string photoFile)
+    {
+      return MembersController.PhotosStoreRelativePath + (photoFile ?? MembersController.StandInPhotoFile);
+    }
+
   }
 }

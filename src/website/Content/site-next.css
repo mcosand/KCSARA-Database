@@ -1,0 +1,77 @@
+﻿body { padding: 70px 15px 0px 15px; }
+
+.navbar-inverse {
+  background-color: rgb(55,55,55)
+}
+.navbar-inverse .navbar-brand {
+  color: #fff
+}
+
+.panel-primary {
+  border-color:rgb(233,148,0)
+}
+.panel-primary>.panel-heading{
+  background-color:rgb(233,148,0);
+  background-image: none;
+  background-image: none;
+  background-image: none;
+  background-image: none;
+  background-image: none;
+  background-image: none;
+  border-color:rgb(233,148,0);
+}
+
+.form-control:focus {
+  border-color: rgb(233, 166, 49);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(233, 148, 0, 0.6);
+}
+.navbar-form form input {
+  position: relative;
+}
+.form-control-feedback.fa {
+  font: inherit;
+  font-family: FontAwesome;
+  line-height: 34px;
+}
+
+@media(min-width:768px) {
+  .navbar-form {
+    padding-right: 0px;
+  }
+}
+
+/* so the search box drop down can overflow */
+.navbar-collapse.in {
+  overflow-y: visible;
+}
+
+@media(min-width:992px) {
+  #searchBox { width: 300px; }
+}
+@media(min-width:1200px) {
+  #searchBox {
+    width: 350px;
+  }
+}
+.search-box-dropdown {
+  border: solid 1px #888;
+  border-radius: 4px;
+  background-color:white;
+}
+.search-box-item {
+  border: solid 1px transparent;
+  border-right-width:4px;
+  cursor: pointer;
+}
+.search-box-highlight {
+  border-color: rgb(233, 166, 49);
+}
+.search-box-item img { display:inline-block; padding:-1px; margin-right:8px; width:25px; height:34px }
+.search-box-item div { display: inline-block; }
+
+a, a:hover {
+  color: #33840c
+}
+a:visited {
+  color: #72840c
+}

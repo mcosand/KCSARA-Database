@@ -18,6 +18,7 @@ namespace Kcsara.Database.Web.api
   using Kcsar.Database.Model;
   using Kcsara.Database.Services.Accounts;
   using Kcsara.Database.Web.api.Models;
+  using Kcsara.Database.Web.api.Models.Account;
   using Kcsara.Database.Web.Services;
   using log4net;
   using SarMembership = Kcsar.Membership;
@@ -27,10 +28,15 @@ namespace Kcsara.Database.Web.api
   {
     public const string APPLICANT_ROLE = "cdb.applicants";
     readonly MembershipProvider membership;
-    readonly AccountsService accountsService;
     readonly IFormsAuthentication formsAuth;
+    readonly AccountsService accountsService;
 
-    public AccountController(IKcsarContext db, AccountsService accountsSvc, IFormsAuthentication formsAuth, ILog log, MembershipProvider membership)
+    public AccountController(
+      IKcsarContext db,
+      AccountsService accountsSvc,
+      ILog log,
+      MembershipProvider membership,
+      IFormsAuthentication formsAuth)
       : base(db, log)
     {
       this.membership = membership;
@@ -114,9 +120,9 @@ namespace Kcsara.Database.Web.api
           string roleName = string.Format("sec.{0}.members", unit.DisplayName.Replace(" ", "").ToLowerInvariant());
 
           // Give them rights as a member of the unit.
-          if (System.Web.Security.Roles.RoleExists(roleName))
+          if (Roles.RoleExists(roleName))
           {
-            System.Web.Security.Roles.AddUserToRole(data.Username, roleName);
+            Roles.AddUserToRole(data.Username, roleName);
           }
         }
 
@@ -214,11 +220,11 @@ namespace Kcsara.Database.Web.api
           UnitsController.RegisterApplication(db, unitId, newMember);
         }
 
-        if (!System.Web.Security.Roles.RoleExists(APPLICANT_ROLE))
+        if (!Roles.RoleExists(APPLICANT_ROLE))
         {
-          System.Web.Security.Roles.CreateRole(APPLICANT_ROLE);
+          Roles.CreateRole(APPLICANT_ROLE);
         }
-        System.Web.Security.Roles.AddUserToRole(data.Username, APPLICANT_ROLE);
+        Roles.AddUserToRole(data.Username, APPLICANT_ROLE);
 
         return newMember;
       }, "new-account-verification.html");
@@ -259,8 +265,8 @@ namespace Kcsara.Database.Web.api
 
       try
       {
-        System.Web.Security.FormsAuthenticationTicket ticket = new System.Web.Security.FormsAuthenticationTicket(data.Username, false, 5);
-        Thread.CurrentPrincipal = new System.Web.Security.RolePrincipal(new System.Web.Security.FormsIdentity(ticket));
+        FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(data.Username, false, 5);
+        Thread.CurrentPrincipal = new RolePrincipal(new FormsIdentity(ticket));
 
         var member = memberCallback();
 
@@ -313,6 +319,24 @@ namespace Kcsara.Database.Web.api
     }
 
     [HttpPost]
+    [AllowAnonymous]
+    public SubmitResult Login(LoginRequest input)
+    {
+      var result = new SubmitResult();
+
+      if (this.membership.ValidateUser(input.Username, input.Password))
+      {
+        this.formsAuth.SetAuthCookie(input.Username, input.RememberMe);
+      }
+      else
+      {
+        result.Errors.Add(new SubmitError(Strings.LoginFailure));
+      }
+
+      return result;
+    }
+
+    [HttpPost]
     [Authorize(Roles = "site.accounts")]
     public object GetInactiveAccounts()
     {
@@ -356,7 +380,6 @@ namespace Kcsara.Database.Web.api
   // unit test code that calls its members. The interface and helper class below demonstrate
   // how to create an abstract wrapper around such a type in order to make the AccountController
   // code unit testable.
-
   public interface IFormsAuthentication
   {
     void SetAuthCookie(string userName, bool createPersistentCookie);

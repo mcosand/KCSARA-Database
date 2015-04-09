@@ -919,14 +919,14 @@ namespace Kcsara.Database.Web.Controllers
     [AcceptVerbs(HttpVerbs.Get)]
     public ActionResult DisconnectedPhotos()
     {
-      string storePath = Server.MapPath(MembersController.PhotosStoreRelativePath);
+      string storePath = Server.MapPath(api.MembersController.PhotosStoreRelativePath);
       var photoFiles = (from m in this.db.Members where m.PhotoFile != "" && m.PhotoFile != null select m.PhotoFile.ToLower()).ToList();
 
       List<string> existingFiles = System.IO.Directory.GetFiles(storePath).Select(f => f.Substring(storePath.Length)).ToList();
       for (int i = 0; i < existingFiles.Count; i++)
       {
         int dbIdx = photoFiles.IndexOf(existingFiles[i].ToLower());
-        if (dbIdx >= 0 || existingFiles[i] == MembersController.StandInPhotoFile.ToLower())
+        if (dbIdx >= 0 || existingFiles[i] == api.MembersController.StandInPhotoFile.ToLower())
         {
           if (dbIdx >= 0)
           {

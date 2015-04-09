@@ -2,6 +2,7 @@
 {
   using System;
   using System.Linq;
+  using Kcsar.Database.Data;
   using Kcsar.Database.Model;
   using NUnit.Framework;
   using OpenQA.Selenium;
@@ -17,7 +18,7 @@
 
       using (var db = context.GetDb())
       {
-        Member a = new Member { FirstName = name, LastName = "TestUser" };
+        MemberRow a = new MemberRow { FirstName = name, LastName = "TestUser" };
         db.Members.Add(a);
         db.SaveChanges();
         memberId = a.Id;

@@ -5,6 +5,7 @@
   using System.Linq;
   using System.Text;
   using System.Threading.Tasks;
+  using Kcsar.Database.Data;
   using Kcsar.Database.Model;
   using NUnit.Framework;
   using OpenQA.Selenium;
@@ -21,7 +22,7 @@
       Guid id;
       using (var db = context.GetDb())
       {
-        var c = new TrainingCourse
+        var c = new TrainingCourseRow
         {
           FullName = name,
           DisplayName = "Test Course",

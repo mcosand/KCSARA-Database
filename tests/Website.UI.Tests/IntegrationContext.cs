@@ -1,12 +1,7 @@
 ﻿namespace Internal.Website
 {
-  using System;
-  using System.Collections.Generic;
   using System.Collections.Specialized;
-  using System.Linq;
-  using System.Text;
-  using System.Threading.Tasks;
-using Kcsar.Database.Model;
+  using Kcsar.Database.Data;
 
   public class IntegrationContext
   {

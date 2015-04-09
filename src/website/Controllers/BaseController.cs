@@ -22,6 +22,7 @@ namespace Kcsara.Database.Web.Controllers
   using Kcsara.Database.Web.Model;
   using Kcsara.Database.Web.Services;
   using MvcContrib.UI;
+  using Newtonsoft.Json;
 
   public class BaseController : Controller
   {
@@ -58,6 +59,14 @@ namespace Kcsara.Database.Web.Controllers
       base.Initialize(requestContext);
       Permissions = new AuthService(User, this.db);
       DocumentRow.StorageRoot = requestContext.HttpContext.Request.MapPath("~/Content/auth/documents/");
+      
+      var authInfo = new {
+        username = this.User.Identity.Name,
+        isAuthenticated = this.User.Identity.IsAuthenticated
+      };
+      var authInfoCookie = new HttpCookie("authInfo", JsonConvert.SerializeObject(authInfo));
+      authInfoCookie.Expires = DateTime.Now.AddHours(1);
+      Response.SetCookie(authInfoCookie);
     }
 
     private UserSettings _settings;

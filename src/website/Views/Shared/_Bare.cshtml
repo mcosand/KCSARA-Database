@@ -1,0 +1,71 @@
+﻿@*
+  * Copyright 2015 Matthew Cosand
+*@
+<!DOCTYPE html>
+<html xml:lang="en" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>@(ViewData["Title"] ?? ViewBag.Title)</title>
+  @Styles.Render("~/Content/site-next")
+</head>
+<body>
+  <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="sr-only">Toggle menu</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        @(Html.ActionLink<HomeController>(f => f.Index(), Strings.DatabaseName, new { @class = "navbar-brand" }))
+      </div>
+      <div class="navbar-collapse collapse">
+        @loginLink("hidden-xs")
+        <div class="navbar-form navbar-right" data-bind="visible: user().isAuthenticated(), component: { name: 'search-box', params: {selected: searchResult, id: 'searchBox'}}" style="display: none">
+        </div>
+        <ul class="nav navbar-nav" data-bind="visible: user().isAuthenticated()" style="display: none">
+          <li>@(Html.ActionLink<UnitsController>(f => f.Index(), Strings.SarUnits))</li>
+        </ul>
+        @loginLink("visible-xs")
+
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid body-content">
+    @RenderBody()
+    <hr />
+    <footer>
+      <p data-bind="text: ko.toJSON($data, null, 2)"></p>
+    </footer>
+  </div>
+
+  <script type="text/javascript">
+    window.appRoot = "@Url.Content("~/").TrimEnd('/')";
+    hasPageModel = false;
+    entryPoint = "site/startup";
+  </script>
+  @Scripts.Render("~/home/RequireConfig")
+  @Scripts.Render("~/scripts/require.js")
+
+  @RenderSection("scripts", required: false)
+  <script type="text/javascript">
+    requirejs([entryPoint])
+  </script>
+</body>
+</html>
+
+@helper loginLink(string addClass) { 
+  <ul class="nav navbar-nav navbar-right @addClass" data-bind="with: user">
+    <li class="dropdown" data-bind="if: isAuthenticated">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+      <span data-bind="text: username"></span> <small><i class="fa fa-user fa-2x" style="position:relative;margin-top:-8px; bottom:-4px"></i></small></a>
+      <ul class="dropdown-menu" role="menu">
+        <li>@(Html.ActionLink<AccountController>(f => f.Logout(), Strings.LogoutPrompt))</li>
+      </ul>
+    </li>
+    <li data-bind="visible: !isAuthenticated()" style="display: none">@(Html.ActionLink<AccountController>(f => f.Login(), Strings.LoginPrompt))</li>
+  </ul>
+}

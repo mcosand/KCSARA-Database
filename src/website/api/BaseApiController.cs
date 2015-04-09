@@ -1,7 +1,6 @@
 ﻿/*
  * Copyright 2012-2014 Matthew Cosand
  */
-
 namespace Kcsara.Database.Web.api
 {
   using System;
@@ -9,7 +8,9 @@ namespace Kcsara.Database.Web.api
   using System.Linq;
   using System.Net;
   using System.Net.Http;
+  using System.Net.Http.Headers;
   using System.Web.Http;
+  using System.Web.Http.Results;
   using Kcsar.Database.Data;
   using Kcsara.Database.Services;
   using Kcsara.Database.Web.Model;
@@ -18,11 +19,6 @@ namespace Kcsara.Database.Web.api
 
   public abstract class BaseApiController : ApiController, IDisposable
   {
-    //static BaseApiController()
-    //{
-    //    GlobalConfiguration.Configuration.Filters.Add(new ExceptionFilter());
-    //}
-
     public BaseApiController(IKcsarContext db, ILog log)
       : this(db, Ninject.ResolutionExtensions.Get<IAuthService>(MvcApplication.myKernel), log)
     {
@@ -37,12 +33,25 @@ namespace Kcsara.Database.Web.api
     }
 
     public IAuthService Permissions = null;
-
-
     public const string ModelRootNodeName = "_root";
 
     protected readonly IKcsarContext db;
     protected readonly ILog log;
+
+    protected override ResponseMessageResult ResponseMessage(HttpResponseMessage response)
+    {
+      var r = base.ResponseMessage(response);
+      var authInfo = new
+      {
+        username = this.User.Identity.Name,
+        isAuthenticated = this.User.Identity.IsAuthenticated
+      };
+      var authInfoCookie = new CookieHeaderValue("authInfo", JsonConvert.SerializeObject(authInfo));
+      authInfoCookie.Expires = DateTime.Now.AddHours(1);
+
+      r.Response.Headers.AddCookies(new[] { authInfoCookie });
+      return r;
+    }
 
     protected override void Dispose(bool disposing)
     {

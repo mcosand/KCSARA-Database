@@ -5,6 +5,7 @@
   using System.Linq;
   using System.Text;
   using System.Threading.Tasks;
+  using Kcsar.Database.Data;
   using Kcsar.Database.Model;
   using NUnit.Framework;
   using OpenQA.Selenium;
@@ -51,7 +52,7 @@
       Guid id;
       using (var db = context.GetDb())
       {
-        Member a = new Member { FirstName = name, LastName = "TestUser" };
+        MemberRow a = new MemberRow { FirstName = name, LastName = "TestUser" };
         db.Members.Add(a);
         db.SaveChanges();
         id=a.Id;

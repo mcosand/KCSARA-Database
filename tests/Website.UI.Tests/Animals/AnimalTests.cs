@@ -5,6 +5,7 @@
   using System.Linq;
   using System.Text;
   using System.Threading.Tasks;
+  using Kcsar.Database.Data;
   using Kcsar.Database.Model;
   using NUnit.Framework;
   using OpenQA.Selenium;
@@ -50,7 +51,7 @@
 
       using (var db = context.GetDb())
       {
-        Animal a = new Animal { Name = name, DemSuffix = "D1" };
+        AnimalRow a = new AnimalRow { Name = name, DemSuffix = "D1" };
         db.Animals.Add(a);
         db.SaveChanges();
       }
@@ -87,12 +88,12 @@
       Guid userId;
       using (var db = context.GetDb())
       {
-        Animal a = new Animal { Name = name, DemSuffix = "D1" };
+        AnimalRow a = new AnimalRow { Name = name, DemSuffix = "D1" };
         db.Animals.Add(a);
         db.SaveChanges();
         id = a.Id;
 
-        Member m = db.Members.First();
+        MemberRow m = db.Members.First();
         owner = m.ReverseName;
         userId = m.Id;
       }

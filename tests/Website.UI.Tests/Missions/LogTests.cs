@@ -5,6 +5,7 @@
   using System.Linq;
   using System.Text;
   using System.Threading.Tasks;
+  using Kcsar.Database.Data.Events;
   using Kcsar.Database.Model;
   using NUnit.Framework;
   using OpenQA.Selenium;
@@ -65,13 +66,13 @@
       using (var db = context.GetDb())
       {
         var member = db.Members.First();
-        var log = new MissionLog
+        var log = new EventLogRow
         {
           Time = DateTime.Now,
-          Data = "Incorrect log",
-          Person = member
+          Message = "Incorrect log",
+          Participant = null
         };
-        db.Missions.Single(f => f.Id == MissionId).Log.Add(log);
+        db.Events.Single(f => f.Id == MissionId).Timeline.Add(log);
         db.SaveChanges();
 
         d.Url = string.Format("{0}/Missions/Roster/{1}", context.Url, this.MissionId);

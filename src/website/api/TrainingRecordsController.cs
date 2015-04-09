@@ -141,11 +141,11 @@ namespace Kcsara.Database.Web.api
       log.DebugFormat("POST {0} {1} {2}", Request.RequestUri, User.Identity.Name, JsonConvert.SerializeObject(view));
       if (!User.IsInRole("cdb.trainingeditors")) ThrowAuthError();
       //     if (!Permissions.IsAdmin && !Permissions.IsSelf(view.MemberId) && !Permissions.IsMembershipForPerson(view.MemberId)) return GetAjaxLoginError<MemberContactView>(null);
-      List<SubmitError> errors = new List<SubmitError>();
+      List<Kcsara.Database.Web.Model.SubmitError> errors = new List<Kcsara.Database.Web.Model.SubmitError>();
 
       if (view.Member.Id == Guid.Empty)
       {
-        ThrowSubmitErrors(new[] { new SubmitError { Error = Strings.API_Required, Property = "Member" } });
+        ThrowSubmitErrors(new[] { new Kcsara.Database.Web.Model.SubmitError { Error = Strings.API_Required, Property = "Member" } });
       }
 
       Data.TrainingRecordRow model;
@@ -157,7 +157,7 @@ namespace Kcsara.Database.Web.api
         model.Member = db.Members.Where(f => f.Id == view.Member.Id).FirstOrDefault();
         if (model.Member == null)
         {
-          errors.Add(new SubmitError { Property = "Member", Error = Strings.API_NotFound });
+          errors.Add(new Kcsara.Database.Web.Model.SubmitError { Property = "Member", Error = Strings.API_NotFound });
           ThrowSubmitErrors(errors);
         }
         db.TrainingRecords.Add(model);
@@ -170,11 +170,11 @@ namespace Kcsara.Database.Web.api
         DateTime completed;
         if (string.IsNullOrWhiteSpace(view.Completed))
         {
-          errors.Add(new SubmitError { Property = "Completed", Error = Strings.API_Required });
+          errors.Add(new Kcsara.Database.Web.Model.SubmitError { Property = "Completed", Error = Strings.API_Required });
         }
         else if (!DateTime.TryParse(view.Completed, out completed))
         {
-          errors.Add(new SubmitError { Error = Strings.API_InvalidDate, Property = "Completed" });
+          errors.Add(new Kcsara.Database.Web.Model.SubmitError { Error = Strings.API_InvalidDate, Property = "Completed" });
         }
         else
         {
@@ -190,7 +190,7 @@ namespace Kcsara.Database.Web.api
 
         if (view.Course.Id == null)
         {
-          errors.Add(new SubmitError { Error = Strings.API_Required, Id = new[] { view.ReferenceId }, Property = "Course" });
+          errors.Add(new Kcsara.Database.Web.Model.SubmitError { Error = Strings.API_Required, Id = new[] { view.ReferenceId }, Property = "Course" });
         }
         else if (model.Course == null || model.Course.Id != view.Course.Id)
         {
@@ -209,7 +209,7 @@ namespace Kcsara.Database.Web.api
             }
             else
             {
-              errors.Add(new SubmitError { Error = Strings.API_TrainingRecord_CustomExpiryRequired, Property = "Expiry", Id = new[] { view.ReferenceId } });
+              errors.Add(new Kcsara.Database.Web.Model.SubmitError { Error = Strings.API_TrainingRecord_CustomExpiryRequired, Property = "Expiry", Id = new[] { view.ReferenceId } });
             }
             break;
           case "never":
@@ -220,13 +220,13 @@ namespace Kcsara.Database.Web.api
         // Documentation required.
         if (!model.UploadsPending && string.IsNullOrWhiteSpace(model.metadata))
         {
-          errors.Add(new SubmitError { Error = Strings.API_TrainingRecord_DocumentationRequired, Property = BaseApiController.ModelRootNodeName });
+          errors.Add(new Kcsara.Database.Web.Model.SubmitError { Error = Strings.API_TrainingRecord_DocumentationRequired, Property = BaseApiController.ModelRootNodeName });
         }
 
         // Prevent duplicate records
         if (db.TrainingRecords.Where(f => f.Id != model.Id && f.Completed == model.Completed && f.Course.Id == model.Course.Id && f.Member.Id == model.Member.Id).Count() > 0)
         {
-          ThrowSubmitErrors(new[] { new SubmitError { Error = Strings.API_TrainingRecord_Duplicate, Id = new[] { model.Id }, Property = BaseApiController.ModelRootNodeName } });
+          ThrowSubmitErrors(new[] { new Kcsara.Database.Web.Model.SubmitError { Error = Strings.API_TrainingRecord_Duplicate, Id = new[] { model.Id }, Property = BaseApiController.ModelRootNodeName } });
         }
 
         if (errors.Count == 0)

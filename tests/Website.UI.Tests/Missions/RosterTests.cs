@@ -3,6 +3,8 @@
   using System;
   using System.Data.Entity;
   using System.Linq;
+  using Kcsar.Database.Data;
+  using Kcsar.Database.Data.Events;
   using Kcsar.Database.Model;
   using NUnit.Framework;
   using OpenQA.Selenium;
@@ -33,13 +35,13 @@
     [Test]
     public void AddEntry()
     {
-      Member member;
-      Mission mission;
+      MemberRow member;
+      MissionRow mission;
       int rowCount;
       using (var db = context.GetDb())
       {
         member = db.Members.AsNoTracking().First();
-        mission = db.Missions.AsNoTracking().Single(f => f.Id == MissionId);
+        mission = db.Events.AsNoTracking().OfType<MissionRow>().Single(f => f.Id == MissionId);
         rowCount = mission.Roster.Count;
       }
       var start = mission.StartTime.ToString("yyMMdd");
@@ -61,7 +63,7 @@
         d.FindElement(By.XPath("//input[@value = 'Finish Roster']")).Click();
         using (var db = context.GetDb())
         {
-          Assert.AreEqual(rowCount + 1, db.Missions.Single(f => f.Id == MissionId).Roster.Count, "row count");
+          Assert.AreEqual(rowCount + 1, db.Events.Single(f => f.Id == MissionId).Roster.Count, "row count");
           Assert.IsTrue(d.FindElement(By.Id("roster")).Text.Contains(member.ReverseName), "roster updated");
         }
       }
@@ -69,9 +71,9 @@
       {
         using (var db = context.GetDb())
         {
-          foreach (var entry in db.Members.Single(f => f.Id == member.Id).MissionRosters.Where(f => f.Mission.Id == MissionId).ToArray())
+          foreach (var entry in db.Members.Single(f => f.Id == member.Id).Participation.Select(f => f.Event).Where(f => f.Id == MissionId).ToArray())
           {
-            db.MissionRosters.Remove(entry);
+            db.Events.Remove(entry);
           }
           db.SaveChanges();
         }

@@ -30,10 +30,6 @@ namespace Kcsara.Database.Web.Controllers
   {
     public MembersController(IKcsarContext db) : base(db) { }
 
-    /// <summary>Vdir-relative directory to the meber's photo store. Includes trailing-slash.</summary>
-    public const string PhotosStoreRelativePath = "~/Content/auth/members/";
-    public const string StandInPhotoFile = "none.jpg";
-
     [Authorize]
     //        [FilterTypes(FilterTypes.ActiveOnly | FilterTypes.Time | FilterTypes.Unit)]
     public ActionResult Index()
@@ -581,30 +577,9 @@ namespace Kcsara.Database.Web.Controllers
 
         Guid id = new Guid(file.Substring(1));
 
-        Image imgPhoto = Image.FromStream(hpf.InputStream);
-
-        // Resize and crop the photo to fit the prescribed format.
-        // The image is cropped (from the center) only enough to fit the aspect ratio.
-        int targetW = 375;
-        int targetH = 500;
-        float targetRatio = (float)targetW / (float)targetH;
-
-        // If we were simply cropping the image to the aspect ratio, what would the new dimensions be?
-        int aspectW = Math.Min(imgPhoto.Width, (int)(targetRatio * imgPhoto.Height));
-        int aspectH = (int)(aspectW / targetRatio);
-
-        Bitmap bmPhoto = new Bitmap(targetW, targetH, PixelFormat.Format24bppRgb);
-        bmPhoto.SetResolution(72, 72);
-        Graphics grPhoto = Graphics.FromImage(bmPhoto);
-        grPhoto.SmoothingMode = SmoothingMode.AntiAlias;
-        grPhoto.InterpolationMode = InterpolationMode.HighQualityBicubic;
-        grPhoto.PixelOffsetMode = PixelOffsetMode.HighQuality;
-        grPhoto.DrawImage(imgPhoto, new Rectangle(0, 0, targetW, targetH), (imgPhoto.Width - aspectW) / 2, (imgPhoto.Height - aspectH) / 2, aspectW, aspectH, GraphicsUnit.Pixel);
-
-        imgPhoto.Dispose();
-        grPhoto.Dispose();
+        var imgSvc = new ImageService();
+        Bitmap bmPhoto = imgSvc.GetResized(hpf.InputStream, 375, 500);
         images.Add(id, bmPhoto);
-
       }
 
       if (images.Count > 0)
@@ -642,7 +617,7 @@ namespace Kcsara.Database.Web.Controllers
           // Permissions check
           if (!(Permissions.IsAdmin || Permissions.IsInRole(new[] { "cdb.photos" }) || Permissions.IsMembershipForPerson(m.Id))) return this.CreateLoginRedirect();
 
-          string storePath = Server.MapPath(MembersController.PhotosStoreRelativePath);
+          string storePath = Server.MapPath(api.MembersController.PhotosStoreRelativePath);
 
           if (keepImages.Contains(m.Id.ToString().ToLowerInvariant()))
           {
@@ -814,7 +789,7 @@ namespace Kcsara.Database.Web.Controllers
 
         if (!string.IsNullOrEmpty(member.PhotoFile))
         {
-          string virtualPathPhoto = MembersController.GetPhotoOrFillInPath(member.PhotoFile);
+          string virtualPathPhoto = api.MembersController.GetPhotoOrFillInPath(member.PhotoFile);
           string photoFile = Server.MapPath(virtualPathPhoto);
           if (IO.File.Exists(photoFile))
           {
@@ -1442,11 +1417,6 @@ namespace Kcsara.Database.Web.Controllers
     }
     #endregion
 
-    public static string GetPhotoOrFillInPath(string photoFile)
-    {
-      return MembersController.PhotosStoreRelativePath + (photoFile ?? MembersController.StandInPhotoFile);
-    }
-
     [Authorize]
     public ActionResult Promotions()
     {
@@ -1921,7 +1891,7 @@ namespace Kcsara.Database.Web.Controllers
       foreach (var row in results)
       {
         if (row.PhotoFile == null) continue;
-        string photoPath = GetPhotoOrFillInPath(row.PhotoFile);
+        string photoPath = api.MembersController.GetPhotoOrFillInPath(row.PhotoFile);
         FileInfo fInfo = new FileInfo(Server.MapPath(photoPath));
         if (fInfo.LastWriteTime >= since)
         {

@@ -16,10 +16,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model.Tests", "tests\Model.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3055FA77-BE93-4823-8D7D-9E8911894E9C}"
 	ProjectSection(SolutionItems) = preProject
-		2010Coverage.testsettings = 2010Coverage.testsettings
 		CodeCoverage.runsettings = CodeCoverage.runsettings
+		Gruntfile.js = Gruntfile.js
 		README.md = README.md
-		Standard.testsettings = Standard.testsettings
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Website.DefaultStrings", "src\Website.DefaultStrings\Website.DefaultStrings.csproj", "{BAFA9145-D19C-4F31-9F1A-C937499E76D5}"
@@ -59,6 +58,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "src\Services\Services.csproj", "{2E5C85DA-32F0-43F1-83ED-026867AA2A6D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DomainModel", "src\DomainModel\DomainModel.csproj", "{EE7EB89E-9AB9-4A46-B130-901A900AA027}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Website.QUnit", "tests\Website.QUnit\Website.QUnit.csproj", "{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -268,6 +269,21 @@ Global
 		{EE7EB89E-9AB9-4A46-B130-901A900AA027}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{EE7EB89E-9AB9-4A46-B130-901A900AA027}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{EE7EB89E-9AB9-4A46-B130-901A900AA027}.Release|x86.ActiveCfg = Release|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Deploy|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Deploy|Any CPU.Build.0 = Debug|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Deploy|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Deploy|Mixed Platforms.Build.0 = Debug|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Deploy|x86.ActiveCfg = Debug|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -285,5 +301,6 @@ Global
 		{BE475201-A881-4BEF-8682-7C9A275281BB} = {AEC88F4A-AE57-4855-A44B-82D7A6BE0B32}
 		{2E5C85DA-32F0-43F1-83ED-026867AA2A6D} = {A825EBF7-E7F6-4059-B151-BCE186E26073}
 		{EE7EB89E-9AB9-4A46-B130-901A900AA027} = {A825EBF7-E7F6-4059-B151-BCE186E26073}
+		{5F6617D6-5F83-45C5-9ED9-ED37FEAAB533} = {F67F8451-20E4-4277-8BA4-6EBD663BCEA3}
 	EndGlobalSection
 EndGlobal

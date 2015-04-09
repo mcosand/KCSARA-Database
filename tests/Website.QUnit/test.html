@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>QUnit Example</title>
+  <!-- QUNIT, we don't touch -->
+  <link rel="stylesheet" href="qunit-1.17.1.css">
+  <script src="qunit-1.17.1.js"></script>
+  <script src="bluebird.min.js"></script>
+  <!-- qunit -->
+  <script type="text/javascript" src="prod/require.js"></script>
+  <script src="blanket.min.js" data-cover-only="prod/site/" data-cover-flags="branchTracking"></script>
+  <script>
+isGrunt = location.href.match(/(\?|&)gruntReport($|&|=)/);
+    if (isGrunt) { blanket.options("reporter", "grunt-reporter.js"); }</script>
+  <script>
+    QUnit.config.autostart = false;
+    var qs = (function (a) {
+      if (a == "") return {};
+      var b = {};
+      for (var i = 0; i < a.length; ++i) {
+        var p = a[i].split('=', 2);
+        if (p.length == 1)
+          b[p[0].toLowerCase()] = "";
+        else
+          b[p[0].toLowerCase()] = decodeURIComponent(p[1].replace(/\+/g, " "));
+      }
+      return b;
+    })(window.location.search.substr(1).split('&'));
+
+    window.squireBlocks = [];
+    window.pushSquire = function newSquire(creator)
+    {
+      window.squireBlocks.push(new Promise(function (resolve, reject) {
+        creator(resolve);
+      }));
+    };
+    //console.log('---');
+    //console.log(qs['suite']);
+    //console.log(qs['suite'].split(','));
+    //console.log('---');
+    var suites = qs['suite'].split(',').map(function (el) { return 'test/' + el + '.tests'; });
+    //console.log(suites.length);
+    //var allTestsDone = QUnit.assert.async();
+    require({
+      baseUrl: "prod",
+
+      paths: {
+        "jquery": 'jquery-2.1.3',
+        "bootstrap": 'bootstrap.min',
+        "bootstrap-dialog": 'bootstrap-dialog.min',
+        "knockout": 'knockout-3.2.0',
+        'test': '../tests',
+        'testlib': '../lib',
+        'testlib/sinon': '../lib/sinon-1.12.2'
+      },
+      shim: {
+        "bootstrap": { deps: ["jquery"] },
+        "jquery.toaster": { deps: ["jquery"] }
+      },
+    }, suites, function () {
+      console.log('All squire blocks started ****');
+      Promise.all(window.squireBlocks).then(function () {
+        console.log("test pass starting...");
+        QUnit.start();
+      });
+    });
+  </script>
+</head>
+<body>
+  <div id="qunit"></div>
+
+</body>
+</html>
