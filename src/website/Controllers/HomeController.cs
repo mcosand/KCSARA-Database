@@ -5,6 +5,7 @@
 namespace Kcsara.Database.Web.Controllers
 {
   using System;
+  using System.Data.Entity;
   using System.Data.Entity.Spatial;
   using System.Linq;
   using System.Web.Mvc;
@@ -17,10 +18,11 @@ namespace Kcsara.Database.Web.Controllers
   public class HomeController : BaseController
   {
     private readonly IReportsService reports;
+
     public HomeController(IKcsarContext db, IReportsService reports, IAppSettings settings)
       : base(db, settings)
     {
-      System.Data.Entity.Database.SetInitializer<MeshNodeEntities>(new System.Data.Entity.DropCreateDatabaseIfModelChanges<MeshNodeEntities>());
+      System.Data.Entity.Database.SetInitializer<MeshNodeEntities>(new DropCreateDatabaseIfModelChanges<MeshNodeEntities>());
       this.reports = reports;
     }
 
@@ -47,7 +49,8 @@ namespace Kcsara.Database.Web.Controllers
         'jquery': 'jquery-2.1.3',
         'bootstrap': 'bootstrap.min',
         'bootstrap-dialog': 'bootstrap-dialog.min',
-        'knockout': 'knockout-3.2.0'
+        'knockout': 'knockout-3.2.0',
+        'moment': 'moment.min'
       },
       map: {
         '*': { 'site/env': 'site/env-ko' },
@@ -59,7 +62,9 @@ namespace Kcsara.Database.Web.Controllers
       }
     };";
 
-      return Content(contentTemplate.Replace("%BASE-URL%", Url.Content("~/scripts/")), "application/javascript");
+      return Content(contentTemplate
+        .Replace("%BASE-URL%", Url.Content("~/scripts/")),
+        "application/javascript");
     }
 
     public ActionResult CountyReport()

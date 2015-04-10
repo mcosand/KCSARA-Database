@@ -12,6 +12,7 @@ namespace Kcsar.Membership
     using System.Net.Mail;
     using System.Web.Profile;
     using System.Web.Security;
+  using Kcsara.Database.Web;
 
     public class MembershipProvider : SqlMembershipProvider, ISetPassword
     {

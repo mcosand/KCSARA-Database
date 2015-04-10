@@ -15,6 +15,7 @@ namespace Kcsara.Database.Web.Controllers
   using Kcsar.Database.Data;
   using Kcsar.Database.Data.Events;
   using Kcsar.Database.Model;
+  using Kcsara.Database.Model.Members;
   using Kcsara.Database.Web.Model;
   using ApiModels = Kcsara.Database.Web.api.Models;
 
@@ -97,11 +98,11 @@ namespace Kcsara.Database.Web.Controllers
                    Id = a.Course.Id,
                    Title = a.Course.DisplayName
                  },
-                 Member = new ApiModels.MemberSummary
+                 Member = new MemberSummary
                  {
                    Id = a.Member.Id,
                    Name = a.Member.LastName + ", " + a.Member.FirstName,
-                   WorkerNumber = a.Member.DEM
+                   IdNumber = a.Member.DEM
                  },
                  Comments = a.metadata,
                  Completed = a.Completed,

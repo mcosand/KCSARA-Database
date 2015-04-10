@@ -29,8 +29,10 @@ define(['jquery', 'knockout', 'site/utils', 'site/env'], function ($, ko, utils,
           self.working(true);
           utils.postJSON("/api/account/login", ko.toJSON(self))
           .done(self._handleResponse)
-          .fail(function (err) { utils.handleServiceError(err, self) })
-          .always(function () { self.working(false); })
+          .fail(function (err) {
+            utils.handleServiceError(err, self);
+            self.working(false);
+          })
         }
         return false;
       };

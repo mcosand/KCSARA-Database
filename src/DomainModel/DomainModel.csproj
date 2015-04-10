@@ -7,8 +7,8 @@
     <ProjectGuid>{EE7EB89E-9AB9-4A46-B130-901A900AA027}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DomainModel</RootNamespace>
-    <AssemblyName>DomainModel</AssemblyName>
+    <RootNamespace>Kcsara.Database.Model</RootNamespace>
+    <AssemblyName>Kcsara.Database.Model</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
@@ -48,9 +48,15 @@
     <Compile Include="ContactInfoSubType.cs" />
     <Compile Include="EmergencyContact.cs" />
     <Compile Include="Enums.cs" />
+    <Compile Include="Events\SarEventSummary.cs" />
+    <Compile Include="Members\MemberAddress.cs" />
+    <Compile Include="Members\MemberContact.cs" />
+    <Compile Include="Members\MemberSummary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Events\SarEvent.cs" />
     <Compile Include="TrainingExpirationSummary.cs" />
     <Compile Include="TrainingStatus.cs" />
+    <Compile Include="Units\UnitSummary.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

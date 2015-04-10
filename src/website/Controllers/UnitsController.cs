@@ -14,6 +14,7 @@ namespace Kcsara.Database.Web.Controllers
   using Kcsar.Database;
   using Kcsar.Database.Data;
   using Kcsar.Database.Model;
+  using Kcsara.Database.Model.Members;
   using Kcsara.Database.Services;
   using Kcsara.Database.Web.Model;
 
@@ -21,10 +22,12 @@ namespace Kcsara.Database.Web.Controllers
   public class UnitsController : BaseController
   {
     private readonly IReportsService reports;
+    private readonly IUnitsService unitsSvc;
 
-    public UnitsController(IReportsService reports, IKcsarContext db) : base(db)
+    public UnitsController(IUnitsService unitsSvc, IReportsService reports, IKcsarContext db) : base(db)
     {
       this.reports = reports;
+      this.unitsSvc = unitsSvc;
     }
 
     /// <summary>Get a list of existing units.</summary>
@@ -32,10 +35,7 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize]
     public ActionResult Index()
     {
-      ViewData["Title"] = "Member Units";
-      ViewData["Message"] = "Member Units here";
-
-      return View((from u in this.db.Units orderby u.DisplayName select u).AsEnumerable());
+      return View(this.unitsSvc.List());
     }
 
     /// <summary>
@@ -95,7 +95,7 @@ namespace Kcsara.Database.Web.Controllers
                         Id = m.Id,
                         FirstName = m.FirstName,
                         LastName = m.LastName,
-                        Contacts = m.ContactNumbers.Where(f => f.Type == "email").Select(f => new MemberContactView { Id = f.Id, Priority = f.Priority, Value = f.Value }).OrderBy(f => f.Priority).ToArray(),
+                        Contacts = m.ContactNumbers.Where(f => f.Type == "email").Select(f => new MemberContact { Id = f.Id, Priority = f.Priority, Value = f.Value }).OrderBy(f => f.Priority).ToArray(),
                         Units = m.Memberships.Where(f => f.Status.IsActive && (f.EndTime == null || f.EndTime > DateTime.Now)).Select(f => f.Unit.DisplayName).ToArray()
                       })
           .ToArray();

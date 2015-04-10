@@ -1,0 +1,17 @@
+﻿@*
+  * Copyright 2015 Matthew Cosand
+*@
+@using Kcsara.Database.Model.Units;
+@{
+  ViewBag.Title = Strings.DatabaseName + " " + Strings.SarUnits;
+}
+<div class="row">
+  <div class="list-group">
+    @foreach (UnitSummary u in Model) {
+      <a href="@Url.Action("Detail", "Units", new { id = u.Id })" class="list-group-item">
+        <i class="fa fa-chevron-right pull-right"></i>
+        @u.Nickname
+      </a>
+    }
+  </div>
+</div>

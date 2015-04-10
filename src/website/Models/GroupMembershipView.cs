@@ -5,6 +5,7 @@ namespace Kcsara.Database.Web.Model
 {
   using System.Runtime.Serialization;
   using System.Web.Mvc;
+  using Kcsara.Database.Model.Members;
   using Kcsara.Database.Web.api.Models;
 
   public class GroupMembershipView

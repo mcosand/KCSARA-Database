@@ -5,6 +5,7 @@ namespace Kcsara.Database.Web.Model
 {
   using System;
   using System.Runtime.Serialization;
+  using Kcsara.Database.Model.Members;
   using Kcsara.Database.Web.api.Models;
 
   [DataContract]

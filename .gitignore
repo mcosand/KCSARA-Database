@@ -1,5 +1,6 @@
 run.log*
 tests/website.qunit/prod/
+src/website/content/auth/
 
 # Build Folders (you can keep bin if you'd like, to store dlls and pdbs)
 [Bb]in/

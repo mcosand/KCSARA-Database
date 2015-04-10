@@ -1,6 +1,6 @@
 ﻿(function () {
   var dependencies = ['jquery', 'knockout', 'site/utils', 'site/app'];
-  if (hasPageModel) dependencies.push('PageModel');
+  if (pageModelRequire) dependencies.push(pageModelRequire);
   define(dependencies.concat(['bootstrap', 'jquery.toaster']), function ($, ko, utils, AppModel, PageModel) {
     var authInfo = JSON.parse(utils.getCookie("authInfo") || "{}");
     if (authInfo) {
@@ -22,9 +22,10 @@
 
     var model = new AppModel();
     model.user().load(authInfo);
-    model.page = hasPageModel ? new PageModel() : null;
-    if (hasPageModel && model.page.load) { model.page.load(); }
+    model.page = pageModelRequire ? new PageModel() : null;
+    if (pageModelRequire && model.page.load) { model.page.load(); }
     ko.applyBindings(model);
+    console.log('knockout ran: ' + (new Date().getTime() - jsStarted))
     $(window).on('resize', function () { $('.glue-previous').each(_resizeGlued) });
     window.setTimeout(function () { $('.glue-previous').each(_setupGlued); $(window).trigger('resize') }, 200);
   
@@ -36,6 +37,6 @@
       utils.postJSON("/api/telemetry/error", JSON.stringify(packet));
     };
 
-    console.info("app started");
+    console.info("app started " + (new Date().getTime() - jsStarted));
   });
 })();

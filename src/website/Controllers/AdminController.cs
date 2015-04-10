@@ -19,9 +19,9 @@ namespace Kcsara.Database.Web.Controllers
   using Kcsar.Database.Data;
   using Kcsar.Membership;
   using Kcsara.Database.Geo;
+  using Kcsara.Database.Model.Members;
   using Kcsara.Database.Web.Model;
   using log4net;
-  using ApiModels = Kcsara.Database.Web.api.Models;
 
   public partial class AdminController : BaseController
   {
@@ -374,11 +374,11 @@ namespace Kcsara.Database.Web.Controllers
       foreach (var group in groups)
       {
         GroupView view = new GroupView { Name = group.Name, EmailAddress = group.EmailAddress, Destinations = group.Destinations.ToArray() };
-        List<ApiModels.MemberSummary> ownersView = new List<ApiModels.MemberSummary>();
+        List<MemberSummary> ownersView = new List<MemberSummary>();
         foreach (Guid owner in group.Owners)
         {
           MemberRow m = ownerDetails[owner];
-          ownersView.Add(new ApiModels.MemberSummary
+          ownersView.Add(new MemberSummary
           {
             Name = m.FullName,
             Id = owner

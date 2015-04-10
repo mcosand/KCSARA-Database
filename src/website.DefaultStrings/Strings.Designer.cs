@@ -97,6 +97,15 @@ namespace Kcsara.Database.Web {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to More ....
+        /// </summary>
+        public static string ActionMore {
+            get {
+                return ResourceManager.GetString("ActionMore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to New ....
         /// </summary>
         public static string ActionNew {
@@ -115,11 +124,29 @@ namespace Kcsara.Database.Web {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Start New.
+        /// </summary>
+        public static string ActionStart {
+            get {
+                return ResourceManager.GetString("ActionStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add More.
         /// </summary>
         public static string AddMore {
             get {
                 return ResourceManager.GetString("AddMore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Addresses.
+        /// </summary>
+        public static string Addresses {
+            get {
+                return ResourceManager.GetString("Addresses", resourceCulture);
             }
         }
         
@@ -196,6 +223,15 @@ namespace Kcsara.Database.Web {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Contact Numbers.
+        /// </summary>
+        public static string ContactNumbers {
+            get {
+                return ResourceManager.GetString("ContactNumbers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Create Animal.
         /// </summary>
         public static string CreateAnimal {
@@ -214,6 +250,24 @@ namespace Kcsara.Database.Web {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mission(s).
+        /// </summary>
+        public static string Event_CountMissions {
+            get {
+                return ResourceManager.GetString("Event_CountMissions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Training(s).
+        /// </summary>
+        public static string Event_CountTraining {
+            get {
+                return ResourceManager.GetString("Event_CountTraining", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Finish Roster.
         /// </summary>
         public static string FinishRoster {
@@ -228,6 +282,15 @@ namespace Kcsara.Database.Web {
         public static string GroupName {
             get {
                 return ResourceManager.GetString("GroupName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DEM#.
+        /// </summary>
+        public static string IdNumber {
+            get {
+                return ResourceManager.GetString("IdNumber", resourceCulture);
             }
         }
         
@@ -277,11 +340,29 @@ namespace Kcsara.Database.Web {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Missions.
+        /// </summary>
+        public static string Missions {
+            get {
+                return ResourceManager.GetString("Missions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Password.
         /// </summary>
         public static string Password {
             get {
                 return ResourceManager.GetString("Password", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rosters.
+        /// </summary>
+        public static string Rosters {
+            get {
+                return ResourceManager.GetString("Rosters", resourceCulture);
             }
         }
         
@@ -300,6 +381,15 @@ namespace Kcsara.Database.Web {
         public static string SensitiveText {
             get {
                 return ResourceManager.GetString("SensitiveText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Training.
+        /// </summary>
+        public static string Training {
+            get {
+                return ResourceManager.GetString("Training", resourceCulture);
             }
         }
         

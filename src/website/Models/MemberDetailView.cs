@@ -9,6 +9,7 @@ using System.Web;
 namespace Kcsara.Database.Web.Model
 {
     using System.Runtime.Serialization;
+  using Kcsara.Database.Model.Members;
 
     [DataContract]
     public class MemberDetailView
@@ -23,7 +24,7 @@ namespace Kcsara.Database.Web.Model
         public string LastName { get; set; }
 
         [DataMember(EmitDefaultValue=false)]
-        public MemberContactView[] Contacts { get; set; }
+        public MemberContact[] Contacts { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
         public string[] Units { get; set; }

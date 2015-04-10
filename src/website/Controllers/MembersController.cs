@@ -25,29 +25,30 @@ namespace Kcsara.Database.Web.Controllers
   using Kcsara.Database.Web.Services;
   using System.Data.Entity.Validation;
   using Kcsar.Database.Data;
+  using Kcsara.Database.Model.Members;
 
   public class MembersController : BaseController
   {
     public MembersController(IKcsarContext db) : base(db) { }
 
-    [Authorize]
-    //        [FilterTypes(FilterTypes.ActiveOnly | FilterTypes.Time | FilterTypes.Unit)]
-    public ActionResult Index()
-    {
-      if (!Permissions.IsUser) return this.CreateLoginRedirect();
+    //[Authorize]
+    ////        [FilterTypes(FilterTypes.ActiveOnly | FilterTypes.Time | FilterTypes.Unit)]
+    //public ActionResult Index()
+    //{
+    //  if (!Permissions.IsUser) return this.CreateLoginRedirect();
 
-      ViewData["PageTitle"] = "Members' Index";
-      ViewData["Message"] = "Members Index Page";
+    //  ViewData["PageTitle"] = "Members' Index";
+    //  ViewData["Message"] = "Members Index Page";
 
-      DateTime now = DateTime.Now;
-      var members = this.db.GetActiveMembers(null, now, "Memberships.Unit", "Memberships.Status");
-      var model = members.ToArray().Select(f => new ApiModels.MemberSummary(f)
-      {
-        Units = f.Memberships.Where(this.db.GetActiveMembershipFilter(null, now)).ToDictionary(g => g.Unit.Id, g => g.Unit.DisplayName)
-      });
+    //  DateTime now = DateTime.Now;
+    //  var members = this.db.GetActiveMembers(null, now, "Memberships.Unit", "Memberships.Status");
+    //  //var model = members.ToArray().Select(f => new MemberSummary(f)
+    //  //{
+    //  //  Units = f.Memberships.Where(this.db.GetActiveMembershipFilter(null, now)).ToDictionary(g => g.Unit.Id, g => g.Unit.DisplayName)
+    //  //});
 
-      return View(model);
-    }
+    //  //return View(model);
+    //}
 
     /// <summary>
     /// Retrieves all of the details for a user.
@@ -57,37 +58,39 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize]
     public ActionResult Detail(Guid id)
     {
+      // Page should be available to database users. Current applicants should be able to see their page.
       if (!(Permissions.IsUser || Permissions.IsSelf(id))) return this.CreateLoginRedirect();
+      ViewBag.MemberId = id;
+ //     ViewData["CanEditSelf"] = Permissions.IsSelf(id) || Permissions.IsMembershipForPerson(id) || Permissions.IsAdmin;
+ //     ViewData["CanEditMember"] = Permissions.IsAdmin || Permissions.IsMembershipForPerson(id);
+ //     ViewData["CanEditPhoto"] = Permissions.IsAdmin || Permissions.IsMembershipForPerson(id) || Permissions.IsInRole(new[] { "cdb.photos" });
+ //     ViewData["CanEditAdmin"] = Permissions.IsAdmin;
 
-      ViewData["CanEditSelf"] = Permissions.IsSelf(id) || Permissions.IsMembershipForPerson(id) || Permissions.IsAdmin;
-      ViewData["CanEditMember"] = Permissions.IsAdmin || Permissions.IsMembershipForPerson(id);
-      ViewData["CanEditPhoto"] = Permissions.IsAdmin || Permissions.IsMembershipForPerson(id) || Permissions.IsInRole(new[] { "cdb.photos" });
-      ViewData["CanEditAdmin"] = Permissions.IsAdmin;
+ //     ViewData["CanPrintBadge"] = User.IsInRole("cdb.badges");
+ //     ViewData["IsUser"] = Permissions.IsUser;
+ //     ViewData["IsSelf"] = Permissions.IsSelf(id);
 
-      ViewData["CanPrintBadge"] = User.IsInRole("cdb.badges");
-      ViewData["IsUser"] = Permissions.IsUser;
-      ViewData["IsSelf"] = Permissions.IsSelf(id);
+ //     ViewData["HideMenu"] = Permissions.IsUser ? null : new object();
 
-      ViewData["HideMenu"] = Permissions.IsUser ? null : new object();
+ //     MemberRow member = (from m in this.db.Members.Include("Memberships.Unit").Include("Memberships.Status")
+ //             .Include("Addresses").Include("MissionRosters").Include("MissionRosters.Mission").Include("MissionRosters.Unit")
+ //             .Include("TrainingRosters").Include("TrainingRosters.Training").Include("Animals").Include("Animals.Animal")
+ //                      where m.Id == id
+ //                      select m).FirstOrDefault();
 
-      MemberRow member = (from m in this.db.Members.Include("Memberships.Unit").Include("Memberships.Status")
-              .Include("Addresses").Include("MissionRosters").Include("MissionRosters.Mission").Include("MissionRosters.Unit")
-              .Include("TrainingRosters").Include("TrainingRosters.Training").Include("Animals").Include("Animals.Animal")
-                       where m.Id == id
-                       select m).FirstOrDefault();
+ //     ViewData["isApplicant"] = member.ApplyingTo.Count > 0; //(member.Status & MemberStatus.Applicant) == MemberStatus.Applicant;
+ //     ViewData["Title"] = member.FullName + " :: KCSARA Database";
 
-      ViewData["isApplicant"] = member.ApplyingTo.Count > 0; //(member.Status & MemberStatus.Applicant) == MemberStatus.Applicant;
-      ViewData["Title"] = member.FullName + " :: KCSARA Database";
+ //     if (!User.IsInRole("cdb.admins"))
+ //     {
+ //       FilterPersonal(member);
+ //     }
 
-      if (!User.IsInRole("cdb.admins"))
-      {
-        FilterPersonal(member);
-      }
-
-      var courses = this.db.GetCoreCompetencyCourses();
- // TODO: reimplement
-      //     ViewData["CoreStatus"] = CompositeTrainingStatus.Compute(member, courses, DateTime.Now).Expirations.ToDictionary(f => f.Value.CourseName, f => f.Value);
-      return View(member);
+ //     var courses = this.db.GetCoreCompetencyCourses();
+ //// TODO: reimplement
+ //     //     ViewData["CoreStatus"] = CompositeTrainingStatus.Compute(member, courses, DateTime.Now).Expirations.ToDictionary(f => f.Value.CourseName, f => f.Value);
+ //     return View(member);
+      return View();
     }
 
 
@@ -676,52 +679,6 @@ namespace Kcsara.Database.Web.Controllers
     #endregion
 
     [Authorize]
-    public ActionResult Suggest(string q)
-    {
-      if (!Permissions.IsUser) return this.CreateLoginRedirect();
-
-      string query = q;
-
-      IEnumerable<MemberRow> results = null;
-      results = (from m in this.db.Members
-                 where (m.FirstName + " " + m.LastName).ToLower().Contains(query)
-                   || (m.LastName + ", " + m.FirstName).ToLower().Contains(query)
-                   || m.DEM.Contains(query)
-                 select m);
-      return Data(results.Select(f => new ApiModels.MemberSummary(f)).ToArray());
-    }
-
-
-    [Authorize]
-    public ActionResult SuggestDem()
-    {
-      int suggestion = ((DateTime.Now.Year) % 10) * 1000 + 1;
-
-      var x = (from m in this.db.Members orderby m.DEM.Length, m.DEM select m.DEM);
-      List<int> demNumbers = new List<int>();
-
-      foreach (string dem in x)
-      {
-        int result;
-        if (!int.TryParse(dem, out result))
-        {
-          continue;
-        }
-        if (result >= suggestion)
-        {
-          demNumbers.Add(result);
-        }
-      }
-
-      while (demNumbers.Contains(suggestion))
-      {
-        suggestion++;
-      }
-
-      return new ContentResult { Content = suggestion.ToString().PadLeft(4, '0') };
-    }
-
-    [Authorize]
     public ActionResult GetMembersActiveUnits(Guid id)
     {
       if (!Permissions.IsUser) return this.CreateLoginRedirect();
@@ -1222,26 +1179,26 @@ namespace Kcsara.Database.Web.Controllers
     #endregion
 
     #region Contact Info
-    public DataActionResult GetContacts(Guid id)
-    {
-      if (!(Permissions.IsUser || Permissions.IsSelf(id))) return GetLoginError();
+    //public DataActionResult GetContacts(Guid id)
+    //{
+    //  if (!(Permissions.IsUser || Permissions.IsSelf(id))) return GetLoginError();
 
-      List<MemberContactView> model = null;
+    //  List<MemberContact> model = null;
 
-      model = (from c in this.db.PersonContact
-               where c.Member.Id == id
-               select new MemberContactView
-               {
-                 Id = c.Id,
-                 MemberId = c.Member.Id,
-                 Type = c.Type,
-                 SubType = c.Subtype,
-                 Value = c.Value,
-                 Priority = c.Priority
-               }).OrderBy(f => f.Type).ThenBy(f => f.Priority).ThenBy(f => f.SubType).ToList();
+    //  model = (from c in this.db.PersonContact
+    //           where c.Member.Id == id
+    //           select new MemberContact
+    //           {
+    //             Id = c.Id,
+    //             //MemberId = c.Member.Id,
+    //             Type = c.Type,
+    //             SubType = c.Subtype,
+    //             Value = c.Value,
+    //             Priority = c.Priority
+    //           }).OrderBy(f => f.Type).ThenBy(f => f.Priority).ThenBy(f => f.SubType).ToList();
 
-      return Data(model);
-    }
+    //  return Data(model);
+    //}
 
     public DataActionResult PromoteContact(Guid id)
     {
@@ -1274,54 +1231,55 @@ namespace Kcsara.Database.Web.Controllers
       return Data(new SubmitResult<bool> { Errors = errors.ToArray(), Result = (errors.Count == 0) });
     }
 
-    public DataActionResult SubmitContact(/*[ModelBinder(typeof(JsonDataContractBinder<MemberContactView>))] */MemberContactView view)
+    public DataActionResult SubmitContact(/*[ModelBinder(typeof(JsonDataContractBinder<MemberContactView>))] */MemberContact view)
     {
-      if (!Permissions.IsAdmin && !Permissions.IsSelf(view.MemberId) && !Permissions.IsMembershipForPerson(view.MemberId)) return GetLoginError();
+      throw new NotImplementedException("reimplement");
+      //if (!Permissions.IsAdmin && !Permissions.IsSelf(view.MemberId) && !Permissions.IsMembershipForPerson(view.MemberId)) return GetLoginError();
 
-      List<SubmitError> errors = new List<SubmitError>();
+      //List<SubmitError> errors = new List<SubmitError>();
 
-      MemberContactRow model = (from c in this.db.PersonContact.Include("Person") where c.Id == view.Id select c).FirstOrDefault();
-      if (model == null)
-      {
-        model = new MemberContactRow();
-        model.Priority = 0;
-        if ((from c in this.db.PersonContact where c.Member.Id == view.MemberId && c.Type == view.Type select c.Id).Count() > 0)
-        {
-          model.Priority = 1;
-        }
-        this.db.PersonContact.Add(model);
-      }
+      //MemberContactRow model = (from c in this.db.PersonContact.Include("Person") where c.Id == view.Id select c).FirstOrDefault();
+      //if (model == null)
+      //{
+      //  model = new MemberContactRow();
+      //  model.Priority = 0;
+      //  if ((from c in this.db.PersonContact where c.Member.Id == view.MemberId && c.Type == view.Type select c.Id).Count() > 0)
+      //  {
+      //    model.Priority = 1;
+      //  }
+      //  this.db.PersonContact.Add(model);
+      //}
 
-      try
-      {
-        if (model.Type != view.Type) model.Type = view.Type;
-        if (model.Subtype != view.SubType) model.Subtype = view.SubType;
-        if (model.Value != view.Value) model.Value = view.Value;
-        if (model.Member == null || model.Member.Id != view.MemberId) model.Member = (from m in this.db.Members where m.Id == view.MemberId select m).FirstOrDefault();
+      //try
+      //{
+      //  if (model.Type != view.Type) model.Type = view.Type;
+      //  if (model.Subtype != view.SubType) model.Subtype = view.SubType;
+      //  if (model.Value != view.Value) model.Value = view.Value;
+      //  if (model.Member == null || model.Member.Id != view.MemberId) model.Member = (from m in this.db.Members where m.Id == view.MemberId select m).FirstOrDefault();
 
-        this.db.SaveChanges();
+      //  this.db.SaveChanges();
 
-        view.Id = model.Id;
-        view.Priority = model.Priority;
-      }
-      catch (DbEntityValidationException ex)
-      {
-        foreach (var entry in ex.EntityValidationErrors.Where(f => !f.IsValid))
-        {
-          foreach (var err in entry.ValidationErrors)
-          {
-            errors.Add(new SubmitError { Error = err.ErrorMessage, Property = err.PropertyName, Id = new[] { ((IModelObjectRow)entry.Entry.Entity).Id } });
-          }
-        }
-      }
+      //  view.Id = model.Id;
+      //  view.Priority = model.Priority;
+      //}
+      //catch (DbEntityValidationException ex)
+      //{
+      //  foreach (var entry in ex.EntityValidationErrors.Where(f => !f.IsValid))
+      //  {
+      //    foreach (var err in entry.ValidationErrors)
+      //    {
+      //      errors.Add(new SubmitError { Error = err.ErrorMessage, Property = err.PropertyName, Id = new[] { ((IModelObjectRow)entry.Entry.Entity).Id } });
+      //    }
+      //  }
+      //}
 
-      return Data(new SubmitResult<MemberContactView>
-      {
-        Errors = errors.ToArray(),
-        Result = (errors.Count > 0) ?
-            (MemberContactView)null :
-            view
-      });
+      //return Data(new SubmitResult<MemberContactView>
+      //{
+      //  Errors = errors.ToArray(),
+      //  Result = (errors.Count > 0) ?
+      //      (MemberContactView)null :
+      //      view
+      //});
     }
 
     public DataActionResult DeleteContact(Guid id)

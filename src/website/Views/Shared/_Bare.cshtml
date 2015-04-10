@@ -9,7 +9,9 @@
   <title>@(ViewData["Title"] ?? ViewBag.Title)</title>
   @Styles.Render("~/Content/site-next")
 </head>
-<body>
+<body
+  @if (ViewBag.PageData != null) { foreach (KeyValuePair<string, string> pair in ViewBag.PageData) { <text> data-@pair.Key="@pair.Value" </text>}}
+>
   <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
       <div class="navbar-header">
@@ -26,25 +28,55 @@
         <div class="navbar-form navbar-right" data-bind="visible: user().isAuthenticated(), component: { name: 'search-box', params: {selected: searchResult, id: 'searchBox'}}" style="display: none">
         </div>
         <ul class="nav navbar-nav" data-bind="visible: user().isAuthenticated()" style="display: none">
-          <li>@(Html.ActionLink<UnitsController>(f => f.Index(), Strings.SarUnits))</li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+              <i class="visible-xs-inline-block fa fa-fw fa-ambulance fa-lg"></i>
+              @Strings.Missions
+            </a>
+            <ul class="dropdown-menu" role="menu">
+              <li>@(Html.ActionLink<MissionsController>(f => f.Create(), Strings.ActionStart))</li>
+              <li>@(Html.ActionLink<MissionsController>(f => f.List(null), Strings.Rosters))</li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+              <i class="visible-xs-inline-block fa fa-fw fa-mortar-board fa-lg"></i>
+              @Strings.Training
+            </a>
+            <ul class="dropdown-menu" role="menu">
+              <li>@(Html.ActionLink<TrainingController>(f => f.Create(), Strings.ActionStart))</li>
+              <li>@(Html.ActionLink<TrainingController>(f => f.List(null), Strings.Rosters))</li>
+              <li>@(Html.ActionLink<TrainingController>(f => f.Index(), Strings.ActionMore))</li>
+            </ul>
+          </li>
+          <li>
+            <a href="@Url.Action("Index", "Units")">
+              <i class="visible-xs-inline-block fa fa-fw fa-group fa-lg"></i>
+              @Strings.SarUnits
+            </a>
+          </li>
         </ul>
         @loginLink("visible-xs")
-
       </div>
     </div>
   </div>
 
-  <div class="container-fluid body-content">
+  <div class="container@((ViewBag.FluidContainer == null) ? string.Empty : "-fluid") body-content">
     @RenderBody()
     <hr />
-    <footer>
+    <footer style="display:none">
       <p data-bind="text: ko.toJSON($data, null, 2)"></p>
     </footer>
   </div>
 
   <script type="text/javascript">
     window.appRoot = "@Url.Content("~/").TrimEnd('/')";
-    hasPageModel = false;
+    @if (ViewBag.PageModelRequire == null) {
+      @: pageModelRequire = null;
+        }
+    else {
+      @: pageModelRequire = '@ViewBag.PageModelRequire';
+        }
     entryPoint = "site/startup";
   </script>
   @Scripts.Render("~/home/RequireConfig")
@@ -52,16 +84,21 @@
 
   @RenderSection("scripts", required: false)
   <script type="text/javascript">
+    jsStarted = new Date().getTime()
     requirejs([entryPoint])
   </script>
 </body>
 </html>
 
-@helper loginLink(string addClass) { 
+@helper loginLink(string addClass)
+{
   <ul class="nav navbar-nav navbar-right @addClass" data-bind="with: user">
     <li class="dropdown" data-bind="if: isAuthenticated">
       <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-      <span data-bind="text: username"></span> <small><i class="fa fa-user fa-2x" style="position:relative;margin-top:-8px; bottom:-4px"></i></small></a>
+        <i class="visible-xs-inline-block fa fa-fw fa-user fa-lg"></i>
+        <span data-bind="text: username"></span>
+        <i class="hidden-xs fa fa-user fa-lg fa-2x"></i>
+      </a>
       <ul class="dropdown-menu" role="menu">
         <li>@(Html.ActionLink<AccountController>(f => f.Logout(), Strings.LogoutPrompt))</li>
       </ul>

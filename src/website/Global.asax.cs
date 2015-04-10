@@ -42,7 +42,8 @@ namespace Kcsara.Database.Web
       myKernel.Bind<IExtensionProvider>().To<ExtensionProvider>().InSingletonScope();
       myKernel.Get<IExtensionProvider>().Initialize();
 
-      myKernel.Bind<Func<IKcsarContext>>().ToConstant((Func<IKcsarContext>)(() => new KcsarContext()));
+      DIConfig.StandardConfig(myKernel);
+
 
       myKernel.Bind<AccountsService>().ToSelf().InSingletonScope();
     }

@@ -200,10 +200,14 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="api\MemberAddressesController.cs" />
+    <Compile Include="api\MemberContactsController.cs" />
     <Compile Include="api\Models\Enums.cs" />
     <Compile Include="api\Models\Search\SearchResult.cs" />
     <Compile Include="api\SearchController.cs" />
     <Compile Include="api\AdminController.cs" />
+    <Compile Include="api\TrainingController.cs" />
+    <Compile Include="api\NoDataBaseApiController.cs" />
     <Compile Include="api\BaseApiController.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -212,12 +216,12 @@
     <Compile Include="api\Models\Account\CurrentAccount.cs" />
     <Compile Include="api\Models\Account\LoginRequest.cs" />
     <Compile Include="api\Models\Admin\ExecuteDatabaseScript.cs" />
-    <Compile Include="api\Models\MemberSummary.cs" />
     <Compile Include="api\Models\MemberUnitDocument.cs" />
     <Compile Include="api\Models\SubmitResult.cs" />
     <Compile Include="api\Models\TrainingCourse.cs" />
     <Compile Include="api\Models\TrainingRecord.cs" />
     <Compile Include="api\Models\UnitDocument.cs" />
+    <Compile Include="api\SarEventsController.cs" />
     <Compile Include="api\UnitsController.cs" />
     <Compile Include="api\MembersController.cs" />
     <Compile Include="api\MissionsController.cs" />
@@ -248,7 +252,7 @@
     <Compile Include="CapturingResponseFilter.cs" />
     <Content Include="App_Readme\Elmah.txt" />
     <Content Include="Content\auth\animals\none.jpg" />
-    <Content Include="Content\auth\members\none.jpg" />
+    <Content Include="Content\images\no-photo.jpg" />
     <Content Include="Content\bootstrap-dialog.min.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
@@ -338,7 +342,6 @@
     <Compile Include="Models\GroupMembershipView.cs" />
     <Compile Include="Models\LogSubmission.cs" />
     <Compile Include="Models\MapDataView.cs" />
-    <Compile Include="Models\MemberContactView.cs" />
     <Compile Include="Models\MemberDetailView.cs" />
     <Compile Include="Models\MemberRosterRow.cs" />
     <Compile Include="Models\AnimalView.cs" />
@@ -515,6 +518,10 @@
     <Content Include="Scripts\knockout.mapping-latest.debug.js" />
     <Content Include="Scripts\knockout.mapping-latest.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\moment-with-locales.js" />
+    <Content Include="Scripts\moment-with-locales.min.js" />
+    <Content Include="Scripts\moment.js" />
+    <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\npm.js" />
     <Content Include="Scripts\nprogress.js" />
     <Content Include="Scripts\r.js" />
@@ -524,6 +531,7 @@
     <Content Include="Scripts\site\components\searchbox.js" />
     <Content Include="Scripts\site\env-ko.js" />
     <Content Include="Scripts\site\env.js" />
+    <Content Include="Scripts\site\page\event-list.js" />
     <Content Include="Scripts\site\startup.js" />
     <Content Include="Scripts\site\user.js" />
     <Content Include="Scripts\site\utils.js" />
@@ -579,13 +587,9 @@
     <Content Include="Views\Members\Delete.aspx" />
     <Content Include="Views\Members\DeleteAddress.aspx" />
     <Content Include="Views\Members\DeleteMembership.aspx" />
-    <Content Include="Views\Members\Detail.aspx" />
     <Content Include="Views\Members\Edit.aspx" />
     <Content Include="Views\Members\EditAddress.aspx" />
     <Content Include="Views\Members\EditMembership.aspx" />
-    <Content Include="Views\Members\Index.aspx" />
-    <Content Include="Views\Members\MemberAddresses.ascx" />
-    <Content Include="Views\Members\MemberContacts.ascx" />
     <Content Include="Views\Members\MemberMemberships.ascx" />
     <Content Include="Views\Members\MemberRequiredTraining.ascx" />
     <Content Include="Views\Members\MemberTrainingAwards.ascx" />
@@ -612,7 +616,6 @@
     <Content Include="Views\Missions\EditSummary.aspx" />
     <Content Include="Views\Missions\Geography.aspx" />
     <Content Include="Views\Missions\History.aspx" />
-    <Content Include="Views\Missions\List.aspx" />
     <Content Include="Views\Missions\Log.aspx" />
     <Content Include="Views\Missions\Mission.ascx" />
     <Content Include="Views\Missions\Mobile\List.aspx" />
@@ -653,7 +656,6 @@
     <Content Include="Views\Training\EditCourse.aspx" />
     <Content Include="Views\Training\Eligible.aspx" />
     <Content Include="Views\Training\Index.aspx" />
-    <Content Include="Views\Training\List.aspx" />
     <Content Include="Views\Training\ReportStatus.aspx" />
     <Content Include="Views\Training\RequiredTrainingReport.aspx" />
     <Content Include="Views\Training\Roster.aspx" />
@@ -664,7 +666,6 @@
     <Content Include="Views\Units\DeleteStatus.aspx" />
     <Content Include="Views\Units\Detail.aspx" />
     <Content Include="Views\Units\EditStatus.aspx" />
-    <Content Include="Views\Units\Index.aspx" />
     <Content Include="Views\Units\Roster.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -693,11 +694,15 @@
     <Content Include="Views\Shared\_Bare.cshtml" />
     <Content Include="Views\Components\LoginForm.cshtml" />
     <Content Include="Views\Components\SearchBox.cshtml" />
+    <Content Include="Views\Shared\EventList.cshtml" />
+    <Content Include="Views\Units\Index.cshtml" />
+    <Content Include="Views\Members\Detail.cshtml" />
     <None Include="Web.Production.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\auth\documents\" />
+    <Folder Include="Content\auth\members\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

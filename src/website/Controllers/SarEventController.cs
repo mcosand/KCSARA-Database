@@ -27,9 +27,11 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize(Roles = "cdb.users")]
     public virtual ActionResult List(string id)
     {
-      IEnumerable<E> list = (from e in this.db.Events.OfType<E>() orderby e.StartTime descending select e);
-      ApplyListFilter(ref list);
-      return View("List", list);
+      //IEnumerable<E> list = (from e in this.db.Events.OfType<E>() orderby e.StartTime descending select e);
+      //ApplyListFilter(ref list);
+      //return View("List", list);
+      ViewBag.EventType = this.EventType;
+      return View("EventList");
     }
 
     protected virtual void ApplyListFilter(ref IEnumerable<E> query)

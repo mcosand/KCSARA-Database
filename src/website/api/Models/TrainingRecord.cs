@@ -9,6 +9,7 @@ using System.Web;
 namespace Kcsara.Database.Web.api.Models
 {
     using System.Runtime.Serialization;
+  using Kcsara.Database.Model.Members;
 
     [DataContract]
     public class TrainingRecord

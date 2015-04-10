@@ -97,13 +97,13 @@ namespace Kcsara.Database.Web.api
         query = query.Where(f => f.Unit.Id == id);
       }
 
-      MembersController members = new MembersController(this.db, this.log);
+  //    MembersController members = new MembersController(this.log);
 
       var notDoneDocs = new[] { DocumentStatus.NotApplicable.ToString(), DocumentStatus.NotStarted.ToString() };
 
       return query.OrderBy(f => f.Applicant.LastName).ThenBy(f => f.Applicant.FirstName).AsEnumerable().Select(f =>
       {
-        var docs = members.GetUnitDocuments(f.Applicant.Id);
+      //  var docs = members.GetUnitDocuments(f.Applicant.Id);
 
         return new UnitApplicant
     {
@@ -115,8 +115,8 @@ namespace Kcsara.Database.Web.api
       Background = f.Applicant.BackgroundText,
       Username = f.Applicant.Username,
       Started = f.Started,
-      Active = f.IsActive,
-      RemainingDocCount = docs.Count() - docs.Count(g => !notDoneDocs.Contains(g.Status))
+      Active = f.IsActive
+   //   RemainingDocCount = docs.Count() - docs.Count(g => !notDoneDocs.Contains(g.Status))
     };
       }).ToArray();
     }

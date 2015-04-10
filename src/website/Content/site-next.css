@@ -1,4 +1,12 @@
-﻿body { padding: 70px 15px 0px 15px; }
+﻿html { font-size:62.5% }
+body { padding: 66px 0px 0px 0px; font-size:1.4rem; }
+
+h2 {
+   margin-top: .2em;
+   margin-bottom: .1em;
+   font-weight: bold;
+   font-size:2.6rem;
+}
 
 .navbar-inverse {
   background-color: rgb(55,55,55)
@@ -19,6 +27,10 @@
   background-image: none;
   background-image: none;
   border-color:rgb(233,148,0);
+}
+
+.panel-heading {
+  padding: 5px;
 }
 
 .form-control:focus {
@@ -43,6 +55,12 @@
 /* so the search box drop down can overflow */
 .navbar-collapse.in {
   overflow-y: visible;
+}
+
+.nav .open>a, .nav .open>a:hover, .nav .open>a:focus {
+  border-color: transparent; 
+  border-bottom-color: rgb(233, 166, 49); 
+  border-bottom-width: 3px;
 }
 
 @media(min-width:992px) {
@@ -74,4 +92,33 @@ a, a:hover {
 }
 a:visited {
   color: #72840c
+}
+
+.r {
+  text-align: right;
+}
+
+.overlay-container {
+  position:relative;
+}
+.overlay {
+  position:absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background-color:white;
+  opacity: 0.75;
+  z-index:10;
+}
+
+.nav-tabs > li > a {
+  padding:.3em .4em;
+}
+@media(min-width:768px) {
+  .nav-tabs > li > a {
+    padding:.3em 1em;
+  }
+}
+
+.tab-pane {
+  display:none;
+  padding-top:1em;
 }

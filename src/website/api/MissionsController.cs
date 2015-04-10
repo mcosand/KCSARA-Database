@@ -6,16 +6,18 @@ namespace Kcsara.Database.Web.api
 {
   using System;
   using System.Collections.Generic;
+  using System.Linq.Expressions;
   using System.Web.Http;
   using Kcsar.Database.Data;
+  using Kcsara.Database.Model.Events;
   using Kcsara.Database.Services;
   using Kcsara.Database.Web.Model;
   using log4net;
 
-  public class MissionsController : BaseApiController
+  public class MissionsController : SarEventsController<Mission>
   {
-    public MissionsController(IKcsarContext db, IAuthService auth, ILog log)
-      : base(db, auth, log)
+    public MissionsController(ISarEventsService<Mission> missionService, IAuthService auth, ILog log)
+      : base(missionService, auth, log)
     { }
 
     [HttpGet]

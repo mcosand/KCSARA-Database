@@ -201,4 +201,34 @@
   <data name="SarUnits" xml:space="preserve">
     <value>Units</value>
   </data>
+  <data name="Event_CountMissions" xml:space="preserve">
+    <value>Mission(s)</value>
+  </data>
+  <data name="Event_CountTraining" xml:space="preserve">
+    <value>Training(s)</value>
+  </data>
+  <data name="Missions" xml:space="preserve">
+    <value>Missions</value>
+  </data>
+  <data name="Training" xml:space="preserve">
+    <value>Training</value>
+  </data>
+  <data name="ActionMore" xml:space="preserve">
+    <value>More ...</value>
+  </data>
+  <data name="ActionStart" xml:space="preserve">
+    <value>Start New</value>
+  </data>
+  <data name="Rosters" xml:space="preserve">
+    <value>Rosters</value>
+  </data>
+  <data name="IdNumber" xml:space="preserve">
+    <value>DEM#</value>
+  </data>
+  <data name="Addresses" xml:space="preserve">
+    <value>Addresses</value>
+  </data>
+  <data name="ContactNumbers" xml:space="preserve">
+    <value>Contact Numbers</value>
+  </data>
 </root>
