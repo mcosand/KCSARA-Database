@@ -27,8 +27,8 @@ namespace Kcsara.Database.Web.Membership.Synchronizers
     public void SetPassword(string username, string newPassword)
     {
       try
-      { 
-      Task.Run(() => SetPasswordAsync(username, newPassword)).Wait();
+      {
+        Task.Run(() => SetPasswordAsync(username, newPassword)).Wait();
       }
       catch (AggregateException ex)
       {
@@ -49,7 +49,8 @@ namespace Kcsara.Database.Web.Membership.Synchronizers
       }
     }
 
-    public async Task SetPasswordAsync(string username, string newPassword){
+    public async Task SetPasswordAsync(string username, string newPassword)
+    {
       ActiveDirectoryClient activeDirectoryClient;
       try
       {
@@ -67,14 +68,25 @@ namespace Kcsara.Database.Web.Membership.Synchronizers
       searchResults = userCollection.Where(user => user.UserPrincipalName.Equals(username + "@kcesar.org")).ExecuteAsync().Result;
       usersList = searchResults.CurrentPage.ToList();
 
-      if (usersList != null && usersList.Count == 1)
+      if (usersList == null)
       {
-        do
+        this.log.DebugFormat("Searching for {0} returned null list", username);
+        return;
+      }
+      if (usersList.Count == 0)
+      {
+        this.log.DebugFormat("Searching for {0} return 0 results", username);
+        return;
+      }
+
+      do
+      {
+        usersList = searchResults.CurrentPage.ToList();
+        foreach (IUser user in usersList)
         {
-          usersList = searchResults.CurrentPage.ToList();
-          foreach (IUser user in usersList)
+          if (usersList.Count == 1)
           {
-            this.log.DebugFormat("Can't set password for {0} - not an Office365 user.", username);
+            this.log.DebugFormat("Setting password for {0}.", user.UserPrincipalName);
             user.PasswordProfile = new PasswordProfile
             {
               Password = newPassword,
@@ -82,13 +94,13 @@ namespace Kcsara.Database.Web.Membership.Synchronizers
             };
             await user.UpdateAsync();
           }
-          searchResults = searchResults.GetNextPageAsync().Result;
-        } while (searchResults != null);
-      }
-      else
-      {
-        this.log.DebugFormat("Can't set password for {0} - not an Office365 user.", username);
-      }
+          else
+          {
+            this.log.DebugFormat("Found multiple matching users for {0}: {1}", username, user.UserPrincipalName);
+          }
+        }
+        searchResults = searchResults.GetNextPageAsync().Result;
+      } while (searchResults != null);
     }
 
     public void SetOptions(Dictionary<string, string> options)
