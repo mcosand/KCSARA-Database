@@ -19,6 +19,7 @@ namespace Kcsara.Database.Services
       kernel.Bind<ISarEventsService<Training>>().To<SarEventsService<Training, TrainingRow>>().InSingletonScope();
       kernel.Bind<IUnitsService>().To<UnitsService>().InSingletonScope();
       kernel.Bind<IMembersService>().To<MembersService>().InSingletonScope();
+      kernel.Bind<ITrainingService>().To<TrainingService>().InSingletonScope();
     }
   }
 }

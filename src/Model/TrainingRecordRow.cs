@@ -11,7 +11,7 @@ namespace Kcsar.Database.Data
   using Kcsar.Database.Data.Events;
 
   [Table("TrainingRecords")]
-  public class TrainingRecordRow : ModelObjectRow, ITrainingAwardRow
+  public class TrainingRecordRow : ModelObjectRow, ITrainingRecordRow
   {
     [Required]
     public DateTime Completed { get; set; }

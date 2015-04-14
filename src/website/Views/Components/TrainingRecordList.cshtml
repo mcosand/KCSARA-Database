@@ -1,0 +1,28 @@
+﻿@*
+  * Copyright 2015 Matthew Cosand
+*@
+<div class="overlay" data-bind="visible: records.loading"><h1>Loading ...</h1></div>
+<table class="table table-condensed table-striped">
+  <thead>
+    <tr>
+      <th>Course</th>
+      <th class="hidden-xs">Via</th>
+      <th class="hidden-xs">Completed</th>
+      <th>Expires</th>
+    </tr>
+  </thead>
+  <tbody data-bind="foreach: records">
+    <tr>
+      <td><span data-bind="text: course.name"></span></td>
+      <td class="hidden-xs"></td>
+      <td data-bind="text: completedText" class="hidden-xs"></td>
+      <td data-bind="text: expiryText"></td>
+      @*
+        <td class="hidden-xs"><span data-bind="text: number"></span></td>
+        <td><a data-bind="attr: {href: $parent.linkUrl + eventId}, text: title"></a></td>
+        <td class="r hidden-xs"><span data-bind="text: hoursText"></span></td>
+        <td class="r hidden-xs"><span data-bind="text: miles"></span></td>
+      *@
+    </tr>
+  </tbody>
+</table>

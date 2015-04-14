@@ -1,4 +1,4 @@
-﻿html { font-size:62.5% }
+﻿html { font-size:62.5%; overflow-y:scroll; }
 body { padding: 66px 0px 0px 0px; font-size:1.4rem; }
 
 h2 {

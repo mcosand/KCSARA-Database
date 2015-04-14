@@ -9,7 +9,7 @@ namespace Kcsar.Database.Data
   using Kcsar.Database.Data.Events;
 
   [Table("ComputedTrainingRecords")]
-  public partial class ComputedTrainingRecordRow : ITrainingAwardRow
+  public partial class ComputedTrainingRecordRow : ITrainingRecordRow
   {
     public ComputedTrainingRecordRow()
       : base()

@@ -2,7 +2,7 @@
  * Copyright 2012-2015 Matthew Cosand
  */
 
-namespace Kcsar.Database.Model
+namespace Kcsara.Database.Model
 {
   using System;
   using System.ComponentModel.DataAnnotations;

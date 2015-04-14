@@ -768,7 +768,7 @@ namespace Kcsara.Database.Web.Controllers
           Guid id = new Guid(defn[1]);
           if (defn[0].ToLowerInvariant().EndsWith("course"))
           {
-            if (member.ComputedAwards.Where(f => ((f.Course.Id == id) && (f.Expiry == null || f.Expiry > DateTime.Now))).Count() > 0)
+            if (member.ComputedTrainingRecords.Where(f => ((f.Course.Id == id) && (f.Expiry == null || f.Expiry > DateTime.Now))).Count() > 0)
             {
               sb.AppendFormat(" {0}=\"1\"", column);
             }

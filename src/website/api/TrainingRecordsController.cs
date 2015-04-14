@@ -4,24 +4,29 @@
 
 namespace Kcsara.Database.Web.api
 {
-  using Data = Kcsar.Database.Data;
-  using Kcsara.Database.Web.Model;
-  using Newtonsoft.Json;
   using System;
   using System.Collections.Generic;
   using System.Linq;
   using System.Linq.Expressions;
   using System.Web.Http;
-  using log4net;
-  using Kcsara.Database.Web.api.Models;
   using Kcsar.Database.Model;
+  using Kcsara.Database.Model.Training;
+  using Kcsara.Database.Services;
+  using Kcsara.Database.Web.api.Models;
+  using log4net;
+  using Data = Kcsar.Database.Data;
 
   [ModelValidationFilter]
-  public class TrainingRecordsController : BaseApiController
+  [Authorize]
+  public class TrainingRecordsController : NoDataBaseApiController
   {
-    public TrainingRecordsController(Data.IKcsarContext db, ILog log)
-      : base(db, log)
-    { }
+    protected readonly ITrainingService trainingSvc;
+
+    public TrainingRecordsController(ITrainingService trainingSvc, ILog log)
+      : base(log)
+    {
+      this.trainingSvc = trainingSvc;
+    }
 
     [HttpGet]
     public TrainingRecord Get(Guid id)
@@ -32,15 +37,28 @@ namespace Kcsara.Database.Web.api
     }
 
     [HttpGet]
+    public CompositeTrainingStatus MemberStatus(Guid id, string section = null)
+    {
+      return this.trainingSvc.GetMemberStatus(section, id);
+    }
+
+    [HttpGet]
+    public TrainingRecord[] ComputedForMember(Guid id)
+    {
+      return this.trainingSvc.ListComputedMemberRecords(id);
+    }
+
+    [HttpGet]
     public IEnumerable<TrainingRecord> FindComputedForMember(Guid id)
     {
-      if (!User.IsInRole("cdb.users")) ThrowAuthError();
+      throw new NotImplementedException("reimplement");
+      //if (!User.IsInRole("cdb.users")) ThrowAuthError();
 
-      Data.MemberRow m = GetObjectOrNotFound(() => db.Members.SingleOrDefault(f => f.Id == id));
+      //Data.MemberRow m = GetObjectOrNotFound(() => db.Members.SingleOrDefault(f => f.Id == id));
 
-      var model = GetComputedTrainingRecordViews(f => f.Member.Id == id, false, m.WacLevel);
+      //var model = GetComputedTrainingRecordViews(f => f.Member.Id == id, false, m.WacLevel);
 
-      return model;
+      //return model;
     }
 
     private IEnumerable<TrainingRecord> GetComputedTrainingRecordViews(Expression<Func<Data.ComputedTrainingRecordRow, bool>> whereClause, bool includeMember, WacLevel? levelForRequired)
@@ -123,153 +141,156 @@ namespace Kcsara.Database.Web.api
     [HttpGet]
     public IEnumerable<TrainingRecord> FindForMember(Guid id)
     {
-      if (!User.IsInRole("cdb.users")) ThrowAuthError();
+      throw new NotImplementedException("reimplement");
+      //if (!User.IsInRole("cdb.users")) ThrowAuthError();
 
-      Data.MemberRow m = GetObjectOrNotFound(() => db.Members.SingleOrDefault(f => f.Id == id));
+      //Data.MemberRow m = GetObjectOrNotFound(() => db.Members.SingleOrDefault(f => f.Id == id));
 
-      int mask = (1 << (((int)m.WacLevel - 1) * 2 + 1));
+      //int mask = (1 << (((int)m.WacLevel - 1) * 2 + 1));
 
-      var model = GetTrainingRecords(f => f.Member.Id == id, false, m.WacLevel);
+      //var model = GetTrainingRecords(f => f.Member.Id == id, false, m.WacLevel);
 
-      return model;
+      //return model;
     }
 
     // POST api/<controller>
     [HttpPost]
     public TrainingRecord Post([FromBody]TrainingRecord view)
     {
-      log.DebugFormat("POST {0} {1} {2}", Request.RequestUri, User.Identity.Name, JsonConvert.SerializeObject(view));
-      if (!User.IsInRole("cdb.trainingeditors")) ThrowAuthError();
-      //     if (!Permissions.IsAdmin && !Permissions.IsSelf(view.MemberId) && !Permissions.IsMembershipForPerson(view.MemberId)) return GetAjaxLoginError<MemberContactView>(null);
-      List<Kcsara.Database.Web.Model.SubmitError> errors = new List<Kcsara.Database.Web.Model.SubmitError>();
+      throw new NotImplementedException("reimplement");
+ //     log.DebugFormat("POST {0} {1} {2}", Request.RequestUri, User.Identity.Name, JsonConvert.SerializeObject(view));
+ //     if (!User.IsInRole("cdb.trainingeditors")) ThrowAuthError();
+ //     //     if (!Permissions.IsAdmin && !Permissions.IsSelf(view.MemberId) && !Permissions.IsMembershipForPerson(view.MemberId)) return GetAjaxLoginError<MemberContactView>(null);
+ //     List<Kcsara.Database.Web.Model.SubmitError> errors = new List<Kcsara.Database.Web.Model.SubmitError>();
 
-      if (view.Member.Id == Guid.Empty)
-      {
-        ThrowSubmitErrors(new[] { new Kcsara.Database.Web.Model.SubmitError { Error = Strings.API_Required, Property = "Member" } });
-      }
-
-      Data.TrainingRecordRow model;
-      model = (from a in db.TrainingRecords.Include("Member").Include("Course") where a.Id == view.ReferenceId select a).FirstOrDefault();
-
-      if (model == null)
-      {
-        model = new Data.TrainingRecordRow();
-        model.Member = db.Members.Where(f => f.Id == view.Member.Id).FirstOrDefault();
-        if (model.Member == null)
-        {
-          errors.Add(new Kcsara.Database.Web.Model.SubmitError { Property = "Member", Error = Strings.API_NotFound });
-          ThrowSubmitErrors(errors);
-        }
-        db.TrainingRecords.Add(model);
-      }
-
- //     try
+ //     if (view.Member.Id == Guid.Empty)
  //     {
-        model.UploadsPending = (view.PendingUploads > 0);
+ //       ThrowSubmitErrors(new[] { new Kcsara.Database.Web.Model.SubmitError { Error = Strings.API_Required, Property = "Member" } });
+ //     }
 
-        DateTime completed;
-        if (string.IsNullOrWhiteSpace(view.Completed))
-        {
-          errors.Add(new Kcsara.Database.Web.Model.SubmitError { Property = "Completed", Error = Strings.API_Required });
-        }
-        else if (!DateTime.TryParse(view.Completed, out completed))
-        {
-          errors.Add(new Kcsara.Database.Web.Model.SubmitError { Error = Strings.API_InvalidDate, Property = "Completed" });
-        }
-        else
-        {
-          model.Completed = completed;
-        }
+ //     Data.TrainingRecordRow model;
+ //     model = (from a in db.TrainingRecords.Include("Member").Include("Course") where a.Id == view.ReferenceId select a).FirstOrDefault();
 
-        if (model.metadata != view.Comments) model.metadata = view.Comments;
+ //     if (model == null)
+ //     {
+ //       model = new Data.TrainingRecordRow();
+ //       model.Member = db.Members.Where(f => f.Id == view.Member.Id).FirstOrDefault();
+ //       if (model.Member == null)
+ //       {
+ //         errors.Add(new Kcsara.Database.Web.Model.SubmitError { Property = "Member", Error = Strings.API_NotFound });
+ //         ThrowSubmitErrors(errors);
+ //       }
+ //       db.TrainingRecords.Add(model);
+ //     }
 
-        if (model.Member.Id != view.Member.Id)
-        {
-          throw new InvalidOperationException("Don't know how to change member yet");
-        }
+ ////     try
+ ////     {
+ //       model.UploadsPending = (view.PendingUploads > 0);
 
-        if (view.Course.Id == null)
-        {
-          errors.Add(new Kcsara.Database.Web.Model.SubmitError { Error = Strings.API_Required, Id = new[] { view.ReferenceId }, Property = "Course" });
-        }
-        else if (model.Course == null || model.Course.Id != view.Course.Id)
-        {
-          model.Course = (from c in db.TrainingCourses where c.Id == view.Course.Id select c).First();
-        }
+ //       DateTime completed;
+ //       if (string.IsNullOrWhiteSpace(view.Completed))
+ //       {
+ //         errors.Add(new Kcsara.Database.Web.Model.SubmitError { Property = "Completed", Error = Strings.API_Required });
+ //       }
+ //       else if (!DateTime.TryParse(view.Completed, out completed))
+ //       {
+ //         errors.Add(new Kcsara.Database.Web.Model.SubmitError { Error = Strings.API_InvalidDate, Property = "Completed" });
+ //       }
+ //       else
+ //       {
+ //         model.Completed = completed;
+ //       }
 
-        switch (view.ExpirySrc)
-        {
-          case "default":
-            model.Expiry = model.Course.ValidMonths.HasValue ? model.Completed.AddMonths(model.Course.ValidMonths.Value) : (DateTime?)null;
-            break;
-          case "custom":
-            if (!string.IsNullOrWhiteSpace(view.Expires))
-            {
-              model.Expiry = DateTime.Parse(view.Expires);
-            }
-            else
-            {
-              errors.Add(new Kcsara.Database.Web.Model.SubmitError { Error = Strings.API_TrainingRecord_CustomExpiryRequired, Property = "Expiry", Id = new[] { view.ReferenceId } });
-            }
-            break;
-          case "never":
-            model.Expiry = null;
-            break;
-        }
+ //       if (model.metadata != view.Comments) model.metadata = view.Comments;
 
-        // Documentation required.
-        if (!model.UploadsPending && string.IsNullOrWhiteSpace(model.metadata))
-        {
-          errors.Add(new Kcsara.Database.Web.Model.SubmitError { Error = Strings.API_TrainingRecord_DocumentationRequired, Property = BaseApiController.ModelRootNodeName });
-        }
+ //       if (model.Member.Id != view.Member.Id)
+ //       {
+ //         throw new InvalidOperationException("Don't know how to change member yet");
+ //       }
 
-        // Prevent duplicate records
-        if (db.TrainingRecords.Where(f => f.Id != model.Id && f.Completed == model.Completed && f.Course.Id == model.Course.Id && f.Member.Id == model.Member.Id).Count() > 0)
-        {
-          ThrowSubmitErrors(new[] { new Kcsara.Database.Web.Model.SubmitError { Error = Strings.API_TrainingRecord_Duplicate, Id = new[] { model.Id }, Property = BaseApiController.ModelRootNodeName } });
-        }
+ //       if (view.Course.Id == null)
+ //       {
+ //         errors.Add(new Kcsara.Database.Web.Model.SubmitError { Error = Strings.API_Required, Id = new[] { view.ReferenceId }, Property = "Course" });
+ //       }
+ //       else if (model.Course == null || model.Course.Id != view.Course.Id)
+ //       {
+ //         model.Course = (from c in db.TrainingCourses where c.Id == view.Course.Id select c).First();
+ //       }
 
-        if (errors.Count == 0)
-        {
-          db.SaveChanges();
-          db.RecalculateTrainingAwards(model.Member.Id);
-          db.SaveChanges();
-        }
+ //       switch (view.ExpirySrc)
+ //       {
+ //         case "default":
+ //           model.Expiry = model.Course.ValidMonths.HasValue ? model.Completed.AddMonths(model.Course.ValidMonths.Value) : (DateTime?)null;
+ //           break;
+ //         case "custom":
+ //           if (!string.IsNullOrWhiteSpace(view.Expires))
+ //           {
+ //             model.Expiry = DateTime.Parse(view.Expires);
+ //           }
+ //           else
+ //           {
+ //             errors.Add(new Kcsara.Database.Web.Model.SubmitError { Error = Strings.API_TrainingRecord_CustomExpiryRequired, Property = "Expiry", Id = new[] { view.ReferenceId } });
+ //           }
+ //           break;
+ //         case "never":
+ //           model.Expiry = null;
+ //           break;
+ //       }
 
-        view.ReferenceId = model.Id;
-        view.Course.Title = model.Course.DisplayName;
-      //}
-      //catch (RuleViolationsException ex)
-      //{
-      //  foreach (RuleViolation v in ex.Errors)
-      //  {
-      //    errors.Add(new SubmitError { Error = v.ErrorMessage, Property = v.PropertyName, Id = new[] { v.EntityKey } });
-      //  }
-      //  // throw new InvalidOperationException("TODO: report errors");
-      //}
+ //       // Documentation required.
+ //       if (!model.UploadsPending && string.IsNullOrWhiteSpace(model.metadata))
+ //       {
+ //         errors.Add(new Kcsara.Database.Web.Model.SubmitError { Error = Strings.API_TrainingRecord_DocumentationRequired, Property = BaseApiController.ModelRootNodeName });
+ //       }
 
-      //if (errors.Count > 0)
-      //{
-      //  ThrowSubmitErrors(errors);
-      //}
+ //       // Prevent duplicate records
+ //       if (db.TrainingRecords.Where(f => f.Id != model.Id && f.Completed == model.Completed && f.Course.Id == model.Course.Id && f.Member.Id == model.Member.Id).Count() > 0)
+ //       {
+ //         ThrowSubmitErrors(new[] { new Kcsara.Database.Web.Model.SubmitError { Error = Strings.API_TrainingRecord_Duplicate, Id = new[] { model.Id }, Property = BaseApiController.ModelRootNodeName } });
+ //       }
 
-      return view;
+ //       if (errors.Count == 0)
+ //       {
+ //         db.SaveChanges();
+ //         db.RecalculateTrainingAwards(model.Member.Id);
+ //         db.SaveChanges();
+ //       }
+
+ //       view.ReferenceId = model.Id;
+ //       view.Course.Title = model.Course.DisplayName;
+ //     //}
+ //     //catch (RuleViolationsException ex)
+ //     //{
+ //     //  foreach (RuleViolation v in ex.Errors)
+ //     //  {
+ //     //    errors.Add(new SubmitError { Error = v.ErrorMessage, Property = v.PropertyName, Id = new[] { v.EntityKey } });
+ //     //  }
+ //     //  // throw new InvalidOperationException("TODO: report errors");
+ //     //}
+
+ //     //if (errors.Count > 0)
+ //     //{
+ //     //  ThrowSubmitErrors(errors);
+ //     //}
+
+ //     return view;
     }
 
     [HttpPost]
     public void Delete(Guid id)
     {
-      if (!User.IsInRole("cdb.trainingeditors")) ThrowAuthError();
+      throw new NotImplementedException("reimplement");
+      //if (!User.IsInRole("cdb.trainingeditors")) ThrowAuthError();
 
-      List<string> files = new List<string>();
+      //List<string> files = new List<string>();
 
-      var item = GetObjectOrNotFound(() => db.TrainingRecords.FirstOrDefault(f => f.Id == id));
-      var memberId = item.Member.Id;
+      //var item = GetObjectOrNotFound(() => db.TrainingRecords.FirstOrDefault(f => f.Id == id));
+      //var memberId = item.Member.Id;
 
-      db.TrainingRecords.Remove(item);
-      db.SaveChanges();
-      db.RecalculateTrainingAwards(memberId);
-      db.SaveChanges();
+      //db.TrainingRecords.Remove(item);
+      //db.SaveChanges();
+      //db.RecalculateTrainingAwards(memberId);
+      //db.SaveChanges();
     }
   }
 }

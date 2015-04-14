@@ -4,6 +4,7 @@
 namespace Kcsar.Database.Data.Events
 {
   using System;
+  using System.Collections.Generic;
   using System.ComponentModel.DataAnnotations.Schema;
 
   [Table("Participants")]
@@ -36,6 +37,8 @@ namespace Kcsar.Database.Data.Events
     [ForeignKey("MemberId")]
     public virtual MemberRow Member { get; set; }
     public Guid? MemberId { get; set; }
+
+    public virtual ICollection<EventRosterRow> Rosters { get; set; }
 
     public override string GetReportHtml()
     {

@@ -10,6 +10,6 @@ namespace Kcsara.Database.Web.Model
   public class AwardsList
     {
         public MemberRow Member { get; set; }
-        public IEnumerable<ITrainingAwardRow> Awards { get; set; }
+        public IEnumerable<ITrainingRecordRow> Awards { get; set; }
     }
 }

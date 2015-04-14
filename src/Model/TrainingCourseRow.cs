@@ -59,7 +59,7 @@ namespace Kcsar.Database.Data
         //}
 
         if (asRefresher == false &&
-            (from c in m.ComputedAwards where c.Course.Id == this.Id && (c.Expiry == null || c.Expiry > DateTime.Today) select c).FirstOrDefault() != null)
+            (from c in m.ComputedTrainingRecords where c.Course.Id == this.Id && (c.Expiry == null || c.Expiry > DateTime.Today) select c).FirstOrDefault() != null)
         {
           continue;
         }
@@ -99,7 +99,7 @@ namespace Kcsar.Database.Data
               throw new InvalidOperationException("Unknown prequisite for course: " + this.DisplayName);
             }
 
-            if ((from f in m.ComputedAwards where (f.Expiry == null || f.Expiry >= DateTime.Today) && f.Course.Id == sourceCourse.Value select f).FirstOrDefault() == null)
+            if ((from f in m.ComputedTrainingRecords where (f.Expiry == null || f.Expiry >= DateTime.Today) && f.Course.Id == sourceCourse.Value select f).FirstOrDefault() == null)
             {
               add = false;
               break;

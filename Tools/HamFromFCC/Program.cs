@@ -20,7 +20,7 @@ namespace HamFromFCC
         var course = db.TrainingCourses.Single(f => f.DisplayName == "HAM License");
 
         var hams = db.PersonContact.Where(f => f.Type == "hamcall")
-          .Where(f => !f.Member.ComputedAwards.Any(g => g.Expiry > cutoff && g.Course.Id == course.Id))
+          .Where(f => !f.Member.ComputedTrainingRecords.Any(g => g.Expiry > cutoff && g.Course.Id == course.Id))
           .Select(f => new { Member = f.Member, Call = f.Value })
           .OrderBy(f => f.Member.LastName).ThenBy(f => f.Member.FirstName).ToArray();
 

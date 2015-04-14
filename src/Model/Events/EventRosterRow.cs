@@ -18,15 +18,15 @@ namespace Kcsar.Database.Data.Events
     }
 
     [ForeignKey("EventId")]
-    public SarEventRow Event { get; set; }
+    public virtual SarEventRow Event { get; set; }
     public Guid EventId { get; set; }
 
     [ForeignKey("ParticipantId")]
-    public ParticipantRow Participant { get; set; }
+    public virtual ParticipantRow Participant { get; set; }
     public Guid ParticipantId { get; set; }
 
     [ForeignKey("UnitId")]
-    public ParticipatingUnitRow Unit { get; set; }
+    public virtual ParticipatingUnitRow Unit { get; set; }
     public Guid? UnitId { get; set; }
 
     public double? Hours { get; set; }

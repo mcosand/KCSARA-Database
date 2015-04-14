@@ -1,0 +1,9 @@
+﻿<table class="table table-condensed table-striped">
+  <tbody data-bind="foreach: contacts">
+    <tr>
+      <td><strong data-bind="text: type"></strong></td>
+      <td data-bind="text: subType"></td>
+      <td><a data-bind="visible: link, attr: { href: link }, text: value"></a><span data-bind="visible:!link, text: value"></span></td>
+    </tr>
+  </tbody>
+</table>

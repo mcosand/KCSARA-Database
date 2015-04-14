@@ -16,6 +16,7 @@ namespace Kcsara.Database.Web.Controllers
   using Kcsar.Database.Data.Events;
   using Kcsar.Database.Model;
   using Kcsara.Database.Model.Members;
+  using Kcsara.Database.Model.Training;
   using Kcsara.Database.Web.Model;
   using ApiModels = Kcsara.Database.Web.api.Models;
 
@@ -82,46 +83,47 @@ namespace Kcsara.Database.Web.Controllers
     [HttpGet]
     public ActionResult AwardDetails(Guid? id)
     {
-      if (id == null)
-      {
-        Response.StatusCode = 400;
-        return new ContentResult { Content = "No id specified" };
-      }
+      throw new NotImplementedException("reimplement");
+      //if (id == null)
+      //{
+      //  Response.StatusCode = 400;
+      //  return new ContentResult { Content = "No id specified" };
+      //}
 
-      ApiModels.TrainingRecord award;
-      award = (from a in this.db.TrainingRecords
-               where a.Id == id
-               select new
-               {
-                 Course = new ApiModels.TrainingCourse
-                 {
-                   Id = a.Course.Id,
-                   Title = a.Course.DisplayName
-                 },
-                 Member = new MemberSummary
-                 {
-                   Id = a.Member.Id,
-                   Name = a.Member.LastName + ", " + a.Member.FirstName,
-                   IdNumber = a.Member.DEM
-                 },
-                 Comments = a.metadata,
-                 Completed = a.Completed,
-                 Expires = a.Expiry,
-                 Source = "rule",
-                 ReferenceId = a.Id
-               }).AsEnumerable().Select(f => new ApiModels.TrainingRecord
-                    {
-                      Course = f.Course,
-                      Member = f.Member,
-                      Comments = f.Comments,
-                      Completed = string.Format(GetDateFormat(), f.Completed),
-                      Expires = string.Format(GetDateFormat(), f.Expires),
-                      Source = f.Source,
-                      ReferenceId = f.ReferenceId
-                    }).First();
-      ViewData["docs"] = (from d in this.db.Documents where d.ReferenceId == award.ReferenceId select new DocumentView { Id = d.Id, Title = d.FileName, Reference = d.ReferenceId, Type = d.Type, Size = d.Size }).ToArray();
+      //ApiModels.TrainingRecord award;
+      //award = (from a in this.db.TrainingRecords
+      //         where a.Id == id
+      //         select new
+      //         {
+      //           Course = new ApiModels.TrainingCourse
+      //           {
+      //             Id = a.Course.Id,
+      //             Title = a.Course.DisplayName
+      //           },
+      //           Member = new MemberSummary
+      //           {
+      //             Id = a.Member.Id,
+      //             Name = a.Member.LastName + ", " + a.Member.FirstName,
+      //             IdNumber = a.Member.DEM
+      //           },
+      //           Comments = a.metadata,
+      //           Completed = a.Completed,
+      //           Expires = a.Expiry,
+      //           Source = "rule",
+      //           ReferenceId = a.Id
+      //         }).AsEnumerable().Select(f => new ApiModels.TrainingRecord
+      //              {
+      //                Course = f.Course,
+      //                Member = f.Member,
+      //                Comments = f.Comments,
+      //                Completed = string.Format(GetDateFormat(), f.Completed),
+      //                Expires = string.Format(GetDateFormat(), f.Expires),
+      //                Source = f.Source,
+      //                ReferenceId = f.ReferenceId
+      //              }).First();
+      //ViewData["docs"] = (from d in this.db.Documents where d.ReferenceId == award.ReferenceId select new DocumentView { Id = d.Id, Title = d.FileName, Reference = d.ReferenceId, Type = d.Type, Size = d.Size }).ToArray();
 
-      return View(award);
+      //return View(award);
     }
     #endregion
 
@@ -372,7 +374,7 @@ namespace Kcsara.Database.Web.Controllers
 
         for (int i = 0; i < courses.Count; i++)
         {
-          var match = member.ComputedAwards.SingleOrDefault(f => f.Course.Id == courses[i].Id);
+          var match = member.ComputedTrainingRecords.SingleOrDefault(f => f.Course.Id == courses[i].Id);
           if (match != null)
           {
             string text = "Complete";
@@ -407,7 +409,7 @@ namespace Kcsara.Database.Web.Controllers
 
       var courses = (from c in this.db.TrainingCourses where c.WacRequired > 0 select c).OrderBy(x => x.DisplayName).ToList();
 
-      var expirations = (from e in this.db.ComputedTrainingAwards where e.Course.WacRequired > 0 orderby e.Member.Id select new { memberId = e.Member.Id, Award = e });
+      var expirations = (from e in this.db.ComputedTrainingRecords where e.Course.WacRequired > 0 orderby e.Member.Id select new { memberId = e.Member.Id, Award = e });
 
       ViewData["courseList"] = (from c in courses select c.DisplayName).ToArray();
       ViewData["Title"] = "Training Expiration Report";
@@ -550,7 +552,7 @@ namespace Kcsara.Database.Web.Controllers
       // Run through the list, and pull out the earlier records for this person and course.
 
       Guid lastId = Guid.Empty;
-      IQueryable<ComputedTrainingRecordRow> src = this.db.ComputedTrainingAwards.Include("Member").Include("Course").Include("Member.Memberships.Unit").Include("Member.Memberships.Status");
+      IQueryable<ComputedTrainingRecordRow> src = this.db.ComputedTrainingRecords.Include("Member").Include("Course").Include("Member.Memberships.Unit").Include("Member.Memberships.Status");
 
       var model = (from ta in src where ta.Course.Id == id select ta);
       if (!(bool)ViewData["expired"])
@@ -1142,7 +1144,7 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
                                     where um.Unit.DisplayName == "ESAR" && um.Status.StatusName == "trainee" && um.EndTime == null
                                     orderby um.Member.FirstName
                                     orderby um.Member.LastName
-                                    select new { p = um.Member, a = um.Member.ComputedAwards, n = um.Member.ContactNumbers }))
+                                    select new { p = um.Member, a = um.Member.ComputedTrainingRecords, n = um.Member.ContactNumbers }))
         {
           row++;
           MemberRow trainee = traineeRow.p;
@@ -1166,7 +1168,7 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
           string courseName = string.Format("{0}", wrap.Sheet.CellAt(0, col).StringValue);
           while (!string.IsNullOrWhiteSpace(courseName))
           {
-            var record = trainee.ComputedAwards.FirstOrDefault(f => f.Course.DisplayName == courseName && (f.Expiry == null || f.Expiry > today));
+            var record = trainee.ComputedTrainingRecords.FirstOrDefault(f => f.Course.DisplayName == courseName && (f.Expiry == null || f.Expiry > today));
 
             if (courseName.Equals("Worker App") && trainee.SheriffApp.HasValue)
             {

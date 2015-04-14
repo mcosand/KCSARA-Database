@@ -40,7 +40,7 @@ namespace Kcsar.Database.Data
     public IDbSet<UnitMembershipRow> UnitMemberships { get; set; }
     public IDbSet<UnitStatusRow> UnitStatusTypes { get; set; }
     public IDbSet<UnitDocumentRow> UnitDocuments { get; set; }
-    public IDbSet<ComputedTrainingRecordRow> ComputedTrainingAwards { get; set; }
+    public IDbSet<ComputedTrainingRecordRow> ComputedTrainingRecords { get; set; }
     protected IDbSet<AuditLogRow> AuditLog { get; set; }
     public IDbSet<SensitiveInfoAccessRow> SensitiveInfoLog { get; set; }
 
@@ -70,7 +70,7 @@ namespace Kcsar.Database.Data
       modelBuilder.Entity<SarEventRow>().HasMany(f => f.Roster).WithRequired(f => f.Event).WillCascadeOnDelete(false);
       modelBuilder.Entity<ParticipantRow>().HasOptional(f => f.Member).WithMany(f => f.Participation).WillCascadeOnDelete(false);
       modelBuilder.Entity<ParticipatingUnitRow>().HasOptional(f => f.MemberUnit).WithMany(f => f.Participation).WillCascadeOnDelete(false);
-      modelBuilder.Entity<EventRosterRow>().HasRequired(f => f.Participant).WithMany().WillCascadeOnDelete(false);
+      modelBuilder.Entity<EventRosterRow>().HasRequired(f => f.Participant).WithMany(f => f.Rosters).WillCascadeOnDelete(false);
       modelBuilder.Entity<EventRosterRow>().HasOptional(f => f.Unit).WithMany().WillCascadeOnDelete(false);
       modelBuilder.Entity<ParticipantStatusRow>().HasRequired(f => f.Participant).WithMany().WillCascadeOnDelete(false);
       modelBuilder.Entity<ParticipantStatusRow>().HasOptional(f => f.Unit).WithMany().WillCascadeOnDelete(false);
@@ -353,9 +353,9 @@ namespace Kcsar.Database.Data
 
       foreach (MemberRow m in members)
       {
-        foreach (ComputedTrainingRecordRow award in (from a in this.ComputedTrainingAwards where a.Member.Id == m.Id select a))
+        foreach (ComputedTrainingRecordRow award in (from a in this.ComputedTrainingRecords where a.Member.Id == m.Id select a))
         {
-          this.ComputedTrainingAwards.Remove(award);
+          this.ComputedTrainingRecords.Remove(award);
         }
 
         // Sort by expiry and completed dates to handle the case of re-taking a course that doesn't expire.
@@ -376,7 +376,7 @@ namespace Kcsar.Database.Data
           {
             var ca = new ComputedTrainingRecordRow(a);
             awards.Add(a.Course.Id, ca);
-            this.ComputedTrainingAwards.Add(ca);
+            this.ComputedTrainingRecords.Add(ca);
             lastCourse = a.Course.Id;
           }
         }
@@ -530,7 +530,7 @@ namespace Kcsar.Database.Data
         {
           ComputedTrainingRecordRow newAward = new ComputedTrainingRecordRow { Course = courses[course], Member = m, Completed = completed, Expiry = expiry, Rule = rule };
           awards.Add(course, newAward);
-          this.ComputedTrainingAwards.Add(newAward);
+          this.ComputedTrainingRecords.Add(newAward);
           awarded = true;
           System.Diagnostics.Debug.WriteLineIf(m.LastName == "Kedan", string.Format("Add new record {0}, new expiry: {1}", courses[course].DisplayName, expiry));
         }

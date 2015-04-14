@@ -43,9 +43,9 @@ namespace Kcsar.Database.Data
     public virtual ICollection<ParticipantRow> Participation { get; set; }
     public virtual ICollection<MemberAddressRow> Addresses { get; set; }
     public virtual ICollection<MemberContactRow> ContactNumbers { get; set; }
-    public virtual ICollection<TrainingRecordRow> TrainingAwards { get; set; }
+    public virtual ICollection<TrainingRecordRow> TrainingRecords { get; set; }
     public virtual ICollection<UnitMembershipRow> Memberships { get; set; }
-    public virtual ICollection<ComputedTrainingRecordRow> ComputedAwards { get; set; }
+    public virtual ICollection<ComputedTrainingRecordRow> ComputedTrainingRecords { get; set; }
     public virtual ICollection<AnimalOwnerRow> Animals { get; set; }
     public virtual ICollection<EventDetailRow> MissionDetails { get; set; }
     public virtual ICollection<UnitApplicantRow> ApplyingTo { get; set; }

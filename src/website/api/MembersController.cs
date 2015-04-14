@@ -24,16 +24,21 @@ namespace Kcsara.Database.Web.api
   using Newtonsoft.Json;
   using Kcsara.Database.Model.Members;
   using Kcsara.Database.Services;
+  using Kcsara.Database.Model.Events;
 
   [ModelValidationFilter]
   public class MembersController : NoDataBaseApiController
   {
     protected readonly IMembersService membersSvc;
+    protected readonly ISarEventsService<Mission> missionsSvc;
+    protected readonly ISarEventsService<Training> trainingSvc;
 
-    public MembersController(IMembersService membersSvc, ILog log)
+    public MembersController(IMembersService membersSvc, ISarEventsService<Mission> missionsSvc, ISarEventsService<Training> trainingSvc, ILog log)
       : base(log)
     {
       this.membersSvc = membersSvc;
+      this.missionsSvc = missionsSvc;
+      this.trainingSvc = trainingSvc;
     }
 
     [HttpGet]
@@ -41,6 +46,44 @@ namespace Kcsara.Database.Web.api
     public MemberSummary CardInfo(Guid id)
     {
       return this.membersSvc.Summary(id);
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "cdb.users")]
+    public List<MemberAddress> ListAddresses(Guid id)
+    {
+      return this.membersSvc.AddressList(id);
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "cdb.users")]
+    public List<MemberContact> ListContacts(Guid id)
+    {
+      return this.membersSvc.ContactList(id);
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "cdb.users")]
+    public object ListTrainings(Guid id)
+    {
+      return ListEvents(id, this.trainingSvc);
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "cdb.users")]
+    public object ListMissions(Guid id)
+    {
+      return ListEvents(id, this.missionsSvc);
+    }
+
+    private static object ListEvents(Guid id, ISarEventsService svc)
+    {
+      var list = svc.ParticipantList(f => f.MemberId == id);
+      return new
+      {
+        totals = new { count = list.Count, hours = list.Sum(f => f.Hours), miles = list.Sum(f => f.Miles) },
+        rows = list
+      };
     }
 
     ///// <summary>

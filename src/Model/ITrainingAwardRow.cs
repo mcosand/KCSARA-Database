@@ -6,7 +6,7 @@ namespace Kcsar.Database.Data
   using System;
   using Kcsar.Database.Data.Events;
 
-  public interface ITrainingAwardRow
+  public interface ITrainingRecordRow
   {
     Guid Id { get; }
     MemberRow Member { get; }

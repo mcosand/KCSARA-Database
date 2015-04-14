@@ -23,7 +23,7 @@ namespace ESAR.Extensions
     {
       if (column == MissionReadyColumns.WorkerType)
       {
-        var courses = member.ComputedAwards.Where(f =>
+        var courses = member.ComputedTrainingRecords.Where(f =>
           f.Course.Unit != null && f.Course.Unit.Id == this.unit.Id 
           && (f.Expiry == null || f.Expiry > DateTime.Now))
           .Select(f => f.Course.DisplayName)

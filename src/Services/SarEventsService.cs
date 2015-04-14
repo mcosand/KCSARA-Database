@@ -12,11 +12,15 @@ namespace Kcsara.Database.Services
   using Kcsara.Database.Model.Events;
   using log4net;
 
-  public interface ISarEventsService<T> where T : SarEvent
+  public interface ISarEventsService
   {
     List<SarEventSummary> List(Expression<Func<SarEventSummary, bool>> filter = null, int? maxCount = null);
     List<int> ListYears();
+    List<ParticipationSummary> ParticipantList(Expression<Func<ParticipationSummary, bool>> filter = null);
   }
+
+  public interface ISarEventsService<T> : ISarEventsService where T : SarEvent
+  { }
 
   public class SarEventsService<T, D> : BaseDataService, ISarEventsService<T>
     where T : SarEvent, new()
@@ -44,6 +48,20 @@ namespace Kcsara.Database.Services
         };
     }
 
+    protected Expression<Func<ParticipantRow, ParticipationSummary>> toDomainParticipantSummary = row =>
+      new ParticipationSummary
+      {
+        Id = row.Id,
+        EventId = row.EventId,
+        Title = row.Event.Title,
+        Number = row.Event.StateNumber,
+        Start = row.Event.StartTime,
+        Hours = row.Rosters.Sum(f => f.Hours),
+        Miles = row.Rosters.Sum(f => f.Miles),
+        MemberId = row.MemberId,
+        Name = row.Lastname + ", " + row.Firstname
+      };
+
     /// <summary>Get a list of events matching the given criteria</summary>
     /// <param name="filter"></param>
     /// <param name="maxCount"></param>
@@ -62,6 +80,21 @@ namespace Kcsara.Database.Services
         {
           query = query.Take(maxCount.Value);
         }
+        return query.ToList();
+      }
+    }
+
+    public List<ParticipationSummary> ParticipantList(Expression<Func<ParticipationSummary, bool>> filter = null)
+    {
+      using (var db = this.dbFactory())
+      {
+        var query = db.Events.OfType<D>().SelectMany(f => f.Participants).Select(toDomainParticipantSummary);
+        if (filter != null)
+        {
+          query = query.Where(filter);
+        }
+
+        query = query.OrderByDescending(f => f.Start).ThenBy(f => f.Name);
         return query.ToList();
       }
     }

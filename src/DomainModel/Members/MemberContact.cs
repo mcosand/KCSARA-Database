@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2010-2015 Matthew Cosand
+ * Copyright 2015 Matthew Cosand
  */
 
 namespace Kcsara.Database.Model.Members

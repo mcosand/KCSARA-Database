@@ -56,7 +56,7 @@ namespace ExpireNotify
       {
         var courses = db.TrainingCourses.Where(f => f.WacRequired > 0).ToDictionary(f => f.Id, f => new { Name = f.DisplayName, Required = f.WacRequired });
 
-        var targets = db.ComputedTrainingAwards.Include("Member.ContactNumbers").Include("Member.Memberships.Status")
+        var targets = db.ComputedTrainingRecords.Include("Member.ContactNumbers").Include("Member.Memberships.Status")
             .Where(f => f.Course.WacRequired > 0)
             .Where(f => f.Member.Memberships.Any(g => g.Status.IsActive && g.EndTime == null))
             .Where(a => (a.Expiry >= exp0 && a.Expiry < day0)

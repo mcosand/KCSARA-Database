@@ -34,7 +34,7 @@ namespace Kcsar.Database.Data
     IDbSet<UnitMembershipRow> UnitMemberships { get; set; }
     IDbSet<UnitStatusRow> UnitStatusTypes { get; set; }
     IDbSet<UnitDocumentRow> UnitDocuments { get; set; }
-    IDbSet<ComputedTrainingRecordRow> ComputedTrainingAwards { get; set; }
+    IDbSet<ComputedTrainingRecordRow> ComputedTrainingRecords { get; set; }
     IDbSet<SensitiveInfoAccessRow> SensitiveInfoLog { get; set; }
 
     void RecalculateTrainingAwards();

@@ -200,8 +200,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="api\MemberAddressesController.cs" />
-    <Compile Include="api\MemberContactsController.cs" />
     <Compile Include="api\Models\Enums.cs" />
     <Compile Include="api\Models\Search\SearchResult.cs" />
     <Compile Include="api\SearchController.cs" />
@@ -219,7 +217,6 @@
     <Compile Include="api\Models\MemberUnitDocument.cs" />
     <Compile Include="api\Models\SubmitResult.cs" />
     <Compile Include="api\Models\TrainingCourse.cs" />
-    <Compile Include="api\Models\TrainingRecord.cs" />
     <Compile Include="api\Models\UnitDocument.cs" />
     <Compile Include="api\SarEventsController.cs" />
     <Compile Include="api\UnitsController.cs" />
@@ -526,6 +523,11 @@
     <Content Include="Scripts\nprogress.js" />
     <Content Include="Scripts\r.js" />
     <Content Include="Scripts\require.js" />
+    <Content Include="Scripts\site\components\contact-addresses.js" />
+    <Content Include="Scripts\site\components\core-competency-status.js" />
+    <Content Include="Scripts\site\components\training-record-list.js" />
+    <Content Include="Scripts\site\components\member-events.js" />
+    <Content Include="Scripts\site\components\contact-numbers.js" />
     <Content Include="Scripts\site\components\login-form.js" />
     <Content Include="Scripts\site\app.js" />
     <Content Include="Scripts\site\components\searchbox.js" />
@@ -583,7 +585,6 @@
     <Content Include="Views\Map\Index.aspx" />
     <Content Include="Views\Account\Signup.aspx" />
     <Content Include="Views\Members\Awards.aspx" />
-    <Content Include="Views\Members\MemberCoreCompetencies.ascx" />
     <Content Include="Views\Members\Delete.aspx" />
     <Content Include="Views\Members\DeleteAddress.aspx" />
     <Content Include="Views\Members\DeleteMembership.aspx" />
@@ -591,7 +592,6 @@
     <Content Include="Views\Members\EditAddress.aspx" />
     <Content Include="Views\Members\EditMembership.aspx" />
     <Content Include="Views\Members\MemberMemberships.ascx" />
-    <Content Include="Views\Members\MemberRequiredTraining.ascx" />
     <Content Include="Views\Members\MemberTrainingAwards.ascx" />
     <Content Include="Views\Members\NewEsarTrainee.aspx" />
     <Content Include="Views\Members\PhotoPreview.aspx" />
@@ -697,6 +697,11 @@
     <Content Include="Views\Shared\EventList.cshtml" />
     <Content Include="Views\Units\Index.cshtml" />
     <Content Include="Views\Members\Detail.cshtml" />
+    <Content Include="Views\Components\MemberContacts.cshtml" />
+    <Content Include="Views\Components\MemberAddresses.cshtml" />
+    <Content Include="Views\Components\MemberEvents.cshtml" />
+    <Content Include="Views\Components\CoreCompetencyStatus.cshtml" />
+    <Content Include="Views\Components\TrainingRecordList.cshtml" />
     <None Include="Web.Production.config" />
   </ItemGroup>
   <ItemGroup>
