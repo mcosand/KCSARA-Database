@@ -97,6 +97,9 @@ a:visited {
 .r {
   text-align: right;
 }
+.c {
+  text-align: center;
+}
 
 .overlay-container {
   position:relative;
@@ -121,4 +124,17 @@ a:visited {
 .tab-pane {
   display:none;
   padding-top:1em;
+}
+
+ul.dropdown-menu-form {
+    padding: 5px 10px 0;
+    max-height: 300px;
+    overflow-y: scroll;
+}
+ul.dropdown-menu-form li {
+  padding-left:18px;
+}
+
+.btn .caret {
+  margin-left:5px;
 }

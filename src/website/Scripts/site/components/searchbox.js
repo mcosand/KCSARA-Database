@@ -84,6 +84,6 @@ define(['jquery', 'knockout', 'site/utils', 'site/env'], function($, ko, utils, 
         if (list.length == 0) { _processQuery(); }
       }
     },
-    template: { require: 'text!' + ('') + '/Components/SearchBox' }
+    template: { require: 'text!' + window.appRoot + '/Components/Get/SearchBox' }
   });
 });

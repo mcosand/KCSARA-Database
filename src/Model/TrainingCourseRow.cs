@@ -115,25 +115,25 @@ namespace Kcsar.Database.Data
       return members;
     }
 
-    public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-    {
-      if (string.IsNullOrEmpty(this.DisplayName))
-      {
-        yield return new ValidationResult("Required", new[] { "DisplayName" });
-      }
+    //public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    //{
+    //  if (string.IsNullOrEmpty(this.DisplayName))
+    //  {
+    //    yield return new ValidationResult("Required", new[] { "DisplayName" });
+    //  }
 
-      if (string.IsNullOrEmpty(this.FullName))
-      {
-        yield return new ValidationResult("Required", new[] { "FullName" });
-      }
+    //  if (string.IsNullOrEmpty(this.FullName))
+    //  {
+    //    yield return new ValidationResult("Required", new[] { "FullName" });
+    //  }
 
-      if (this.OfferedFrom != null && this.OfferedUntil != null)
-      {
-        if (this.OfferedFrom >= this.OfferedUntil)
-        {
-          yield return new ValidationResult("Must be after Offered From: " + this.OfferedFrom.ToString(), new[] { "OfferedUntil" });
-        }
-      }
-    }
+    //  if (this.OfferedFrom != null && this.OfferedUntil != null)
+    //  {
+    //    if (this.OfferedFrom >= this.OfferedUntil)
+    //    {
+    //      yield return new ValidationResult("Must be after Offered From: " + this.OfferedFrom.ToString(), new[] { "OfferedUntil" });
+    //    }
+    //  }
+    //}
   }
 }

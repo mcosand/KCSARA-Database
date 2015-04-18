@@ -46,6 +46,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ContactInfoSubType.cs" />
+    <Compile Include="Events\TimelineEntry.cs" />
+    <Compile Include="Events\EventOverview.cs" />
+    <Compile Include="Events\Participant.cs" />
+    <Compile Include="Events\RosterEntry.cs" />
     <Compile Include="Members\EmergencyContact.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Events\ParticipationSummary.cs" />

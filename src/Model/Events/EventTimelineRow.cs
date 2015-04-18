@@ -10,17 +10,19 @@ namespace Kcsar.Database.Data.Events
   public abstract class EventTimelineRow : ModelObjectRow
   {
     [ForeignKey("EventId")]
-    public SarEventRow Event { get; set; }
+    public virtual SarEventRow Event { get; set; }
     public Guid EventId { get; set; }
 
     public DateTime Time { get; set; }
     public string JsonData { get; set; }
+
+    public abstract string ToMarkdown();
   }
 
   public abstract class ParticipantEventTimeline : EventTimelineRow
   {
     [ForeignKey("ParticipantId")]
-    public ParticipantRow Participant { get; set; }
+    public virtual ParticipantRow Participant { get; set; }
     public Guid? ParticipantId { get; set; }
   }
 }

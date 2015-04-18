@@ -9,6 +9,7 @@ namespace Kcsara.Database.Services
   using System.Linq.Expressions;
   using Kcsar.Database.Data;
   using Kcsar.Database.Data.Events;
+  using Kcsara.Database.Model;
   using Kcsara.Database.Model.Events;
   using log4net;
 
@@ -17,6 +18,9 @@ namespace Kcsara.Database.Services
     List<SarEventSummary> List(Expression<Func<SarEventSummary, bool>> filter = null, int? maxCount = null);
     List<int> ListYears();
     List<ParticipationSummary> ParticipantList(Expression<Func<ParticipationSummary, bool>> filter = null);
+    EventOverview GetOverview(Guid id);
+    List<RosterEntry> ListRoster(Guid eventId);
+    List<TimelineEntry> ListTimeline(Guid eventId);
   }
 
   public interface ISarEventsService<T> : ISarEventsService where T : SarEvent
@@ -39,7 +43,7 @@ namespace Kcsara.Database.Services
       return row => new SarEventSummary
         {
           Id = row.Id,
-          Number = row.StateNumber,
+          IdNumber = row.StateNumber,
           Title = row.Title,
           Start = row.StartTime,
           Participants = row.Participants.Count,
@@ -108,6 +112,74 @@ namespace Kcsara.Database.Services
       using (var db = this.dbFactory())
       {
         return db.Events.OfType<D>().Select(f => f.StartTime.Year).Where(f => f > eon).Distinct().OrderBy(f => f).ToList();
+      }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public EventOverview GetOverview(Guid id)
+    {
+      using (var db = this.dbFactory())
+      {
+        return db.Events.Where(f => f.Id == id).Select(f => new EventOverview
+        {
+          Id = f.Id,
+          Title = f.Title,
+          Start = f.StartTime,
+          IdNumber = f.StateNumber
+        }).FirstOrDefault();
+      }
+    }
+
+
+    public List<RosterEntry> ListRoster(Guid eventId)
+    {
+      using (var db = this.dbFactory())
+      {
+        return db.Events.Where(f => f.Id == eventId).SelectMany(f => f.Roster)
+          .Select(f => new RosterEntry
+          {
+            Id = f.Id,
+            Participant = new Participant
+            {
+              Id = f.Participant.Id,
+              Name = f.Participant.Lastname + ", " + f.Participant.Firstname,
+              IdNumber = f.Participant.WorkerNumber,
+              MemberId = f.Participant.MemberId
+            },
+            Unit = new NameIdPair
+            {
+              Id = f.UnitId,
+              Name = f.Unit.Nickname
+            },
+            Hours = f.Hours,
+            Miles = f.Miles
+          })
+          .OrderBy(f => f.Unit.Name)
+          .ThenBy(f => f.Participant.Name)
+          .ToList();
+      }
+    }
+
+    public List<TimelineEntry> ListTimeline(Guid eventId)
+    {
+      using (var db = this.dbFactory())
+      {
+        return db.Events.Include("Timeline.Participant").Where(f => f.Id == eventId)
+          .SelectMany(f => f.Timeline)
+          .AsEnumerable()
+          .Select(f => new TimelineEntry
+          {
+            Id = f.Id,
+            Time = f.Time,
+            Markdown = f.ToMarkdown(),
+            Type = f.GetType().Name.Replace("Row", string.Empty).Split('_')[0]
+          })
+          .OrderByDescending(f => f.Time)
+          .ToList();
       }
     }
   }

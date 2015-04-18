@@ -22,6 +22,6 @@ define(['jquery', 'knockout', 'site/utils', 'site/env'], function ($, ko, utils,
 
       self.load();
     },
-    template: { require: 'text!' + '' + '/Components/MemberAddresses' }
+    template: { require: 'text!' + window.appRoot + '/Components/Get/MemberAddresses' }
   });
 });

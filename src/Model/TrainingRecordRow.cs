@@ -59,17 +59,17 @@ namespace Kcsar.Database.Data
     public TrainingRuleRow Rule { get { return null; } }
     public Guid? RuleId { get { return null; } }
 
-    public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-    {
-      if (this.Completed > DateTime.Today.AddMonths(3))
-      {
-        yield return new ValidationResult("Too far in the future. Must be less than 3 months from today.", new[] { "Completed" });
-      }
+    //public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    //{
+    //  if (this.Completed > DateTime.Today.AddMonths(3))
+    //  {
+    //    yield return new ValidationResult("Too far in the future. Must be less than 3 months from today.", new[] { "Completed" });
+    //  }
 
-      if (this.Expiry.HasValue && this.Completed > this.Expiry)
-      {
-        yield return new ValidationResult("Expiration must be after time completed.", new[] { "Expiry" });
-      }
-    }
+    //  if (this.Expiry.HasValue && this.Completed > this.Expiry)
+    //  {
+    //    yield return new ValidationResult("Expiration must be after time completed.", new[] { "Expiry" });
+    //  }
+    //}
   }
 }

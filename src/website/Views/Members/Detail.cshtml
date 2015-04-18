@@ -31,14 +31,12 @@
   <li role="presentation" data-bind="css: { active: activeTab() == 'contact' }"><a href="#" data-bind="click:pickTab" data-tab="contact">Contact</a></li>
   <li role="presentation" data-bind="css: { active: activeTab() == 'missions' }"><a href="#" data-bind="click:pickTab" data-tab="missions">Missions</a></li>
   <li role="presentation" data-bind="css: { active: activeTab() == 'training' }"><a href="#" data-bind="click:pickTab" data-tab="training">Training</a></li>
-  @*<li role="presentation" data-bind="css: { active: activeTab().substring(0,5) == 'other' }"><a href="#" data-bind="click:pickTab" data-tab="other">Other</a></li>*@
   <li role="presentation" class="dropdown" data-bind="css: { active: isOtherTab }">
     <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
       Other <span class="caret"></span>
     </a>
-    <ul class="dropdown-menu" role="menu">
-      <li><a href="#" data-bind="click:pickTab" data-tab="other_medical">Medical</a></li>
-      <li><a href="#" data-bind="click:pickTab" data-tab="other_foo">Foo</a></li>
+    <ul class="dropdown-menu pull-right" role="menu">
+      <li class="pull-right"><a href="#" data-bind="click:pickTab" data-tab="other_medical">Medical</a></li>
     </ul>
   </li>
 </ul>
@@ -124,8 +122,7 @@
         self.topInfo = ko.observable();
         self.topInfo.loading = ko.observable(true);
 
-        self.pickTab = function (newTab, evt) {
-          if (evt) newTab = $(evt.currentTarget).data('tab') || "";
+        self.switchTab = function (newTab) {
           if (paneResources[newTab]) {
             require(paneResources[newTab], function () {
               self.activeTab(newTab);
@@ -133,6 +130,12 @@
           } else {
             self.activeTab(newTab);
           }
+        }
+
+        self.pickTab = function (newTab, evt) {
+          if (evt) newTab = $(evt.currentTarget).data('tab') || "";
+          self.switchTab(newTab);
+          window.location.hash = '#!' + newTab;
         }
 
         self.load = function loadEvents() {
@@ -146,7 +149,8 @@
           .always(function () { self.topInfo.loading(false); });
         };
 
-        self.pickTab($('body').data('initialTab'));
+        var initialTab = utils.hashBangInit($('body').data('initialTab'), self.switchTab);
+        self.switchTab(initialTab);
       };
     });
   </script>

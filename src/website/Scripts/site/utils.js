@@ -15,6 +15,19 @@
   };
 
   var utils = {};
+  utils.hashBangInit = function hashBangInit(initialPage, callback) {
+    $(window).on('hashchange', function () {
+      console.log("hash changed: ")
+      if (window.location.hash.length < 2 || window.location.hash == '#!') {
+        callback(initialPage);
+      } else if (window.location.hash.length > 1 && window.location.hash[1] == '!') {
+        callback(window.location.hash.substring(2));
+      }
+    });
+
+    return (window.location.hash.length > 1 && window.location.hash[1] == '!') ? window.location.hash.substring(2) : initialPage;
+  };
+
   utils.getCookie = function getCookie(name, source) {
     var src = source || env.cookie;
     if (!src) return null;

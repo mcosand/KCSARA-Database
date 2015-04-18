@@ -266,6 +266,8 @@
     <Content Include="Content\images\roster-add-right.png" />
     <Content Include="Content\images\Trash.png" />
     <Content Include="Content\images\upload.gif" />
+    <Content Include="Content\pagedown\Markdown.Editor.Icons.png" />
+    <Content Include="Content\pagedown\pagedown.bootstrap.css" />
     <Content Include="Content\script\errorHandling.js" />
     <Content Include="Content\nprogress.css" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -275,7 +277,6 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\ComponentsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\IEventController.cs" />
     <Compile Include="Controllers\LogController.cs" />
     <Compile Include="Controllers\MapController.cs" />
     <Compile Include="Controllers\MembersController.cs" />
@@ -286,7 +287,7 @@
     <Compile Include="IAppSettings.cs" />
     <Compile Include="Models\LoginRequest.cs" />
     <Compile Include="Services\AuthService.cs" />
-    <Compile Include="Controllers\SarEventController.cs" />
+    <Compile Include="Controllers\EventsController.cs" />
     <Compile Include="Controllers\TrainingController.cs" />
     <Compile Include="Controllers\TrainingController_Documents.cs" />
     <Compile Include="Controllers\UnitsController.cs" />
@@ -521,10 +522,15 @@
     <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\npm.js" />
     <Content Include="Scripts\nprogress.js" />
+    <Content Include="Scripts\pagedown\Markdown.Converter.js" />
+    <Content Include="Scripts\pagedown\Markdown.Editor.js" />
+    <Content Include="Scripts\pagedown\Markdown.Sanitizer.js" />
     <Content Include="Scripts\r.js" />
     <Content Include="Scripts\require.js" />
     <Content Include="Scripts\site\components\contact-addresses.js" />
+    <Content Include="Scripts\site\components\event-timeline.js" />
     <Content Include="Scripts\site\components\core-competency-status.js" />
+    <Content Include="Scripts\site\components\event-roster.js" />
     <Content Include="Scripts\site\components\training-record-list.js" />
     <Content Include="Scripts\site\components\member-events.js" />
     <Content Include="Scripts\site\components\contact-numbers.js" />
@@ -639,7 +645,6 @@
     <Content Include="Views\Shared\Close.aspx" />
     <Content Include="Views\Shared\ClosePopup.aspx" />
     <Content Include="Views\Shared\EditRoster.aspx" />
-    <Content Include="Views\Shared\EventRoster.ascx" />
     <Content Include="Views\Shared\ICS211.aspx" />
     <Content Include="Views\Shared\Review4x4Roster.aspx" />
     <Content Include="Views\Shared\RosterOfEvents.ascx" />
@@ -702,6 +707,9 @@
     <Content Include="Views\Components\MemberEvents.cshtml" />
     <Content Include="Views\Components\CoreCompetencyStatus.cshtml" />
     <Content Include="Views\Components\TrainingRecordList.cshtml" />
+    <Content Include="Views\Shared\EventDetail.cshtml" />
+    <Content Include="Views\Components\EventRoster.cshtml" />
+    <Content Include="Views\Components\EventTimeline.cshtml" />
     <None Include="Web.Production.config" />
   </ItemGroup>
   <ItemGroup>

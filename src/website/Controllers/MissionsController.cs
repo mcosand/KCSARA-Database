@@ -1108,119 +1108,119 @@ namespace Kcsara.Database.Web.Controllers
     //    this.db.AddToMissions(newEvent);
     //}
 
-    protected override void OnBuildingRosterModel(Guid id)
-    {
-      throw new NotImplementedException("reimplement");
+    //protected override void OnBuildingRosterModel(Guid id)
+    //{
+    //  throw new NotImplementedException("reimplement");
 
-      //base.OnBuildingRosterModel(id);
-      //ViewData["missionId"] = id;
-      //ViewData["UnitList"] = (from u in this.db.Units orderby u.County + ":" + u.DisplayName select u).ToArray();
-      //ViewData["RoleTypes"] = EventRoster.RoleTypes;
+    //  //base.OnBuildingRosterModel(id);
+    //  //ViewData["missionId"] = id;
+    //  //ViewData["UnitList"] = (from u in this.db.Units orderby u.County + ":" + u.DisplayName select u).ToArray();
+    //  //ViewData["RoleTypes"] = EventRoster.RoleTypes;
 
-    }
+    //}
 
-    protected override void OnDeletingRosterRow(EventRosterRow row)
-    {
-      throw new NotImplementedException("reimplement");
+    //protected override void OnDeletingRosterRow(EventRosterRow row)
+    //{
+    //  throw new NotImplementedException("reimplement");
 
-      //while (row.Animals.Count > 0)
-      //{
-      //  this.db.AnimalMissions.Remove(row.Animals.First());
-      //}
+    //  //while (row.Animals.Count > 0)
+    //  //{
+    //  //  this.db.AnimalMissions.Remove(row.Animals.First());
+    //  //}
 
-      //base.OnDeletingRosterRow(row);
-    }
+    //  //base.OnDeletingRosterRow(row);
+    //}
 
-    protected override void OnProcessingRosterInput(EventRosterRow row, FormCollection fields)
-    {
-      throw new NotImplementedException("reimplement");
+    //protected override void OnProcessingRosterInput(EventRosterRow row, FormCollection fields)
+    //{
+    //  throw new NotImplementedException("reimplement");
 
-      //base.OnProcessingRosterInput(row, fields);
+    //  //base.OnProcessingRosterInput(row, fields);
 
-      //// ==== Unit ========================
+    //  //// ==== Unit ========================
 
-      //if (string.IsNullOrEmpty(fields["unit_" + row.Id.ToString()]))
-      //{
-      //  return;
-      //}
-      //Guid unitId = new Guid(fields["unit_" + row.Id.ToString()]);
-      //var unit = (from u in this.db.Units where u.Id == unitId select u).First();
+    //  //if (string.IsNullOrEmpty(fields["unit_" + row.Id.ToString()]))
+    //  //{
+    //  //  return;
+    //  //}
+    //  //Guid unitId = new Guid(fields["unit_" + row.Id.ToString()]);
+    //  //var unit = (from u in this.db.Units where u.Id == unitId select u).First();
 
-      //if (row.Unit != unit)
-      //{
-      //  row.Unit = unit;
-      //}
+    //  //if (row.Unit != unit)
+    //  //{
+    //  //  row.Unit = unit;
+    //  //}
 
-      //// ==== Mission Role =================
-      //string role = fields["role_" + row.Id.ToString()];
-      //if (row.InternalRole != role)
-      //{
-      //  row.InternalRole = role;
-      //}
+    //  //// ==== Mission Role =================
+    //  //string role = fields["role_" + row.Id.ToString()];
+    //  //if (row.InternalRole != role)
+    //  //{
+    //  //  row.InternalRole = role;
+    //  //}
 
-      //// ==== Overtime hours =================
-      //if (!string.IsNullOrEmpty(fields["overtimehours_" + row.Id.ToString()]))
-      //{
-      //  double hours = double.Parse(fields["overtimehours_" + row.Id.ToString()]); ;
-      //  if (hours != row.OvertimeHours)
-      //  {
-      //    row.OvertimeHours = hours;
-      //  }
-      //}
-      //else if (row.OvertimeHours != null)
-      //{
-      //  row.OvertimeHours = null;
-      //}
-
-
-
-      //// ==== Animals ========================
-      //string animal = fields["animal_" + row.Id.ToString()];
-      //List<AnimalEvent> animalsToRemove = new List<AnimalEvent>();
-      //if (string.IsNullOrEmpty(animal))
-      //{
-      //  foreach (AnimalEvent am in row.Animals)
-      //  {
-      //    animalsToRemove.Add(am);
-      //  }
-      //}
-      //else
-      //{
-      //  animal = animal.ToLowerInvariant();
-
-      //  // Figure out which animals should be kept
-      //  foreach (AnimalEvent am in row.Animals)
-      //  {
-      //    string idString = am.Animal.Id.ToString().ToLowerInvariant();
-      //    if (!animal.Contains(idString))
-      //    {
-      //      animalsToRemove.Add(am);
-      //    }
-      //    else
-      //    {
-      //      animal = animal.Replace(idString, "");
-      //    }
-      //  }
-
-      //  // Add the new ones.
-      //  foreach (string newAnimalId in animal.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-      //  {
-      //    Guid animalId = new Guid(newAnimalId);
-      //    Animal a = (from x in this.db.Animals where x.Id == animalId select x).First();
-      //    AnimalEvent am = new AnimalEvent { Animal = a, Roster = row };
-      //    row.Animals.Add(am);
-      //    this.db.AnimalMissions.Add(am);
-      //  }
-      //}
-
-      //// Get rid of those that should be removed
-      //foreach (AnimalEvent am in animalsToRemove)
-      //{
-      //  this.db.AnimalMissions.Remove(am);
-      //}
+    //  //// ==== Overtime hours =================
+    //  //if (!string.IsNullOrEmpty(fields["overtimehours_" + row.Id.ToString()]))
+    //  //{
+    //  //  double hours = double.Parse(fields["overtimehours_" + row.Id.ToString()]); ;
+    //  //  if (hours != row.OvertimeHours)
+    //  //  {
+    //  //    row.OvertimeHours = hours;
+    //  //  }
+    //  //}
+    //  //else if (row.OvertimeHours != null)
+    //  //{
+    //  //  row.OvertimeHours = null;
+    //  //}
 
 
-    }
+
+    //  //// ==== Animals ========================
+    //  //string animal = fields["animal_" + row.Id.ToString()];
+    //  //List<AnimalEvent> animalsToRemove = new List<AnimalEvent>();
+    //  //if (string.IsNullOrEmpty(animal))
+    //  //{
+    //  //  foreach (AnimalEvent am in row.Animals)
+    //  //  {
+    //  //    animalsToRemove.Add(am);
+    //  //  }
+    //  //}
+    //  //else
+    //  //{
+    //  //  animal = animal.ToLowerInvariant();
+
+    //  //  // Figure out which animals should be kept
+    //  //  foreach (AnimalEvent am in row.Animals)
+    //  //  {
+    //  //    string idString = am.Animal.Id.ToString().ToLowerInvariant();
+    //  //    if (!animal.Contains(idString))
+    //  //    {
+    //  //      animalsToRemove.Add(am);
+    //  //    }
+    //  //    else
+    //  //    {
+    //  //      animal = animal.Replace(idString, "");
+    //  //    }
+    //  //  }
+
+    //  //  // Add the new ones.
+    //  //  foreach (string newAnimalId in animal.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+    //  //  {
+    //  //    Guid animalId = new Guid(newAnimalId);
+    //  //    Animal a = (from x in this.db.Animals where x.Id == animalId select x).First();
+    //  //    AnimalEvent am = new AnimalEvent { Animal = a, Roster = row };
+    //  //    row.Animals.Add(am);
+    //  //    this.db.AnimalMissions.Add(am);
+    //  //  }
+    //  //}
+
+    //  //// Get rid of those that should be removed
+    //  //foreach (AnimalEvent am in animalsToRemove)
+    //  //{
+    //  //  this.db.AnimalMissions.Remove(am);
+    //  //}
+
+
+    //}
 
     [Authorize(Roles = "cdb.users")]
     public ActionResult TopResponders(string unit, string start, string end)

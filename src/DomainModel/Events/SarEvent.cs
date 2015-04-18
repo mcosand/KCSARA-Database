@@ -10,6 +10,7 @@ namespace Kcsara.Database.Model.Events
     public Guid Id { get; set; }
     public string Title { get; set; }
     public DateTime Start { get; set; }
+    public string IdNumber { get; set; }
   }
 
   public class Mission : SarEvent

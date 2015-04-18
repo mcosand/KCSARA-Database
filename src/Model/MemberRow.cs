@@ -145,12 +145,12 @@ namespace Kcsar.Database.Data
       return string.Format("<b>{0}</b> DEM:{1}, {2}, <span class=\"personal\">DOB:{3}, </span>WAC:{4}", this.FullName, this.DEM, this.Gender, this.BirthDate, this.WacLevel);
     }
 
-    public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-    {
-      if (string.IsNullOrEmpty(this.FirstName))
-      {
-        yield return new ValidationResult("Required", new[] { "FirstName" });
-      }
-    }
+    //public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    //{
+    //  if (string.IsNullOrEmpty(this.FirstName))
+    //  {
+    //    yield return new ValidationResult("Required", new[] { "FirstName" });
+    //  }
+    //}
   }
 }

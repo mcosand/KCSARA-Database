@@ -231,4 +231,10 @@
   <data name="ContactNumbers" xml:space="preserve">
     <value>Contact Numbers</value>
   </data>
+  <data name="Event_RosterMissions" xml:space="preserve">
+    <value>Mission Roster</value>
+  </data>
+  <data name="Event_RosterTraining" xml:space="preserve">
+    <value>Training Roster</value>
+  </data>
 </root>

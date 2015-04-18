@@ -92,7 +92,7 @@ namespace Kcsar.Database.Data.Migrations
       Console.WriteLine("Wait for timing glitch?"); // When this statement is not here, upgrades can't find Animalevents.AnimalId
       CreateIndex("dbo.AnimalEvents", "AnimalId");
       CreateIndex("dbo.AnimalEvents", "RosterId");
-      Sql(@"EXECUTE sp_rename '[PK_dbo.AnimalMissions]', 'PK_dbo.AnimalEvents'");
+      Sql(@"IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME='PK_dbo.AnimalMissions') EXECUTE sp_rename '[PK_dbo.AnimalMissions]', 'PK_dbo.AnimalEvents'");
       RenameColumn("dbo.AnimalOwners", "Animal_Id", "AnimalId");
       RenameColumn("dbo.AnimalOwners", "Owner_Id", "OwnerId");
       CreateIndex("dbo.AnimalOwners", "AnimalId");
@@ -108,7 +108,7 @@ namespace Kcsar.Database.Data.Migrations
       CreateIndex("dbo.ComputedTrainingRecords", "CourseId");
       CreateIndex("dbo.ComputedTrainingRecords", "MemberId");
       CreateIndex("dbo.ComputedTrainingRecords", "RuleId");
-      Sql(@"EXECUTE sp_rename '[PK_dbo.ComputedTrainingAwards]', 'PK_dbo.ComputedTrainingRecords'");
+      Sql(@"IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME='PK_dbo.ComputedTrainingAwards') EXECUTE sp_rename '[PK_dbo.ComputedTrainingAwards]', 'PK_dbo.ComputedTrainingRecords'");
       AddForeignKey("dbo.ComputedTrainingRecords", "MemberId", "dbo.Members", cascadeDelete: true);
       AddForeignKey("dbo.ComputedTrainingRecords", "AttendanceId", "dbo.Participants");
       AddForeignKey("dbo.ComputedTrainingRecords", "CourseId", "dbo.TrainingCourses", cascadeDelete: true);
@@ -116,17 +116,17 @@ namespace Kcsar.Database.Data.Migrations
 
       RenameColumn("dbo.EventDetails", "Person_Id", "MemberId");
       CreateIndex("dbo.EventDetails", "MemberId");
-      Sql(@"EXECUTE sp_rename '[PK_dbo.MissionDetails]', 'PK_dbo.EventDetails'");
+      Sql(@"IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME='PK_dbo.MissionDetails') EXECUTE sp_rename '[PK_dbo.MissionDetails]', 'PK_dbo.EventDetails'");
       AddForeignKey("dbo.EventDetails", "MemberId", "dbo.Members");
       AddForeignKey("dbo.EventDetails", "Id", "dbo.SarEvents", cascadeDelete: true);
-      Sql(@"EXECUTE sp_rename '[PK_dbo.MissionGeographies]', 'PK_dbo.EventGeographies'");
+      Sql(@"IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME='PK_dbo.MissionGeographies') EXECUTE sp_rename '[PK_dbo.MissionGeographies]', 'PK_dbo.EventGeographies'");
       AddForeignKey("dbo.EventGeographies", "EventId", "dbo.SarEvents", cascadeDelete: true);
 
-      Sql(@"EXECUTE sp_rename '[PK_dbo.PersonAddresses]', 'PK_dbo.MemberAddresses'");
+      Sql(@"IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME='PK_dbo.PersonAddresses') EXECUTE sp_rename '[PK_dbo.PersonAddresses]', 'PK_dbo.MemberAddresses'");
       RenameColumn("dbo.MemberAddresses", "Person_Id", "MemberId");
       AddForeignKey("dbo.MemberAddresses", "MemberId", "dbo.Members", cascadeDelete: true);
       CreateIndex("dbo.MemberAddresses", "MemberId");
-      Sql(@"EXECUTE sp_rename '[PK_dbo.PersonContacts]', 'PK_dbo.MemberContacts'");
+      Sql(@"IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME='PK_dbo.PersonContacts') EXECUTE sp_rename '[PK_dbo.PersonContacts]', 'PK_dbo.MemberContacts'");
       RenameColumn("dbo.MemberContacts", "Person_Id", "MemberId");
       AddForeignKey("dbo.MemberContacts", "MemberId", "dbo.Members", cascadeDelete: true);
       CreateIndex("dbo.MemberContacts", "MemberId");
@@ -156,7 +156,9 @@ namespace Kcsar.Database.Data.Migrations
       CreateIndex("dbo.SarEvents", "PreviousId");
       Sql(@"UPDATE dbo.SarEvents SET Discriminator='MissionRow' WHERE Discriminator='Mission'");
       Sql(@"UPDATE dbo.SarEvents SET Discriminator='TrainingRow' WHERE Discriminator='Training'");
-      Sql(@"EXECUTE sp_rename '[PK_dbo.SarUnits]', 'PK_dbo.Units'");
+      Sql(@"UPDATE dbo.EventTimelines SET Discriminator='ParticipantStatusRow' WHERE Discriminator='ParticipantStatus'");
+      Sql(@"UPDATE dbo.EventTimelines SET Discriminator='EventLogRow' WHERE Discriminator='EventLog'");
+      Sql(@"IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME='PK_dbo.SarUnits') EXECUTE sp_rename '[PK_dbo.SarUnits]', 'PK_dbo.Units'");
       RenameColumn("dbo.SubjectGroupLinks", "Subject_Id", "SubjectId");
       RenameColumn("dbo.SubjectGroupLinks", "Group_Id", "GroupId");
       AlterColumn("dbo.SubjectGroupLinks", "SubjectId", c => c.Guid(nullable: false));
@@ -177,7 +179,7 @@ namespace Kcsar.Database.Data.Migrations
       DropColumn("dbo.TrainingRecords", "TrainingRule_Id");
       RenameColumn("dbo.TrainingRecords", "Member_Id", "MemberId");
       RenameColumn("dbo.TrainingRecords", "Course_Id", "CourseId");
-      Sql(@"EXECUTE sp_rename '[PK_dbo.TrainingAwards]', 'PK_dbo.TrainingRecords'");
+      Sql(@"IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME='PK_dbo.TrainingAwards') EXECUTE sp_rename '[PK_dbo.TrainingAwards]', 'PK_dbo.TrainingRecords'");
       CreateIndex("dbo.TrainingRecords", "MemberId");
       CreateIndex("dbo.TrainingRecords", "CourseId");
       AddForeignKey("dbo.TrainingRecords", "CourseId", "dbo.TrainingCourses", cascadeDelete: true);
@@ -186,7 +188,7 @@ namespace Kcsar.Database.Data.Migrations
 
       RenameColumn("dbo.TrainingRowTrainingCourseRows", "Training_Id", "TrainingRow_Id");
       RenameColumn("dbo.TrainingRowTrainingCourseRows", "TrainingCourse_Id", "TrainingCourseRow_Id");
-      Sql(@"EXECUTE sp_rename '[PK_dbo.Training2TrainingCourse]', 'PK_dbo.TrainingRowTrainingCourseRows'");
+      Sql(@"IF EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE CONSTRAINT_NAME='PK_dbo.Training2TrainingCourse') EXECUTE sp_rename '[PK_dbo.Training2TrainingCourse]', 'PK_dbo.TrainingRowTrainingCourseRows'");
       CreateIndex("dbo.TrainingRowTrainingCourseRows", "TrainingRow_Id");
       CreateIndex("dbo.TrainingRowTrainingCourseRows", "TrainingCourseRow_Id");
       AddForeignKey("dbo.TrainingRowTrainingCourseRows", "TrainingRow_Id", "dbo.SarEvents", cascadeDelete: true);

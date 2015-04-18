@@ -623,112 +623,112 @@ namespace Kcsara.Database.Web.Controllers
 
     private List<Guid> dirtyAwardMembers = new List<Guid>();
 
-    protected override void OnProcessingRosterInput(EventRosterRow row, FormCollection fields)
-    {
-      throw new NotImplementedException("reimplement");
+    //protected override void OnProcessingRosterInput(EventRosterRow row, FormCollection fields)
+    //{
+    //  throw new NotImplementedException("reimplement");
 
-      //base.OnProcessingRosterInput(row, fields);
+    //  //base.OnProcessingRosterInput(row, fields);
 
-      //string coursesKey = "courses_" + row.Id.ToString();
-      //string loweredCourses = (fields[coursesKey] ?? "").ToLower();
+    //  //string coursesKey = "courses_" + row.Id.ToString();
+    //  //string loweredCourses = (fields[coursesKey] ?? "").ToLower();
 
-      //if (!string.IsNullOrEmpty(loweredCourses))
-      //{
-      //  ModelState.SetModelValue(coursesKey, new ValueProviderResult(fields[coursesKey], fields[coursesKey], CultureInfo.CurrentUICulture));
-      //}
+    //  //if (!string.IsNullOrEmpty(loweredCourses))
+    //  //{
+    //  //  ModelState.SetModelValue(coursesKey, new ValueProviderResult(fields[coursesKey], fields[coursesKey], CultureInfo.CurrentUICulture));
+    //  //}
 
-      //TrainingAward[] tmp = row.TrainingAwards.ToArray();
+    //  //TrainingAward[] tmp = row.TrainingAwards.ToArray();
 
-      //Dictionary<string, TrainingAward> currentAwards = row.TrainingAwards.ToDictionary(f => f.Course.Id.ToString().ToLower(), f => f);
-      //bool awardsDirty = false;
+    //  //Dictionary<string, TrainingAward> currentAwards = row.TrainingAwards.ToDictionary(f => f.Course.Id.ToString().ToLower(), f => f);
+    //  //bool awardsDirty = false;
 
-      //foreach (string award in currentAwards.Keys)
-      //{
-      //  string lowered = award.ToLower();
-      //  if (loweredCourses.Contains(lowered))
-      //  {
-      //    loweredCourses = loweredCourses.Replace(lowered, "");
-      //  }
-      //  else
-      //  {
-      //    awardsDirty = true;
-      //    this.db.TrainingAward.Remove(currentAwards[award]);
-      //  }
-      //}
+    //  //foreach (string award in currentAwards.Keys)
+    //  //{
+    //  //  string lowered = award.ToLower();
+    //  //  if (loweredCourses.Contains(lowered))
+    //  //  {
+    //  //    loweredCourses = loweredCourses.Replace(lowered, "");
+    //  //  }
+    //  //  else
+    //  //  {
+    //  //    awardsDirty = true;
+    //  //    this.db.TrainingAward.Remove(currentAwards[award]);
+    //  //  }
+    //  //}
 
-      //foreach (string key in loweredCourses.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-      //{
-      //  if (!row.TimeOut.HasValue)
-      //  {
-      //    ModelState.AddModelError(coursesKey, "Time out required when awarding courses");
-      //    return;
-      //    //ModelState.AddModelError("TimeOut", "Time out is required if course is awarded.");
-      //    //throw new InvalidOperationException("row's timeout is null");
-      //  }
+    //  //foreach (string key in loweredCourses.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+    //  //{
+    //  //  if (!row.TimeOut.HasValue)
+    //  //  {
+    //  //    ModelState.AddModelError(coursesKey, "Time out required when awarding courses");
+    //  //    return;
+    //  //    //ModelState.AddModelError("TimeOut", "Time out is required if course is awarded.");
+    //  //    //throw new InvalidOperationException("row's timeout is null");
+    //  //  }
 
-      //  if (row.Person == null)
-      //  {
-      //    return;
-      //  }
+    //  //  if (row.Person == null)
+    //  //  {
+    //  //    return;
+    //  //  }
 
-      //  if (!ModelState.IsValid)
-      //  {
-      //    return;
-      //  }
+    //  //  if (!ModelState.IsValid)
+    //  //  {
+    //  //    return;
+    //  //  }
 
-      //  TrainingCourse course = GetCourse(new Guid(key));
+    //  //  TrainingCourse course = GetCourse(new Guid(key));
 
-      //  TrainingAward newAward = new TrainingAward()
-      //  {
-      //    Member = row.Person,
-      //    Roster = row,
-      //    Completed = row.TimeOut.Value,
-      //    Course = course,
-      //    Expiry = course.ValidMonths.HasValue ? row.TimeOut.Value.AddMonths(course.ValidMonths.Value) : (DateTime?)null
-      //  };
+    //  //  TrainingAward newAward = new TrainingAward()
+    //  //  {
+    //  //    Member = row.Person,
+    //  //    Roster = row,
+    //  //    Completed = row.TimeOut.Value,
+    //  //    Course = course,
+    //  //    Expiry = course.ValidMonths.HasValue ? row.TimeOut.Value.AddMonths(course.ValidMonths.Value) : (DateTime?)null
+    //  //  };
 
-      //  awardsDirty = true;
-      //  row.TrainingAwards.Add(newAward);
-      //}
+    //  //  awardsDirty = true;
+    //  //  row.TrainingAwards.Add(newAward);
+    //  //}
 
-      //if (awardsDirty && row.Person != null && !dirtyAwardMembers.Contains(row.Person.Id))
-      //{
-      //  dirtyAwardMembers.Add(row.Person.Id);
-      //}
-    }
+    //  //if (awardsDirty && row.Person != null && !dirtyAwardMembers.Contains(row.Person.Id))
+    //  //{
+    //  //  dirtyAwardMembers.Add(row.Person.Id);
+    //  //}
+    //}
 
-    protected override void OnRosterPostProcessing()
-    {
-      base.OnRosterPostProcessing();
-      foreach (Guid memberId in dirtyAwardMembers)
-      {
-        this.db.RecalculateTrainingAwards(memberId);
-      }
-      dirtyAwardMembers.Clear();
-      this.db.SaveChanges();
-    }
+    //protected override void OnRosterPostProcessing()
+    //{
+    //  base.OnRosterPostProcessing();
+    //  foreach (Guid memberId in dirtyAwardMembers)
+    //  {
+    //    this.db.RecalculateTrainingAwards(memberId);
+    //  }
+    //  dirtyAwardMembers.Clear();
+    //  this.db.SaveChanges();
+    //}
 
-    protected override void OnDeletingRosterRow(EventRosterRow row)
-    {
-      throw new NotImplementedException("reimplement");
+    //protected override void OnDeletingRosterRow(EventRosterRow row)
+    //{
+    //  throw new NotImplementedException("reimplement");
 
-      //base.OnDeletingRosterRow(row);
+    //  //base.OnDeletingRosterRow(row);
 
-      //Member member = null;
+    //  //Member member = null;
 
-      //// Take away any rewards that may have come with this roster row.
-      //while (row.TrainingAwards.Count > 0)
-      //{
-      //  this.db.TrainingAward.Remove(row.TrainingAwards.First());
-      //  member = row.Person;
-      //}
+    //  //// Take away any rewards that may have come with this roster row.
+    //  //while (row.TrainingAwards.Count > 0)
+    //  //{
+    //  //  this.db.TrainingAward.Remove(row.TrainingAwards.First());
+    //  //  member = row.Person;
+    //  //}
 
-      //// Figure out what this means for the rest of the member's training
-      //if (member != null)
-      //{
-      //  this.db.RecalculateTrainingAwards(member.Id);
-      //}
-    }
+    //  //// Figure out what this means for the rest of the member's training
+    //  //if (member != null)
+    //  //{
+    //  //  this.db.RecalculateTrainingAwards(member.Id);
+    //  //}
+    //}
 
     protected override ActionResult InternalEdit(TrainingRow evt)
     {

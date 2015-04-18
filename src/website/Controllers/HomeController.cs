@@ -50,7 +50,8 @@ namespace Kcsara.Database.Web.Controllers
         'bootstrap': 'bootstrap.min',
         'bootstrap-dialog': 'bootstrap-dialog.min',
         'knockout': 'knockout-3.2.0',
-        'moment': 'moment.min'
+        'moment': 'moment.min',
+        'pagedown-convert': 'pagedown/Markdown.Converter'
       },
       map: {
         '*': { 'site/env': 'site/env-ko' },
@@ -58,7 +59,8 @@ namespace Kcsara.Database.Web.Controllers
       },
       shim: {
         bootstrap: { deps: ['jquery'] },
-        'jquery.toaster': { deps: ['jquery'] }
+        'jquery.toaster': { deps: ['jquery'] },
+        'pagedown-convert': { deps: ['bootstrap'], exports: 'Markdown' }
       }
     };";
 

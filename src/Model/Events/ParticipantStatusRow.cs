@@ -16,6 +16,11 @@ namespace Kcsar.Database.Data.Events
 
     public ParticipantStatusType Status { get; set; }
 
+    public override string ToMarkdown()
+    {
+      return string.Format("**{0} {1}** {2}{3}", this.Participant.Firstname, this.Participant.Lastname, this.Status.ToString().ToLower(), this.UnitId == null ? null : (" with " + this.Unit.Nickname));
+    }
+
     public override string GetReportHtml()
     {
       return string.Format("<b>{0} / {1} {2}</b> {3} with {4} @{5}", this.Event.Title, this.Participant.Firstname, this.Participant.Lastname, this.Status, this.Unit.Nickname, this.Time);

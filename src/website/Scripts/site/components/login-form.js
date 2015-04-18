@@ -39,6 +39,6 @@ define(['jquery', 'knockout', 'site/utils', 'site/env'], function ($, ko, utils,
 
       utils.extendForErrors(this);
     },
-    template: { require: 'text!' + '' + '/Components/LoginForm' }
+    template: { require: 'text!' + window.appRoot + '/Components/Get/LoginForm' }
   });
 });

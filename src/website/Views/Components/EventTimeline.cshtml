@@ -1,0 +1,43 @@
+﻿@*
+  * Copyright 2015 Matthew Cosand
+*@
+@{ ViewBag.Unique = Guid.NewGuid(); }
+<div class="overlay" data-bind="visible: timeline.loading"><h1>Loading ...</h1></div>
+<div>
+  <form class="form-horizontal">
+    <div class="form-group">
+      <label for="@("filter" + @ViewBag.Unique)" class="control-label col-xs-2 col-sm-1">Filter:</label>
+      <div class="dropdown col-xs-10 col-sm-11" id="@("filter" + @ViewBag.Unique)">
+        <a class="dropdown-toggle btn btn-default" data-toggle="dropdown" href="#">Filter Timeline<b class="caret"></b></a>
+        <ul class="dropdown-menu dropdown-menu-form" role="menu" data-bind="click: function() { return true; }, clickBubble: false">
+          <li>
+            <label class="checkbox">
+              <input type="checkbox" value="ParticipantStatus" data-bind="checked: filteredEvents">
+              Sign In/Out
+            </label>
+          </li>
+          <li>
+            <label class="checkbox">
+              <input type="checkbox" value="EventLog" data-bind="checked: filteredEvents">
+              Log
+            </label>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </form>
+</div>
+<table class="table table-condensed table-striped">
+  <thead>
+    <tr>
+      <th class="c col-xs-2 col-sm-1">Time</th>
+      <th>Event</th>
+    </tr>
+  </thead>
+  <tbody data-bind="foreach: filteredTimeline">
+    <tr>
+      <td class="c col-xs-2 col-sm-1"><span data-bind="text: $parent.formatTime(time)" style="white-space: nowrap"></span></td>
+      <td class="col-xs-10 col-sm-11"><span data-bind="html: $parent.formatMarkdown(markdown)"></span></td>
+    </tr>
+  </tbody>
+</table>

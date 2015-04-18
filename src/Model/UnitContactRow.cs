@@ -81,27 +81,27 @@ namespace Kcsar.Database.Data
       return string.Format("<b>{0}</b> {1} contact: {2}/{3}", this.Unit.DisplayName, this.Purpose, this.Type, this.Value);
     }
 
-    public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-    {
-      if (string.IsNullOrEmpty(this.Type))
-      {
-        yield return new ValidationResult("Required", new[] { "Type" });
-      }
-      else if (!UnitContactRow.AllowedTypes.Contains(this.Type.ToLower()))
-      {
-        yield return new ValidationResult("Must be one of: " + string.Join(", ", UnitContactRow.AllowedTypes), new[] { "Type" });
-      }
+    //public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    //{
+    //  if (string.IsNullOrEmpty(this.Type))
+    //  {
+    //    yield return new ValidationResult("Required", new[] { "Type" });
+    //  }
+    //  else if (!UnitContactRow.AllowedTypes.Contains(this.Type.ToLower()))
+    //  {
+    //    yield return new ValidationResult("Must be one of: " + string.Join(", ", UnitContactRow.AllowedTypes), new[] { "Type" });
+    //  }
 
-      if (string.IsNullOrEmpty(this.Value))
-      {
-        yield return new ValidationResult("Required", new[] { "Value" });
-      }
+    //  if (string.IsNullOrEmpty(this.Value))
+    //  {
+    //    yield return new ValidationResult("Required", new[] { "Value" });
+    //  }
 
-      string dummy;
-      if (!UnitContactRow.TryParse(this.Type, this.Value, true, out dummy))
-      {
-        yield return new ValidationResult(string.Format("'{0}' is not in valid form", this.Value), new[] { "Value" });
-      }
-    }
+    //  string dummy;
+    //  if (!UnitContactRow.TryParse(this.Type, this.Value, true, out dummy))
+    //  {
+    //    yield return new ValidationResult(string.Format("'{0}' is not in valid form", this.Value), new[] { "Value" });
+    //  }
+    //}
   }
 }

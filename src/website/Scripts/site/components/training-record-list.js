@@ -26,6 +26,6 @@ define(['jquery', 'knockout', 'moment', 'site/utils', 'site/env'], function ($, 
       };
       self.load();
     },
-    template: { require: 'text!' + '' + '/Components/TrainingRecordList' }
+    template: { require: 'text!' + window.appRoot + '/Components/Get/TrainingRecordList' }
   });
 });

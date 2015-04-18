@@ -34,6 +34,6 @@ define(['jquery', 'knockout', 'moment', 'site/utils', 'site/env'], function ($, 
       };
       self.load();
     },
-    template: { require: 'text!' + '' + '/Components/MemberEvents' }
+    template: { require: 'text!' + window.appRoot + '/Components/Get/MemberEvents' }
   });
 });

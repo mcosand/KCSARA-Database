@@ -268,6 +268,24 @@ namespace Kcsara.Database.Web {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mission Roster.
+        /// </summary>
+        public static string Event_RosterMissions {
+            get {
+                return ResourceManager.GetString("Event_RosterMissions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Training Roster.
+        /// </summary>
+        public static string Event_RosterTraining {
+            get {
+                return ResourceManager.GetString("Event_RosterTraining", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Finish Roster.
         /// </summary>
         public static string FinishRoster {

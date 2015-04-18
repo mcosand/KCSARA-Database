@@ -16,6 +16,11 @@ namespace Kcsar.Database.Data.Events
       set { this.JsonData = JsonConvert.SerializeObject(value); }
     }
 
+    public override string ToMarkdown()
+    {
+      return this.Message;
+    }
+
     public override string GetReportHtml()
     {
       return string.Format("<b>{0}</b> @{1}: {2}", this.Event.Title, this.Time, this.Message);

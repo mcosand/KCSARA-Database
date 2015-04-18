@@ -6,7 +6,7 @@ namespace Kcsar.Database.Data
   using System;
   using System.ComponentModel.DataAnnotations;
 
-  public interface IModelObjectRow : IValidatableObject
+  public interface IModelObjectRow
   {
     DateTime LastChanged { get; set; }
     string ChangedBy { get; set; }

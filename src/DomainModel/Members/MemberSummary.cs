@@ -6,7 +6,7 @@ namespace Kcsara.Database.Model.Members
 {
   using System;
   using System.Collections.Generic;
-using Kcsar.Database.Model;
+  using Kcsar.Database.Model;
 
   public class MemberSummary
   {

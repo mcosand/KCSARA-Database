@@ -33,8 +33,8 @@
         <tbody data-bind="foreach: items">
           <tr>
             <td><span data-bind="text: startText"></span></td>
-            <td><span data-bind="text: number"></span></td>
-            <td><a data-bind="attr: {href: '@Url.Content("~/" + ViewBag.EventType + "/Roster/")' + id}, text: title"></a></td>
+            <td><span data-bind="text: idNumber"></span></td>
+            <td><a data-bind="attr: {href: '@Url.Content("~/" + ViewBag.EventType + "/Detail/")' + id + '#!roster'}, text: title"></a></td>
             <td class="r hidden-xs"><span data-bind="text: participants"></span></td>
             <td class="r hidden-xs"><span data-bind="text: hoursText"></span></td>
             <td class="r hidden-xs"><span data-bind="text: miles"></span></td>

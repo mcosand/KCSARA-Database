@@ -41,5 +41,26 @@ namespace Kcsara.Database.Web.api
     {
       return eventService.ListYears();
     }
+
+    [HttpGet]
+    [Authorize(Roles = "cdb.users")]
+    public EventOverview Overview(Guid id)
+    {
+      return eventService.GetOverview(id);
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "cdb.users")]
+    public List<RosterEntry> Roster(Guid id)
+    {
+      return eventService.ListRoster(id);
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "cdb.users")]
+    public List<TimelineEntry> Timeline(Guid id)
+    {
+      return eventService.ListTimeline(id);
+    }
   }
 }

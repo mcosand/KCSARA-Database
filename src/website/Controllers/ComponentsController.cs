@@ -7,18 +7,11 @@ namespace Kcsara.Database.Web.Controllers
 
   public class ComponentsController : Controller
   {
-    [AllowAnonymous]
     [HttpGet]
-    public ActionResult SearchBox() { return PartialView(); }
-
-    [HttpGet]
-    public ActionResult LoginForm() { return PartialView(); }
-
-    [HttpGet]
-    public ActionResult MemberContacts() { return PartialView(); }
-
-    [HttpGet]
-    public ActionResult MemberAddresses() { return PartialView(); }
+    public ActionResult Get(string id)
+    {
+      return PartialView(id);
+    }
 
     [HttpGet]
     public ActionResult MemberEvents(string id)
@@ -26,14 +19,5 @@ namespace Kcsara.Database.Web.Controllers
       ViewBag.EventType = id;
       return PartialView();
     }
-
-    [HttpGet]
-    public ActionResult TrainingRecords() { return PartialView(); }
-
-    [HttpGet]
-    public ActionResult CoreCompetencyStatus() { return PartialView(); }
-
-    [HttpGet]
-    public ActionResult TrainingRecordList() { return PartialView(); }
   }
 }
