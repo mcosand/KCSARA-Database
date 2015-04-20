@@ -64,7 +64,7 @@
     <div class="col-xs-12">
       <div class="panel panel-primary overlay-container">
         <div class="panel-heading">Mission Participation</div>
-        <!-- ko component: { name: 'member-events', params: {memberId: memberId, api: '@Url.Content("~/api/members/listmissions/")', linkUrl: '@Url.Content("~/Missions/Roster/")', eventText: '@Strings.Missions' }} -->
+        <!-- ko component: { name: 'member-events', params: {memberId: memberId, api: '@Url.Content("~/api/members/listmissions/")', linkUrl: '@Url.Content("~/Missions/Detail/{0}/#!roster")', eventText: '@Strings.Missions' }} -->
         <!-- /ko -->
       </div>
     </div>
@@ -97,7 +97,7 @@
     <div class="col-xs-12">
       <div class="panel panel-primary overlay-container">
         <div class="panel-heading">Training Attendance</div>
-        <!-- ko component: { name: 'member-events', params: {memberId: memberId, api: '@Url.Content("~/api/members/listtrainings/")', linkUrl: '@Url.Content("~/Training/Roster/")', eventText: '@Strings.Training' }} -->
+        <!-- ko component: { name: 'member-events', params: {memberId: memberId, api: '@Url.Content("~/api/members/listtrainings/")', linkUrl: '@Url.Content("~/Training/Detail/{0}/#!roster")', eventText: '@Strings.Training' }} -->
         <!-- /ko -->
       </div>
     </div>

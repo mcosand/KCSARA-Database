@@ -5,18 +5,18 @@
 <table class="table table-condensed table-striped">
   <thead>
     <tr>
-      <th>Date</th>
-      <th class="hidden-xs">DEM</th>
-      <th>Title</th>
-      <th class="r hidden-xs">Hours</th>
-      <th class="r hidden-xs">Miles</th>
+      <th data-bind="sort: { arr: events, prop: 'start'}">Date</th>
+      <th data-bind="sort: { arr: events, prop: 'number'}" class="hidden-xs">DEM</th>
+      <th data-bind="sort: { arr: events, prop: 'title'}">Title</th>
+      <th data-bind="sort: { arr: events, prop: 'hours'}" class="r hidden-xs">Hours</th>
+      <th data-bind="sort: { arr: events, prop: 'miles'}" class="r hidden-xs">Miles</th>
     </tr>
   </thead>
   <tbody data-bind="foreach: events">
     <tr>
       <td><span data-bind="text: startText" style="white-space: nowrap"></span></td>
       <td class="hidden-xs"><span data-bind="text: number"></span></td>
-      <td><a data-bind="attr: {href: $parent.linkUrl + eventId}, html: title"></a></td>
+      <td><a data-bind="attr: {href: $parent.linkUrl.replace('{0}', eventId)}, nbText: title"></a></td>
       <td class="r hidden-xs"><span data-bind="text: hoursText"></span></td>
       <td class="r hidden-xs"><span data-bind="text: miles"></span></td>
     </tr>

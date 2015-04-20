@@ -5,11 +5,11 @@
 <table class="table table-condensed table-striped">
   <thead>
     <tr>
-      <th class="hidden-xs">@Strings.IdNumber</th>
-      <th>Name</th>
-      <th>Unit</th>
-      <th class="r">Hours</th>
-      <th class="r hidden-xs">Miles</th>
+      <th class="hidden-xs" data-bind="sort: { arr: roster, prop: 'participant.idNumber'}">@Strings.IdNumber</th>
+      <th data-bind="sort: { arr: roster, prop: 'participant.name'}">Name</th>
+      <th data-bind="sort: { arr: roster, prop: 'unit.name'}">Unit</th>
+      <th data-bind="sort: { arr: roster, prop: 'hours'}" class=" r">Hours</th>
+      <th data-bind="sort: { arr: roster, prop: 'miles'}" class=" r hidden-xs">Miles</th>
     </tr>
   </thead>
   <tbody data-bind="foreach: roster">

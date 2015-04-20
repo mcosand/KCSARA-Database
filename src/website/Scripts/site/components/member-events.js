@@ -22,7 +22,6 @@ define(['jquery', 'knockout', 'moment', 'site/utils', 'site/env'], function ($, 
             if (m.year() < firstYear) firstYear = m.year();
             d.hoursText = d.hours ? d.hours.toFixed(2) : '';
             d.startText = m.format('YYYY-MM-DD');
-            d.title = d.title.replace("-", "&#8209;");
           }
           data.totals.firstYear = firstYear;
           if (data.totals.hours) data.totals.hoursText = data.totals.hours.toFixed(2);
