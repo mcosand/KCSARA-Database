@@ -40,7 +40,7 @@ define(['jquery', 'knockout', 'moment', 'pagedown-convert', 'site/utils', 'site/
 
       self.load = function () {
         self.timeline.loading(true);
-        utils.getJSON(params.api + params.eventId)
+        utils.getJSONRetriable(params.api + params.eventId).go()
         .done(function (data) {
           for (var i = 0; i < data.length; i++) {
             var d = data[i];

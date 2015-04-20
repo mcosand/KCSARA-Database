@@ -6,6 +6,12 @@ define(['jquery', 'knockout', 'site/utils', 'site/env'], function ($, ko, utils,
     viewModel: function (params) {
       var self = this;
 
+      this.onSuccess = params.onSuccess || function () {
+        var redirect = utils.qs["returnurl"];
+        if (redirect) { env.location.href = redirect; }
+        else { env.location.href = env.location.href; }
+      };
+
       this.showLinks = params && params.showLinks;
       this.username = ko.observable();
       this.password = ko.observable();
@@ -13,12 +19,11 @@ define(['jquery', 'knockout', 'site/utils', 'site/env'], function ($, ko, utils,
 
       this._handleResponse = function (r) {
         if (r['errors'] && r['errors'].length > 0) {
-          utils.applyErrors(r.errors);
+          utils.applyErrors(self, r.errors);
+          self.working(false);
           return;
         }
-        var redirect = utils.qs["returnurl"];
-        if (redirect) { env.location.href = redirect; }
-        else { env.location.href = env.location.href; }
+        self.onSuccess();
       };
 
       this.doSubmit = function (formElement) {

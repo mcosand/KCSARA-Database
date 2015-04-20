@@ -80,18 +80,91 @@
   utils.getJSON = function getJSON(relativeUrl, data) {
     return $.ajax('' + relativeUrl, { type: 'GET', contentType: 'application/json', dataType: 'json', data: data });
   };
+
+  utils._loginDialog = function (onSuccess) {
+    require(['bootstrap-dialog'], function (BootstrapDialog) {
+      var dialog;
+      var localModel = {
+        onSuccess: function () { onSuccess(dialog); }
+      };
+      dialog = BootstrapDialog.show({
+        closable: false,
+        title: 'Login',
+        message: '<p>Please login in again:</p><login-form params="onSuccess: onSuccess"></login-form>',
+        onshown: function (a) {
+          ko.applyBindings(localModel, a.getModalBody()[0]);
+        }
+      });
+    });
+  }
+
+
+  /* getJSONRetriable
+   * If a get request fails for some reasons (auth timeout), retry it.
+   * If the reason is an auth expiration, re-authenticate the user and then retry the request.
+   *
+   * Re-auth: Use a wrapping deferred object. Load bootstrapdialog and show the login form. The dialog
+   * can't be closed so the user has to post an auth request (or leave the page). When we get back from
+   * a successful auth request we re-issue the request.
+   *
+   * When we get to a success or unhandled failed state, resolve or reject the wrapping deferred respectively.
+   */
+  utils._reauth = { working: false, requests: [] };
+  utils.getJSONRetriable = function getJSONRetriable(relativeUrl, data) {
+    var dfrd = $.Deferred(),
+      promise = dfrd.promise(),
+      jqXHR;
+
+    promise.go = function () {
+      if (!jqXHR) {
+        jqXHR = utils.getJSON(relativeUrl, data)
+          .fail(function (err) {
+            if (err.status == 401) {
+              // todo - wrap this in another deferred?
+              utils._reauth.requests.push(promise.go);
+              if (utils._reauth.working == false) {
+                utils._reauth.working = true;
+                utils._loginDialog(function (dialog) {
+                  jqXHR = false;
+                  dialog.close();
+                  window.setTimeout(function () {
+                    console.log('running ' + utils._reauth.requests.length + " requests");
+                    utils._reauth.working = false;
+                    for (var i = 0; i < utils._reauth.requests.length; i++) {
+                      utils._reauth.requests[i]();
+                    }
+                    utils._reauth.requests.length = 0;
+                  }, 10);
+                });
+              }
+            }
+            else { dfrd.reject(err); }
+          })
+        .done(function (data) { dfrd.resolve(data) });
+      }
+      return promise;
+    }
+    promise.abort = function abort() {
+      if (jqXHR) {
+        jqXHR.abort();
+        dfrd.reject({ status: 0 });
+      }
+    }
+    return promise;
+  }
+
   utils.log = function (message) {
     env.log(message);
   };
 
-  utils.applyErrors = function applySubmitErrors(errs) {
+  utils.applyErrors = function applyErrors(model, errs) {
     for (var i = 0; i < errs.length; i++) {
 
       if (errs[i].property === undefined || errs[i].property === null || errs[i].property === '') {
-        self.error(errs[i].text);
+        model.error(errs[i].text);
       }
       else {
-        self[errs[i]].error(errs[i].text);
+        model[errs[i]].error(errs[i].text);
       }
     }
   };
@@ -99,7 +172,8 @@
   utils.handleServiceError = function handleServiceError(err, model) {
     if (err.status == 0) return;
     if (err.status == 401) {
-
+      // If you want to get the user to re-authenticate and retry the request, use utils.getJSONRetriable
+      $.toaster({ title: 'Error', priority: 'danger', message: 'Permission denied' })
     } else {
       utils.log(err);
       if (err.responseJSON) {

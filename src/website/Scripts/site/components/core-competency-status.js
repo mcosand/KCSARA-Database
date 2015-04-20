@@ -12,7 +12,7 @@ define(['jquery', 'knockout', 'moment', 'site/utils', 'site/env'], function ($, 
       self.loading = ko.observable(true);
       self.load = function() {
         self.loading(true);
-        utils.getJSON(params.api + params.memberId)
+        utils.getJSONRetriable(params.api + params.memberId).go()
         .done(function (data) {
           self.loading(false);
           var e = {};

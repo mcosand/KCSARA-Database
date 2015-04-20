@@ -60,7 +60,8 @@ namespace Kcsara.Database.Web.Controllers
       shim: {
         bootstrap: { deps: ['jquery'] },
         'jquery.toaster': { deps: ['jquery'] },
-        'pagedown-convert': { deps: ['bootstrap'], exports: 'Markdown' }
+        'pagedown-convert': { deps: ['bootstrap'], exports: 'Markdown' },
+        'bootstrap-dialog': { deps: ['jquery', 'bootstrap' ]}
       }
     };";
 

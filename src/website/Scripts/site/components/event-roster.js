@@ -11,9 +11,10 @@ define(['jquery', 'knockout', 'moment', 'site/utils', 'site/env'], function ($, 
       self.roster = ko.observableArray();
       self.roster.loading = ko.observable(true);
       self.totals = ko.observable({ count: 0, hours: 0.00, miles: 0, hoursText: 0.00 });
+
       self.load = function () {
         self.roster.loading(true);
-        utils.getJSON(params.api + params.eventId)
+        utils.getJSONRetriable(params.api + params.eventId).go()
         .done(function (data) {
           for (var i = 0; i < data.length; i++) {
             var d = data[i];

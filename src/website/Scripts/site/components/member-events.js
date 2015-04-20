@@ -13,7 +13,7 @@ define(['jquery', 'knockout', 'moment', 'site/utils', 'site/env'], function ($, 
       self.totals = ko.observable({ count: 0, hours: 0.00, miles: 0, firstYear: new Date().getYear(), hoursText: 0.00 });
       self.load = function () {
         self.events.loading(true);
-        utils.getJSON(params.api + params.memberId)
+        utils.getJSONRetriable(params.api + params.memberId).go()
         .done(function (data) {
           var firstYear = new Date().getYear() + 1900;
           for (var i = 0; i < data.rows.length; i++) {

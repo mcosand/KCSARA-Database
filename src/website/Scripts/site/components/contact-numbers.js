@@ -12,7 +12,7 @@ define(['jquery', 'knockout', 'site/utils', 'site/env'], function ($, ko, utils,
 
       self.load = function () {
         self.contacts.loading(true);
-        utils.getJSON('/api/Members/ListContacts/' + params.memberId)
+        utils.getJSONRetriable('/api/Members/ListContacts/' + params.memberId).go()
         .done(function (data) {
           for (var i = 0; i < data.length; i++) { var d = data[i]; var p = linkPrefixes[d.type]; d.link = p ? p + ':' + d.value : null };
           self.contacts(data);

@@ -12,7 +12,7 @@ define(['jquery', 'knockout', 'site/utils', 'site/env'], function ($, ko, utils,
 
       self.load = function () {
         self.addresses.loading(true);
-        utils.getJSON('/api/Members/ListAddresses/' + params.memberId)
+        utils.getJSONRetriable('/api/Members/ListAddresses/' + params.memberId).go()
         .done(function (data) {
           self.addresses(data);
         })

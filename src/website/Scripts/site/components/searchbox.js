@@ -28,7 +28,7 @@ define(['jquery', 'knockout', 'site/utils', 'site/env'], function($, ko, utils, 
         self.debounce = null;
         self.working(true);
         if (self.ajax) self.ajax.abort();
-        self.ajax = utils.getJSON('/api/search/find?q=' + encodeURIComponent(query))
+        self.ajax = utils.getJSONRetriable('/api/search/find?q=' + encodeURIComponent(query)).go()
           .done(function (data) {
             self.results(data);
           })
