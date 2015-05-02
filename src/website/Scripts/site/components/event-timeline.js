@@ -33,9 +33,9 @@ define(['jquery', 'knockout', 'moment', 'pagedown-convert', 'site/utils', 'site/
         return retVal;
       };
 
-      self.converter = new Markdown.Converter();
+      self._converter = new Markdown.Converter();
       self.formatMarkdown = function formatMarkdown(markdown) {
-        return self.converter.makeHtml(markdown);
+        return self._converter.makeHtml(markdown);
       };
 
       self.load = function () {

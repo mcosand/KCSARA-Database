@@ -435,6 +435,10 @@ namespace Kcsara.Database.Web.api
     public HttpResponseMessage GetThumbnail(Guid id, int width)
     {
       var filename = HostingEnvironment.MapPath(MembersController.GetPhotoOrFillInPath(this.membersSvc.PhotoPath(id)));
+      if (!File.Exists(filename))
+      {
+        return new HttpResponseMessage(HttpStatusCode.NotFound);
+      }
 
       HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK);
       var ms = new MemoryStream();

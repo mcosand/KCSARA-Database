@@ -669,7 +669,7 @@
     <Content Include="Views\Training\UploadDocument.aspx" />
     <Content Include="Views\Units\Applicants.aspx" />
     <Content Include="Views\Units\DeleteStatus.aspx" />
-    <Content Include="Views\Units\Detail.aspx" />
+    <Content Include="Views\Units\Detail-old.aspx" />
     <Content Include="Views\Units\EditStatus.aspx" />
     <Content Include="Views\Units\Roster.aspx" />
     <Content Include="Web.config">
@@ -710,6 +710,7 @@
     <Content Include="Views\Shared\EventDetail.cshtml" />
     <Content Include="Views\Components\EventRoster.cshtml" />
     <Content Include="Views\Components\EventTimeline.cshtml" />
+    <Content Include="Views\Units\Detail.cshtml" />
     <None Include="Web.Production.config" />
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,97 @@
+﻿@*
+  * Copyright 2015 Matthew Cosand
+*@
+@model Kcsara.Database.Model.Units.UnitSummary
+@{
+  ViewBag.Title = Strings.DatabaseName + " ";
+  ViewBag.PageModelRequire = "PageModel";
+  ViewBag.PageData = new Dictionary<string, string> {
+    { "initial-tab", "roster" },
+    { "event-id", Model.Id.ToString() }
+  };
+}
+<div class="row" data-bind="with:page" style="padding-left:15px; padding-right:15px;">
+  <div class="col-xs-12 overlay-container" style="margin-bottom:1em; border: solid 1px #ccc; border-radius:9px;">
+    <div class="row">
+      <div class="col-xs-12">
+        <h2>@Model.Nickname</h2>
+        <div>@Model.Name</div>
+      </div>
+    </div>
+  </div>
+</div>
+<ul class="nav nav-tabs" data-bind="with:page">
+  <li role="presentation" data-bind="css: { active: activeTab() == 'roster' }"><a href="#" data-bind="click:pickTab" data-tab="roster">Roster</a></li>
+  <li role="presentation" data-bind="css: { active: activeTab() == 'contacts' }"><a href="#" data-bind="click:pickTab" data-tab="contacts">Contacts</a></li>
+  @*<li role="presentation" data-bind="css: { active: activeTab() == 'documents' }"><a href="#" data-bind="click:pickTab" data-tab="documents">Documents</a></li>
+  <li role="presentation" class="dropdown" data-bind="css: { active: isOtherTab }">
+    <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
+      Other <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu pull-right" role="menu">
+      <li class="pull-right"><a href="#" data-bind="click:pickTab" data-tab="other_map">Map</a></li>
+    </ul>
+  </li>*@
+</ul>
+<!-- ko with: page -->
+@*<div data-bind="fadeVisible: activeTab() == 'roster', if: activeTab() == 'roster'" class="tab-pane">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="panel panel-primary">
+        <div class="panel-heading">Unit Roster</div>
+        <!-- ko component: { name: 'unit-roster', params: {unitId: '@Model.Id', api: '@Url.Content("~/api/units/roster/")' }} -->
+        <!-- /ko -->
+      </div>
+    </div>
+  </div>
+</div>
+<div data-bind="fadeVisible: activeTab() == 'contacts', if: activeTab() == 'contacts'" style="display:none" class="tab-pane">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="panel panel-primary overlay-container">
+        <div class="panel-heading">Unit Contacts</div>
+        <!-- ko component: { name: 'unit-contacts', params: {unitId: '@Model.Id', api: '@Url.Content("~/api/units/contacts/")' }} -->
+        <!-- /ko -->
+      </div>
+    </div>
+  </div>
+</div>*@
+<!-- /ko -->
+@section scripts {
+  <script type="text/javascript">
+    define('PageModel', ['knockout', 'moment', 'site/utils'], function PageModel(ko, moment, utils) {
+      return function (params) {
+        var self = this;
+        var paneResources = {
+          roster: [],
+          contacts: [],
+        };
+
+        self.unitId = $('body').data('unitId');
+        //self.controllerName = $('body').data('controllerName');
+
+        self.activeTab = ko.observable();
+        self.isOtherTab = ko.computed(function() { return self.activeTab() && self.activeTab().substring(0,5) == "other" });
+
+        self.switchTab = function (newTab) {
+          if (paneResources[newTab]) {
+            require(paneResources[newTab], function () {
+              self.activeTab(newTab);
+            });
+          } else {
+            self.activeTab(newTab);
+          }
+        }
+
+        self.pickTab = function (newTab, evt) {
+          if (evt) newTab = $(evt.currentTarget).data('tab') || "";
+          self.switchTab(newTab);
+          window.location.hash = '#!' + newTab;
+        }
+
+        var initialTab = utils.hashBangInit($('body').data('initialTab'), self.switchTab);
+        self.switchTab(initialTab);
+      };
+    });
+  </script>
+}

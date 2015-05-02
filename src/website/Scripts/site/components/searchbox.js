@@ -5,14 +5,15 @@ define(['jquery', 'knockout', 'site/utils', 'site/env'], function($, ko, utils, 
   env.registerComponent('search-box', {
     viewModel: function (params) {
       var self = this;
-      this.working = ko.observable(false);
-      this.text = ko.observable();
-      this.results = ko.observableArray();
-      this.ajax = null;
-      this.debounce = null;
-      this.highlighted = ko.observable(-1);
-      this.selected = (params && params.selected) ? params.selected : ko.observable();
-      this.ctrlId = (params && params.id) ? params.id : undefined;
+      self.working = ko.observable(false);
+      self.text = ko.observable();
+      self.results = ko.observableArray();
+      self.ajax = null;
+      self.debounce = null;
+      self.highlighted = ko.observable(-1);
+      self.selected = (params && params.selected) ? params.selected : ko.observable();
+      self.ctrlId = (params && params.id) ? params.id : undefined;
+
 
       var ignoreUpdate = false;
       var _searchHandler = function () {
@@ -38,9 +39,9 @@ define(['jquery', 'knockout', 'site/utils', 'site/env'], function($, ko, utils, 
 
       this.text.subscribe(utils.debounce(_searchHandler, 400, true, self.text));
 
-      this.hasResults = ko.computed(function () {
-        return self.results().length > 0
-      });
+      this.hasResults = ko.computed(function () { return self.results().length > 0 });
+      this.showImages = ko.computed(function () { return self.results().length < 20 });
+
 
       this.clickItem = function (item) {
         self.results.removeAll();

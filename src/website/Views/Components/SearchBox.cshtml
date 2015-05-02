@@ -3,7 +3,9 @@
   <input type="text" class="form-control" placeholder="Search" data-bind="textInput: text, event: { keyup: keyup, focus: doFocus, blur: blur}, attr:{ id: ctrlId }" autocomplete="off" />
   <div class="search-box-dropdown glue-previous" data-bind="visible: hasResults, foreach: results">
     <div data-bind="click: $parent.clickItem, event: {mouseover: $parent.doHighlight}, css: { 'search-box-highlight': $parent.highlighted() == $index() }" class="search-box-item">
+      <!-- ko if: $parent.showImages -->
       <img data-bind="attr: { src: '@Url.Content("~/api/members/getthumbnail/")' + more.id + '?width=25' }" />
+      <!-- /ko -->
       <div><strong data-bind="text: text"></strong><span data-bind="visible: more.dem, text: ' - ' + more.dem"></span></div>
     </div>
   </div>

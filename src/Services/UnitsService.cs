@@ -14,6 +14,7 @@ namespace Kcsara.Database.Services
   public interface IUnitsService
   {
     List<UnitSummary> List();
+    UnitSummary GetOverview(Guid id);
   }
 
   public class UnitsService : BaseDataService, IUnitsService
@@ -40,6 +41,14 @@ namespace Kcsara.Database.Services
       using (var db = this.dbFactory())
       {
         return db.Units.OrderBy(f => f.DisplayName).Select(toDomainSummary).ToList();
+      }
+    }
+
+    public UnitSummary GetOverview(Guid id)
+    {
+      using (var db = this.dbFactory())
+      {
+        return db.Units.Where(f => f.Id == id).Select(toDomainSummary).First();
       }
     }
   }

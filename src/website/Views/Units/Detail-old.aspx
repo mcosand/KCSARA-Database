@@ -1,5 +1,5 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" AutoEventWireup="true" Inherits="System.Web.Mvc.ViewPage<SarUnit>" %>
-<%@ Import Namespace="Kcsar.Database.Model" %>
+<%@ Import Namespace="Kcsara.Database.Model" %>
 <%@ Import Namespace="Kcsara.Database.Web.Controllers" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">

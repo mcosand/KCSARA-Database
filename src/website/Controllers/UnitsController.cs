@@ -298,22 +298,12 @@ namespace Kcsara.Database.Web.Controllers
     [AcceptVerbs(HttpVerbs.Get)]
     public ActionResult Detail(Guid id)
     {
-      UnitRow unit = (from u in this.db.Units.Include("StatusTypes") where u.Id == id select u).First();
 
-      ViewData["Title"] = "Unit Detail: " + unit.DisplayName;
 
-      MemberRow actor = this.db.Members.Include("Memberships.Status").SingleOrDefault(f => f.Username == User.Identity.Name);
 
-      ViewBag.CanApply = string.IsNullOrEmpty(unit.NoApplicationsText)
-          && actor != null
-          && !actor.Memberships.Any(f => f.Status.IsActive && f.EndTime == null && f.Unit.Id == unit.Id)
-          && !actor.ApplyingTo.Any(f => f.Unit.Id == unit.Id && f.IsActive);
-      ViewBag.NoApplyReason = unit.NoApplicationsText == "never" ? null : unit.NoApplicationsText;
-      ViewBag.ActorId = Permissions.UserId;
 
-      ViewBag.CanEditDocuments = api.UnitsController.CanEditDocuments(Permissions, id);
 
-      return View(unit);
+      return View(this.unitsSvc.GetOverview(id));
     }
 
     [Authorize]
