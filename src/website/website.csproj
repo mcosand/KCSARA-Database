@@ -573,7 +573,6 @@
     <Content Include="Views\Account\ChangePasswordSuccess.aspx" />
     <Content Include="Views\Account\InactiveMemberAccounts.aspx" />
     <Content Include="Views\Account\Index.aspx" />
-    <Content Include="Views\Account\Mobile\Login.aspx" />
     <Content Include="Views\Account\ReAuth.aspx" />
     <Content Include="Views\Account\ResetPassword.aspx" />
     <Content Include="Views\Account\ResetPasswordDone.aspx" />
@@ -605,7 +604,6 @@
     <Content Include="Views\Home\Index.aspx" />
     <Content Include="Views\Home\MeshGraphs.aspx" />
     <Content Include="Views\Home\MeshStatus.aspx" />
-    <Content Include="Views\Home\Mobile\Index.aspx" />
     <Content Include="Views\Log\Index.aspx" />
     <Content Include="Views\Log\LogTable.ascx" />
     <Content Include="Views\Map\Index.aspx" />
@@ -644,8 +642,6 @@
     <Content Include="Views\Missions\History.aspx" />
     <Content Include="Views\Missions\Log.aspx" />
     <Content Include="Views\Missions\Mission.ascx" />
-    <Content Include="Views\Missions\Mobile\List.aspx" />
-    <Content Include="Views\Missions\Mobile\Roster.aspx" />
     <Content Include="Views\Missions\PendingDocuments.aspx" />
     <Content Include="Views\Missions\ReportStatus.aspx" />
     <Content Include="Views\Missions\ResponderEmails.aspx" />
