@@ -47,7 +47,6 @@
   <ItemGroup>
     <Compile Include="ContactInfoSubType.cs" />
     <Compile Include="Events\TimelineEntry.cs" />
-    <Compile Include="Events\EventOverview.cs" />
     <Compile Include="Events\Participant.cs" />
     <Compile Include="Events\RosterEntry.cs" />
     <Compile Include="Members\EmergencyContact.cs" />
@@ -60,6 +59,7 @@
     <Compile Include="NameIdPair.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Events\SarEvent.cs" />
+    <Compile Include="SubmitResult.cs" />
     <Compile Include="Training\TrainingExpirationSummary.cs" />
     <Compile Include="Training\TrainingRecord.cs" />
     <Compile Include="Training\TrainingStatus.cs" />

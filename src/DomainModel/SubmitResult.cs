@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright 2013-2014 Matthew Cosand
  */
-namespace Kcsara.Database.Web.api.Models
+namespace Kcsara.Database.Model
 {
   using System.Collections.Generic;
 

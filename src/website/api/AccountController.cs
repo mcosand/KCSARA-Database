@@ -16,6 +16,7 @@ namespace Kcsara.Database.Web.api
   using System.Web.Security;
   using Kcsar.Database.Data;
   using Kcsar.Database.Model;
+  using Kcsara.Database.Model;
   using Kcsara.Database.Services.Accounts;
   using Kcsara.Database.Web.api.Models;
   using Kcsara.Database.Web.api.Models.Account;

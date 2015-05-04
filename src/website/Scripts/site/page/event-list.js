@@ -1,18 +1,32 @@
-﻿define(['knockout', 'moment', 'site/utils'], function PageModel(ko, moment, utils) {
+﻿define(['knockout', 'moment', 'site/utils', 'signalr-hubs'], function PageModel(ko, moment, utils) {
   return function () {
     var self = this;
-    var _currentYear = parseInt($('body').data('year'));
+    var _currentYear = ko.observable(parseInt($('body').data('year')));
     this.years = ko.observableArray([_currentYear]);
     this.items = ko.observableArray([]);
+    this.items.initReset = ko.observable(false).extend({ notify: 'always' });
     this.loadingList = ko.observable(true);
     this.count = ko.observable();
     this.hours = ko.observable();
     this.miles = ko.observable();
 
+    this.hub = $.connection.appHub;
+    this.hub.client.eventUpdated = function (eventId) {
+      utils.getJSON('/api/' + $('body').data('eventType') + '/overview/' + eventId).done(function (data) {
+        self.fixupRow(data);
+        if (!self.items.replaceById(eventId, data) && (moment(data.start).year() == self.currentYear())) {
+          self.items.push(data);
+        }
+        self.updateTotals();
+      });
+    };
+
+    $.connection.hub.start({ waitForPageLoad: false });
+
     this.currentYear = ko.computed({
-      read: function() { return _currentYear; },
+      read: function () { return _currentYear(); },
       write: function(value) {
-        _currentYear = value;
+        _currentYear(value);
         self.updateMissions();
       }
     });
@@ -24,24 +38,34 @@
           self.years(data.reverse());
         })
     };
+
+    this.fixupRow = function (row) {
+      row.hoursText = row.hours ? row.hours.toFixed(2) : '';
+      row.startText = moment(row.start).format('YYYY-MM-DD');
+    }
+    this.updateTotals = function () {
+      var count = 0;
+      var hours = 0;
+      var miles = 0;
+      $.each(self.items(), function (i, el) {
+        count++;
+        hours += (el.hours || 0.0);
+        miles += (el.miles || 0);
+      });
+      self.count(count);
+      self.hours(hours.toFixed(2));
+      self.miles(miles);
+    }
     this.updateMissions = function() {
       self.loadingList(true);
-      utils.getJSON('/api/' + $('body').data('eventType') + '/list/' + _currentYear)
+      utils.getJSON('/api/' + $('body').data('eventType') + '/list/' + self.currentYear())
       .done(function (data) {
-        var count = 0;
-        var hours = 0;
-        var miles = 0;
         $.each(data, function (i, el) {
-          el.hoursText = el.hours ? el.hours.toFixed(2) : '';
-          el.startText = moment(el.start).format('YYYY-MM-DD');
-          count++;
-          hours += (el.hours || 0.0);
-          miles += (el.miles || 0);
+          self.fixupRow(el);
         });
-        self.count(count);
-        self.hours(hours.toFixed(2));
-        self.miles(miles);
+        self.items.initReset(true);
         self.items(data);
+        self.updateTotals();
       })
       .always(function() { self.loadingList(false) });
     }

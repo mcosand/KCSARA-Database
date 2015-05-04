@@ -51,15 +51,20 @@ namespace Kcsara.Database.Web.Controllers
         'bootstrap-dialog': 'bootstrap-dialog.min',
         'knockout': 'knockout-3.2.0',
         'moment': 'moment.min',
-        'pagedown-convert': 'pagedown/Markdown.Converter'
+        'pagedown-convert': 'pagedown/Markdown.Converter',
+        'signalr': 'jquery.signalR-2.2.0.min',
+        'signalr-hubs': window.appRoot + '/signalr/hubs?'
       },
       map: {
         '*': { 'site/env': 'site/env-ko' },
         'site/env-ko': { 'site/env': 'site/env' }
       },
       shim: {
+        'jquery': { exports: '$' },
         bootstrap: { deps: ['jquery'] },
         'jquery.toaster': { deps: ['jquery'] },
+        'signalr': { deps: ['jquery'], exports: '$.connection' },
+        'signalr-hubs': { deps: ['signalr'] },
         'pagedown-convert': { deps: ['bootstrap'], exports: 'Markdown' },
         'bootstrap-dialog': { deps: ['jquery', 'bootstrap' ]}
       }

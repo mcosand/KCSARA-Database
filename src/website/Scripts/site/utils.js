@@ -64,6 +64,55 @@
     }
   };
 
+  ko.bindingHandlers.foreachWithHighlight = {
+    init: function (element, valueAccessor, allBindingsAccessor, viewModel, context) {
+      var flashReset = valueAccessor().initReset,
+        key = "forEachWithHightlight_initialized";
+      if (flashReset) {
+        flashReset.subscribe(function () { ko.utils.domData.set(element, key, false) });
+      }
+      return ko.bindingHandlers.foreach.init(element, valueAccessor, allBindingsAccessor, viewModel, context);
+    },
+    update: function (element, valueAccessor, allBindingsAccessor, viewModel, context) {
+      var args = valueAccessor();
+      var value = ko.unwrap(args.data),
+          duration = ko.unwrap(args.duration) || 800,
+          key = "forEachWithHightlight_initialized";
+
+      var newValue = function () {
+        return {
+          data: value,
+          afterAdd: function (el, index, data) {
+            if (ko.utils.domData.get(element, key)) {
+              $(el).addClass('info');
+              window.setTimeout(function () { $(el).removeClass('info') }, duration);
+            };
+          }
+        };
+      };
+
+      ko.bindingHandlers.foreach.update(element, newValue, allBindingsAccessor, viewModel, context);
+
+      //if we have not previously marked this as initialized and there are currently items in the array, then cache on the element that it has been initialized
+      if (!ko.utils.domData.get(element, key) && value.length) {
+        ko.utils.domData.set(element, key, true);
+      }
+
+      return { controlsDescendantBindings: true };
+    }
+  };
+  ko.observableArray.fn.replaceById = function (id, newValue) {
+    this.valueWillMutate();
+    var arr = this();
+    var found = false;
+    for (var i = 0; i < arr.length; i++)
+    {
+      if (arr[i].id == id) { arr[i] = newValue; found = true; }
+    }
+    this.valueHasMutated();
+    return found;
+  }
+
   var utils = {};
   utils.hashBangInit = function hashBangInit(initialPage, callback) {
     $(window).on('hashchange', function () {

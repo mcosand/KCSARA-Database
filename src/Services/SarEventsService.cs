@@ -18,7 +18,7 @@ namespace Kcsara.Database.Services
     List<SarEventSummary> List(Expression<Func<SarEventSummary, bool>> filter = null, int? maxCount = null);
     List<int> ListYears();
     List<ParticipationSummary> ParticipantList(Expression<Func<ParticipationSummary, bool>> filter = null);
-    EventOverview GetOverview(Guid id);
+    SarEventSummary GetOverview(Guid id);
     List<RosterEntry> ListRoster(Guid eventId);
     List<TimelineEntry> ListTimeline(Guid eventId);
   }
@@ -37,6 +37,18 @@ namespace Kcsara.Database.Services
       : base(dbFactory, log)
     {
     }
+
+    protected Func<D, SarEvent> toModel = row =>
+      new T
+      {
+        Id = row.Id,
+        IdNumber = row.StateNumber,
+        Title = row.Title,
+        Start = row.StartTime,
+        Jurisdiction = row.County,
+        Location = row.Location,
+        MissionType = row.MissionType.Split(',').ToList()
+      };
 
     protected virtual Expression<Func<D, SarEventSummary>> GetSummaryProjection()
     {
@@ -120,17 +132,11 @@ namespace Kcsara.Database.Services
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public EventOverview GetOverview(Guid id)
+    public SarEventSummary GetOverview(Guid id)
     {
       using (var db = this.dbFactory())
       {
-        return db.Events.Where(f => f.Id == id).Select(f => new EventOverview
-        {
-          Id = f.Id,
-          Title = f.Title,
-          Start = f.StartTime,
-          IdNumber = f.StateNumber
-        }).FirstOrDefault();
+        return db.Events.OfType<D>().Where(f => f.Id == id).Select(GetSummaryProjection()).FirstOrDefault();
       }
     }
 

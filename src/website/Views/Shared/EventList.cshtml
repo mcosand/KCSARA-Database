@@ -30,7 +30,7 @@
             <th class="r hidden-xs">Miles</th>
           </tr>
         </thead>
-        <tbody data-bind="foreach: items">
+        <tbody data-bind="foreachWithHighlight: { data: items, duration: 3000}">
           <tr>
             <td><span data-bind="text: startText"></span></td>
             <td><span data-bind="text: idNumber"></span></td>
