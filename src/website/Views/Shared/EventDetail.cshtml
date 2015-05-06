@@ -3,7 +3,7 @@
 *@
 @{
   ViewBag.Title = Strings.DatabaseName + " ";
-  ViewBag.PageModelRequire = "PageModel";
+  ViewBag.PageModelRequire = "site/page/event-detail";
   ViewBag.PageData = new Dictionary<string, string> {
     { "initial-tab", "roster" },
     { "event-id", ViewBag.EventId.ToString() },
@@ -12,12 +12,13 @@
 }
 <div class="row" data-bind="with:page" style="padding-left:15px; padding-right:15px;">
   <div class="col-xs-12 overlay-container" style="margin-bottom:1em; border: solid 1px #ccc; border-radius:9px;">
-    <div class="overlay" data-bind="visible: topInfo.loading">LOADING !!!</div>
+    <div class="overlay" data-bind="visible: topInfo.loading">LOADING ...</div>
     <div class="row" data-bind="with:topInfo">
       <!-- ko if: $data -->
       <div class="col-xs-12">
         <h2 data-bind="text: title"></h2>
         <div data-bind="text: '@Strings.IdNumber: ' + idNumber"></div>
+        <a href="#" data-bind="click: $parent.toggleExpand" class="text-primary"><!-- ko text: $parent.expanded() ? 'Hide' : 'Show' --><!-- /ko --> Details <span data-bind="css: 'fa-angle-double-' + ($parent.expanded() ? 'up' : 'down')" class="fa"></span></a>
       </div>
       <!-- /ko -->
     </div>
@@ -60,54 +61,3 @@
   </div>
 </div>
 <!-- /ko -->
-@section scripts {
-  <script type="text/javascript">
-    define('PageModel', ['knockout', 'moment', 'site/utils'], function PageModel(ko, moment, utils) {
-      return function (params) {
-        var self = this;
-        var paneResources = {
-          roster: ['site/components/event-roster'],
-          timeline: ['site/components/event-timeline'],
-        };
-
-        self.eventId = $('body').data('eventId');
-        self.controllerName = $('body').data('controllerName');
-
-        self.activeTab = ko.observable();
-        self.isOtherTab = ko.computed(function() { return self.activeTab() && self.activeTab().substring(0,5) == "other" });
-        self.topInfo = ko.observable();
-        self.topInfo.loading = ko.observable(true);
-
-        self.switchTab = function (newTab) {
-          if (paneResources[newTab]) {
-            require(paneResources[newTab], function () {
-              self.activeTab(newTab);
-            });
-          } else {
-            self.activeTab(newTab);
-          }
-        }
-
-        self.pickTab = function (newTab, evt) {
-          if (evt) newTab = $(evt.currentTarget).data('tab') || "";
-          self.switchTab(newTab);
-          window.location.hash = '#!' + newTab;
-        }
-
-        self.load = function loadEvents() {
-          self.topInfo.loading(true);
-          utils.getJSON('/api/' + self.controllerName + '/Overview/' + self.eventId)
-          .done(function (data) {
-            data.start = new moment(data.start);
-            self.topInfo(data);
-          })
-          .fail(function (err) { utils.handleServiceError(err, self); })
-          .always(function () { self.topInfo.loading(false); });
-        };
-
-        var initialTab = utils.hashBangInit($('body').data('initialTab'), self.switchTab);
-        self.switchTab(initialTab);
-      };
-    });
-  </script>
-}

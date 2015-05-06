@@ -29,13 +29,17 @@ h2 {
   border-color:rgb(233,148,0);
 }
 
-.bootstrap-dialog.type-primary .modal-header {
+.bootstrap-dialog .modal-header {
   background-color: rgb(233,148,0);
   padding: 5px;
 }
 
 .panel-heading {
   padding: 5px;
+}
+
+.form-horizontal .form-group label{
+  padding-right: 0px;
 }
 
 .form-control:focus {
@@ -142,4 +146,8 @@ ul.dropdown-menu-form li {
 
 .btn .caret {
   margin-left:5px;
+}
+
+.checkbox-text {
+  font-weight: normal;
 }

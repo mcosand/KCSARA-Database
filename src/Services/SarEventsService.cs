@@ -11,7 +11,9 @@ namespace Kcsara.Database.Services
   using Kcsar.Database.Data.Events;
   using Kcsara.Database.Model;
   using Kcsara.Database.Model.Events;
+  using Kcsara.Database.Services.Hubs;
   using log4net;
+  using Microsoft.AspNet.SignalR;
 
   public interface ISarEventsService
   {
@@ -21,10 +23,13 @@ namespace Kcsara.Database.Services
     SarEventSummary GetOverview(Guid id);
     List<RosterEntry> ListRoster(Guid eventId);
     List<TimelineEntry> ListTimeline(Guid eventId);
+    SubmitResult Delete(Guid id);
   }
 
   public interface ISarEventsService<T> : ISarEventsService where T : SarEvent
-  { }
+  {
+    SubmitResult<T> Update(T model);
+  }
 
   public class SarEventsService<T, D> : BaseDataService, ISarEventsService<T>
     where T : SarEvent, new()
@@ -38,7 +43,7 @@ namespace Kcsara.Database.Services
     {
     }
 
-    protected Func<D, SarEvent> toModel = row =>
+    protected Func<D, T> toModel = row =>
       new T
       {
         Id = row.Id,
@@ -47,7 +52,7 @@ namespace Kcsara.Database.Services
         Start = row.StartTime,
         Jurisdiction = row.County,
         Location = row.Location,
-        MissionType = row.MissionType.Split(',').ToList()
+        MissionType = (row.MissionType == null ? new string[0] : row.MissionType.Split(',')).ToList()
       };
 
     protected virtual Expression<Func<D, SarEventSummary>> GetSummaryProjection()
@@ -100,6 +105,80 @@ namespace Kcsara.Database.Services
       }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    public SubmitResult<T> Update(T model)
+    {
+      var result = new SubmitResult<T>();
+
+
+      using (var db = this.dbFactory())
+      {
+        D row = null;
+        if (model.Id != Guid.Empty)
+        {
+          row = db.Events.OfType<D>().Single(f => f.Id == model.Id);
+        }
+        else
+        {
+          row = new D();
+          db.Events.Add(row);
+        }
+
+        row.Title = model.Title;
+        row.Location = model.Location;
+        row.MissionType = model.MissionType == null ? null : string.Join(",", model.MissionType.OrderBy(f => f));
+        row.StartTime = model.Start;
+        row.StopTime = model.Stop;
+        row.County = model.Jurisdiction;
+
+        if (result.Errors.Count == 0)
+        {
+          db.SaveChanges();
+          result.Data = toModel(row);
+          GlobalHost.ConnectionManager.GetHubContext<AppHub>().Clients.All.eventUpdated(result.Data);
+        }
+      }
+      return result;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public SubmitResult Delete(Guid id)
+    {
+      var result = new SubmitResult();
+      using (var db = this.dbFactory())
+      {
+        var victim = db.Events.Where(f => f.Id == id).Select(f => new { Row = f, RosterCount = f.Participants.Count }).SingleOrDefault();
+        if (victim == null)
+        {
+          result.Errors.Add(new SubmitError("Event not found"));
+        }
+        else if (victim.RosterCount > 0)
+        {
+          result.Errors.Add(new SubmitError(string.Format("Event still has {0} participants", victim.RosterCount)));
+        }
+        
+        if (result.Errors.Count == 0)
+        {
+          db.Events.Remove(victim.Row);
+          db.SaveChanges();
+        }
+      }
+      return result;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <returns></returns>
     public List<ParticipationSummary> ParticipantList(Expression<Func<ParticipationSummary, bool>> filter = null)
     {
       using (var db = this.dbFactory())

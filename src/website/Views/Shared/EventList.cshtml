@@ -6,6 +6,7 @@
   ViewBag.PageModelRequire = "site/page/event-list";
   ViewBag.PageData = new Dictionary<string, string> {
     { "event-type", ViewBag.EventType },
+    { "controller", ViewBag.ControllerName },
     { "year", DateTime.Now.Year.ToString() }
   };
 }
@@ -34,7 +35,7 @@
           <tr>
             <td><span data-bind="text: startText"></span></td>
             <td><span data-bind="text: idNumber"></span></td>
-            <td><a data-bind="attr: {href: '@Url.Content("~/" + ViewBag.EventType + "/Detail/")' + id + '#!roster'}, text: title"></a></td>
+            <td><a data-bind="attr: {href: '@Url.Content("~/" + ViewBag.ControllerName + "/Detail/")' + id + '#!roster'}, text: title"></a></td>
             <td class="r hidden-xs"><span data-bind="text: participants"></span></td>
             <td class="r hidden-xs"><span data-bind="text: hoursText"></span></td>
             <td class="r hidden-xs"><span data-bind="text: miles"></span></td>

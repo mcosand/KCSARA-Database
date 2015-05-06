@@ -301,6 +301,7 @@
     <Compile Include="Controllers\MissionsController_Documents.cs" />
     <Compile Include="Controllers\MissionsController_Geography.cs" />
     <Compile Include="ExtensionProvider.cs" />
+    <Compile Include="FilteredCamelCasePropertyNamesContractResolver.cs" />
     <Compile Include="IAppSettings.cs" />
     <Compile Include="Models\LoginRequest.cs" />
     <Compile Include="Services\AuthService.cs" />
@@ -551,6 +552,7 @@
     <Content Include="Scripts\site\components\event-timeline.js" />
     <Content Include="Scripts\site\components\core-competency-status.js" />
     <Content Include="Scripts\site\components\event-roster.js" />
+    <Content Include="Scripts\site\components\event-quick-create.js" />
     <Content Include="Scripts\site\components\training-record-list.js" />
     <Content Include="Scripts\site\components\member-events.js" />
     <Content Include="Scripts\site\components\contact-numbers.js" />
@@ -559,6 +561,7 @@
     <Content Include="Scripts\site\components\searchbox.js" />
     <Content Include="Scripts\site\env-ko.js" />
     <Content Include="Scripts\site\env.js" />
+    <Content Include="Scripts\site\page\event-detail.js" />
     <Content Include="Scripts\site\page\event-list.js" />
     <Content Include="Scripts\site\startup.js" />
     <Content Include="Scripts\site\user.js" />
@@ -727,6 +730,8 @@
     <Content Include="Views\Components\EventRoster.cshtml" />
     <Content Include="Views\Components\EventTimeline.cshtml" />
     <Content Include="Views\Units\Detail.cshtml" />
+    <Content Include="Views\Shared\EventCreate.cshtml" />
+    <Content Include="Views\Components\EventQuickCreate.cshtml" />
     <None Include="Web.Production.config" />
   </ItemGroup>
   <ItemGroup>

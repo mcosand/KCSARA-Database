@@ -847,10 +847,6 @@ namespace Kcsara.Database.Web.Controllers
 
     #endregion
 
-    protected override string EventType
-    {
-      get { return "Missions"; }
-    }
 
     protected override bool CanDoAction(SarEventActions action, object context)
     {

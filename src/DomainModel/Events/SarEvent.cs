@@ -19,6 +19,7 @@ namespace Kcsara.Database.Model.Events
     public string Location { get; set; }
     public string IdNumber { get; set; }
 
+    public string EventType { get { return this.GetType().Name; } }
   }
 
   public abstract class SarEvent : BaseSarEvent

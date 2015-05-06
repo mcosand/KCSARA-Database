@@ -7,6 +7,7 @@ namespace Kcsara.Database.Web.api
   using System.Collections.Generic;
   using System.Linq.Expressions;
   using System.Web.Http;
+  using Kcsara.Database.Model;
   using Kcsara.Database.Model.Events;
   using Kcsara.Database.Services;
   using log4net;
@@ -19,6 +20,22 @@ namespace Kcsara.Database.Web.api
       : base(auth, log)
     {
       this.eventService = eventService;
+    }
+
+    [HttpGet]
+    [Authorize]
+    [HttpPost]
+    [Authorize]
+    public SubmitResult<T> Update(T model)
+    {
+      return eventService.Update(model);
+    }
+
+    [HttpPost]
+    [Authorize]
+    public SubmitResult Delete(Guid id)
+    {
+      return eventService.Delete(id);
     }
 
     [HttpGet]

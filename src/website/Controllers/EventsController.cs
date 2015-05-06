@@ -18,6 +18,13 @@ namespace Kcsara.Database.Web.Controllers
   {
     public SarEventController(IKcsarContext db) : base(db) { }
 
+    protected override void Initialize(System.Web.Routing.RequestContext requestContext)
+    {
+      base.Initialize(requestContext);
+      ViewBag.EventType = typeof(E).Name.Replace("Row", "");
+      ViewBag.ControllerName = requestContext.RouteData.GetRequiredString("controller");
+    }
+
     [Authorize(Roles = "cdb.users")]
     public virtual ActionResult Index()
     {
@@ -28,14 +35,12 @@ namespace Kcsara.Database.Web.Controllers
     public ActionResult Detail(Guid id)
     {
       ViewBag.EventId = id;
-      ViewBag.ControllerName = this.EventType;
       return View("EventDetail");
     }
 
     [Authorize(Roles = "cdb.users")]
     public virtual ActionResult List(string id)
     {
-      ViewBag.EventType = this.EventType;
       return View("EventList");
     }
 
@@ -44,41 +49,7 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize(Roles = "cdb.users")]
     public ActionResult Create()
     {
-      if (!this.CanDoAction(SarEventActions.CreateEvent, null))
-      {
-        return this.CreateLoginRedirect();
-      }
-
-      ViewData["PageTitle"] = "New " + this.EventType;
-      this.SetSessionValue("NewEventGuid", Guid.NewGuid());
-      ViewData["NewEventGuid"] = this.GetSessionValue("NewEventGuid");
-
-      E sarEvent = new E();
-
-      return InternalEdit(sarEvent);
-    }
-
-    [AcceptVerbs(HttpVerbs.Post)]
-    [Authorize(Roles = "cdb.users")]
-    public ActionResult Create(FormCollection fields)
-    {
-      if (!this.CanDoAction(SarEventActions.CreateEvent, null))
-      {
-        return this.CreateLoginRedirect();
-      }
-
-      if (this.GetSessionValue("NewEventGuid") != null && this.GetSessionValue("NewEventGuid").ToString() != fields["NewEventGuid"])
-      {
-        throw new InvalidOperationException("Invalid operation. Are you trying to re-create a " + this.EventType + "?");
-      }
-      this.SetSessionValue("NewEventGuid", null);
-
-      ViewData["PageTitle"] = "New " + this.EventType;
-
-      E evt = new E();
-      this.db.Events.Add(evt);
-
-      return InternalSave(evt, fields, RedirectToAction("Roster", new { id = evt.Id, edit = true }));
+      return View("EventCreate");
     }
 
     [AcceptVerbs("GET")]
@@ -256,7 +227,6 @@ namespace Kcsara.Database.Web.Controllers
 
     }
 
-    protected abstract string EventType { get; }
     protected abstract bool CanDoAction(SarEventActions action, object context);
 
     ///// <summary>

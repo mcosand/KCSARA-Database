@@ -237,4 +237,13 @@
   <data name="Event_RosterTraining" xml:space="preserve">
     <value>Training Roster</value>
   </data>
+  <data name="EventTitle" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="EventCreateTemplate" xml:space="preserve">
+    <value>Create New {0}</value>
+  </data>
+  <data name="EventStartTime" xml:space="preserve">
+    <value>Start Time</value>
+  </data>
 </root>

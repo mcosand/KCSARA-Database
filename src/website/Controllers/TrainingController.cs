@@ -609,10 +609,6 @@ namespace Kcsara.Database.Web.Controllers
 
     #region SarEventController base class
 
-    protected override string EventType
-    {
-      get { return "Training"; }
-    }
 
     protected override bool CanDoAction(SarEventActions action, object context)
     {

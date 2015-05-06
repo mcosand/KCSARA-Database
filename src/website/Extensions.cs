@@ -24,6 +24,21 @@ namespace Kcsara.Database.Web
       return SecurityElement.Escape(str);
     }
 
+    public static string ToCamelCase(this string value)
+    {
+      if (string.IsNullOrEmpty(value))
+      {
+        return value;
+      }
+      var firstChar = value[0];
+      if (char.IsLower(firstChar))
+      {
+        return value;
+      }
+      firstChar = char.ToLowerInvariant(firstChar);
+      return firstChar + value.Substring(1);
+    }
+
     public static SelectList ToSelectList(this Enum enumeration)
     {
       List<object> list = new List<object>();

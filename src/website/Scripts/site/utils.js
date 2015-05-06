@@ -1,4 +1,4 @@
-﻿define(['jquery', 'knockout', 'site/env'], function ($, ko, env) {
+﻿define(['jquery', 'knockout', 'site/env', 'moment'], function ($, ko, env, moment) {
   // Here's a custom Knockout binding that makes elements shown/hidden via jQuery's fadeIn()/fadeOut() methods
   // Could be stored in a separate utility library
   ko.bindingHandlers.fadeVisible = {
@@ -325,6 +325,19 @@
     }
     return b;
   })(searchParts);
+
+  utils.goToEvent = function (id, type, page, subpage) {
+    var controller = type == 'Mission' ? 'Missions' : type;
+    var url = [window.appRoot, controller, page, id].join('/');
+    if (subpage) url += '#!' + subpage;
+    window.location.href = url;
+  }
+
+  utils.roundTime = function(m, roundMinutes)
+  {
+    var rounding = roundMinutes * 60 * 1000; /*ms*/
+    return moment(Math.floor((+m) / rounding) * rounding);
+  }
 
   return utils;
 });

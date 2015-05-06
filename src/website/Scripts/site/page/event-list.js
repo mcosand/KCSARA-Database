@@ -10,17 +10,17 @@
     this.hours = ko.observable();
     this.miles = ko.observable();
 
-    this.hub = $.connection.appHub;
-    this.hub.client.eventUpdated = function (eventId) {
-      utils.getJSON('/api/' + $('body').data('eventType') + '/overview/' + eventId).done(function (data) {
+    var hub = $.connection.appHub;
+    hub.client.eventUpdated = function (theEvent) {
+      console.log(theEvent);
+      utils.getJSON('/api/' + $('body').data('controller') + '/overview/' + theEvent.id).done(function (data) {
         self.fixupRow(data);
-        if (!self.items.replaceById(eventId, data) && (moment(data.start).year() == self.currentYear())) {
+        if (!self.items.replaceById(theEvent.id, data) && (moment(data.start).year() == self.currentYear())) {
           self.items.push(data);
         }
         self.updateTotals();
       });
     };
-
     $.connection.hub.start({ waitForPageLoad: false });
 
     this.currentYear = ko.computed({
@@ -33,7 +33,7 @@
 
     this.load = function loadEvents() {
       self.updateMissions();
-      utils.getJSON('/api/' + $('body').data('eventType') + '/listyears')
+      utils.getJSON('/api/' + $('body').data('controller') + '/listyears')
         .done(function (data) {
           self.years(data.reverse());
         })
@@ -58,7 +58,7 @@
     }
     this.updateMissions = function() {
       self.loadingList(true);
-      utils.getJSON('/api/' + $('body').data('eventType') + '/list/' + self.currentYear())
+      utils.getJSON('/api/' + $('body').data('controller') + '/list/' + self.currentYear())
       .done(function (data) {
         $.each(data, function (i, el) {
           self.fixupRow(el);

@@ -286,6 +286,33 @@ namespace Kcsara.Database.Web {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Create New {0}.
+        /// </summary>
+        public static string EventCreateTemplate {
+            get {
+                return ResourceManager.GetString("EventCreateTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start Time.
+        /// </summary>
+        public static string EventStartTime {
+            get {
+                return ResourceManager.GetString("EventStartTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Title.
+        /// </summary>
+        public static string EventTitle {
+            get {
+                return ResourceManager.GetString("EventTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Finish Roster.
         /// </summary>
         public static string FinishRoster {

@@ -10,8 +10,8 @@
 @helper LabelledInput(string type, string property, string label, string placeholder, string labelCols, string inputCols)
 {
   <div class="form-group" data-bind="css: { 'has-error': @(property).error() }">
-    <label class="col-sm-3 col-md-2 control-label">@label:</label>
-    <div class="col-sm-9 col-md-10">
+    <label class="@(labelCols ?? "col-sm-3 col-md-2") control-label">@label:</label>
+    <div class="@(inputCols ?? "col-sm-9 col-md-10")">
       <input type="@type" data-bind="value: @(property)" class="form-control" placeholder="@placeholder" />
       <span class="help-block" data-bind="text: @(property).error()"></span>
     </div>
