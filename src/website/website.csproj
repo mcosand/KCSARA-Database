@@ -561,8 +561,9 @@
     <Content Include="Scripts\site\components\searchbox.js" />
     <Content Include="Scripts\site\env-ko.js" />
     <Content Include="Scripts\site\env.js" />
-    <Content Include="Scripts\site\page\event-detail.js" />
-    <Content Include="Scripts\site\page\event-list.js" />
+    <Content Include="Scripts\site\page\home.js" />
+    <Content Include="Scripts\site\page\event\detail.js" />
+    <Content Include="Scripts\site\page\event\list.js" />
     <Content Include="Scripts\site\startup.js" />
     <Content Include="Scripts\site\user.js" />
     <Content Include="Scripts\site\utils.js" />
@@ -604,7 +605,6 @@
     <Content Include="Views\Animals\Index.aspx" />
     <Content Include="Views\Animals\PhotoPreview.aspx" />
     <Content Include="Views\Animals\PhotoUpload.aspx" />
-    <Content Include="Views\Home\Index.aspx" />
     <Content Include="Views\Home\MeshGraphs.aspx" />
     <Content Include="Views\Home\MeshStatus.aspx" />
     <Content Include="Views\Log\Index.aspx" />
@@ -732,6 +732,7 @@
     <Content Include="Views\Units\Detail.cshtml" />
     <Content Include="Views\Shared\EventCreate.cshtml" />
     <Content Include="Views\Components\EventQuickCreate.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
     <None Include="Web.Production.config" />
   </ItemGroup>
   <ItemGroup>

@@ -9,6 +9,14 @@ define(['knockout', 'moment', 'site/utils'], function PageModel(ko, moment, util
       timeline: ['site/components/event-timeline'],
     };
 
+    self.expanded = ko.observable(false);
+    self.toggleExpand = function () {
+      self.expanded(!self.expanded());
+    }
+
+    self.canEdit = true;
+    self.doEdit = function () { }
+
     self.canDelete = true;
     self.doDelete = function () {
       require(['bootstrap-dialog'], function (dialog) {
@@ -66,6 +74,7 @@ define(['knockout', 'moment', 'site/utils'], function PageModel(ko, moment, util
       utils.getJSON('/api/' + self.controllerName + '/Overview/' + self.eventId)
       .done(function (data) {
         data.start = new moment(data.start);
+        if (data.stop) data.stop = new moment(data.stop);
         self.topInfo(data);
       })
       .fail(function (err) { utils.handleServiceError(err, self); })

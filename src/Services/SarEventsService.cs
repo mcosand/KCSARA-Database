@@ -20,7 +20,6 @@ namespace Kcsara.Database.Services
     List<SarEventSummary> List(Expression<Func<SarEventSummary, bool>> filter = null, int? maxCount = null);
     List<int> ListYears();
     List<ParticipationSummary> ParticipantList(Expression<Func<ParticipationSummary, bool>> filter = null);
-    SarEventSummary GetOverview(Guid id);
     List<RosterEntry> ListRoster(Guid eventId);
     List<TimelineEntry> ListTimeline(Guid eventId);
     SubmitResult Delete(Guid id);
@@ -28,6 +27,7 @@ namespace Kcsara.Database.Services
 
   public interface ISarEventsService<T> : ISarEventsService where T : SarEvent
   {
+    T GetOverview(Guid id);
     SubmitResult<T> Update(T model);
   }
 
@@ -50,6 +50,7 @@ namespace Kcsara.Database.Services
         IdNumber = row.StateNumber,
         Title = row.Title,
         Start = row.StartTime,
+        Stop = row.StopTime,
         Jurisdiction = row.County,
         Location = row.Location,
         MissionType = (row.MissionType == null ? new string[0] : row.MissionType.Split(',')).ToList()
@@ -211,11 +212,11 @@ namespace Kcsara.Database.Services
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public SarEventSummary GetOverview(Guid id)
+    public T GetOverview(Guid id)
     {
       using (var db = this.dbFactory())
       {
-        return db.Events.OfType<D>().Where(f => f.Id == id).Select(GetSummaryProjection()).FirstOrDefault();
+        return db.Events.OfType<D>().Where(f => f.Id == id).Select(toModel).FirstOrDefault();
       }
     }
 

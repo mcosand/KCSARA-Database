@@ -1,0 +1,13 @@
+﻿@*
+  * Copyright 2015 Matthew Cosand
+*@
+@{
+  ViewBag.Title = Strings.DatabaseName + " ";
+  ViewBag.PageModelRequire = "site/page/home";
+}
+<div class="row" data-bind="with:page" style="padding-left:15px; padding-right:15px;">
+  <div class="jumbotron">
+    <h1>This is the Home Page</h1>
+    <p>This page should contain interesting information, such as the member's recent missions, current training status, mission stats for the year, etc.</p>
+  </div>
+</div>

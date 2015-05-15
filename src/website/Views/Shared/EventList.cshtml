@@ -3,7 +3,7 @@
 *@
 @{
   ViewBag.Title = Strings.DatabaseName + " " + Strings.ResourceManager.GetString(ViewBag.EventType);
-  ViewBag.PageModelRequire = "site/page/event-list";
+  ViewBag.PageModelRequire = "site/page/event/list";
   ViewBag.PageData = new Dictionary<string, string> {
     { "event-type", ViewBag.EventType },
     { "controller", ViewBag.ControllerName },

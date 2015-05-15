@@ -3,7 +3,7 @@
 *@
 @{
   ViewBag.Title = Strings.DatabaseName + " ";
-  ViewBag.PageModelRequire = "site/page/event-detail";
+  ViewBag.PageModelRequire = "site/page/event/detail";
   ViewBag.PageData = new Dictionary<string, string> {
     { "initial-tab", "roster" },
     { "event-id", ViewBag.EventId.ToString() },
@@ -17,8 +17,19 @@
       <!-- ko if: $data -->
       <div class="col-xs-12">
         <h2 data-bind="text: title"></h2>
-        <div data-bind="text: '@Strings.IdNumber: ' + idNumber"></div>
-        <a href="#" data-bind="click: $parent.toggleExpand" class="text-primary"><!-- ko text: $parent.expanded() ? 'Hide' : 'Show' --><!-- /ko --> Details <span data-bind="css: 'fa-angle-double-' + ($parent.expanded() ? 'up' : 'down')" class="fa"></span></a>
+        <div>
+          <label>@Strings.IdNumber:</label> <span data-bind="text: idNumber"></span>
+        </div>
+        <div data-bind="slideVisible: $parent.expanded">
+          <div><label>Location:</label> <span data-bind="text: location"></span></div>
+          <div><label>Start:</label> <span data-bind="text: start ? start.format('YYYY-MM-DD ddd HH:mm') : ''"></span></div>
+          <div><label>Stop:</label> <span data-bind="text: stop ? stop.format('YYYY-MM-DD ddd HH:mm') : ''"></span></div>
+          <div><label>County:</label> <span class="text-capitalize" data-bind="text: jurisdiction"></span></div>
+          <div><label>Mission Type:</label><!-- ko foreach: missionType --> <span class="badge" data-bind="text: $data"></span><!-- /ko --></div>
+        </div>
+        <a href="#" data-bind="click: $parent.doDelete, visible: $parent.canDelete" class="pull-right text-danger btn">Delete</a>
+        <a href="#" data-bind="click: $parent.doEdit, visible: $parent.canEdit" class="pull-right text-primary btn">Edit</a>
+        <a href="#" data-bind="click: $parent.toggleExpand" class="btn text-primary"><!-- ko text: $parent.expanded() ? 'Hide' : 'Show' --><!-- /ko --> Details <span data-bind="css: 'fa-angle-double-' + ($parent.expanded() ? 'up' : 'down')" class="fa"></span></a>
       </div>
       <!-- /ko -->
     </div>

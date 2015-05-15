@@ -30,8 +30,10 @@ h2 {
 }
 
 .bootstrap-dialog .modal-header {
-  background-color: rgb(233,148,0);
   padding: 5px;
+}
+.bootstrap-dialog.type-primary .modal-header {
+  background-color: rgb(233,148,0);
 }
 
 .panel-heading {

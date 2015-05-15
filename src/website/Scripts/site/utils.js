@@ -66,7 +66,7 @@
 
   ko.bindingHandlers.foreachWithHighlight = {
     init: function (element, valueAccessor, allBindingsAccessor, viewModel, context) {
-      var flashReset = valueAccessor().initReset,
+      var flashReset = valueAccessor().data.initReset,
         key = "forEachWithHightlight_initialized";
       if (flashReset) {
         flashReset.subscribe(function () { ko.utils.domData.set(element, key, false) });
@@ -101,6 +101,20 @@
       return { controlsDescendantBindings: true };
     }
   };
+
+  ko.bindingHandlers.slideVisible = {
+    init: function (element, valueAccessor) {
+      // Initially set the element to be instantly visible/hidden depending on the value
+      var value = valueAccessor();
+      $(element).toggle(ko.unwrap(value)); // Use "unwrapObservable" so we can handle values that may or may not be observable
+    },
+    update: function (element, valueAccessor) {
+      // Whenever the value subsequently changes, slowly fade the element in or out
+      var value = valueAccessor();
+      ko.unwrap(value) ? $(element).slideDown() : $(element).slideUp();
+    }
+  };
+
   ko.observableArray.fn.replaceById = function (id, newValue) {
     this.valueWillMutate();
     var arr = this();
@@ -116,7 +130,6 @@
   var utils = {};
   utils.hashBangInit = function hashBangInit(initialPage, callback) {
     $(window).on('hashchange', function () {
-      console.log("hash changed: ")
       if (window.location.hash.length < 2 || window.location.hash == '#!') {
         callback(initialPage);
       } else if (window.location.hash.length > 1 && window.location.hash[1] == '!') {

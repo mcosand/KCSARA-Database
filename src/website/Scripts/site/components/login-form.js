@@ -7,7 +7,7 @@ define(['jquery', 'knockout', 'site/utils', 'site/env'], function ($, ko, utils,
       var self = this;
 
       this.onSuccess = params.onSuccess || function () {
-        var redirect = utils.qs["returnurl"];
+        var redirect = utils.qs["returnurl"] || (window.appRoot + '/');
         if (redirect) { env.location.href = redirect; }
         else { env.location.href = env.location.href; }
       };

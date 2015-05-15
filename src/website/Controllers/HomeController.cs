@@ -28,8 +28,6 @@ namespace Kcsara.Database.Web.Controllers
 
     public ActionResult Index()
     {
-      ViewData["Title"] = Strings.DatabaseName;
-
       return View();
     }
 

@@ -61,7 +61,7 @@ namespace Kcsara.Database.Web.api
 
     [HttpGet]
     [Authorize(Roles = "cdb.users")]
-    public SarEventSummary Overview(Guid id)
+    public T Overview(Guid id)
     {
       return eventService.GetOverview(id);
     }

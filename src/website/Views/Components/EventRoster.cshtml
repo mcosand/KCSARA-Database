@@ -12,14 +12,20 @@
       <th data-bind="sort: { arr: roster, prop: 'miles'}" class=" r hidden-xs">Miles</th>
     </tr>
   </thead>
-  <tbody data-bind="foreach: roster">
+  <tbody>
+    <!-- ko foreach: roster -->
     <tr>
       <td class="hidden-xs"><span data-bind="text: participant.idNumber" style="white-space: nowrap"></span></td>
-      <td><span data-bind="text: participant.name"></span></td>
+      <td><span data-bind="visible: !participant.memberId, text: participant.name"></span>
+      <a data-bind="attr: { href: '@Url.Content("~/Members/Detail/")' + participant.memberId }, visible: participant.memberId, text: participant.name"></a></td>
       <td><span data-bind="text: unit.name"></span>@*<a data-bind="attr: {href: $parent.linkUrl + eventId}, html: title"></a>*@</td>
       <td class="r"><span data-bind="text: hoursText"></span></td>
       <td class="r hidden-xs"><span data-bind="text: miles"></span></td>
     </tr>
+    <!-- /ko -->
+    <!-- ko if: (roster().length == 0) -->
+    <tr><td colspan="10">No records</td></tr>
+    <!-- /ko -->
   </tbody>
   <tfoot>
   @*  <tr>
