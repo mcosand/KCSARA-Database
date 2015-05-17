@@ -215,7 +215,10 @@ namespace Kcsara.Database.Web.api
         // Documentation required.
         if (!model.UploadsPending && string.IsNullOrWhiteSpace(model.metadata))
         {
-          errors.Add(new SubmitError { Error = Strings.API_TrainingRecord_DocumentationRequired, Property = BaseApiController.ModelRootNodeName });
+          if (!db.Documents.Any(f => f.ReferenceId == model.Id))
+          {
+            errors.Add(new SubmitError { Error = Strings.API_TrainingRecord_DocumentationRequired, Property = BaseApiController.ModelRootNodeName });
+          }
         }
 
         // Prevent duplicate records
