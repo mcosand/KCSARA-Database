@@ -21,6 +21,7 @@ namespace Kcsara.Database.Web.api
   using System.Web.Helpers;
   using Model = Kcsar.Database.Model;
   using log4net;
+  using System.Data.Entity.SqlServer;
   
   [ModelValidationFilter]
   public class MembersController : BaseApiController
@@ -350,7 +351,9 @@ namespace Kcsara.Database.Web.api
     [Authorize(Roles = "cdb.users")]
     public IEnumerable<MemberSummary> ByWorkerNumber(string id)
     {
-      var result = db.Members.Where(f => f.DEM == id)
+      id = id.TrimStart('S', 'R');
+
+      var result = db.Members.Where(f => f.DEM == id || f.DEM == "SR" + id)
         .OrderBy(f => f.LastName).ThenBy(f => f.FirstName)
         .AsEnumerable()
         .Select(f => new MemberSummary
@@ -359,6 +362,33 @@ namespace Kcsara.Database.Web.api
           WorkerNumber = f.DEM,
           Id = f.Id
         });
+
+      return result;
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "cdb.users")]
+    public IEnumerable<MemberSummary> ByPhoneNumber(string id)
+    {
+      if (id.Length < 10 || !Regex.IsMatch(id, "\\d+"))
+      {
+        return new MemberSummary[0];
+      }
+
+      var pattern = string.Format("%{0}%{1}%{2}%",
+        id.Substring(id.Length - 10, 3),
+        id.Substring(id.Length - 7, 3),
+        id.Substring(id.Length - 4, 4));
+
+      var result = db.Members.Where(f => f.ContactNumbers.Any(g => SqlFunctions.PatIndex(pattern, g.Value) > 0))
+        .AsEnumerable()
+        .Select(f => new MemberSummary
+      {
+        Name = f.FullName,
+        WorkerNumber = f.DEM,
+        Id = f.Id
+      });
+
       return result;
     }
   }
