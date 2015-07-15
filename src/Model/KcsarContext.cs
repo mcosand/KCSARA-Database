@@ -54,6 +54,8 @@ namespace Kcsar.Database.Model
     protected IDbSet<AuditLog> AuditLog { get; set; }
     public IDbSet<SensitiveInfoAccess> SensitiveInfoLog { get; set; }
 
+    public IDbSet<ExternalLogin> ExternalLogins { get; set; }
+
     public KcsarContext() : this("DataStore") { }
 
     public KcsarContext(string connName)
@@ -85,6 +87,7 @@ namespace Kcsar.Database.Model
       modelBuilder.Entity<Member>().HasMany(f => f.ContactNumbers).WithRequired(f => f.Person).WillCascadeOnDelete();
       modelBuilder.Entity<Animal>().HasMany(f => f.Owners).WithRequired(f => f.Animal).WillCascadeOnDelete();
       modelBuilder.Entity<Member>().HasMany(f => f.Animals).WithRequired(f => f.Owner).WillCascadeOnDelete();
+      modelBuilder.Entity<Member>().HasMany(f => f.ExternalLogins).WithRequired(f => f.Member).WillCascadeOnDelete();
     }
 
     public Func<UnitMembership, bool> GetActiveMembershipFilter(Guid? unit, DateTime time)
