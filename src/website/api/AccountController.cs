@@ -4,23 +4,25 @@
 
 namespace Kcsara.Database.Web.api
 {
-  using Kcsar.Database.Model;
-  using SarMembership = Kcsar.Membership;
-  using Kcsara.Database.Web.api.Models;
-  using Kcsara.Database.Web.Services;
   using System;
+  using System.Collections.Generic;
   using System.Configuration;
+  using System.Data.Entity;
+  using System.Data.SqlClient;
   using System.IO;
   using System.Linq;
   using System.Text.RegularExpressions;
   using System.Threading;
+  using System.Threading.Tasks;
   using System.Web.Http;
   using System.Web.Profile;
-  using Model = Kcsar.Database.Model;
-  using log4net;
   using System.Web.Security;
+  using Kcsar.Database.Model;
   using Kcsara.Database.Services.Accounts;
-  using System.Data.SqlClient;
+  using Kcsara.Database.Web.api.Models;
+  using Kcsara.Database.Web.Services;
+  using log4net;
+  using SarMembership = Kcsar.Membership;
 
   [ModelValidationFilter]
   public class AccountController : BaseApiController
@@ -349,6 +351,20 @@ namespace Kcsara.Database.Web.api
       db.SaveChanges();
 
       return true;
+    }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<string> LookupExternalLogin(string provider, string login, string memberOf = null)
+    {
+      var query = this.db.Members.Where(f => f.ExternalLogins.Any(g => g.Provider == provider && g.Login == login));
+      if (!string.IsNullOrWhiteSpace(memberOf))
+      {
+        DateTime now = DateTime.Now;
+        query = query.Where(f => f.Memberships.Any(g => g.Status.IsActive && (g.EndTime == null || g.EndTime > now) && g.Unit.DisplayName == memberOf));
+      }
+
+      return await query.Select(f => f.Username).SingleOrDefaultAsync();
     }
   }
 

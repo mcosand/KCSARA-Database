@@ -27,6 +27,8 @@ namespace Kcsar.Database.Model
     [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:d}")]
     public DateTime WacLevelDate { get; set; }
     public string Username { get; set; }
+    public virtual ICollection<ExternalLogin> ExternalLogins { get; set; }
+
     public string Comments { get; set; }
     [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:d}")]
     public DateTime? BackgroundDate { get; set; }
@@ -61,6 +63,7 @@ namespace Kcsar.Database.Model
       this.MissionRosters = new List<MissionRoster>();
       this.Addresses = new List<PersonAddress>();
       this.ContactNumbers = new List<PersonContact>();
+      this.ExternalLogins = new List<ExternalLogin>();
     }
 
     public override string ToString()
