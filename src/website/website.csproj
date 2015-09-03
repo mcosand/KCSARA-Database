@@ -23,6 +23,7 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <WebGreaseLibPath>..\..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -170,8 +171,8 @@
       <HintPath>..\..\packages\Microsoft.AspNet.Providers.Core.2.0.0\lib\net40\System.Web.Providers.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Microsoft.AspNet.Razor.3.0.0\lib\net45\System.Web.Razor.dll</HintPath>
+      <HintPath>..\..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -221,6 +222,7 @@
     <Compile Include="api\Models\TrainingCourse.cs" />
     <Compile Include="api\Models\TrainingRecord.cs" />
     <Compile Include="api\Models\UnitDocument.cs" />
+    <Compile Include="api\TrackController.cs" />
     <Compile Include="api\UnitsController.cs" />
     <Compile Include="api\MembersController.cs" />
     <Compile Include="api\MissionsController.cs" />
@@ -265,6 +267,7 @@
     <Content Include="Content\images\roster-add-right.png" />
     <Content Include="Content\images\Trash.png" />
     <Content Include="Content\images\upload.gif" />
+    <Content Include="Content\leaflet.css" />
     <Content Include="Content\script\errorHandling.js" />
     <Content Include="Content\nprogress.css" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -280,6 +283,7 @@
     <Compile Include="Controllers\MissionsController.cs" />
     <Compile Include="Controllers\MissionsController_Documents.cs" />
     <Compile Include="Controllers\MissionsController_Geography.cs" />
+    <Compile Include="Controllers\TrackController.cs" />
     <Compile Include="ExtensionProvider.cs" />
     <Compile Include="IAppSettings.cs" />
     <Compile Include="Membership\Synchronizers\EsarOffice365.cs" />
@@ -534,6 +538,9 @@
     <Content Include="Scripts\knockout-3.0.0.js" />
     <Content Include="Scripts\knockout.mapping-latest.debug.js" />
     <Content Include="Scripts\knockout.mapping-latest.js" />
+    <Content Include="Scripts\lib\leaflet.google.js" />
+    <Content Include="Scripts\lib\leaflet.js" />
+    <Content Include="Scripts\lib\TileLayer.GeoJSON.js" />
     <Content Include="Scripts\modernizr-2.7.1.js" />
     <Content Include="Scripts\nprogress.js" />
     <Content Include="Scripts\ViewModels.js" />
@@ -695,6 +702,11 @@
     <None Include="Properties\PublishProfiles\Production.pubxml" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
     <Content Include="Templates\Report\missionready-template.xls" />
+    <Content Include="Views\Track\Index.cshtml" />
+    <Content Include="Views\Shared\foo_Layout.cshtml" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\_FrameLayout.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
     <None Include="Web.Production.config" />
   </ItemGroup>
   <ItemGroup>

@@ -2,16 +2,11 @@
  * Copyright 2009-2014 Matthew Cosand
  */
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kcsar.Database.Model
 {
-    public class AuditLog
+  public class AuditLog
     {
         public AuditLog()
         {

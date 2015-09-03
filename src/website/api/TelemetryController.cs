@@ -1,15 +1,9 @@
 ﻿/*
  * Copyright 2012-2014 Matthew Cosand
  */
+using System.Web.Http;
 using Kcsar.Database.Model;
 using Kcsara.Database.Web.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
 using log4net;
 
 namespace Kcsara.Database.Web.api

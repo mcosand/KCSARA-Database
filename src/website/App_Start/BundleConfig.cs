@@ -71,6 +71,12 @@ namespace Kcsara.Database.Web
 
             bundles.Add(new StyleBundle("~/style/print").Include(
                 "~/Content/print-styles.css"));
+
+      bundles.Add(new StyleBundle("~/scripts/leaflet").Include(
+        "~/scripts/lib/leaflet.js",
+        "~/scripts/lib/TileLayer.GeoJSON.js",
+        "~/scripts/lib/leaflet.google.js"
+       ));
         }
     }
 }

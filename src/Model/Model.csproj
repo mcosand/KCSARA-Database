@@ -114,6 +114,10 @@
     <Compile Include="Migrations\201507150632096_ExternalLogins.Designer.cs">
       <DependentUpon>201507150632096_ExternalLogins.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201508302250059_Tracks.cs" />
+    <Compile Include="Migrations\201508302250059_Tracks.Designer.cs">
+      <DependentUpon>201508302250059_Tracks.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Migrator.cs" />
     <Compile Include="MemberUnitDocument.cs" />
     <Compile Include="MemberMedical.cs" />
@@ -124,6 +128,7 @@
       <DependentUpon>201309050314287_UnitDocuments.cs</DependentUpon>
     </Compile>
     <Compile Include="SensitiveInfoAccess.cs" />
+    <Compile Include="TrackPoint.cs" />
     <Compile Include="UnitApplicant.cs" />
     <Compile Include="UnitContact.cs" />
     <Compile Include="UnitDocument.cs" />
@@ -232,6 +237,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201507150632096_ExternalLogins.resx">
       <DependentUpon>201507150632096_ExternalLogins.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201508302250059_Tracks.resx">
+      <DependentUpon>201508302250059_Tracks.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -43,6 +43,8 @@ namespace Kcsar.Database.Model
     IDbSet<xref_county_id> xref_county_id { get; set; }
     IDbSet<SensitiveInfoAccess> SensitiveInfoLog { get; set; }
 
+    IDbSet<Track> Tracks { get; set; }
+
     void RecalculateTrainingAwards();
     void RecalculateTrainingAwards(Guid memberId);
     void RecalculateTrainingAwards(IEnumerable<Member> members);

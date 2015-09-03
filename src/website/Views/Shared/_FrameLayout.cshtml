@@ -1,0 +1,71 @@
+﻿@{
+  Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="header-container">
+  <div class="nav-login">
+    @if (User.Identity.IsAuthenticated)
+    {
+      <span>Welcome <b>@string.Format("{0} [{1}]", ((Kcsar.Membership.KcsarUserProfile)Profile).FirstName, User.Identity.Name))</b>!</span>
+    
+    <ul>
+      <li>@(Html.ActionLink<AccountController>(f => f.Logout(), Strings.LogoutPrompt))</li>
+    </ul>
+    } else {
+    <ul>
+      <li class="first">@(Html.ActionLink<AccountController>(f => f.Login(), Strings.LoginPrompt))</li>
+    </ul>
+    }
+  </div>
+  <div class="logo"><a href="@Url.Action(" Index", "Home" )">@Strings.GroupName</a></div>
+  <div class="clear"></div>
+</div>
+<div class="poster-container-no-image">
+  <div class="poster-inner" @((ViewData["HideMenu"] == null) ? "" : "style=\"min-height:30px;\"" )> </div>
+</div>
+@if (ViewData["HideMenu"] == null)
+{
+<div class="nav-second">
+  @*<asp:ContentPlaceHolder ID="secondaryNav" runat="server" />*@
+</div>
+}
+<div class="content-container">
+  <div class="content-container-inner" @((ViewData["HideMenu"] == null) ? "" : "style=\"padding:0px;\"")>
+        <div class="content-main" id="content"><a id="maincontent"></a>
+        @*<%= ConditionalDiv("alert", "border:solid 2px black; padding:.3em; margin:1em")%>
+        <%= ConditionalDiv("success", "border:solid 2px #008800; color:#008800; padding:.3em; margin:1em;")%>
+        <%= ConditionalDiv("warning", "border:solid 2px orange; color:orange; padding:.3em; margin:1em")%>
+        <%= ConditionalDiv("error", "border:solid 2px red; color:red; padding:.3em; margin:1em")%>*@
+      @RenderBody()
+
+        </div>
+    <div class="content-left">
+      <div class="side-bucket">
+        <ul>
+        @if (User.IsInRole("cdb.users")) {
+          <li class="first">@(Html.ActionLink<MembersController>(x => x.Index(), "Members"))
+          @Html.Hidden("pid_m")
+          @Html.TextBox("searchMember_m", "", new { style = "width:110px; font-size:80%; display:inline;", @class = "input-box" })
+          </li>
+            <li>@(Html.ActionLink<TrainingController>(x => x.Index(), "Training"))
+            <ul><li>@(Html.ActionLink<TrainingController>(x => x.List(null), "Rosters"))</li></ul>
+          </li>
+          <li>@(Html.ActionLink<MissionsController>(x => x.Index(), "Missions"))</li>
+
+          <li>@(Html.ActionLink<MapController>(x => x.Index(null), "Map"))</li>
+          <li>@(Html.ActionLink<UnitsController>(x => x.Index(), "Units"))</li>
+          <li>@(Html.ActionLink<AnimalsController>(x => x.Index(), "Animals"))</li>
+          <li>@(Html.ActionLink<AdminController>(f => f.Index(), "Admin"))</li>
+            if (User.IsInRole("cdb.admins")) {
+            <li>@(Html.ActionLink<LogController>(f => f.Index(), "Change Log"))</li>
+            }
+          <li>@(Html.ActionLink<AccountController>(f => f.Index(), "My Account"))</li>
+          }
+        </ul>
+        <p id="showMInfoP" style="color:#888888; display:none"><input type="checkbox" id="showMInfo" />Show change info</p>
+      </div>
+    </div>
+  <div class="clear"></div>
+  </div>
+</div>
+
+@section head {@RenderSection("head", false)}
