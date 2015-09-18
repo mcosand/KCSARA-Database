@@ -27,51 +27,76 @@ namespace Kcsara.Database.Web.Controllers
 
     [HttpGet]
     [AllowAnonymous]
-    public ActionResult SelfHost(string id, string tracker, decimal? lat = null, decimal? lon = null)
+    public ActionResult SelfHost(string id, string tracker, double? lat = null, double? lon = null)
     {
-      if (string.IsNullOrWhiteSpace(id))
+      return Beacon(new BeaconModel
+      {
+        Action = tracker ?? "beacon",
+        User = id,
+        Points = (lat.HasValue && lon.HasValue) ? new[]
+        {
+          new BeaconPointModel
+          {
+            Lat = lat.Value,
+            Lon = lon.Value
+          }
+        } : null
+      });
+    }
+
+    [HttpPost]
+    [AllowAnonymous]
+    public ActionResult Beacon(BeaconModel input)
+    {
+      if (string.IsNullOrWhiteSpace(input.User))
       {
         return Content("No username");
       }
 
       DateTime now = DateTime.Now;
-      if (lat.HasValue && lon.HasValue)
+      if (input.Points != null)
       {
-        var info = db.Tracks.Where(f => f.Username == id).OrderByDescending(f => f.StartTime).Select(f => new { Trip = f, Idx = f.Points.Count }).FirstOrDefault();
+        var info = db.Tracks.Where(f => f.Username == input.User).OrderByDescending(f => f.StartTime).Select(f => new { Trip = f, Idx = f.Points.Count }).FirstOrDefault();
+        var nextIndex = info.Idx;
         var trip = info.Trip;
         if (trip == null)
         {
           trip = new Track
           {
             Id = Guid.NewGuid(),
-            Name = "Track for " + id,
+            Name = "Track for " + input.User,
             StartTime = now,
-            Username = id,
-            TripId = id + "-" + now.ToString("u")
+            Username = input.User,
+            TripId = input.User + "-" + now.ToString("u")
           };
           db.Tracks.Add(trip);
         }
 
-        var point = new TrackPoint
+        foreach (var pointInput in input.Points)
         {
-          Id = Guid.NewGuid(),
-          Index = info.Idx,
-          Time = DateTime.Now,
-          Point = DbGeography.PointFromText(string.Format("POINT({0} {1})", lon.Value, lat.Value), DbGeography.DefaultCoordinateSystemId)
-        };
+          var point = new TrackPoint
+          {
+            Id = Guid.NewGuid(),
+            Index = nextIndex++,
+            Time = pointInput.Time ?? DateTime.Now,
+            Point = DbGeography.PointFromText(string.Format("POINT({0} {1})", pointInput.Lon, pointInput.Lat), DbGeography.DefaultCoordinateSystemId),
+            HAccuracy = pointInput.Accuracy,
+            Battery = pointInput.Battery
+          };
 
-        trip.Points.Add(point);
+          trip.Points.Add(point);
+        }
       }
-      else if (tracker == "start" )
+      else if (input.Action == "start")
       {
         DateTime startDate = DateTime.Now;
         var trip = new Track
         {
           Id = Guid.NewGuid(),
-          Name = "Track for " + id,
+          Name = "Track for " + input.User,
           StartTime = startDate,
-          Username = id,
-          TripId = id + "-" + startDate.ToString("u")
+          Username = input.User,
+          TripId = input.User + "-" + startDate.ToString("u")
         };
         db.Tracks.Add(trip);
       }
@@ -79,7 +104,24 @@ namespace Kcsara.Database.Web.Controllers
       db.SaveChanges();
 
       return Content("GotIt");
+
     }
+
+    public class BeaconModel
+    {
+      public string Action { get; set; }
+      public string User { get; set; }
+      public BeaconPointModel[] Points { get; set; }
+    }
+    public class BeaconPointModel
+    {
+      public double Lat { get; set; }
+      public double Lon { get; set; }
+      public DateTime? Time { get; set; }
+      public double? Accuracy { get; set; }
+      public double? Battery { get; set; }
+    }
+
 
     [HttpPost]
     [AllowAnonymous]
