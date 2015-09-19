@@ -81,7 +81,7 @@ namespace Kcsara.Database.Web.Controllers
             Time = pointInput.Time ?? DateTime.Now,
             Point = DbGeography.PointFromText(string.Format("POINT({0} {1})", pointInput.Lon, pointInput.Lat), DbGeography.DefaultCoordinateSystemId),
             HAccuracy = pointInput.Accuracy,
-            Battery = pointInput.Battery
+            Battery = pointInput.Battery / 100.0
           };
 
           trip.Points.Add(point);
