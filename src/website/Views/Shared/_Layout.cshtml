@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" @(ViewBag.NgApp != null ? new HtmlString("ng-app=\"" + ViewBag.NgApp + "\"") : new HtmlString(string.Empty))>
 <head>
   <!-- Force latest IE rendering engine or ChromeFrame if installed -->
   <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><![endif]-->
