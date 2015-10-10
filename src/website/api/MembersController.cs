@@ -22,7 +22,7 @@ namespace Kcsara.Database.Web.api
   using Model = Kcsar.Database.Model;
   using log4net;
   using System.Data.Entity.SqlServer;
-  
+
   [ModelValidationFilter]
   public class MembersController : BaseApiController
   {
@@ -383,11 +383,33 @@ namespace Kcsara.Database.Web.api
       var result = db.Members.Where(f => f.ContactNumbers.Any(g => SqlFunctions.PatIndex(pattern, g.Value) > 0))
         .AsEnumerable()
         .Select(f => new MemberSummary
+        {
+          Name = f.FullName,
+          WorkerNumber = f.DEM,
+          Id = f.Id
+        });
+
+      return result;
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "cdb.users")]
+    public IEnumerable<MemberSummary> ByUsername(string id)
+    {
+      if (string.IsNullOrWhiteSpace(id))
       {
-        Name = f.FullName,
-        WorkerNumber = f.DEM,
-        Id = f.Id
-      });
+        throw new HttpResponseException(System.Net.HttpStatusCode.BadRequest);
+      }
+
+      var result = db.Members.Where(f => f.Username == id)
+        .OrderBy(f => f.LastName).ThenBy(f => f.FirstName)
+        .AsEnumerable()
+        .Select(f => new MemberSummary
+        {
+          Name = f.FullName,
+          WorkerNumber = f.DEM,
+          Id = f.Id
+        });
 
       return result;
     }
