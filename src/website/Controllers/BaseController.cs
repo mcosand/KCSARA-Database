@@ -23,6 +23,7 @@ namespace Kcsara.Database.Web.Controllers
   using System.Web.Mvc;
   using System.Web.Security;
   using Kcsara.Database.Services;
+  using System.Runtime.Caching;
 
   public class BaseController : Controller
   {
@@ -33,6 +34,10 @@ namespace Kcsara.Database.Web.Controllers
     protected readonly IAppSettings settings;
     protected readonly IKcsarContext db;
     
+    private static readonly MemoryCache userToIdCache= new MemoryCache("usernameToMemberId");
+    private static readonly object userIdCacheLock = new object();
+    private static readonly object nullUserObject = new object();
+    private static readonly CacheItemPolicy cachePolicy = new CacheItemPolicy { SlidingExpiration = TimeSpan.FromMinutes(15) };
     public BaseController(IKcsarContext db)
       : this(db, Ninject.ResolutionExtensions.Get<IAppSettings>(MvcApplication.myKernel))
     {
@@ -59,6 +64,29 @@ namespace Kcsara.Database.Web.Controllers
       base.Initialize(requestContext);
       Permissions = new AuthService(User, this.db);
       Document.StorageRoot = requestContext.HttpContext.Request.MapPath("~/Content/auth/documents/");
+      var profile = Profile as DatabaseUserProfile;
+
+      if (User.Identity.IsAuthenticated)
+      {
+        object userCacheObject;
+        lock (userIdCacheLock)
+        {
+          userCacheObject = userToIdCache[User.Identity.Name];
+        }
+        if (userCacheObject == null)
+        {
+          userCacheObject = db.Members.Where(f => f.Username == User.Identity.Name).Select(f => f.Id).SingleOrDefault();
+          userCacheObject = userCacheObject ?? nullUserObject;
+          lock (userIdCacheLock)
+          {
+            userToIdCache.Set(User.Identity.Name, userCacheObject, cachePolicy);
+          }
+        }
+        if (userCacheObject != nullUserObject)
+        {
+          ViewData["MemberId"] = userCacheObject;
+        }
+      }
     }
 
     private UserSettings _settings;

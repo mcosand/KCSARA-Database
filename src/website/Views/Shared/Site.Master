@@ -13,6 +13,10 @@
       <% if (Request.IsAuthenticated) { %>
         Welcome <b><%= Html.Encode(string.Format("{0} [{1}]", Profile.FirstName, Page.User.Identity.Name))%></b>!
         <ul>
+          <% if (ViewData["MemberId"] != null)
+            { %>
+          <li class="first"><%: Html.ActionLink<MembersController>(x => x.Detail((Guid)ViewData["MemberId"]), "My Page") %></li>
+          <% } %>
 <%--            <li class="first"><%= Html.PopupActionLink<AccountController>(x => x.Settings(), "Settings", 500) %></li>
 --%>            <li><%= Html.ActionLink<AccountController>(f => f.Logout(), Strings.LogoutPrompt) %></li>
         </ul>
