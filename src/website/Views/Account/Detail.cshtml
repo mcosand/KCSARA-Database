@@ -65,11 +65,11 @@
         <h3 class="box-title">Database Group Membership</h3>
       </div>
       <div class="box-body">
-        <div data-angular-treeview="true" data-tree-model="account.groups" data-node-label="name" data-node-children="groups" data-on-selected="onGroupSelected">
-        </div>
+        <div data-angular-treeview="true" data-tree-model="account.groups" data-node-label="name" data-node-children="groups" data-on-selected="onGroupSelected" data-on-remove="onGroupRemove"></div>
       </div>
       <div class="box-footer text-center">
         <button class="btn btn-link" ng-click="nyi()">Add To Group</button>
+        <div class="col-xs-6"><button class="btn" ng-disabled="!getGroupsToRemove().length" ng-click="nyi()">Remove From Groups</button></div>
       </div>
     </div>
   </div>
@@ -90,12 +90,13 @@
             k = '<ul class="no-bullet">' +
                   '<li data-ng-repeat="node in ' + e + '">' +
                     ' <div data-ng-click="selectNodeHead(node, $event)">' +
+                      '<input type="checkbox" class="input-control" ng-model="node.remove" ng-hide="' + (c.treeNested || false) + '" ng-click="clickInput(node, $event)">' +
                       '<i class="fa fa-fw fa-plus-square-o" data-ng-show="!node.' + d + '.loaded || (node.' + d + '.length && node.collapsed)" data-ng-click="selectNodeHead(node, $event)"></i>' +
                       '<i class="fa fa-fw fa-minus-square-o" data-ng-show="node.' + d + '.length && !node.collapsed" data-ng-click="selectNodeHead(node, $event)"></i>' +
                       '<i class="fa fa-fw" data-ng-hide="!node.' + d + '.loaded || node.' + d + '.length"></i>' +
                       ' {{node.' + h + '}}' +
                       '</div>' +
-                    '<div data-ng-hide="!node.' + d + '.loaded || node.collapsed" data-tree-model="node.' + d + '" data-node-label="' + h + '" data-node-children="' + d + '"></div>' +
+                    '<div data-ng-hide="!node.' + d + '.loaded || node.collapsed" data-tree-model="node.' + d + '" data-node-label="' + h + '" data-node-children="' + d + '" data-tree-nested="true"></div>' +
                   '</li>' +
                 '</ul>';
             e && e.length && (c.angularTreeview ? (
@@ -112,6 +113,10 @@
               if (c.onSelected) {
                 scope[c.onSelected](ax);
               }
+            },
+            scope.clickInput = scope.removeFromGroup || function (node, ev) {
+              ev.stopPropagation && ev.stopPropagation();
+              ev.cancelBubble = !0;
             }
               )
             : g.html($compile(k)(scope)))
@@ -134,7 +139,7 @@
     angular.module('sarDatabase').directive('statusGlyph', function () {
       return {
         restrict: 'E',
-        template: "<i ng-class=\"{'text-success': test, 'fa-check': test, 'fa-times': !test, 'text-danger': !test}\" class=\"fa\"></i>",
+        template: "<i ng-class=\"{'text-success': test, 'fa-check': test, 'fa-exclamation': !test, 'text-danger': !test}\" class=\"fa\"></i>",
         scope: {
           test: '='
         }
@@ -186,7 +191,7 @@
               if (!self.groups[group]) {
                 self.groups[group] = { name: group, groups: [] };
                 self.groups[group].groups.loaded = false;
-                accountModel.groups.push($.extend({ collapsed: true }, self.groups[group]));
+                accountModel.groups.push($.extend({ collapsed: true, remove: false }, self.groups[group]));
               }
             });
             delete accountModel.groups.loading;
@@ -212,7 +217,7 @@
                 self.groups[group] = { name: group, groups: [] };
                 self.groups[group].groups.loaded = false;
               }
-              groupModel.groups.push($.extend({ collapsed: true }, self.groups[group]));
+              groupModel.groups.push($.extend({ collapsed: true, remove: false }, self.groups[group]));
             })
             groupModel.groups.loaded = true;
           })
@@ -254,6 +259,15 @@
           options: { usePreciseDates: false },
           onGroupSelected: function (node) {
             AccountService.loadMoreGroups(node);
+          },
+          onGroupRemove: function (node) {
+            alert("would confirm then remove account from group");
+            return false;
+          },
+          getGroupsToRemove: function () {
+            return $scope.account.groups.filter(function (g) {
+               return !!g.remove;
+             });
           },
           nyi: function() { alert('Not implemented')}
         });
