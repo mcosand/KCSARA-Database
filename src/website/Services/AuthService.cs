@@ -136,7 +136,7 @@
 
     public IEnumerable<string> GetGroupsForUser(string username)
     {
-      return Kcsar.Membership.RoleProvider.GetRoles().Select(f => f.Name);
+      return ((INestedRoleProvider)Roles.Provider).GetRolesForUser(username, false);
     }
 
     public IEnumerable<string> GetGroupsFoGroup(string group)
