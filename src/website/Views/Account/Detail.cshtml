@@ -24,15 +24,15 @@
           <li>Password changed {{options.usePreciseDates ? 'on ' + account.lastPassword.format() : account.lastPassword.fromNow()}}</li>
         </ul>
       </div>
-      <div class="box-footer text-center">
+      <div class="box-footer box-action-footer text-center">
         <div class="col-xs-4">
-          <button class="btn btn-link" ng-click="nyi()">{{account.locked ? 'Unlock' : 'Lock'}} Account</button>
+          <button class="btn" ng-click="nyi()">{{account.locked ? 'Unlock' : 'Lock'}} Account</button>
         </div>
         <div class="col-xs-4">
-          <button class="btn btn-link" ng-click="nyi()">Change Email</button>
+          <button class="btn" ng-click="nyi()">Change Email</button>
         </div>
         <div class="col-xs-4">
-          <button class="btn btn-link" ng-click="nyi()">Set Password</button>
+          <button class="btn" ng-click="nyi()">Set Password</button>
         </div>
       </div>
     </div>
@@ -67,9 +67,9 @@
       <div class="box-body">
         <div data-angular-treeview="true" data-tree-model="account.groups" data-node-label="name" data-node-children="groups" data-on-selected="onGroupSelected" data-on-remove="onGroupRemove"></div>
       </div>
-      <div class="box-footer text-center">
-        <button class="btn btn-link" ng-click="nyi()">Add To Group</button>
+      <div class="box-footer box-action-footer text-center">
         <div class="col-xs-6"><button class="btn" ng-disabled="!getGroupsToRemove().length" ng-click="nyi()">Remove From Groups</button></div>
+        <div class="col-xs-6"><button class="btn" ng-click="nyi()">Add To Group</button></div>
       </div>
     </div>
   </div>

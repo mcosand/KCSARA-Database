@@ -49,12 +49,78 @@ ul.no-bullet {
   padding-left: 20px;
 }
 
-.box {
-  box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);
-}
 .box.box-primary {
     border-top-color: #008d4c;
 }
-.btn-link, a {
+a {
   color: #008d4c;
+}
+
+.sidebar-menu > li > ul.treeview-menu {
+  padding-bottom: .3em;
+  padding-top:.4em;
+  position: relative; /* so z-index has effect */
+}
+.sidebar-menu > li > ul.treeview-menu form {
+  padding-top:0px;
+  margin-top:5px;
+}
+
+.box-action-footer {
+  padding: 0;
+}
+.box-action-footer>div{
+  padding:0
+}
+.box-action-footer .btn {
+  width: 100%;
+  border-radius:0;
+  outline: none !important;
+  background-color: transparent;
+  border-color: transparent;
+  color: #008d4c;
+}
+.box-action-footer div:not(:first-child) {
+  border-left: 1px solid #f4f4f4;
+}
+
+.box-action-footer .btn:hover,
+.box-action-footer .btn:visited
+{
+  text-decoration: none;
+}
+
+.shadow-1,
+header,
+aside.main-sidebar,
+.box-action-footer .btn:hover
+{
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    z-index:10;
+}
+.shadow-2,
+.sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > a > span:not(.pull-right),
+.sidebar-menu > li:not(.header):hover > a,
+.box-action-footer .btn:active,
+.box
+ {
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    z-index:20;
+}
+.shadow-3,
+.sidebar-mini.sidebar-collapse .sidebar-menu > li:active > a > span:not(.pull-right),
+.sidebar-menu > li:not(.header):active > a,
+.sidebar-menu > li > ul.treeview-menu {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    z-index:30;
+}
+.shadow-4 {
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+    z-index:40;
+}
+.shadow-5 {
+    box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+}
+.sidebar-menu > li:not(.header):active > a {
+  z-index:29
 }
