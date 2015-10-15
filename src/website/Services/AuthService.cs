@@ -1,19 +1,17 @@
 ﻿/*
- * Copyright 2010-2014 Matthew Cosand
+ * Copyright 2010-2015 Matthew Cosand
  */
-
-
-namespace Kcsara.Database.Services
+ namespace Kcsara.Database.Services
 {
   using System;
   using System.Collections.Generic;
   using System.Linq;
-  using System.Web;
-  using System.Web.Security;
   using System.Security.Principal;
+  using System.Web;
   using System.Web.Profile;
-  using Kcsar.Membership;
+  using System.Web.Security;
   using Kcsar.Database.Model;
+  using Kcsar.Membership;
 
   public class AuthService : IAuthService
   {
@@ -29,18 +27,8 @@ namespace Kcsara.Database.Services
       UserId = Guid.Empty;
       if (user != null)
       {
-        UserId = UsernameToMemberKey(user.Identity.Name) ?? UserId;
+        UserId = context.Members.Where(f => f.Username == user.Identity.Name).Select(f => f.Id).FirstOrDefault();
       }
-    }
-
-    public static Guid? UsernameToMemberKey(string name)
-    {
-      KcsarUserProfile profile = ProfileBase.Create(name) as KcsarUserProfile;
-      if (profile.UsesLink)
-      {
-        return new Guid(profile.LinkKey);
-      }
-      return null;
     }
 
     public bool IsUserOrLocal(HttpRequestBase request)
@@ -49,7 +37,7 @@ namespace Kcsara.Database.Services
                       f.GetIPProperties().UnicastAddresses.Select(g =>
                               g.Address.ToString()));
 
-      return this.IsUser || ips.Contains(request.UserHostAddress);
+      return IsUser || ips.Contains(request.UserHostAddress);
     }
 
     public bool IsSelf(Guid id)
@@ -57,28 +45,33 @@ namespace Kcsara.Database.Services
       return (UserId == id);
     }
 
+    public bool IsSelf(string username)
+    {
+      return (user != null && user.Identity != null && user.Identity.IsAuthenticated && user.Identity.Name == username);
+    }
+
     public bool IsAdmin
     {
-      get { return this.IsInRole("cdb.admins"); }
+      get { return IsInRole("cdb.admins"); }
     }
 
     public bool IsAuthenticated
     {
-      get { return (this.user != null) && this.user.Identity.IsAuthenticated; }
+      get { return (user != null) && user.Identity.IsAuthenticated; }
     }
 
     public bool IsUser
     {
-      get { return this.IsInRole("cdb.users"); }
+      get { return IsInRole("cdb.users"); }
     }
 
     public bool IsInRole(params string[] group)
     {
-      if (this.user == null) return false;
+      if (user == null) return false;
 
       foreach (string g in group)
       {
-        if (this.user.IsInRole(g)) return true;
+        if (user.IsInRole(g)) return true;
       }
       return false;
     }
@@ -96,9 +89,14 @@ namespace Kcsara.Database.Services
         return false;
       }
 
+      if (IsAdmin)
+      {
+        return true;
+      }
+
       foreach (UnitMembership um in member.GetActiveUnits())
       {
-        if (this.IsInRole(um.Unit.DisplayName.Replace(" ", "").ToLowerInvariant() + "." + role))
+        if (IsInRole(um.Unit.DisplayName.Replace(" ", "").ToLowerInvariant() + "." + role))
         {
           return true;
         }
@@ -109,7 +107,7 @@ namespace Kcsara.Database.Services
     public bool IsRoleForUnit(string role, Guid unitId)
     {
       string unitName = (from u in context.Units where u.Id == unitId select u.DisplayName).FirstOrDefault();
-      return this.IsInRole(unitName.Replace(" ", "").ToLowerInvariant() + "." + role);
+      return IsInRole(unitName.Replace(" ", "").ToLowerInvariant() + "." + role);
     }
 
     public bool IsMembershipForUnit(Guid id)
@@ -122,7 +120,7 @@ namespace Kcsara.Database.Services
       List<SarUnit> list = new List<SarUnit>();
       foreach (SarUnit u in (from unit in context.Units select unit))
       {
-        if (this.IsInRole(u.DisplayName.Replace(" ", "").ToLowerInvariant() + ".membership"))
+        if (IsInRole(u.DisplayName.Replace(" ", "").ToLowerInvariant() + ".membership"))
         {
           list.Add(u);
         }
@@ -134,6 +132,16 @@ namespace Kcsara.Database.Services
     public void DeleteUser(string id)
     {
       Membership.DeleteUser(id);
+    }
+
+    public IEnumerable<string> GetGroupsForUser(string username)
+    {
+      return Kcsar.Membership.RoleProvider.GetRoles().Select(f => f.Name);
+    }
+
+    public IEnumerable<string> GetGroupsFoGroup(string group)
+    {
+      return ((INestedRoleProvider)Roles.Provider).GetRolesWithRole(group);
     }
   }
 }

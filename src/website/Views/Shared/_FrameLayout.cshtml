@@ -1,71 +1,103 @@
 ﻿@{
   Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<div class="header-container">
-  <div class="nav-login">
-    @if (User.Identity.IsAuthenticated)
-    {
-      <span>Welcome <b>@string.Format("{0} [{1}]", ((Kcsar.Membership.KcsarUserProfile)Profile).FirstName, User.Identity.Name))</b>!</span>
-    
-    <ul>
-      <li>@(Html.ActionLink<AccountController>(f => f.Logout(), Strings.LogoutPrompt))</li>
-    </ul>
-    } else {
-    <ul>
-      <li class="first">@(Html.ActionLink<AccountController>(f => f.Login(), Strings.LoginPrompt))</li>
-    </ul>
-    }
-  </div>
-  <div class="logo"><a href="@Url.Action(" Index", "Home" )">@Strings.GroupName</a></div>
-  <div class="clear"></div>
-</div>
-<div class="poster-container-no-image">
-  <div class="poster-inner" @((ViewData["HideMenu"] == null) ? "" : "style=\"min-height:30px;\"" )> </div>
-</div>
-@if (ViewData["HideMenu"] == null)
-{
-<div class="nav-second">
-  @*<asp:ContentPlaceHolder ID="secondaryNav" runat="server" />*@
-</div>
-}
-<div class="content-container">
-  <div class="content-container-inner" @((ViewData["HideMenu"] == null) ? "" : "style=\"padding:0px;\"")>
-        <div class="content-main" id="content"><a id="maincontent"></a>
-        @*<%= ConditionalDiv("alert", "border:solid 2px black; padding:.3em; margin:1em")%>
-        <%= ConditionalDiv("success", "border:solid 2px #008800; color:#008800; padding:.3em; margin:1em;")%>
-        <%= ConditionalDiv("warning", "border:solid 2px orange; color:orange; padding:.3em; margin:1em")%>
-        <%= ConditionalDiv("error", "border:solid 2px red; color:red; padding:.3em; margin:1em")%>*@
-      @RenderBody()
 
-        </div>
-    <div class="content-left">
-      <div class="side-bucket">
-        <ul>
-        @if (User.IsInRole("cdb.users")) {
-          <li class="first">@(Html.ActionLink<MembersController>(x => x.Index(), "Members"))
-          @Html.Hidden("pid_m")
-          @Html.TextBox("searchMember_m", "", new { style = "width:110px; font-size:80%; display:inline;", @class = "input-box" })
+<header class="main-header">
+  <a href="~/" class="logo">
+    <span class="logo-mini"><b>SAR</b></span>
+    <span class="logo-lg"><b>KCSARA Database</b></span>
+  </a>
+  <nav class="navbar navbar-static-top" role="navigation">
+    <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+        <span class="sr-only">Toggle navigation</span>
+    </a>
+    <div class="navbar-custom-menu">
+      <ul class="nav navbar-nav">
+        @if (User.Identity.IsAuthenticated)
+        {
+          <li class="dropdown notifications-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              @string.Format("{0} {1}", ((Kcsar.Membership.KcsarUserProfile)Profile).FirstName, ((Kcsar.Membership.KcsarUserProfile)Profile).LastName)
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <ul class="menu">
+                  @if (ViewData["MemberId"] != null) { <li><a href="~/Members/Detail/@ViewData["MemberId"]"><i class="fa fa-home text-primary"></i> My Page</a></li> }
+                  <li>
+                    <a href="~/Account/Logout"><i class="fa fa-sign-out text-primary"></i> Logout</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
           </li>
-            <li>@(Html.ActionLink<TrainingController>(x => x.Index(), "Training"))
-            <ul><li>@(Html.ActionLink<TrainingController>(x => x.List(null), "Rosters"))</li></ul>
+          if (IsSectionDefined("pageSettings"))
+          {
+          <!-- Control Sidebar Toggle Button -->
+          <li>
+            <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
           </li>
-          <li>@(Html.ActionLink<MissionsController>(x => x.Index(), "Missions"))</li>
-
-          <li>@(Html.ActionLink<MapController>(x => x.Index(null), "Map"))</li>
-          <li>@(Html.ActionLink<UnitsController>(x => x.Index(), "Units"))</li>
-          <li>@(Html.ActionLink<AnimalsController>(x => x.Index(), "Animals"))</li>
-          <li>@(Html.ActionLink<AdminController>(f => f.Index(), "Admin"))</li>
-            if (User.IsInRole("cdb.admins")) {
-            <li>@(Html.ActionLink<LogController>(f => f.Index(), "Change Log"))</li>
-            }
-          <li>@(Html.ActionLink<AccountController>(f => f.Index(), "My Account"))</li>
           }
-        </ul>
-        <p id="showMInfoP" style="color:#888888; display:none"><input type="checkbox" id="showMInfo" />Show change info</p>
-      </div>
+        }
+        else
+        {
+          <li><i class="fa fa-sign-in"></i> @(Html.ActionLink<AccountController>(f => f.Login(), Strings.LoginPrompt))</li>
+        }
+      </ul>
     </div>
-  <div class="clear"></div>
-  </div>
+  </nav>
+</header>
+<aside class="main-sidebar">
+  <section class="sidebar">
+@if (User.IsInRole("cdb.users"))
+{
+  <ul class="sidebar-menu">
+    <li class="header">Main Navigation</li>
+    <li class="treeview">
+      <a href="#"><i class="fa fa-user"></i><span>Members</span><i class="fa fa-angle-down pull-right"></i></a>
+      <ul class="treeview-menu">
+        <li>
+          <form action="#" method="get" class="sidebar-form" onsubmit="alert('not implemented'); return false;">
+            <div class="input-group">
+              <input type="text" name="q" class="form-control" placeholder="Search ..." />
+              <span class="input-group-btn">
+                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
+              </span>
+            </div>
+          </form>
+        </li>
+        <li><a href="~/Members"><i class="fa fa-circle-o"></i> <span>Member List</span></a></li>
+      </ul>
+    </li>
+    <li class="treeview">
+      <a href="#"><i class="fa fa-book"></i> <span>Training</span><i class="fa fa-angle-down pull-right"></i></a>
+      <ul class="treeview-menu">
+        <li><a href="~/Training/List/"><i class="fa fa-circle-o"></i> Rosters</a></li>
+      </ul>
+    </li>
+    <li><a href="~/Missions/"><i class="fa fa-binoculars"></i> <span>Missions</span></a></li>
+    <li><a href="~/Units/"><i class="fa fa-users"></i> <span>Units</span></a></li>
+    <li><a href="~/Animals/"><i class="fa fa-paw"></i> <span>Animals</span></a></li>
+  </ul>
+}
+    @RenderSection("sidebar", false)
+  </section>
+</aside>
+<div class="content-wrapper">
+  <section class="content-header">
+    @RenderSection("header", false)
+  </section>
+  <section class="content">
+    @RenderBody()
+  </section>
 </div>
-
+<footer class="main-footer">
+  <strong>King County Search and Rescue Association</strong>
+</footer>
+<aside class="control-sidebar control-sidebar-dark">
+  <div class="tab-content">
+    @RenderSection("pageSettings", false)
+  </div>
+</aside>
+<div class="control-sidebar-bg"></div>
 @section head {@RenderSection("head", false)}
+@section scripts {@RenderSection("scripts", false)}

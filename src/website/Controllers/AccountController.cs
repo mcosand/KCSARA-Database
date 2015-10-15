@@ -5,26 +5,57 @@ namespace Kcsara.Database.Web.Controllers
 {
   using System;
   using System.Collections.Generic;
+  using System.Data.SqlClient;
+  using System.Globalization;
+  using System.Linq;
   using System.Security.Principal;
   using System.Threading;
   using System.Web.Mvc;
   using System.Web.Security;
   using System.Web.UI;
-  using System.Linq;
-  using System.Data.SqlClient;
-  using Config = System.Configuration;
+  using api.Models.Account;
   using Kcsar.Database.Model;
-  using Kcsar.Database;
-  using Kcsara.Database.Web.Controllers;
-  using System.Globalization;
-  using Kcsar.Membership;
   using Kcsara.Database.Web;
-  using System.Web.Profile;
   using Kcsara.Database.Web.Model;
+  using Config = System.Configuration;
 
   [OutputCache(Location = OutputCacheLocation.None)]
   public sealed class AccountController : BaseController
   {
+    [Authorize]
+    public ActionResult Detail(string id)
+    {
+      id = id ?? User.Identity.Name;
+
+      var user = Membership.GetUser(id);
+      if (user == null)
+      {
+        return Content("You do not have permissions to view account details for " + id);
+      }
+
+      ViewBag.Account = new AccountInfo
+      {
+        Name = id,
+        Approved = user.IsApproved,
+        Locked = user.IsLockedOut,
+        LastActive = user.LastActivityDate,
+        LastPassword = user.LastPasswordChangedDate,
+        LastLocked = user.LastLockoutDate < new DateTime(1900, 1, 1) ? (DateTimeOffset?)null : user.LastLockoutDate,
+        Email = user.Email
+      };
+
+      var member = db.Members.SingleOrDefault(f => f.Username == id);
+      if (member == null && !(Permissions.IsAdmin || Permissions.IsSelf(id)))
+      {
+        return Content("You do not have permissions to view account details for " + id);
+      }
+      else if (member != null && !Permissions.IsMembershipForPerson(member.Id))
+      {
+        return Content("You do not have permissions to view account details for " + id);
+      }
+      return View();
+    }
+
     public ActionResult Signup()
     {
       ViewData["Title"] = "New Member Application";
@@ -152,46 +183,6 @@ namespace Kcsara.Database.Web.Controllers
       redirect = redirect.Replace("%TICKET%", ticket.ToString());
       redirect = redirect.Replace("%URL%", returnUrl);
       return Redirect(redirect);
-    }
-
-    [AcceptVerbs(HttpVerbs.Get)]
-    [Authorize(Roles = "cdb.users")]
-    [RequireHttps]
-    public ActionResult Settings()
-    {
-      ViewData["lstUnitFilter"] = new MultiSelectList((from u in this.db.Units select u), "Id", "DisplayName", this.UserSettings.UnitFilter);
-      ViewData["coordDisplay"] = (int)this.UserSettings.CoordinateDisplay;
-      return View();
-    }
-
-    [AcceptVerbs(HttpVerbs.Post)]
-    [Authorize(Roles = "cdb.users")]
-    [RequireHttps]
-    public ActionResult Settings(FormCollection fields)
-    {
-      //if (fields["lstUnitFilter"] == null)
-      //{
-      //    this.UserSettings.UnitFilter.Clear();
-      //}
-      //else
-      //{
-      //    this.UserSettings.UnitFilter = new List<Guid>(fields["lstUnitFilter"].Split(',').Select(f => new Guid(f)));
-      //}
-
-      //if (string.IsNullOrEmpty(fields["setTime"]))
-      //{
-      //    this.UserSettings.AtTime = null;
-      //}
-      //else
-      //{
-      //    this.UserSettings.AtTime = DateTime.Parse(fields["setTime"]);
-      //}
-
-      this.UserSettings.CoordinateDisplay = (CoordinateDisplay)Enum.Parse(typeof(CoordinateDisplay), fields["coordDisplay"]);
-
-      SettingsProvider.SaveSettings(this.UserSettings, this.SetSessionValue, !string.IsNullOrEmpty(fields["persist"]));
-
-      return RedirectToAction("ClosePopup");
     }
 
     [Authorize]
@@ -350,32 +341,12 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs(HttpVerbs.Get)]
-    //   [RequireHttps]
     public ActionResult ReAuth()
     {
       return View();
     }
 
-    //[AcceptVerbs(HttpVerbs.Post)]
-    //[RequireHttps]
-    //public JsonDataContractResult ServiceLogin(string username, string password)
-    //{
-    //    bool success = Provider.ValidateUser(username, password);
-    //    if (success)
-    //    {
-    //        FormsAuth.SetAuthCookie(username, false);
-    //    }
-
-    //    return new JsonDataContractResult(new SubmitResult<bool>
-    //    {
-    //        Errors = new SubmitError[0],
-    //        Result = success
-    //    });
-    //}
-
-
     [AcceptVerbs(HttpVerbs.Post)]
-    //    [RequireHttps]
     public ActionResult Login(string username, string password, bool rememberMe, string returnUrl, int? id, int? p)
     {
       ViewData["PageTitle"] = "Login";
@@ -413,9 +384,11 @@ namespace Kcsara.Database.Web.Controllers
           }
           else if (Roles.IsUserInRole(username, api.AccountController.APPLICANT_ROLE))
           {
-            KcsarUserProfile profile = ProfileBase.Create(username) as KcsarUserProfile;
-            if (!string.IsNullOrWhiteSpace(profile.LinkKey))
-              return RedirectToAction("Detail", "Members", new { id = profile.LinkKey });
+            var member = db.Members.FirstOrDefault(f => f.Username == username);
+            if (member != null)
+            {
+              return RedirectToAction("Detail", "Members", new { id = member.Id });
+            }
           }
           return RedirectToAction("Index", "Home");
         }
@@ -484,84 +457,5 @@ namespace Kcsara.Database.Web.Controllers
           return "An unknown error occurred. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
       }
     }
-
-    //[HttpGet]
-    //public ActionResult FixupUnitMemberGroups()
-    //{
-    //    if (!Permissions.IsUserOrLocal(Request))
-    //    {
-    //        Response.StatusCode = 403;
-    //        return new ContentResult { Content = "Not enough permission" };
-    //    }
-
-    //    string results = string.Empty;
-
-    //    using (var ctx = GetContext())
-    //    {
-    //        foreach (var group in ctx.Units)
-    //        {
-    //            List<string> usersToAdd = new List<string>();
-
-    //            string groupName = string.Format("sec.{0}.members", group.DisplayName);
-
-    //            if (!Roles.RoleExists(groupName))
-    //            {
-    //                results += "Role " + groupName + " does not exist\n";
-    //                continue;
-    //            }
-
-    //            var usersInGroup = Roles.GetUsersInRole(groupName).Select(f => Memberuser.Create(f)).ToDictionary(f => f.Username, f => f.Id);
-    //            var usersToRemove = new List<string>(usersInGroup.Keys);
-
-    //            ////    List<string> accountsInGroup = new List<string>(Roles.GetUsersInRole(string.Format("sec.{0}.members", group.DisplayName)));
-
-    //            List<Member> usersInUnit = ctx.GetActiveMembers(group.Id, DateTime.Now, "ContactNumbers").ToList();
-
-    //            foreach (Member m in usersInUnit)
-    //            {
-    //                if (!usersInGroup.ContainsValue(m.Id))
-    //                {
-    //                    string memberEmail = m.ContactNumbers.Where(f => f.Type == "email").OrderBy(f => f.Priority).Select(f => f.Value).FirstOrDefault();
-    //                    if (string.IsNullOrWhiteSpace(memberEmail))
-    //                    {
-    //                        results += "Member " + m.FullName + " has no registered email\n";
-    //                        continue;
-    //                    }
-
-    //                    string username = Membership.GetUserNameByEmail(memberEmail);
-    //                    if (string.IsNullOrWhiteSpace(username))
-    //                    {
-    //                        results += "Member " + m.FullName + " has no account with email " + memberEmail + "\n";
-    //                        continue;
-    //                    }
-
-    //                    usersToAdd.Add(username);
-    //                }
-    //                foreach (string user in usersInGroup.Where(f => f.Value == m.Id).Select(f => f.Key))
-    //                {
-    //                    usersToRemove.Remove(user);
-    //                }
-    //            }
-
-    //            results += string.Join("\n", usersToAdd.Select(f => string.Format("Adding '{0}' to group '{1}'", f, groupName)).ToArray()) + "\n";
-    //            results += string.Join("\n", usersToRemove.Select(f => string.Format("Removing '{0}' from group '{1}'", f, groupName)).ToArray()) + "\n\n";
-
-    //            //      Roles.AddUsersToRole(usersToAdd.ToArray(), groupName);
-    //            //      Roles.RemoveUsersFromRole(usersInGroup.Select(f => f.Value).ToArray(), groupName);
-    //        }
-    //    }
-
-    //    return new ContentResult { ContentType = "text/plain", Content = "Done.\n" + results };
-    //}
-
-    //private class Memberuser
-    //{
-    //    public Guid? Id { get; set; }
-    //    public string Username { get; set; }
-    //    public static Memberuser Create(string username)
-    //    {
-    //        return new Memberuser { Id = Kcsar.Membership.MembershipProvider.UsernameToMemberKey(username), Username = username };
-    //    }
-    //}
   }
 }

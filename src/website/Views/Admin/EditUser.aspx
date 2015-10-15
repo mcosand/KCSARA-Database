@@ -20,12 +20,6 @@
       <td>
         <%: Html.TextBoxFor(m => m.Email) %><%: Html.ValidationMessageFor(f => f.Email) %></td>
     </tr>
-    <tr><td>Link</td><td><%: Html.TextBoxFor(m => m.LinkKey) %></td></tr>
-    <tr><td>External:</td>
-      <td>
-        <%: Html.TextBoxFor(model => model.ExternalSources)%><%: Html.ValidationMessageFor(f => f.ExternalSources) %>
-      </td>
-    </tr>
     <tr><td colspan="2">
       <input type="submit" value="Update" /></td>
     </tr>

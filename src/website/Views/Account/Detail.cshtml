@@ -1,0 +1,274 @@
+﻿@{
+  ViewBag.Title = "Account Details :: " + ViewBag.Account.Name;
+  ViewBag.NgApp = "sarDatabase";
+  ViewBag.NgController = "AccountDetailCtrl";
+}
+@section header {
+  <h1>Account Detail for @ViewBag.Account.Name</h1>
+}
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="box box-primary">
+      <div class="box-header with-border">
+        <h3 class="box-title">Database Login Account</h3>
+      </div>
+      <div class="box-body">
+        <ul class="clearfix ng-cloak">
+          <li>Email {{account.email ? account.email : 'no email'}} <status-glyph test="account.email"></status-glyph></li>
+          <li>Is approved <status-glyph test="account.approved"></status-glyph></li>
+          <li>
+            Is not locked <status-glyph test="!account.locked"></status-glyph>
+          </li>
+          <li>Last active {{options.usePreciseDates ? 'on ' + account.lastActive.format() : account.lastActive.fromNow()}}</li>
+          <li>Password changed {{options.usePreciseDates ? 'on ' + account.lastPassword.format() : account.lastPassword.fromNow()}}</li>
+        </ul>
+      </div>
+      <div class="box-footer text-center">
+        <div class="col-xs-4">
+          <button class="btn btn-link" ng-click="nyi()">{{account.locked ? 'Unlock' : 'Lock'}} Account</button>
+        </div>
+        <div class="col-xs-4">
+          <button class="btn btn-link" ng-click="nyi()">Change Email</button>
+        </div>
+        <div class="col-xs-4">
+          <button class="btn btn-link" ng-click="nyi()">Set Password</button>
+        </div>
+      </div>
+    </div>
+    <div class="box box-primary">
+      <div class="box-header with-border">
+        <h3 class="box-title">Linked KCSARA Member</h3>
+      </div>
+      <div class="box-body">
+        <div ng-if="account.linkedMember.loading">Loading ...</div>
+        <div ng-if="account.linkedMember.loaded">
+          <div ng-if="!account.linkedMember.id">Not linked to member.</div>
+          <ul ng-if="account.linkedMember.id" class="clearfix ng-cloak">
+            <li>Member name {{account.linkedMember.name}}</li>
+            <li>DEM# {{account.linkedMember.dem}}</li>
+            <li>
+              Active Units <status-glyph test="account.linkedMember.units"></status-glyph>
+              <ul>
+                <li ng-repeat="u in account.linkedMember.units">{{u.Name}}</li>
+              </ul>
+            </li>
+            <li><a ng-href="{{window.appRoot + '/Members/Detail/' + account.linkedMember.id}}">Details Page</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="box box-primary">
+      <div class="box-header with-border">
+        <h3 class="box-title">Database Group Membership</h3>
+      </div>
+      <div class="box-body">
+        <div data-angular-treeview="true" data-tree-model="account.groups" data-node-label="name" data-node-children="groups" data-on-selected="onGroupSelected">
+        </div>
+      </div>
+      <div class="box-footer text-center">
+        <button class="btn btn-link" ng-click="nyi()">Add To Group</button>
+      </div>
+    </div>
+  </div>
+</div>
+@section scripts {
+  <script type="text/javascript">
+    /*
+    angular.treeview.js
+*/
+    (function (l) {
+      l.module("angularTreeview", []).directive("treeModel", ['$compile', function ($compile) {
+        return {
+          restrict: "A",
+          link: function (scope, g, c) {
+            var e = c.treeModel,
+              h = c.nodeLabel || "label",
+              d = c.nodeChildren || "children",
+            k = '<ul class="no-bullet">' +
+                  '<li data-ng-repeat="node in ' + e + '">' +
+                    ' <div data-ng-click="selectNodeHead(node, $event)">' +
+                      '<i class="fa fa-fw fa-plus-square-o" data-ng-show="!node.' + d + '.loaded || (node.' + d + '.length && node.collapsed)" data-ng-click="selectNodeHead(node, $event)"></i>' +
+                      '<i class="fa fa-fw fa-minus-square-o" data-ng-show="node.' + d + '.length && !node.collapsed" data-ng-click="selectNodeHead(node, $event)"></i>' +
+                      '<i class="fa fa-fw" data-ng-hide="!node.' + d + '.loaded || node.' + d + '.length"></i>' +
+                      ' {{node.' + h + '}}' +
+                      '</div>' +
+                    '<div data-ng-hide="!node.' + d + '.loaded || node.collapsed" data-tree-model="node.' + d + '" data-node-label="' + h + '" data-node-children="' + d + '"></div>' +
+                  '</li>' +
+                '</ul>';
+            e && e.length && (c.angularTreeview ? (
+            scope.$watch(
+              e,
+              function (m, b) { g.empty().html($compile(k)(scope)) },
+              !1),
+            scope.selectNodeHead = scope.selectNodeHead || function (ax, b) {
+              b.stopPropagation && b.stopPropagation();
+              b.preventDefault && b.preventDefault();
+              b.cancelBubble = !0;
+              b.returnValue = !1;
+              ax.collapsed = ax.collapsed === undefined ? false : !ax.collapsed;
+              if (c.onSelected) {
+                scope[c.onSelected](ax);
+              }
+            }
+              )
+            : g.html($compile(k)(scope)))
+          }
+        }
+      }])
+    })(angular);
+
+    var DatabaseAccountModel = function (dto) {
+      $.extend(this, dto);
+      this.lastActive = moment(this.lastActive);
+      this.lastPassword = moment(this.lastPassword);
+      this.lastLocked = this.lastLocked ? moment(this.lastLocked) : null;
+      this.groups = [];
+      this.groups.loaded = false;
+      this.linkedMember = {};
+      this.linkedMember.loaded = false;
+    };
+    angular.module('sarDatabase', ['angularTreeview']);
+    angular.module('sarDatabase').directive('statusGlyph', function () {
+      return {
+        restrict: 'E',
+        template: "<i ng-class=\"{'text-success': test, 'fa-check': test, 'fa-times': !test, 'text-danger': !test}\" class=\"fa\"></i>",
+        scope: {
+          test: '='
+        }
+      }
+    });
+    angular.module('sarDatabase').directive('groupNode', function () {
+      return {
+        restrict: 'E',
+        template: "<li ng-click=\"console.log(arguments);onRemove(name)\">{{name}}<button class=\"btn btn-inline btn-link\"><i class=\"text-danger fa fa-remove\"></i></button></li>",
+        scope: {
+          name: '=',
+          list: '=',
+          onRemove: '&'
+        }
+      }
+    })
+
+    angular.module('sarDatabase').service('AccountService', ['$http', '$q', function ($http, $q) {
+      self = this;
+
+      $.extend(this, {
+        accounts: {},
+        groups: {},
+        initAccount: function (model) {
+          var accountModel;
+          if (model['name']) {
+            accountModel = new DatabaseAccountModel(model);
+            self.accounts[model.name] = accountModel;
+          }
+          return accountModel;
+        },
+        loadGroups: function (username) {
+          var accountModel = self.accounts[username];
+
+          var deferred = $q.defer();
+          if (accountModel.groups.loaded) {
+            deferred.resolve(accountModel.groups);
+            return deferred;
+          }
+
+          accountModel.groups.length = 0;
+          accountModel.groups.loading = true;
+
+          $http({
+            method: 'GET',
+            url: window.appRoot + 'api/account/rolesforuser/' + username,
+          }).success(function (data) {
+            $.each(data, function (idx, group) {
+              if (!self.groups[group]) {
+                self.groups[group] = { name: group, groups: [] };
+                self.groups[group].groups.loaded = false;
+                accountModel.groups.push($.extend({ collapsed: true }, self.groups[group]));
+              }
+            });
+            delete accountModel.groups.loading;
+            accountModel.groups.loaded = true;
+            deferred.resolve(data);
+          })
+          .error(function (response) { deferred.reject(response); });
+        },
+        loadMoreGroups: function (group) {
+          var groupModel = self.groups[group.name];
+          var deferred = $q.defer();
+          if (groupModel.groups.loaded) {
+            deferred.resolve();
+            return deferred.promise;
+          }
+
+          $http({
+            method: 'GET',
+            url: window.appRoot + 'api/account/rolesforrole/' + group.name
+          }).success(function (data) {
+            $.each(data, function (idx, group) {
+              if (!self.groups[group]) {
+                self.groups[group] = { name: group, groups: [] };
+                self.groups[group].groups.loaded = false;
+              }
+              groupModel.groups.push($.extend({ collapsed: true }, self.groups[group]));
+            })
+            groupModel.groups.loaded = true;
+          })
+          return deferred.promise;
+        },
+        loadLinkedMember: function (username) {
+          var accountModel = self.accounts[username];
+          var deferred = $q.defer();
+          if (accountModel.linkedMember.loaded) {
+            deferred.resolve(accountModel.linkedMember);
+            return deferred;
+          }
+          accountModel.linkedMember.loading = true;
+          $http({
+            method: 'GET',
+            url: window.appRoot + 'api/members/byusername/' + username
+          }).success(function (data) {
+            if (data.length == 1) {
+              accountModel.linkedMember.id = data[0].Id;
+              accountModel.linkedMember.name = data[0].Name;
+              accountModel.linkedMember.units = data[0].Units;
+              accountModel.linkedMember.dem = data[0].DEM;
+            }
+            delete accountModel.linkedMember.loading;
+            accountModel.linkedMember.loaded = true;
+            deferred.resolve(data);
+          })
+          .error(function (response) { deferred.reject(response); });
+        }
+      });
+    }]);
+
+    angular.module('sarDatabase').controller('AccountDetailCtrl', ['$scope', 'AccountService',
+      function ($scope, AccountService) {
+        var accountModel = AccountService.initAccount(@(new HtmlString(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.Account, Kcsar.Utils.GetJsonSettings()))));
+        $.extend($scope, {
+          account: accountModel,
+          groups: AccountService.groups,
+          options: { usePreciseDates: false },
+          onGroupSelected: function (node) {
+            AccountService.loadMoreGroups(node);
+          },
+          nyi: function() { alert('Not implemented')}
+        });
+        AccountService.loadGroups(accountModel.name);
+        AccountService.loadLinkedMember(accountModel.name);
+      }]);
+  </script>
+}
+@section pageSettings {
+  <div class="form-group">
+    <label class="control-sidebar-subheading">
+      Show Precise Times <input type="checkbox" class="pull-right" ng-model="options.usePreciseDates" />
+    </label>
+    <p>
+      Show dates as exact date and time instead of more readable English.
+    </p>
+  </div><!-- /.form-group -->
+}

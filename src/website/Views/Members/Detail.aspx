@@ -29,9 +29,9 @@
            { %>
           Youth Member<br />
         <% } %>
-          <% if ((bool)ViewData["CanEditAdmin"])
+          <% if ((bool)ViewData["CanEditMember"])
      { %>
-     <%: string.IsNullOrEmpty(m.Username) ? MvcHtmlString.Empty : MvcHtmlString.Create(m.Username) %><br />
+     <%: string.IsNullOrEmpty(m.Username) ? MvcHtmlString.Empty : Html.ActionLink<AccountController>(f => f.Detail(m.Username), m.Username) %><br />
   <% } %>
 
         <div style="position:absolute; bottom:.2em; right:.2em;">
@@ -40,7 +40,7 @@
         <%= (bool)ViewData["CanEditPhoto"] ? Html.PopupActionLink<MembersController>(x => x.PhotoUpload(m.Id.ToString()), "Photo", 400) : MvcHtmlString.Empty %>
         <%= (bool)ViewData["CanPrintBadge"] ? Html.ActionLink<MembersController>(x => x.Badges(m.Id.ToString()), "Badges").ToString() : "" %>
         <%= (bool)ViewData["CanEditMember"] ? Html.PopupActionLink<MembersController>(x => x.Edit(m.Id), "Edit", 300).ToString() : "" %>
-        <%= (bool)ViewData["CanEditAdmin"] ? Html.ActionLink<MembersController>(x => x.Delete(m.Id), Strings.ActionDelete).ToString() : "" %>
+        <%= (bool)ViewData["CanEditMember"] ? Html.ActionLink<MembersController>(x => x.Delete(m.Id), Strings.ActionDelete).ToString() : "" %>
         </div>
       </div>
       <div style="clear:both"></div>

@@ -1,40 +1,33 @@
 ﻿/*
- * Copyright 2009-2014 Matthew Cosand
+ * Copyright 2009-2015 Matthew Cosand
  */
 
 namespace Kcsara.Database.Web.api.Models
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Web;
-    using System.Runtime.Serialization;
-    using Kcsar.Database.Model;
+  using System;
+  using System.Collections.Generic;
+  using Kcsar.Database.Model;
 
-    [DataContract]
-    public class MemberSummary
+  public class MemberSummary
+  {
+    public Guid Id { get; set; }
+    public string Name { get; set; }
+
+    [Newtonsoft.Json.JsonProperty("DEM")]
+    public string WorkerNumber { get; set; }
+
+
+    public NameIdPair[] Units { get; set; }
+
+    public MemberSummary()
     {
-        [DataMember]
-        public Guid Id { get; set; }
-        [DataMember]
-        public string Name { get; set; }
-        
-        [DataMember(Name="DEM")]
-        public string WorkerNumber { get; set; }
-        
-
-        [IgnoreDataMember]
-        public Dictionary<Guid, string> Units { get; set; }
-
-        public MemberSummary()
-        {
-        }
-
-        public MemberSummary(Member member)
-        {
-            this.Id = member.Id;
-            this.Name = member.ReverseName;
-            this.WorkerNumber = member.DEM;
-        }
     }
+
+    public MemberSummary(Member member)
+    {
+      this.Id = member.Id;
+      this.Name = member.ReverseName;
+      this.WorkerNumber = member.DEM;
+    }
+  }
 }

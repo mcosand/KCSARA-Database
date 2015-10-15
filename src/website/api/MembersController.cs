@@ -401,14 +401,17 @@ namespace Kcsara.Database.Web.api
         throw new HttpResponseException(System.Net.HttpStatusCode.BadRequest);
       }
 
+      DateTime cutoff = DateTime.Now;
       var result = db.Members.Where(f => f.Username == id)
         .OrderBy(f => f.LastName).ThenBy(f => f.FirstName)
+        .Select(f => new { Member = f, Units = f.Memberships.Where(g => (g.EndTime == null || g.EndTime > cutoff) && g.Status.IsActive).Select(g => g.Unit).Select(g => new NameIdPair { Id = g.Id, Name = g.DisplayName }).Distinct() })
         .AsEnumerable()
         .Select(f => new MemberSummary
         {
-          Name = f.FullName,
-          WorkerNumber = f.DEM,
-          Id = f.Id
+          Name = f.Member.FullName,
+          WorkerNumber = f.Member.DEM,
+          Id = f.Member.Id,
+          Units = f.Units.ToArray()
         });
 
       return result;

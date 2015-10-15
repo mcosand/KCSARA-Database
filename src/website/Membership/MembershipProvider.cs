@@ -85,15 +85,5 @@ namespace Kcsar.Membership
         Utils.SendMail(msg);
       }
     }
-
-    public static Guid? UsernameToMemberKey(string name)
-    {
-      KcsarUserProfile profile = ProfileBase.Create(name) as KcsarUserProfile;
-      if (profile.UsesLink)
-      {
-        return new Guid(profile.LinkKey);
-      }
-      return null;
-    }
   }
 }

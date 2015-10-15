@@ -145,4 +145,11 @@ namespace Kcsar.Database.Model
         UnderReview = 3,
         Complete = 4
     }
+
+  public enum CoordinateDisplay
+  {
+    DecimalDegrees,
+    DecimalMinutes,
+    DegreesMinutesSeconds
+  }
 }

@@ -4,7 +4,6 @@
 namespace Kcsara.Database.Web.api
 {
   using System.Web.Http;
-  using System.Web.Http.Controllers;
   using Newtonsoft.Json.Converters;
   using Ninject;
 

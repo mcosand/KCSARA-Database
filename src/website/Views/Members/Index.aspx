@@ -23,7 +23,7 @@
         <tr>
           <td><%= m.WorkerNumber %></td>
           <td><%= Html.ActionLink<MembersController>(x => x.Detail(m.Id), m.Name) %></td>
-          <td><%= string.Join(", ", m.Units.Values.OrderBy(f => f).ToArray()) %></td>
+          <td><%= string.Join(", ", m.Units.Select(f => f.Name).OrderBy(f => f).ToArray()) %></td>
          </tr>
       <% } %>
     </tbody>

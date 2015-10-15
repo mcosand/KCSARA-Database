@@ -68,5 +68,20 @@ namespace Internal.Website
     {
       return true;
     }
+
+    public bool IsSelf(string username)
+    {
+      return true;
+    }
+
+    public IEnumerable<string> GetGroupsForUser(string username)
+    {
+      return new string[0];
+    }
+
+    public IEnumerable<string> GetGroupsFoGroup(string group)
+    {
+      return new string[0];
+    }
   }
 }

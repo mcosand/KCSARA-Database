@@ -557,7 +557,7 @@ namespace Kcsara.Database.Web.Controllers
       ViewData["mission"] = m;
 
       model.Id = id;
-      ViewData["coordDisplay"] = this.UserSettings.CoordinateDisplay;
+      ViewData["coordDisplay"] = CoordinateDisplay.DecimalMinutes;
       ViewData["missionId"] = id;
       return View(model);
     }

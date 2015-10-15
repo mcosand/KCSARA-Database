@@ -3,21 +3,23 @@
 <head>
   <!-- Force latest IE rendering engine or ChromeFrame if installed -->
   <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><![endif]-->
-  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes" name="viewport">
   <title>@ViewData["Title"]</title>
-  <script type="text/javascript">var errorUrl = '@Url.RouteUrl("DefaultApi", new { httproute="", Controller = "telemetry", Action="error" })';</script>
-  <!--[if lt IE 9]><script src="<%= Url.Content("~/Scripts/html5.js") %>"></script><![endif]-->
-  @Styles.Render("~/Content/themes/base/jquery-ui")
-  @Styles.Render("~/Content/site-style")
-  <link href="@BundleTable.Bundles.ResolveBundleUrl("~/style/print")" rel="stylesheet" type="text/css" media="print" />
-  @Scripts.Render("~/script/core")
+  <script type="text/javascript">window.appRoot = '@Url.Content("~/")'; var errorUrl = '@Url.RouteUrl("DefaultApi", new { httproute="", Controller = "telemetry", Action="error" })';</script>
+  @Styles.Render("~/Content/bootstrap")
+  @*<link href="@BundleTable.Bundles.ResolveBundleUrl("~/style/print")" rel="stylesheet" type="text/css" media="print" />*@
+  @Scripts.Render("~/scripts/ng-core")
   @RenderSection("head", false)
   @*<asp:ContentPlaceHolder ID="HeadContent" runat="server" />*@
 </head>
-<body>
+<body class="skin-green sidebar-mini" @(ViewBag.NgController != null ? new HtmlString("ng-controller=\"" + ViewBag.NgController + "\"") : new HtmlString(string.Empty))>
+  @*<div class="wrapper">
+    @RenderBody()
+  </div>*@
   @RenderBody()
-  @*<asp:ContentPlaceHolder ID="MainContent" runat="server" />*@
-  @Html.Image("~/Content/images/progress.gif", new { id="progressbar", style="visibility:hidden; position:absolute;" })
+  @*@Html.Image("~/Content/images/progress.gif", new { id="progressbar", style="visibility:hidden; position:absolute;" })
   <div id="formsDelete" title="Delete {0}" style="display: none;">
     <form action="#">
       <fieldset>
@@ -38,11 +40,11 @@
         <input type="password" name="password" id="formsPassword" class="text ui-corner-all" />
       </fieldset>
     </form>
-  </div>
+  </div>*@
+  @RenderSection("scripts", false)
   <script type="text/javascript">
-    $(document).ready(function () {
-      kcsarInit('@(Url.Content("~").TrimEnd('/')+'/')');
-    });
+  $(document).ready(function() {
+  $.AdminLTE.layout.fix()
+  })
   </script>
-</body>
-</html>
+</body></html>

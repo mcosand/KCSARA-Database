@@ -1,0 +1,60 @@
+﻿.skin-green .main-header .navbar .nav > li > p {
+  color: #ffffff;
+}
+ul.menu-open > li > form.sidebar-form {
+  margin-top:0px;
+  padding-top:10px;
+}
+
+.navbar-nav > li > p {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-bottom: 0px;
+}
+@media (min-width: 768px) {
+  .navbar-nav > li > p {
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+}
+@media (max-width: 991px) {
+  .navbar-custom-menu .navbar-nav > li > p {
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+}
+.navbar-nav > .notifications-menu > .dropdown-menu {
+  width: initial;
+}
+
+.btn-inline {
+    padding-top: 0px;
+    padding-bottom: 0px;
+    vertical-align: inherit;
+    border: none;
+}
+
+ul{
+   margin-left: 0px;
+   padding-left: 30px;
+   /*
+     padding-left: 1em;
+   */ /* Set the distance from the list edge to 1x the font size */
+   list-style-position: outside;
+   list-style-image: none;
+}
+
+ul.no-bullet {
+  list-style: none;
+  padding-left: 20px;
+}
+
+.box {
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);
+}
+.box.box-primary {
+    border-top-color: #008d4c;
+}
+.btn-link, a {
+  color: #008d4c;
+}

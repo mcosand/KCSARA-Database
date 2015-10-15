@@ -40,6 +40,21 @@ namespace Kcsara.Database.Web.api
       this.formsAuth = formsAuth;
     }
 
+    [HttpGet]
+    [Authorize]
+    public IEnumerable<string> RolesForUser(string id)
+    {
+      return Permissions.GetGroupsForUser(id);
+    }
+
+
+    [HttpGet]
+    [Authorize]
+    public IEnumerable<string> RolesForRole(string id)
+    {
+      return Permissions.GetGroupsFoGroup(id);
+    }
+
     [HttpPost]
     [AllowAnonymous]
     public string PartnerLogin(string authKey, string username)
@@ -271,7 +286,6 @@ namespace Kcsara.Database.Web.api
         {
           profile.FirstName = member.FirstName;
           profile.LastName = member.LastName;
-          profile.LinkKey = member.Id.ToString();
           profile.Save();
         }
 

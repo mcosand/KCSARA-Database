@@ -7,11 +7,11 @@ namespace Kcsara.Database.Web.Controllers
   using System.Collections.Generic;
   using System.Configuration;
   using System.Data.Entity;
+  using System.Data.Entity.Validation;
   using System.Data.SqlClient;
   using System.Globalization;
   using System.Linq;
   using System.Text;
-  using System.Text.RegularExpressions;
   using System.Web;
   using System.Web.Mvc;
   using System.Web.Profile;
@@ -20,9 +20,8 @@ namespace Kcsara.Database.Web.Controllers
   using Kcsar.Membership;
   using Kcsara.Database.Geo;
   using Kcsara.Database.Web.Model;
-  using ApiModels = Kcsara.Database.Web.api.Models;
-  using System.Data.Entity.Validation;
   using log4net;
+  using ApiModels = Kcsara.Database.Web.api.Models;
 
   public partial class AdminController : BaseController
   {
@@ -163,31 +162,10 @@ namespace Kcsara.Database.Web.Controllers
         LastActive = account.LastLoginDate,
         FirstName = profile.FirstName,
         LastName = profile.LastName,
-        LinkKey = profile.LinkKey,
         Email = account.Email,
-        ExternalSources = profile.ExternalSource,
         IsLocked = account.IsLockedOut,
       };
       return row;
-    }
-
-    [Authorize(Roles = "site.accounts")]
-    [AcceptVerbs(HttpVerbs.Post)]
-    public ContentResult LinkAccount()
-    {
-      string acct = Request["acct"].ToLower();
-      Guid id = new Guid(Request["id"]);
-
-      KcsarUserProfile profile = ProfileBase.Create(acct) as KcsarUserProfile;
-      profile.LinkKey = id.ToString();
-      profile.Save();
-      Member m = this.db.Members.Where(x => x.Id == id).FirstOrDefault();
-      if (m != null && string.IsNullOrWhiteSpace(m.Username))
-      {
-        m.Username = acct;
-        this.db.SaveChanges();
-      }
-      return new ContentResult { Content = "OK", ContentType = "text/plain" };
     }
 
     [Authorize(Roles = "site.accounts")]
@@ -239,7 +217,7 @@ namespace Kcsara.Database.Web.Controllers
     {
       AccountListRow row = GetAccountView(id);
 
-      TryUpdateModel(row, new[] { "Email", "LinkKey", "ExternalSources" });
+      TryUpdateModel(row, new[] { "Email" });
 
       if (string.IsNullOrWhiteSpace(row.LinkKey))
       {
@@ -267,8 +245,6 @@ namespace Kcsara.Database.Web.Controllers
 
         if (profile.LastName != row.LastName) profile.LastName = row.LastName;
         if (profile.FirstName != row.FirstName) profile.FirstName = row.FirstName;
-        if (profile.LinkKey != row.LinkKey) profile.LinkKey = row.LinkKey;
-        if (profile.ExternalSource != row.ExternalSources) profile.ExternalSource = row.ExternalSources;
 
         try
         {
@@ -283,29 +259,6 @@ namespace Kcsara.Database.Web.Controllers
       }
 
       return View(row);
-      //TryUpdateModel(user, new[] { "Email" });
-
-
-
-      //ModelState.SetModelValue("Owners", fields["Owners"]);
-      //role.Owners.Clear();
-      //role.Owners.AddRange((fields["Owners"] ?? "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(f => new Guid(f.Trim())));
-
-      //ModelState.SetModelValue("Destinations", fields["Destinations"]);
-      //role.Destinations.Clear();
-      //role.Destinations.AddRange((fields["Destinations"] ?? "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(f => f.Trim()));
-
-      //try
-      //{
-      //    nested.UpdateRole(role);
-      //    ViewData["success"] = "Saved OK";
-      //}
-      //catch (Exception e)
-      //{
-      //    ViewData["error"] = e.ToString();
-      //}
-
-      //return View(role);    
     }
 
     [Authorize(Roles = "site.accounts")]
@@ -394,254 +347,6 @@ namespace Kcsara.Database.Web.Controllers
 
       return View(model);
     }
-
-    //[Authorize]
-    //public ActionResult ReconcileSubscriptions()
-    //{
-    //    string msgs = string.Empty;
-    //    INestedRoleProvider nested = Roles.Provider as INestedRoleProvider;
-    //    Dictionary<string, List<Guid>> visitedGroups = new Dictionary<string, List<Guid>>();
-
-    //    using (var ctx = GetContext())
-    //    {
-    //        foreach (var role in Kcsar.Membership.RoleProvider.GetRoles())
-    //        {
-    //            msgs += "============= " + role.Name + "==================\n";
-    //            if (string.IsNullOrWhiteSpace(role.EmailAddress))
-    //            {
-    //                continue;
-    //            }
-    //            msgs += "============= " + role.Name + "==================\n";
-    //            ReconcileSubscriptions(role.Name, nested, ctx, visitedGroups, ref msgs);
-    //        }
-    //        //ctx.SaveChanges();
-    //    }
-    //    return new ContentResult { Content = "Done\n" + msgs, ContentType = "text/plain" };
-    //}
-
-    //private void ReconcileSubscriptions(string role, INestedRoleProvider nested, KcsarContext ctx, Dictionary<string, List<Guid>> visited, ref string msgs)
-    //{
-    //    List<Guid> users = new List<Guid>();
-    //    BuildMembershipListForSubscriptions(role, nested, users, visited, ref msgs);
-
-    //    Guid lastUser = Guid.Empty;
-    //    foreach (var row in (from s in ctx.PersonSubscription where s.ListName == role select new { User = s.Person.Id, Record = s }).OrderBy(f => f.User))
-    //    {
-    //        // Keep track of the users we've seen so we can figure out which ones in the 'users' list are new.
-    //        // Because a member can have multiple subscriptions per list, we need to only
-    //        // act at the transition to a new user
-    //        if (row.User != lastUser && lastUser != Guid.Empty)
-    //        {
-    //            msgs += string.Format("-- {0}: users.Remove({1})\n", role, lastUser);
-    //            users.Remove(lastUser);
-    //        }
-    //        lastUser = row.User;
-
-    //        if (!users.Contains(row.User))
-    //        {
-    //            string.Format("-- {0}: ctx.DeleteObject({1})\n", role, row.Record);
-    //            ctx.DeleteObject(row.Record);
-    //        }
-    //    }
-    //    if (lastUser != Guid.Empty)
-    //    {
-    //        msgs += string.Format("-- {0}: users.Remove({1})\n", role, lastUser);
-    //        users.Remove(lastUser);
-    //    }
-
-    //    foreach (Guid user in users)
-    //    {
-    //        PersonSubscription sub = new PersonSubscription
-    //        {
-    //            Person = (from m in ctx.Members where m.Id == user select m).First(),
-    //            ListName = role
-    //        };
-    //        System.Diagnostics.Debug.WriteLine(string.Format("{0} {1}", role, user));
-    //        msgs += string.Format("-- {0}: ctx.AddToPersonSubscription({1})\n", role, sub.Person.FullName);
-    //        ctx.AddToPersonSubscription(sub);
-    //        try
-    //        {
-    //            //ctx.SaveChanges();
-    //        }
-    //        catch
-    //        {
-    //        }
-    //    }
-    //}
-
-    /// <summary>
-    /// Gets the membership of a group, with special logic for recursion. For each member of this group:
-    ///  - If the child is a user, add the user to the list.
-    ///  - If the child is a group, and the group has an email address, only add the email address of the group
-    ///  - If the child is a group, and there is no email address, recursively add group's children.
-    /// </summary>
-    /// <param name="role"></param>
-    /// <param name="nested"></param>
-    /// <param name="users"></param>
-    /// <param name="visited"></param>
-    private void BuildMembershipListForSubscriptions(string role, INestedRoleProvider nested, List<Guid> users, Dictionary<string, List<Guid>> visited, ref string msgs)
-    {
-      List<Guid> myUsers = new List<Guid>();
-      // If we've already cached this group, then we don't need to rebuild it.
-      if (!visited.ContainsKey(role))
-      {
-        // Get all users in the group
-        foreach (var username in nested.GetUsersInRole(role, false))
-        {
-
-          Guid? key = Kcsar.Membership.MembershipProvider.UsernameToMemberKey(username);
-          if (key.HasValue && !users.Contains(key.Value))
-          {
-            myUsers.Add(key.Value);
-          }
-        }
-
-        foreach (var child in nested.GetRolesInRole(role, false))
-        {
-          ExtendedRole r = Kcsar.Membership.RoleProvider.GetRole(child);
-          if (string.IsNullOrEmpty(r.EmailAddress))
-          {
-            BuildMembershipListForSubscriptions(child, nested, users, visited, ref msgs);
-          }
-        }
-
-        visited.Add(role, myUsers);
-      }
-
-      // Add any new children to the group.
-      foreach (Guid user in myUsers)
-      {
-        if (!users.Contains(user))
-        {
-          users.Add(user);
-        }
-      }
-    }
-
-    //[Authorize]
-    //public DataActionResult GetSubscriptionLists(string id, bool? usersAsEmails)
-    //{
-    //    INestedRoleProvider nested = Roles.Provider as INestedRoleProvider;
-    //    List<GroupView> groups = new List<GroupView>();
-
-    //    foreach (string group in Roles.Provider.GetAllRoles())
-    //    {
-    //        ExtendedRole role = nested.ExtendedGetRole(group);
-
-    //        if (role.Destinations == null || role.Destinations.All(f => (f == null || f.ToLowerInvariant() != id))) continue;
-
-    //        string[] subscribed = ShowSubscriptions(group, usersAsEmails).Content.Split(';').Select(f => f.Trim()).ToArray();
-
-    //        groups.Add(new GroupView { Name = group, Destinations = role.Destinations.ToArray(), EmailAddress = role.EmailAddress, SubscribedAddresses = subscribed });
-    //    }
-
-    //    return Data(groups.ToArray());
-    //}
-
-    //[Authorize]
-    //public ContentResult ShowSubscriptions(string id, bool? usersAsEmails)
-    //{
-    //    INestedRoleProvider nested = Roles.Provider as INestedRoleProvider;
-
-    //    List<string> emails = new List<string>();
-
-    //    GetSubscriptionSubList(id, emails, nested, usersAsEmails);
-
-    //    return new ContentResult { Content = string.Join("; ", emails.Distinct().ToArray()), ContentType = "text/plain" };
-    //}
-
-    ///// <summary>
-    ///// Gets the subscribed emails to a list. If the subscription doesn't come with a selected email contact, pick the person's default.
-    ///// If the group has sub-groups, add them as a) an email if the group has an address, or b) members' emails.
-    ///// </summary>
-    ///// <param name="list"></param>
-    ///// <param name="emails"></param>
-    ///// <param name="nested"></param>
-    //private void GetSubscriptionSubList(string list, List<string> emails, INestedRoleProvider nested, bool? usersAsEmails)
-    //{
-    //    bool useEmail = usersAsEmails ?? true;
-
-    //    using (var ctx = GetContext())
-    //    {
-    //        foreach (var row in (from s in ctx.PersonSubscription
-    //                             where s.ListName == list
-    //                             select new
-    //                             {
-    //                                 F = s.Person.FirstName,
-    //                                 L = s.Person.LastName,
-    //                                 U = s.Person.Username,
-    //                                 C = s.Contact ??
-    //                                     (from c in ctx.PersonContact where c.Person.Id == s.Person.Id && c.Type == "email" orderby c.Priority select c).FirstOrDefault()
-    //                             })
-    //            )
-    //        {
-    //            if (row.C != null)
-    //            {
-    //                string newMail = (useEmail || string.IsNullOrEmpty(row.U)) ? string.Format("\"{0} {1}\" <{2}>", row.F, row.L, row.C.Value) : row.U;
-    //                if (!emails.Contains(newMail)) emails.Add(newMail);
-    //            }
-    //        }
-    //    }
-
-    //    foreach (string child in nested.GetRolesInRole(list, false))
-    //    {
-    //        ExtendedRole r = Kcsar.Membership.RoleProvider.GetRole(child);
-    //        if (!string.IsNullOrEmpty(r.EmailAddress))
-    //        {
-    //            emails.Add(r.EmailAddress.Split(',')[0].Trim());
-    //        }
-    //        else
-    //        {
-    //            GetSubscriptionSubList(child, emails, nested, usersAsEmails);
-    //        }
-    //    }
-    //}
-
-    ////private static void GetSubscriptions_Internal(INestedRoleProvider nested, string roleId, List<string> emails, KcsarContext ctx)
-    ////{
-    ////    System.Diagnostics.Debug.WriteLine(roleId);
-    ////    foreach (var username in nested.GetUsersInRole(roleId, false))
-    ////    {
-    ////        Guid? key = PermissionsProvider.UsernameToMemberKey(username);
-    ////        if (key.HasValue)
-    ////        {
-    ////            Guid keyId = key.Value;
-
-
-    //////            var rows = (from s in ctx.PersonSubscription where s.ListName == roleId && 
-
-    ////           // string email = (from c in ctx.PersonContact where c.Person.Id == keyId && c.Type == "email" orderby c.Priority select '"' + c.Person.FirstName + ' ' + c.Person.LastName + "\" <" + c.Value + '>').FirstOrDefault();
-    ////            var data = (from c in ctx.PersonContact where c.Person.Id == keyId && c.Type == "email" orderby c.Priority select new { F = c.Person.FirstName, L = c.Person.LastName, V = c.Value }).FirstOrDefault();
-    ////            if (data != null)
-    ////            {
-    ////                FormatAndInsert(data.F, data.L, data.V, emails);
-    ////            }
-    ////        }
-    ////    }
-
-    ////    foreach (var role in nested.GetRolesInRole(roleId, false))
-    ////    {
-    ////        ExtendedRole r = Kcsar.Membership.RoleProvider.GetRole(role);
-    ////        if (!string.IsNullOrEmpty(r.EmailAddress))
-    ////        {
-    ////            emails.Add(r.EmailAddress);
-    ////        }
-    ////        else
-    ////        {
-    ////            GetSubscriptions_Internal(nested, role, emails, ctx);
-    ////        }
-    ////    }
-    ////}
-
-    ////private static void FormatAndInsert(string first, string last, string emailAddr, List<string> emails)
-    ////{
-    ////    string email = string.Format("\"{0} {1}\" <{2}>", first, last, emailAddr);
-
-    ////    if (email != null && !emails.Contains(email))
-    ////    {
-    ////        emails.Add(email);
-    ////    }
-    ////}
 
     public DataActionResult GetAccounts()
     {
@@ -744,8 +449,6 @@ namespace Kcsara.Database.Web.Controllers
     {
       string msgs = string.Empty;
       doit = doit ?? false;
-
-      //SarUnit withUnit = string.IsNullOrWhiteSpace(unit) ? null : UnitsController.ResolveUnit(ctx.Units, unit);
 
       var query = (from m in this.db.UnitMemberships where m.Status.IsActive && m.EndTime == null select m);
       if (!string.IsNullOrWhiteSpace(unit))
@@ -906,18 +609,6 @@ namespace Kcsara.Database.Web.Controllers
 
     [Authorize(Roles = "cdb.admins")]
     [AcceptVerbs(HttpVerbs.Get)]
-    public ActionResult SetExternalSources(string id, string sources)
-    {
-      KcsarUserProfile profile = ProfileBase.Create(id) as KcsarUserProfile;
-      if (profile == null) return new ContentResult { Content = "No profile" };
-
-      profile.ExternalSource = sources;
-      profile.Save();
-      return new ContentResult { Content = profile.ExternalSource };
-    }
-
-    [Authorize(Roles = "cdb.admins")]
-    [AcceptVerbs(HttpVerbs.Get)]
     public ActionResult DisconnectedPhotos()
     {
       string storePath = Server.MapPath(MembersController.PhotosStoreRelativePath);
@@ -986,7 +677,7 @@ namespace Kcsara.Database.Web.Controllers
       }
       catch (DbEntityValidationException ex)
       {
-        LogManager.GetLogger("AdminController").ErrorFormat("Validation error: {0}", 
+        LogManager.GetLogger("AdminController").ErrorFormat("Validation error: {0}",
           string.Join("\n", ex.EntityValidationErrors.SelectMany(f => f.ValidationErrors.Select(g => g.PropertyName + ": " + g.ErrorMessage))));
         data += "<tr><td colspan=23>DIDN'T SAVE ANY CHANGES BECAUSE OF VALIDATION EXCEPTIONS. CHECK LOGS.</td></tr>";
       }
@@ -996,28 +687,6 @@ namespace Kcsara.Database.Web.Controllers
     private static string UnitNameAsGroupName(string groupName)
     {
       return groupName.ToLower().Replace(" ", "");
-    }
-
-    public ActionResult CopyUsernames()
-    {
-      string results = string.Empty;
-      var profiles = Membership.GetAllUsers().Cast<MembershipUser>().Select(f => ProfileBase.Create(f.UserName) as KcsarUserProfile);
-      foreach (KcsarUserProfile profile in profiles)
-      {
-        if (string.IsNullOrEmpty(profile.LinkKey)) continue;
-        Guid key = new Guid(profile.LinkKey);
-        var member = (from m in this.db.Members where m.Id == key select m).FirstOrDefault();
-        if (!string.IsNullOrEmpty(member.Username) && member.Username != profile.UserName)
-        {
-          results += string.Format("{0} {1}\n", member.Username, member.ReverseName);
-        }
-        if (member.Username != profile.UserName)
-        {
-          member.Username = profile.UserName;
-        }
-      }
-      this.db.SaveChanges();
-      return new ContentResult { Content = "OK\n\n" + results, ContentType = "text/plain" };
     }
 
     /// <summary>
@@ -1068,50 +737,7 @@ namespace Kcsara.Database.Web.Controllers
         result += string.Format("## suggest remove {0}<br/>", username);
       }
 
-      //if (commit.HasValue && commit.Value)
-      //{
-      //        if (usersToAdd.Count > 0)
-      //        {
-      //            Roles.AddUsersToRole(usersToAdd.ToArray(), group);
-      //        }
-
-      //        if (usersToRemove.Count > 0)
-      //        {
-      //            Roles.RemoveUsersFromRole(usersToRemove.ToArray(), group);
-      //        }
-      //    }
-      //}
-
       return new ContentResult { ContentType = "text/html", Content = "Done.\n" + result };
-    }
-
-    [HttpGet]
-    [Authorize(Roles = "cdb.admins")]
-    public ActionResult RenameExternalSource(string id, string newname)
-    {
-      foreach (MembershipUser user in Membership.GetAllUsers())
-      {
-        KcsarUserProfile profile = ProfileBase.Create(user.UserName) as KcsarUserProfile;
-
-        List<string> external = profile.ExternalSource.Split(',').Select(f => f.Trim()).ToList();
-
-        int idx = external.IndexOf(id);
-        if (idx >= 0)
-        {
-          if (string.IsNullOrWhiteSpace(newname))
-          {
-            external.Remove(id);
-          }
-          else
-          {
-            external[idx] = newname;
-          }
-          profile.ExternalSource = string.Join(",", external.ToArray());
-          profile.Save();
-        }
-      }
-
-      return new ContentResult { Content = "Done" };
     }
 
     [Authorize(Roles = "cdb.admins")]

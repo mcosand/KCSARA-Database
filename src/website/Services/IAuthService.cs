@@ -17,6 +17,7 @@ namespace Kcsara.Database.Services
   {
     Guid UserId { get; }
     bool IsSelf(Guid id);
+    bool IsSelf(string username);
     bool IsAdmin { get; }
     bool IsAuthenticated { get; }
     bool IsUser { get; }
@@ -26,5 +27,8 @@ namespace Kcsara.Database.Services
     bool IsUserOrLocal(HttpRequestBase request);
     bool IsRoleForPerson(string role, Guid personId);
     bool IsRoleForUnit(string role, Guid unitId);
+
+    IEnumerable<string> GetGroupsForUser(string username);
+    IEnumerable<string> GetGroupsFoGroup(string group);
   }
 }

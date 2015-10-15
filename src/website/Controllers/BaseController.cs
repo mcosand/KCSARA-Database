@@ -23,7 +23,6 @@ namespace Kcsara.Database.Web.Controllers
   using System.Web.Mvc;
   using System.Web.Security;
   using Kcsara.Database.Services;
-  using System.Runtime.Caching;
 
   public class BaseController : Controller
   {
@@ -34,10 +33,6 @@ namespace Kcsara.Database.Web.Controllers
     protected readonly IAppSettings settings;
     protected readonly IKcsarContext db;
     
-    private static readonly MemoryCache userToIdCache= new MemoryCache("usernameToMemberId");
-    private static readonly object userIdCacheLock = new object();
-    private static readonly object nullUserObject = new object();
-    private static readonly CacheItemPolicy cachePolicy = new CacheItemPolicy { SlidingExpiration = TimeSpan.FromMinutes(15) };
     public BaseController(IKcsarContext db)
       : this(db, Ninject.ResolutionExtensions.Get<IAppSettings>(MvcApplication.myKernel))
     {
@@ -64,43 +59,14 @@ namespace Kcsara.Database.Web.Controllers
       base.Initialize(requestContext);
       Permissions = new AuthService(User, this.db);
       Document.StorageRoot = requestContext.HttpContext.Request.MapPath("~/Content/auth/documents/");
-      var profile = Profile as DatabaseUserProfile;
 
-      if (User.Identity.IsAuthenticated)
+      if (Permissions.IsAuthenticated)
       {
-        object userCacheObject;
-        lock (userIdCacheLock)
+        var member = db.Members.FirstOrDefault(f => f.Username == User.Identity.Name);
+        if (member != null)
         {
-          userCacheObject = userToIdCache[User.Identity.Name];
+          ViewData["MemberId"] = member.Id;
         }
-        if (userCacheObject == null)
-        {
-          userCacheObject = db.Members.Where(f => f.Username == User.Identity.Name).Select(f => f.Id).SingleOrDefault();
-          userCacheObject = userCacheObject ?? nullUserObject;
-          lock (userIdCacheLock)
-          {
-            userToIdCache.Set(User.Identity.Name, userCacheObject, cachePolicy);
-          }
-        }
-        if (userCacheObject != nullUserObject)
-        {
-          ViewData["MemberId"] = userCacheObject;
-        }
-      }
-    }
-
-    private UserSettings _settings;
-    protected UserSettings UserSettings
-    {
-      get
-      {
-        // Lazily initialized because the session object isn't available during the constructor.
-
-        if (this._settings == null)
-        {
-          this._settings = Kcsara.Database.Web.SettingsProvider.LoadSettings(this.GetSessionValue);
-        }
-        return this._settings;
       }
     }
 
@@ -169,10 +135,6 @@ namespace Kcsara.Database.Web.Controllers
     [HttpPost]
     public ActionResult UploadSupportingDoc(string type, int refId, FormCollection fields)
     {
-      //string type = Request.QueryString["type"];
-      //Guid? target = string.IsNullOrWhiteSpace(Request.QueryString["target"]) ? (Guid?)null : new Guid(Request.QueryString["target"]);
-      //string refId = Request.QueryString["refId"];
-
       Guid target = new Guid(fields["target"]);
       Guid newId = Guid.Empty;
 
@@ -225,7 +187,6 @@ namespace Kcsara.Database.Web.Controllers
 
       Response.AddHeader("Content-Disposition", "inline; filename=" + name);
       return File(buffer, mime);
-      //return new FileContentResult(buffer, mime);// { FileDownloadName = name };
     }
 
     [Authorize]
@@ -334,10 +295,6 @@ namespace Kcsara.Database.Web.Controllers
 
       result.ExecuteResult(controllerContext);
 
-      //HtmlHelper h = new HtmlHelper(new ViewContext(controllerContext, new WebFormView("omg"), result.ViewData, result.TempData, ), new ViewPage());
-      //var blockRenderer = new BlockRenderer(controllerthis.db.HttpContext);
-
-      //result.ExecuteResult(controllerContext);
       string s = blockRenderer.Capture(
           () => result.ExecuteResult(controllerContext)
       );

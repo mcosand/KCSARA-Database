@@ -46,7 +46,7 @@ namespace Kcsara.Database.Web.Controllers
       var members = this.db.GetActiveMembers(null, now, "Memberships.Unit", "Memberships.Status");
       var model = members.ToArray().Select(f => new ApiModels.MemberSummary(f)
       {
-        Units = f.Memberships.Where(this.db.GetActiveMembershipFilter(null, now)).ToDictionary(g => g.Unit.Id, g => g.Unit.DisplayName)
+        Units = f.Memberships.Where(this.db.GetActiveMembershipFilter(null, now)).Select(g => new ApiModels.NameIdPair { Id = g.Unit.Id, Name = g.Unit.DisplayName }).ToArray()
       });
 
       return View(model);
@@ -65,7 +65,6 @@ namespace Kcsara.Database.Web.Controllers
       ViewData["CanEditSelf"] = Permissions.IsSelf(id) || Permissions.IsMembershipForPerson(id) || Permissions.IsAdmin;
       ViewData["CanEditMember"] = Permissions.IsAdmin || Permissions.IsMembershipForPerson(id);
       ViewData["CanEditPhoto"] = Permissions.IsAdmin || Permissions.IsMembershipForPerson(id) || Permissions.IsInRole(new[] { "cdb.photos" });
-      ViewData["CanEditAdmin"] = Permissions.IsAdmin;
 
       ViewData["CanPrintBadge"] = User.IsInRole("cdb.badges");
       ViewData["IsUser"] = Permissions.IsUser;

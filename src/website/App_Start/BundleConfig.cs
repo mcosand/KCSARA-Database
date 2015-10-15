@@ -12,8 +12,13 @@ namespace Kcsara.Database.Web
     {
       BundleTable.EnableOptimizations = false;
 
-      bundles.Add(new ScriptBundle("~/script/angular").Include(
-        "~/Scripts/angular.js"
+      bundles.Add(new ScriptBundle("~/scripts/ng-core").Include(
+        "~/Scripts/modernizr-*",
+        "~/Scripts/jquery-{version}.js",
+        "~/Scripts/bootstrap.js",
+        "~/Scripts/moment.js",
+        "~/Scripts/angular.js",
+        "~/Scripts/app.js"
         ));
 
       bundles.Add(new ScriptBundle("~/script/core").Include(
@@ -64,6 +69,14 @@ namespace Kcsara.Database.Web
           "~/Content/themes/base/progressbar.css",
           "~/Content/themes/base/theme.css"
           ));
+      bundles.Add(new StyleBundle("~/Content/bootstrap").Include(
+        "~/Content/bootstrap.css",
+        "~/Content/font-awesome.css",
+        "~/Content/AdminLTE.css",
+        "~/Content/skins/skin-green.css",
+        "~/Content/site-next.css"
+        ));
+
       bundles.Add(new StyleBundle("~/Content/site-style").Include(
           "~/Content/site.css",
           "~/Content/common.css",
