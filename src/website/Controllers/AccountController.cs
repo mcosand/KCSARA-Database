@@ -45,14 +45,23 @@ namespace Kcsara.Database.Web.Controllers
       };
 
       var member = db.Members.SingleOrDefault(f => f.Username == id);
-      if (member == null && !(Permissions.IsAdmin || Permissions.IsSelf(id)))
+      bool canAdmin = Permissions.IsAdmin;
+      bool canEdit = canAdmin;
+
+      if (member != null)
+      {
+        canAdmin = Permissions.IsMembershipForPerson(member.Id);
+        canEdit = canAdmin || Permissions.IsSelf(member.Id);
+
+      }
+
+      if (!canEdit)
       {
         return Content("You do not have permissions to view account details for " + id);
       }
-      else if (member != null && !Permissions.IsMembershipForPerson(member.Id))
-      {
-        return Content("You do not have permissions to view account details for " + id);
-      }
+
+      ViewBag.CanEdit = canEdit;
+      ViewBag.CanAdmin = canAdmin;
       return View();
     }
 

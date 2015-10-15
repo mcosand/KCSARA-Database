@@ -24,14 +24,14 @@
           <li>Password changed {{options.usePreciseDates ? 'on ' + account.lastPassword.format() : account.lastPassword.fromNow()}}</li>
         </ul>
       </div>
-      <div class="box-footer box-action-footer text-center">
-        <div class="col-xs-4">
+      <div ng-if="canEdit" class="box-footer box-action-footer">
+        <div ng-if="canAdmin" class="col-xs-4">
           <button class="btn" ng-click="nyi()">{{account.locked ? 'Unlock' : 'Lock'}} Account</button>
         </div>
-        <div class="col-xs-4">
+        <div ng-class="canAdmin ? 'col-xs-4' : 'col-xs-6'">
           <button class="btn" ng-click="nyi()">Change Email</button>
         </div>
-        <div class="col-xs-4">
+        <div ng-class="canAdmin ? 'col-xs-4' : 'col-xs-6'">
           <button class="btn" ng-click="nyi()">Set Password</button>
         </div>
       </div>
@@ -53,8 +53,12 @@
                 <li ng-repeat="u in account.linkedMember.units">{{u.Name}}</li>
               </ul>
             </li>
-            <li><a ng-href="{{window.appRoot + '/Members/Detail/' + account.linkedMember.id}}">Details Page</a></li>
           </ul>
+        </div>
+      </div>
+      <div class="box-footer box-action-footer">
+        <div class="col-xs-12">
+          <a class="btn" ng-href="{{window.appRoot + '/Members/Detail/' + account.linkedMember.id}}">View Details Page</a>
         </div>
       </div>
     </div>
@@ -65,9 +69,9 @@
         <h3 class="box-title">Database Group Membership</h3>
       </div>
       <div class="box-body">
-        <div data-angular-treeview="true" data-tree-model="account.groups" data-node-label="name" data-node-children="groups" data-on-selected="onGroupSelected" data-on-remove="onGroupRemove"></div>
+        <div data-angular-treeview="true" data-tree-model="account.groups" data-node-label="name" data-node-children="groups" data-can-edit="canAdmin" data-on-selected="onGroupSelected" data-on-remove="onGroupRemove"></div>
       </div>
-      <div class="box-footer box-action-footer text-center">
+      <div ng-if="canAdmin" class="box-footer box-action-footer">
         <div class="col-xs-6"><button class="btn" ng-disabled="!getGroupsToRemove().length" ng-click="nyi()">Remove From Groups</button></div>
         <div class="col-xs-6"><button class="btn" ng-click="nyi()">Add To Group</button></div>
       </div>
@@ -76,9 +80,6 @@
 </div>
 @section scripts {
   <script type="text/javascript">
-    /*
-    angular.treeview.js
-*/
     (function (l) {
       l.module("angularTreeview", []).directive("treeModel", ['$compile', function ($compile) {
         return {
@@ -87,10 +88,11 @@
             var e = c.treeModel,
               h = c.nodeLabel || "label",
               d = c.nodeChildren || "children",
+              canEdit = scope[c.canEdit] || false,
             k = '<ul class="no-bullet">' +
                   '<li data-ng-repeat="node in ' + e + '">' +
                     ' <div data-ng-click="selectNodeHead(node, $event)">' +
-                      '<input type="checkbox" class="input-control" ng-model="node.remove" ng-hide="' + (c.treeNested || false) + '" ng-click="clickInput(node, $event)">' +
+                      '<input type="checkbox" class="input-control" ng-model="node.remove" ng-show="' + (canEdit && !(c.treeNested || false)) + '" ng-click="clickInput(node, $event)">' +
                       '<i class="fa fa-fw fa-plus-square-o" data-ng-show="!node.' + d + '.loaded || (node.' + d + '.length && node.collapsed)" data-ng-click="selectNodeHead(node, $event)"></i>' +
                       '<i class="fa fa-fw fa-minus-square-o" data-ng-show="node.' + d + '.length && !node.collapsed" data-ng-click="selectNodeHead(node, $event)"></i>' +
                       '<i class="fa fa-fw" data-ng-hide="!node.' + d + '.loaded || node.' + d + '.length"></i>' +
@@ -256,6 +258,8 @@
         $.extend($scope, {
           account: accountModel,
           groups: AccountService.groups,
+          canAdmin: @Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.CanAdmin, Kcsar.Utils.GetJsonSettings()),
+          canEdit: @Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.CanEdit, Kcsar.Utils.GetJsonSettings()),
           options: { usePreciseDates: false },
           onGroupSelected: function (node) {
             AccountService.loadMoreGroups(node);
@@ -284,5 +288,5 @@
     <p>
       Show dates as exact date and time instead of more readable English.
     </p>
-  </div><!-- /.form-group -->
+  </div>
 }

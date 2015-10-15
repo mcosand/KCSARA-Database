@@ -66,6 +66,7 @@ namespace Kcsara.Database.Web.Controllers
         if (member != null)
         {
           ViewData["MemberId"] = member.Id;
+          ViewBag.LoginUserName = member.FullName;
         }
       }
     }
