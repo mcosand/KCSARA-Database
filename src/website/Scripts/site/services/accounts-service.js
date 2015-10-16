@@ -101,6 +101,19 @@
       .success(function (data) { deferred.resolve(data); })
       .error(function (response) { deferred.reject(response); })
       return deferred.promise;
+    },
+    setPassword: function (model) {
+      if (model.type == 'set') {
+        return self.save($.extend({}, model.account, { password: model.password }));
+      }
+      var deferred = $q.defer();
+      $http({
+        method: 'POST',
+        url: window.appRoot + 'api/account/resetpassword/' + model.account.name
+      })
+      .success(function (data) { deferred.resolve(); })
+      .error(function (response) { deferred.reject(response); })
+      return deferred.promise;
     }
   });
 }]);

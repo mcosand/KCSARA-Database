@@ -98,7 +98,31 @@ namespace Kcsara.Database.Web.api
       }
 
       Membership.UpdateUser(user);
+
+      if (!string.IsNullOrWhiteSpace(id.Password))
+      {
+        ((Kcsar.Membership.ISetPassword)Membership.Provider).SetPassword(id.Name, id.Password, true);
+      }
+
       return Get(id.Name);
+    }
+
+    [HttpPost]
+    [AllowAnonymous]
+    public AccountInfo ResetPassword(string id)
+    {
+      var user = Membership.GetUser(id);
+
+      string password = ((SqlMembershipProvider)Membership.Provider).GeneratePassword();
+      ((Kcsar.Membership.ISetPassword)Membership.Provider).SetPassword(id, password, true);
+
+      return Permissions.IsAuthenticated
+        ? Get(id)
+        : new AccountInfo
+          {
+            Email = user.Email,
+            Name = id
+          };
     }
 
     [Flags]

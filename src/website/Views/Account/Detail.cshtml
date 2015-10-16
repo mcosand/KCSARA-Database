@@ -1,8 +1,8 @@
 ﻿@{
-    ViewBag.Title = "Account Details :: " + ViewBag.Account.Name;
-    ViewBag.NgApp = "sarDatabase";
-    ViewBag.NgController = "AccountDetailCtrl";
-    ViewBag.NgModules = new List<string> { "treeView" };
+  ViewBag.Title = "Account Details :: " + ViewBag.Account.Name;
+  ViewBag.NgApp = "sarDatabase";
+  ViewBag.NgController = "AccountDetailCtrl";
+  ViewBag.NgModules = new List<string> { "treeView" };
 }
 @section header {
   <h1>Account Detail for @ViewBag.Account.Name</h1>
@@ -33,7 +33,7 @@
           <button class="btn" ng-click="editEmail()">Change Email</button>
         </div>
         <div ng-class="canAdmin ? 'col-xs-4' : 'col-xs-6'">
-          <button class="btn" ng-click="nyi()">Set Password</button>
+          <button class="btn" ng-click="changePassword()">Set Password</button>
         </div>
       </div>
     </div>
@@ -90,11 +90,29 @@
         <label for="email" class="control-label">Email:</label>
         <input name="email" type="text" ng-model="model.email" class="form-control" />
         @*<div class="help-block" ng-if="isInvalid(signoutForm, 'date')">
-          <div ng-if="signoutForm.date.$error.pattern">Must be in form YYYY-MM-DD.</div>
-        </div>*@
+            <div ng-if="signoutForm.date.$error.pattern">Must be in form YYYY-MM-DD.</div>
+          </div>*@
       </div>
     </form>
-</script>
+  </script>
+  <script type="text/ng-template" id="setAccountPassword.html">
+    <form name="setPasswordForm">
+      <div class="form-group inline-form-group" @*ng-class="{ 'has-error': isInvalid(signoutForm, 'date')}"*@>
+        <label for="type" class="control-label"><input type="radio" value="reset" name="type" ng-model="model.type" /> Create Random Password:</label>
+        <div>A new password will be generated and emailed to {{model.account.email}}.</div>
+      </div>
+      <div class="form-group inline-form-group" ng-class="{ 'has-error': isInvalid(setPasswordForm, 'password')}">
+        <label for="password" class="control-label"><input type="radio" value="set" ng-model="model.type" /> Specify Password:</label>
+        <input name="password" type="text" ng-model="model.password" ng-change="model.type = 'set'"
+                ng-validate-password-characters ng-required="model.type == 'set'"
+                ng-model-options="{allowInvalid: true}"
+                class="form-control" />
+        <div class="help-block" ng-if="isInvalid(setPasswordForm, 'password')">
+            <div ng-if="setPasswordForm.password.$error.passwordCharacters">Not a strong password.</div>
+          </div>
+      </div>
+    </form>
+  </script>  
 
   <script type="text/javascript">
     angular.module('sarDatabase').controller('AccountDetailCtrl', ['$scope', 'AccountService', 'EditModalService',
@@ -116,8 +134,8 @@
           },
           getGroupsToRemove: function () {
             return $scope.account.groups.filter(function (g) {
-               return !!g.remove;
-             });
+              return !!g.remove;
+            });
           },
           setAccountApproved: function(newValue) {
             var actionText = (newValue ? 'Enable' : 'Disable');
@@ -140,6 +158,21 @@
               {
                 done: function(data) {
                   accountModel.merge(data);
+                }
+              });
+          },
+          changePassword: function() {
+            EditModalService.edit('setAccountPassword.html',
+              'Change Account Password',
+              { type: 'reset', value: null, account: accountModel },
+              AccountService.setPassword,
+              {
+                done: function(data) {
+                  accountModel.merge(data);
+                  BootstrapDialog.show({
+                    title: 'Password Reset',
+                    message: 'The password for ' + accountModel.name + ' was reset and sent to ' + accountModel.email
+                  })
                 }
               });
           },

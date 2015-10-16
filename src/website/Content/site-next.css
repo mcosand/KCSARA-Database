@@ -87,7 +87,7 @@ a {
 
 .box-action-footer>*:not(:first-child),
 .bootstrap-dialog-footer-buttons .btn{
-  border-left: 1px solid #f4f4f4;
+  border: 1px solid #f4f4f4;
 }
 
 
@@ -141,6 +141,10 @@ aside.main-sidebar,
 .bootstrap-dialog.type-primary .modal-header {
     background-color: #00a65a;
 }
+.form-control:focus {
+  border-color: #00a65a;
+}
+
 .modal-footer {
   padding:0px;
 }

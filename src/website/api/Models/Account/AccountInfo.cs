@@ -15,5 +15,7 @@ namespace Kcsara.Database.Web.api.Models.Account
     public DateTimeOffset LastPassword { get; set; }
     public DateTimeOffset? LastLocked { get; set; }
     public string Email { get; set; }
+
+    public string Password { get; set; }
   }
 }
