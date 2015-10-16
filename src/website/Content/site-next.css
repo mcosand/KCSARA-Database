@@ -162,3 +162,46 @@ aside.main-sidebar,
 .text-primary {
   color: #008d4c;
 }
+
+.navbar-form input[type="text"],
+.navbar-form .btn {
+  box-shadow: none;
+  background-color: #db8b0b;
+  border: 1px solid transparent;
+  height: 35px;
+  -webkit-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+}
+.navbar-form input[type="text"] {
+  color: #bbb; /* #666; */
+  border-top-left-radius: 4px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 4px;
+}
+.navbar-form input[type="text"]:focus,
+.navbar-form input[type="text"]:focus + .input-group-btn .btn {
+  background-color: #fff;
+  color: #666;
+}
+.navbar-form input[type="text"]:focus + .input-group-btn .btn {
+  border-left-color: #fff;
+}
+.navbar-form .btn {
+  color: #bbb; /*#999;*/
+  border-top-left-radius: 0;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border-bottom-left-radius: 0;
+}
+.navbar .form-control::-moz-placeholder {
+  color: #bbb;
+  opacity: 1;
+}
+.navbar .form-control:-ms-input-placeholder {
+  color: #bbb;
+}
+.navbar .form-control::-webkit-input-placeholder {
+  color: #bbb;
+}

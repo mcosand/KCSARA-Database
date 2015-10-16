@@ -20,6 +20,7 @@ namespace Kcsara.Database.Web
         "~/Scripts/moment.js",
         "~/Scripts/angular.js",
         "~/Scripts/angular-modal-service.js",
+        "~/Scripts/np-autocomplete.min.js",
         "~/Scripts/app.js",
         "~/scripts/site/modules/*.js"
         ));
@@ -70,6 +71,7 @@ namespace Kcsara.Database.Web
       bundles.Add(new StyleBundle("~/Content/bootstrap").Include(
         "~/Content/bootstrap.css",
         "~/Content/bootstrap-dialog.css",
+        "~/Content/np-autocomplete.min.css",
         "~/Content/font-awesome.css",
         "~/Content/AdminLTE.css",
         "~/Content/skins/skin-yellow.css",

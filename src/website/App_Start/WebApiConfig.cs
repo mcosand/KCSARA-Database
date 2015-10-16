@@ -20,6 +20,12 @@ namespace Kcsara.Database.Web.api
       config.MapHttpAttributeRoutes();
 
       config.Routes.MapHttpRoute(
+        "SearchApi",
+        "api/search/{q}",
+        new { controller = "Search", action = "Search", q = RouteParameter.Optional }
+        );
+
+      config.Routes.MapHttpRoute(
           "DefaultApi",
           "api/{controller}/{action}/{id}",
           new { action = RouteParameter.Optional, id = RouteParameter.Optional }

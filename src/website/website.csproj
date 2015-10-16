@@ -237,9 +237,11 @@
     <Compile Include="api\Models\Admin\ExecuteDatabaseScript.cs" />
     <Compile Include="api\Models\MemberSummary.cs" />
     <Compile Include="api\Models\MemberUnitDocument.cs" />
+    <Compile Include="api\Models\SearchResult.cs" />
     <Compile Include="api\Models\TrainingCourse.cs" />
     <Compile Include="api\Models\TrainingRecord.cs" />
     <Compile Include="api\Models\UnitDocument.cs" />
+    <Compile Include="api\SearchController.cs" />
     <Compile Include="api\TrackController.cs" />
     <Compile Include="api\UnitsController.cs" />
     <Compile Include="api\MembersController.cs" />
@@ -291,6 +293,7 @@
     <Content Include="Content\images\Trash.png" />
     <Content Include="Content\images\upload.gif" />
     <Content Include="Content\leaflet.css" />
+    <Content Include="Content\np-autocomplete.min.css" />
     <Content Include="Content\script\errorHandling.js" />
     <Content Include="Content\nprogress.css" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -553,6 +556,7 @@
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\moment.js" />
     <Content Include="Scripts\moment.min.js" />
+    <Content Include="Scripts\np-autocomplete.min.js" />
     <Content Include="Scripts\nprogress.js" />
     <Content Include="Scripts\site\directives\password-validator.js" />
     <Content Include="Scripts\site\directives\status-glyph.js" />

@@ -1,6 +1,6 @@
 ﻿@{ 
   ViewBag.NgModules = ViewBag.NgModules ?? new List<string>();
-  ViewBag.NgModules.Add("editModals");
+  ViewBag.NgModules.AddRange(new[] { "editModals", "ng-pros.directive.autocomplete" });
 }
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" @(ViewBag.NgApp != null ? new HtmlString("ng-app=\"" + ViewBag.NgApp + "\"") : new HtmlString(string.Empty))>

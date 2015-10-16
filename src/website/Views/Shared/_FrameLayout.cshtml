@@ -7,14 +7,33 @@
     <span class="logo-mini"><span class="fa-stack fa-lg"><i class="fa fa-plus fa-stack-1x"></i><i class="fa fa-circle-thin fa-stack-2x"></i></span></span>
     <span class="logo-lg"><b>KCSARA Database</b></span>
   </a>
-  <nav class="navbar navbar-static-top" role="navigation">
+  <nav class="navbar navbar-static-top" role="navigation" ng-controller="MainNavCtrl">
     <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
-        <span class="sr-only">Toggle navigation</span>
+      <span class="sr-only">Toggle navigation</span>
     </a>
     <div class="navbar-custom-menu">
       <ul class="nav navbar-nav">
         @if (User.Identity.IsAuthenticated)
         {
+          <li>
+            <form class="navbar-form" role="search">
+              <div class="form-group">
+                <div np-autocomplete="searchOptions" class="input-group">
+                  <input type="text" name="q" class="form-control" placeholder="Search ..." />
+                  <span class="input-group-btn">
+                    <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
+                  </span>
+                </div>
+                @*<input type="text" class="form-control" placeholder="Search ..." />*@
+                @*<div class="input-group">
+                  <input type="text" name="q" placeholder="Search ..." />
+                  <span class="input-group-btn">
+                    <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
+                  </span>
+                </div>*@
+              </div>
+            </form>
+          </li>
           <li class="dropdown notifications-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               @(ViewBag.LoginUserName ?? string.Format("{0} {1}", ((Kcsar.Membership.KcsarUserProfile)Profile).FirstName, ((Kcsar.Membership.KcsarUserProfile)Profile).LastName))
@@ -22,7 +41,9 @@
             <ul class="dropdown-menu">
               <li>
                 <ul class="menu">
-                  @if (ViewData["MemberId"] != null) { <li><a href="~/Members/Detail/@ViewData["MemberId"]"><i class="fa fa-home text-primary"></i> My Page</a></li> }
+                  @if (ViewData["MemberId"] != null)
+                  {
+                    <li><a href="~/Members/Detail/@ViewData["MemberId"]"><i class="fa fa-home text-primary"></i> My Page</a></li> }
                   <li>
                     <a href="~/Account/Logout"><i class="fa fa-sign-out text-primary"></i> Logout</a>
                   </li>
@@ -33,9 +54,9 @@
           if (IsSectionDefined("pageSettings"))
           {
           <!-- Control Sidebar Toggle Button -->
-          <li>
-            <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
-          </li>
+            <li>
+              <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+            </li>
           }
         }
         else
@@ -46,39 +67,39 @@
     </div>
   </nav>
 </header>
-<aside class="main-sidebar">
+<aside class="main-sidebar" ng-controller="MainNavCtrl">
   <section class="sidebar">
-@if (User.IsInRole("cdb.users"))
-{
-  <ul class="sidebar-menu">
-    <li class="header">Main Navigation</li>
-    <li class="treeview">
-      <a href="#"><i class="fa fa-user"></i><span>Members</span><i class="fa fa-angle-down pull-right"></i></a>
-      <ul class="treeview-menu">
-        <li>
-          <form action="#" method="get" class="sidebar-form" onsubmit="alert('not implemented'); return false;">
-            <div class="input-group">
-              <input type="text" name="q" class="form-control" placeholder="Search ..." />
-              <span class="input-group-btn">
-                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
-              </span>
-            </div>
-          </form>
+    @if (User.IsInRole("cdb.users"))
+    {
+      <ul class="sidebar-menu">
+        <li class="header">Main Navigation</li>
+        <li class="treeview">
+          <a href="#"><i class="fa fa-user"></i><span>Members</span><i class="fa fa-angle-down pull-right"></i></a>
+          <ul class="treeview-menu">
+            <li>
+              <form action="#" method="get" class="sidebar-form" onsubmit="alert('not implemented'); return false;">
+                <div class="input-group">
+                  <input type="text" name="q" class="form-control" placeholder="Search ..." />
+                  <span class="input-group-btn">
+                    <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
+                  </span>
+                </div>
+              </form>
+            </li>
+            <li><a href="~/Members"><i class="fa fa-circle-o"></i> <span>Member List</span></a></li>
+          </ul>
         </li>
-        <li><a href="~/Members"><i class="fa fa-circle-o"></i> <span>Member List</span></a></li>
+        <li class="treeview">
+          <a href="#"><i class="fa fa-book"></i> <span>Training</span><i class="fa fa-angle-down pull-right"></i></a>
+          <ul class="treeview-menu">
+            <li><a href="~/Training/List/"><i class="fa fa-circle-o"></i> Rosters</a></li>
+          </ul>
+        </li>
+        <li><a href="~/Missions/"><i class="fa fa-binoculars"></i> <span>Missions</span></a></li>
+        <li><a href="~/Units/"><i class="fa fa-users"></i> <span>Units</span></a></li>
+        <li><a href="~/Animals/"><i class="fa fa-paw"></i> <span>Animals</span></a></li>
       </ul>
-    </li>
-    <li class="treeview">
-      <a href="#"><i class="fa fa-book"></i> <span>Training</span><i class="fa fa-angle-down pull-right"></i></a>
-      <ul class="treeview-menu">
-        <li><a href="~/Training/List/"><i class="fa fa-circle-o"></i> Rosters</a></li>
-      </ul>
-    </li>
-    <li><a href="~/Missions/"><i class="fa fa-binoculars"></i> <span>Missions</span></a></li>
-    <li><a href="~/Units/"><i class="fa fa-users"></i> <span>Units</span></a></li>
-    <li><a href="~/Animals/"><i class="fa fa-paw"></i> <span>Animals</span></a></li>
-  </ul>
-}
+    }
     @RenderSection("sidebar", false)
   </section>
 </aside>
@@ -100,4 +121,21 @@
 </aside>
 <div class="control-sidebar-bg"></div>
 @section head {@RenderSection("head", false)}
-@section scripts {@RenderSection("scripts", false)}
+@section scripts {
+  @RenderSection("scripts", false)
+  <script type="text/ng-template" id="searchResult.html">
+  This is a result. {{item.type}}
+  </script>
+  <script type="text/javascript">
+    angular.module('sarDatabase').controller('MainNavCtrl', ['$scope',
+      function ($scope) {
+        $.extend($scope, {
+          searchOptions: {
+            url: '@Url.Content("~/api/search/")',
+            searchParam: 'q',
+            itemTemplateUrl: 'searchResult.html'
+          }
+        });
+      }]);
+  </script>
+}
