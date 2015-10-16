@@ -9,7 +9,7 @@
   <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><![endif]-->
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes" name="viewport">
+  <meta content="width=device-width, initial-scale=1, minimum-scale=1, user-scalable=yes" name="viewport">
   <title>@ViewData["Title"]</title>
   <script type="text/javascript">window.appRoot = '@Url.Content("~/")'; var errorUrl = '@Url.RouteUrl("DefaultApi", new { httproute="", Controller = "telemetry", Action="error" })';</script>
   @Styles.Render("~/Content/bootstrap")
@@ -19,7 +19,7 @@
 
   @RenderSection("head", false)
 </head>
-<body class="skin-green sidebar-mini" @(ViewBag.NgController != null ? new HtmlString("ng-controller=\"" + ViewBag.NgController + "\"") : new HtmlString(string.Empty))>
+<body class="skin-yellow sidebar-mini" @(ViewBag.NgController != null ? new HtmlString("ng-controller=\"" + ViewBag.NgController + "\"") : new HtmlString(string.Empty))>
   <div class="wrapper">
     @RenderBody()
   </div>

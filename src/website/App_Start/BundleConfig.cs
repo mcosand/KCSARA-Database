@@ -72,7 +72,7 @@ namespace Kcsara.Database.Web
         "~/Content/bootstrap-dialog.css",
         "~/Content/font-awesome.css",
         "~/Content/AdminLTE.css",
-        "~/Content/skins/skin-green.css",
+        "~/Content/skins/skin-yellow.css",
         "~/Content/site-next.css"
         ));
 

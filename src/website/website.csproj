@@ -463,6 +463,7 @@
     <Content Include="Content\script\timepicker.js" />
     <Content Include="Content\site-next.css" />
     <Content Include="Content\skins\skin-green.css" />
+    <Content Include="Content\skins\skin-yellow.css" />
     <Content Include="Content\skins\skin-green.min.css" />
     <Content Include="Content\suggest.css" />
     <Content Include="Content\themes\base\accordion.css" />
