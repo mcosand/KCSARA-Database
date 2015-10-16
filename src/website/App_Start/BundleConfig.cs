@@ -16,9 +16,18 @@ namespace Kcsara.Database.Web
         "~/Scripts/modernizr-*",
         "~/Scripts/jquery-{version}.js",
         "~/Scripts/bootstrap.js",
+        "~/Scripts/bootstrap-dialog.js",
         "~/Scripts/moment.js",
         "~/Scripts/angular.js",
-        "~/Scripts/app.js"
+        "~/Scripts/angular-modal-service.js",
+        "~/Scripts/app.js",
+        "~/scripts/site/modules/*.js"
+        ));
+
+      bundles.Add(new ScriptBundle("~/scripts/ng-site").Include(
+        "~/scripts/site/models/*.js",
+        "~/scripts/site/directives/*.js",
+        "~/scripts/site/services/*.js"
         ));
 
       bundles.Add(new ScriptBundle("~/script/core").Include(
@@ -42,18 +51,7 @@ namespace Kcsara.Database.Web
           "~/Scripts/ViewModels.js",
           "~/Content/script/suggest.person.js",
           "~/Content/script/common.js"));
-      //bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
-      //            "~/Content/script/jquery-1.*"));
 
-      //bundles.Add(new ScriptBundle("~/bundles/jqueryui").Include(
-      //            "~/Content/script/jquery-ui*"));
-
-      //bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
-      //            "~/Content/script/jquery.unobtrusive*",
-      //            "~/Content/script/jquery.validate*"));
-
-      //bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
-      //            "~/Content/script/modernizr-*"));
 
       bundles.Add(new StyleBundle("~/Content/themes/base/jquery-ui").Include(
           "~/Content/themes/base/core.css",
@@ -71,6 +69,7 @@ namespace Kcsara.Database.Web
           ));
       bundles.Add(new StyleBundle("~/Content/bootstrap").Include(
         "~/Content/bootstrap.css",
+        "~/Content/bootstrap-dialog.css",
         "~/Content/font-awesome.css",
         "~/Content/AdminLTE.css",
         "~/Content/skins/skin-green.css",

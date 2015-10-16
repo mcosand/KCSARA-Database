@@ -73,20 +73,28 @@ a {
 .box-action-footer>div{
   padding:0
 }
-.box-action-footer .btn {
-  width: 100%;
+.box-action-footer .btn,
+.bootstrap-dialog-footer .btn {
   border-radius:0;
   outline: none !important;
   background-color: transparent;
   border-color: transparent;
   color: #008d4c;
 }
-.box-action-footer div:not(:first-child) {
+.box-action-footer .btn {
+  width: 100%;
+}
+
+.box-action-footer>*:not(:first-child),
+.bootstrap-dialog-footer-buttons .btn{
   border-left: 1px solid #f4f4f4;
 }
 
+
 .box-action-footer .btn:hover,
-.box-action-footer .btn:visited
+.bootstrap-dialog-footer .btn:visited,
+.bootstrap-dialog-footer .btn:hover,
+.bootstrap-dialog-footer .btn:visited
 {
   text-decoration: none;
 }
@@ -94,7 +102,8 @@ a {
 .shadow-1,
 header,
 aside.main-sidebar,
-.box-action-footer .btn:hover
+.box-action-footer .btn:hover,
+.bootstrap-dialog-footer .btn:hover
 {
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
     z-index:10;
@@ -103,6 +112,7 @@ aside.main-sidebar,
 .sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > a > span:not(.pull-right),
 .sidebar-menu > li:not(.header):hover > a,
 .box-action-footer .btn:active,
+.bootstrap-dialog-footer .btn:active,
 .box
  {
     box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
@@ -120,9 +130,23 @@ aside.main-sidebar,
     box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
     z-index:40;
 }
-.shadow-5 {
+.shadow-5,
+.modal-dialog {
     box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
 }
 .sidebar-menu > li:not(.header):active > a {
   z-index:29
+}
+
+.bootstrap-dialog.type-primary .modal-header {
+    background-color: #00a65a;
+}
+.modal-footer {
+  padding:0px;
+}
+.modal-footer .btn + .btn {
+  margin-left: 0;
+}
+.modal {
+  background-color: rgba(0, 0, 0, 0.01);
 }

@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{ 
+  ViewBag.NgModules = ViewBag.NgModules ?? new List<string>();
+  ViewBag.NgModules.Add("editModals");
+}
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" @(ViewBag.NgApp != null ? new HtmlString("ng-app=\"" + ViewBag.NgApp + "\"") : new HtmlString(string.Empty))>
 <head>
   <!-- Force latest IE rendering engine or ChromeFrame if installed -->
@@ -9,42 +13,20 @@
   <title>@ViewData["Title"]</title>
   <script type="text/javascript">window.appRoot = '@Url.Content("~/")'; var errorUrl = '@Url.RouteUrl("DefaultApi", new { httproute="", Controller = "telemetry", Action="error" })';</script>
   @Styles.Render("~/Content/bootstrap")
-  @*<link href="@BundleTable.Bundles.ResolveBundleUrl("~/style/print")" rel="stylesheet" type="text/css" media="print" />*@
   @Scripts.Render("~/scripts/ng-core")
+  <script type="text/javascript">angular.module('sarDatabase', @Html.ToJson((object)(ViewBag.NgModules ?? new object[0])));</script>
+  @Scripts.Render("~/scripts/ng-site")
+
   @RenderSection("head", false)
-  @*<asp:ContentPlaceHolder ID="HeadContent" runat="server" />*@
 </head>
 <body class="skin-green sidebar-mini" @(ViewBag.NgController != null ? new HtmlString("ng-controller=\"" + ViewBag.NgController + "\"") : new HtmlString(string.Empty))>
-  @*<div class="wrapper">
+  <div class="wrapper">
     @RenderBody()
-  </div>*@
-  @RenderBody()
-  @*@Html.Image("~/Content/images/progress.gif", new { id="progressbar", style="visibility:hidden; position:absolute;" })
-  <div id="formsDelete" title="Delete {0}" style="display: none;">
-    <form action="#">
-      <fieldset>
-        Delete <span id="formsDeleteTitle">{object}</span>. Are you sure?
-      </fieldset>
-    </form>
   </div>
-  <div id="formsLogin" title="Login" style="display: none;">
-    <form action="#">
-      <p>
-        Your session has timed out, or you do not have permission for this operation. Please enter
-        your username and password, then retry your operation.
-      </p>
-      <fieldset>
-        <label for="username">Username</label>
-        <input type="text" name="username" id="formsUsername" class="text ui-corner-all" />
-        <label for="password">Password</label>
-        <input type="password" name="password" id="formsPassword" class="text ui-corner-all" />
-      </fieldset>
-    </form>
-  </div>*@
   @RenderSection("scripts", false)
   <script type="text/javascript">
   $(document).ready(function() {
-  $.AdminLTE.layout.fix()
+  $.AdminLTE.layout.activate()
   })
   </script>
 </body></html>

@@ -1,12 +1,12 @@
 ﻿@{
-  ViewBag.Title = "Account Details :: " + ViewBag.Account.Name;
-  ViewBag.NgApp = "sarDatabase";
-  ViewBag.NgController = "AccountDetailCtrl";
+    ViewBag.Title = "Account Details :: " + ViewBag.Account.Name;
+    ViewBag.NgApp = "sarDatabase";
+    ViewBag.NgController = "AccountDetailCtrl";
+    ViewBag.NgModules = new List<string> { "treeView" };
 }
 @section header {
   <h1>Account Detail for @ViewBag.Account.Name</h1>
 }
-
 <div class="row">
   <div class="col-md-6">
     <div class="box box-primary">
@@ -25,11 +25,12 @@
         </ul>
       </div>
       <div ng-if="canEdit" class="box-footer box-action-footer">
-        <div ng-if="canAdmin" class="col-xs-4">
-          <button class="btn" ng-click="nyi()">{{account.locked ? 'Unlock' : 'Lock'}} Account</button>
+        <div ng-if="canAdmin" class="col-xs-4 ng-cloak">
+          <button class="btn" ng-if="!account.locked" ng-click="setAccountApproved(!account.approved)" ng-disabled="disableLockButton">{{account.approved ? 'Disable' : 'Enable'}} Account</button>
+          <button class="btn" ng-if="account.locked" ng-click="unlockAccount()" ng-disabled="disableLockButton">Unlock Account</button>
         </div>
         <div ng-class="canAdmin ? 'col-xs-4' : 'col-xs-6'">
-          <button class="btn" ng-click="nyi()">Change Email</button>
+          <button class="btn" ng-click="editEmail()">Change Email</button>
         </div>
         <div ng-class="canAdmin ? 'col-xs-4' : 'col-xs-6'">
           <button class="btn" ng-click="nyi()">Set Password</button>
@@ -79,187 +80,32 @@
   </div>
 </div>
 @section scripts {
+  <script type="text/ng-template" id="confirmEnableAccount.html">
+    <div>{{model.approved ? 'Enable' : 'Disable'}} account {{model.name}}?</div>
+    <div ng-if="!model.approved">This user will no longer have access to this site.</div>
+  </script>
+  <script type="text/ng-template" id="editAccountEmail.html">
+    <form name="editEmailForm">
+      <div class="form-group inline-form-group" @*ng-class="{ 'has-error': isInvalid(signoutForm, 'date')}"*@>
+        <label for="email" class="control-label">Email:</label>
+        <input name="email" type="text" ng-model="model.email" class="form-control" />
+        @*<div class="help-block" ng-if="isInvalid(signoutForm, 'date')">
+          <div ng-if="signoutForm.date.$error.pattern">Must be in form YYYY-MM-DD.</div>
+        </div>*@
+      </div>
+    </form>
+</script>
+
   <script type="text/javascript">
-    (function (l) {
-      l.module("angularTreeview", []).directive("treeModel", ['$compile', function ($compile) {
-        return {
-          restrict: "A",
-          link: function (scope, g, c) {
-            var e = c.treeModel,
-              h = c.nodeLabel || "label",
-              d = c.nodeChildren || "children",
-              canEdit = scope[c.canEdit] || false,
-            k = '<ul class="no-bullet">' +
-                  '<li data-ng-repeat="node in ' + e + '">' +
-                    ' <div data-ng-click="selectNodeHead(node, $event)">' +
-                      '<input type="checkbox" class="input-control" ng-model="node.remove" ng-show="' + (canEdit && !(c.treeNested || false)) + '" ng-click="clickInput(node, $event)">' +
-                      '<i class="fa fa-fw fa-plus-square-o" data-ng-show="!node.' + d + '.loaded || (node.' + d + '.length && node.collapsed)" data-ng-click="selectNodeHead(node, $event)"></i>' +
-                      '<i class="fa fa-fw fa-minus-square-o" data-ng-show="node.' + d + '.length && !node.collapsed" data-ng-click="selectNodeHead(node, $event)"></i>' +
-                      '<i class="fa fa-fw" data-ng-hide="!node.' + d + '.loaded || node.' + d + '.length"></i>' +
-                      ' {{node.' + h + '}}' +
-                      '</div>' +
-                    '<div data-ng-hide="!node.' + d + '.loaded || node.collapsed" data-tree-model="node.' + d + '" data-node-label="' + h + '" data-node-children="' + d + '" data-tree-nested="true"></div>' +
-                  '</li>' +
-                '</ul>';
-            e && e.length && (c.angularTreeview ? (
-            scope.$watch(
-              e,
-              function (m, b) { g.empty().html($compile(k)(scope)) },
-              !1),
-            scope.selectNodeHead = scope.selectNodeHead || function (ax, b) {
-              b.stopPropagation && b.stopPropagation();
-              b.preventDefault && b.preventDefault();
-              b.cancelBubble = !0;
-              b.returnValue = !1;
-              ax.collapsed = ax.collapsed === undefined ? false : !ax.collapsed;
-              if (c.onSelected) {
-                scope[c.onSelected](ax);
-              }
-            },
-            scope.clickInput = scope.removeFromGroup || function (node, ev) {
-              ev.stopPropagation && ev.stopPropagation();
-              ev.cancelBubble = !0;
-            }
-              )
-            : g.html($compile(k)(scope)))
-          }
-        }
-      }])
-    })(angular);
-
-    var DatabaseAccountModel = function (dto) {
-      $.extend(this, dto);
-      this.lastActive = moment(this.lastActive);
-      this.lastPassword = moment(this.lastPassword);
-      this.lastLocked = this.lastLocked ? moment(this.lastLocked) : null;
-      this.groups = [];
-      this.groups.loaded = false;
-      this.linkedMember = {};
-      this.linkedMember.loaded = false;
-    };
-    angular.module('sarDatabase', ['angularTreeview']);
-    angular.module('sarDatabase').directive('statusGlyph', function () {
-      return {
-        restrict: 'E',
-        template: "<i ng-class=\"{'text-success': test, 'fa-check': test, 'fa-exclamation': !test, 'text-danger': !test}\" class=\"fa\"></i>",
-        scope: {
-          test: '='
-        }
-      }
-    });
-    angular.module('sarDatabase').directive('groupNode', function () {
-      return {
-        restrict: 'E',
-        template: "<li ng-click=\"console.log(arguments);onRemove(name)\">{{name}}<button class=\"btn btn-inline btn-link\"><i class=\"text-danger fa fa-remove\"></i></button></li>",
-        scope: {
-          name: '=',
-          list: '=',
-          onRemove: '&'
-        }
-      }
-    })
-
-    angular.module('sarDatabase').service('AccountService', ['$http', '$q', function ($http, $q) {
-      self = this;
-
-      $.extend(this, {
-        accounts: {},
-        groups: {},
-        initAccount: function (model) {
-          var accountModel;
-          if (model['name']) {
-            accountModel = new DatabaseAccountModel(model);
-            self.accounts[model.name] = accountModel;
-          }
-          return accountModel;
-        },
-        loadGroups: function (username) {
-          var accountModel = self.accounts[username];
-
-          var deferred = $q.defer();
-          if (accountModel.groups.loaded) {
-            deferred.resolve(accountModel.groups);
-            return deferred;
-          }
-
-          accountModel.groups.length = 0;
-          accountModel.groups.loading = true;
-
-          $http({
-            method: 'GET',
-            url: window.appRoot + 'api/account/rolesforuser/' + username,
-          }).success(function (data) {
-            $.each(data, function (idx, group) {
-              if (!self.groups[group]) {
-                self.groups[group] = { name: group, groups: [] };
-                self.groups[group].groups.loaded = false;
-                accountModel.groups.push($.extend({ collapsed: true, remove: false }, self.groups[group]));
-              }
-            });
-            delete accountModel.groups.loading;
-            accountModel.groups.loaded = true;
-            deferred.resolve(data);
-          })
-          .error(function (response) { deferred.reject(response); });
-        },
-        loadMoreGroups: function (group) {
-          var groupModel = self.groups[group.name];
-          var deferred = $q.defer();
-          if (groupModel.groups.loaded) {
-            deferred.resolve();
-            return deferred.promise;
-          }
-
-          $http({
-            method: 'GET',
-            url: window.appRoot + 'api/account/rolesforrole/' + group.name
-          }).success(function (data) {
-            $.each(data, function (idx, group) {
-              if (!self.groups[group]) {
-                self.groups[group] = { name: group, groups: [] };
-                self.groups[group].groups.loaded = false;
-              }
-              groupModel.groups.push($.extend({ collapsed: true, remove: false }, self.groups[group]));
-            })
-            groupModel.groups.loaded = true;
-          })
-          return deferred.promise;
-        },
-        loadLinkedMember: function (username) {
-          var accountModel = self.accounts[username];
-          var deferred = $q.defer();
-          if (accountModel.linkedMember.loaded) {
-            deferred.resolve(accountModel.linkedMember);
-            return deferred;
-          }
-          accountModel.linkedMember.loading = true;
-          $http({
-            method: 'GET',
-            url: window.appRoot + 'api/members/byusername/' + username
-          }).success(function (data) {
-            if (data.length == 1) {
-              accountModel.linkedMember.id = data[0].Id;
-              accountModel.linkedMember.name = data[0].Name;
-              accountModel.linkedMember.units = data[0].Units;
-              accountModel.linkedMember.dem = data[0].DEM;
-            }
-            delete accountModel.linkedMember.loading;
-            accountModel.linkedMember.loaded = true;
-            deferred.resolve(data);
-          })
-          .error(function (response) { deferred.reject(response); });
-        }
-      });
-    }]);
-
-    angular.module('sarDatabase').controller('AccountDetailCtrl', ['$scope', 'AccountService',
-      function ($scope, AccountService) {
-        var accountModel = AccountService.initAccount(@(new HtmlString(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.Account, Kcsar.Utils.GetJsonSettings()))));
+    angular.module('sarDatabase').controller('AccountDetailCtrl', ['$scope', 'AccountService', 'EditModalService',
+      function ($scope, AccountService, EditModalService) {
+        var accountModel = AccountService.initAccount(@Html.ToJson((object)ViewBag.Account));
         $.extend($scope, {
           account: accountModel,
           groups: AccountService.groups,
-          canAdmin: @Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.CanAdmin, Kcsar.Utils.GetJsonSettings()),
-          canEdit: @Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.CanEdit, Kcsar.Utils.GetJsonSettings()),
+          canAdmin: @Html.ToJson((object)ViewBag.CanAdmin),
+          canEdit: @Html.ToJson((object)ViewBag.CanEdit),
+          disableLockButton: @Html.ToJson(User.Identity.Name) == accountModel.name,
           options: { usePreciseDates: false },
           onGroupSelected: function (node) {
             AccountService.loadMoreGroups(node);
@@ -272,6 +118,30 @@
             return $scope.account.groups.filter(function (g) {
                return !!g.remove;
              });
+          },
+          setAccountApproved: function(newValue) {
+            var actionText = (newValue ? 'Enable' : 'Disable');
+            EditModalService.edit('confirmEnableAccount.html',
+              actionText + ' Account',
+              $.extend({}, accountModel, { approved: newValue }),
+              AccountService.save,
+              {
+                saveText: actionText,
+                done: function(data) {
+                  accountModel.merge(data);
+                }
+              });
+          },
+          editEmail: function() {
+            EditModalService.edit('editAccountEmail.html',
+              'Edit Account Email',
+              $.extend({}, accountModel),
+              AccountService.save,
+              {
+                done: function(data) {
+                  accountModel.merge(data);
+                }
+              });
           },
           nyi: function() { alert('Not implemented')}
         });

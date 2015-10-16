@@ -22,46 +22,32 @@ namespace Kcsara.Database.Web.Controllers
   [OutputCache(Location = OutputCacheLocation.None)]
   public sealed class AccountController : BaseController
   {
+    readonly Lazy<api.AccountController> accountsApi;
+
+    public AccountController(Lazy<api.AccountController> accountsApi, IKcsarContext db, api.IFormsAuthentication formsAuth, System.Web.Security.MembershipProvider provider)
+      : base(db)
+    {
+      Provider = provider;
+      FormsAuth = formsAuth;
+      this.accountsApi = accountsApi;
+    }
+
     [Authorize]
     public ActionResult Detail(string id)
     {
-      id = id ?? User.Identity.Name;
-
-      var user = Membership.GetUser(id);
-      if (user == null)
+      ViewBag.Account = accountsApi.Value.Get(id);
+      if (ViewBag.Account == null)
       {
         return Content("You do not have permissions to view account details for " + id);
       }
 
-      ViewBag.Account = new AccountInfo
-      {
-        Name = id,
-        Approved = user.IsApproved,
-        Locked = user.IsLockedOut,
-        LastActive = user.LastActivityDate,
-        LastPassword = user.LastPasswordChangedDate,
-        LastLocked = user.LastLockoutDate < new DateTime(1900, 1, 1) ? (DateTimeOffset?)null : user.LastLockoutDate,
-        Email = user.Email
-      };
-
-      var member = db.Members.SingleOrDefault(f => f.Username == id);
-      bool canAdmin = Permissions.IsAdmin;
-      bool canEdit = canAdmin;
-
-      if (member != null)
-      {
-        canAdmin = Permissions.IsMembershipForPerson(member.Id);
-        canEdit = canAdmin || Permissions.IsSelf(member.Id);
-
-      }
-
-      if (!canEdit)
+      var perms = api.AccountController.GetPermissionsOnAccount(id, Permissions, db);
+      if (!perms.HasFlag(api.AccountController.AccountPermissions.CanEdit))
       {
         return Content("You do not have permissions to view account details for " + id);
       }
-
-      ViewBag.CanEdit = canEdit;
-      ViewBag.CanAdmin = canAdmin;
+      ViewBag.CanEdit = perms.HasFlag(api.AccountController.AccountPermissions.CanEdit);
+      ViewBag.CanAdmin = perms.HasFlag(api.AccountController.AccountPermissions.CanAdmin);
       return View();
     }
 
@@ -202,12 +188,6 @@ namespace Kcsara.Database.Web.Controllers
       return View();
     }
 
-    public AccountController(IKcsarContext db, api.IFormsAuthentication formsAuth, System.Web.Security.MembershipProvider provider)
-      : base(db)
-    {
-      Provider = provider;
-      FormsAuth = formsAuth;
-    }
 
     public api.IFormsAuthentication FormsAuth
     {

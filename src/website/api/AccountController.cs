@@ -1,7 +1,6 @@
 ﻿/*
  * Copyright 2013-2015 Matthew Cosand
  */
-
 namespace Kcsara.Database.Web.api
 {
   using System;
@@ -20,11 +19,15 @@ namespace Kcsara.Database.Web.api
   using Kcsar.Database.Model;
   using Kcsara.Database.Services.Accounts;
   using Kcsara.Database.Web.api.Models;
+  using Models.Account;
   using Kcsara.Database.Web.Services;
   using log4net;
   using SarMembership = Kcsar.Membership;
+  using Database.Services;
+  using System.Net;
 
   [ModelValidationFilter]
+  [CamelCaseControllerConfig]
   public class AccountController : BaseApiController
   {
     public const string APPLICANT_ROLE = "cdb.applicants";
@@ -38,6 +41,94 @@ namespace Kcsara.Database.Web.api
       this.membership = membership;
       this.accountsService = accountsSvc;
       this.formsAuth = formsAuth;
+    }
+
+    [Authorize]
+    public AccountInfo Get(string id)
+    {
+      id = id ?? User.Identity.Name;
+
+      var user = Membership.GetUser(id);
+      if (user == null)
+      {
+        return null;
+      }
+      return new AccountInfo
+      {
+        Name = id,
+        Approved = user.IsApproved,
+        Locked = user.IsLockedOut,
+        LastActive = user.LastActivityDate,
+        LastPassword = user.LastPasswordChangedDate,
+        LastLocked = user.LastLockoutDate < new DateTime(1900, 1, 1) ? (DateTimeOffset?)null : user.LastLockoutDate,
+        Email = user.Email
+      };
+    }
+
+    [Authorize]
+    public AccountInfo Put(AccountInfo id)
+    {
+      var user = Membership.GetUser(id.Name);
+      if (user == null)
+      {
+        throw new HttpResponseException(HttpStatusCode.BadRequest);
+      }
+
+      var perms = GetPermissionsOnAccount(id.Name, Permissions, db);
+      if (!perms.HasFlag(AccountPermissions.CanEdit))
+      {
+        throw new HttpResponseException(HttpStatusCode.BadRequest);
+      }
+
+      if (!string.Equals(user.Email, id.Email, StringComparison.OrdinalIgnoreCase))
+      {
+        user.Email = id.Email;
+      }
+
+      if (perms.HasFlag(AccountPermissions.CanAdmin))
+      {
+        if (user.IsLockedOut && !id.Locked)
+        {
+          user.UnlockUser();
+        }
+        if (user.IsApproved != id.Approved)
+        {
+          user.IsApproved = id.Approved;
+        }
+      }
+
+      Membership.UpdateUser(user);
+      return Get(id.Name);
+    }
+
+    [Flags]
+    public enum AccountPermissions
+    {
+      None = 0,
+      View = 1,
+      CanEdit = 3,
+      CanAdmin = 7
+    }
+
+    public static AccountPermissions GetPermissionsOnAccount(string username, IAuthService authService, IKcsarContext db)
+    {
+      var member = db.Members.SingleOrDefault(f => f.Username == username);
+      bool canAdmin = authService.IsAdmin;
+      bool canEdit = canAdmin;
+
+      if (member != null)
+      {
+        canAdmin = authService.IsMembershipForPerson(member.Id);
+        canEdit = canAdmin || authService.IsSelf(member.Id);
+
+      }
+
+      if (!canEdit)
+      {
+        return AccountPermissions.None;
+      }
+
+      return (canAdmin ? AccountPermissions.CanAdmin : AccountPermissions.None) | (canEdit ? AccountPermissions.CanEdit : AccountPermissions.None);
     }
 
     [HttpGet]

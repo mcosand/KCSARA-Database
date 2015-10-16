@@ -17,6 +17,8 @@ namespace Kcsara.Database.Web.api
     {
       config.DependencyResolver = new NinjectResolver(kernel);
 
+      config.MapHttpAttributeRoutes();
+
       config.Routes.MapHttpRoute(
           "DefaultApi",
           "api/{controller}/{action}/{id}",
