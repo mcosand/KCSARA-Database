@@ -59,7 +59,7 @@
       </div>
       <div class="box-footer box-action-footer">
         <div class="col-xs-12">
-          <a class="btn" ng-href="{{window.appRoot + '/Members/Detail/' + account.linkedMember.id}}">View Details Page</a>
+          <a ng-if="account.linkedMember.id" class="btn" ng-href="{{window.appRoot + '/Members/Detail/' + account.linkedMember.id}}">View Details Page</a>
         </div>
       </div>
     </div>

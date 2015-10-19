@@ -205,3 +205,16 @@ aside.main-sidebar,
 .navbar .form-control::-webkit-input-placeholder {
   color: #bbb;
 }
+
+.list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {
+    z-index: 2;
+    color: #fff;
+    background-color: #f39c12;
+    border-color: #f39c12;
+}
+
+.np‐autocomplete‐wrapper.form‐group span.form‐control‐feedback { display: none; }
+.np‐autocomplete‐wrapper.has‐feedback span.form‐control‐feedback { display: block; }
+.np‐autocomplete‐open input.form‐control { border‐bottom‐left‐radius: 0; border‐bottom‐right‐radius: 0; }
+.np‐autocomplete‐open .list‐group‐item:first‐child { border‐top‐left‐radius: 0; border‐top‐right‐radius: 0; }
+.np‐autocomplete‐wrapper .list‐group‐item.active strong { text‐shadow: none; }

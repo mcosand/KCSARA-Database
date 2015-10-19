@@ -3,12 +3,25 @@
  */
 namespace Kcsara.Database.Web.api.Models
 {
+  public class SearchResponse
+  {
+    public SearchResult[] Results { get; set; }
+  }
+
   public class SearchResult
   {
     public SearchResultType Type { get; set; }
-
+    internal int Score { get; set; }
   }
 
+  public class MemberSearchResult : SearchResult
+  {
+    public MemberSearchResult()
+    {
+      this.Type = SearchResultType.Member;
+    }
+    public MemberSummary Summary { get; set; }
+  }
   public enum SearchResultType
   {
     Member,

@@ -401,10 +401,16 @@ namespace Kcsara.Database.Web.api
         throw new HttpResponseException(System.Net.HttpStatusCode.BadRequest);
       }
 
+      var result = SummariesWithUnits(db.Members.Where(f => f.Username == id)
+        .OrderBy(f => f.LastName).ThenBy(f => f.FirstName));
+
+      return result;
+    }
+
+    internal static IEnumerable<MemberSummary> SummariesWithUnits(IQueryable<Model.Member> query)
+    {
       DateTime cutoff = DateTime.Now;
-      var result = db.Members.Where(f => f.Username == id)
-        .OrderBy(f => f.LastName).ThenBy(f => f.FirstName)
-        .Select(f => new { Member = f, Units = f.Memberships.Where(g => (g.EndTime == null || g.EndTime > cutoff) && g.Status.IsActive).Select(g => g.Unit).Select(g => new NameIdPair { Id = g.Id, Name = g.DisplayName }).Distinct() })
+      return query.Select(f => new { Member = f, Units = f.Memberships.Where(g => (g.EndTime == null || g.EndTime > cutoff) && g.Status.IsActive).Select(g => g.Unit).Select(g => new NameIdPair { Id = g.Id, Name = g.DisplayName }).Distinct() })
         .AsEnumerable()
         .Select(f => new MemberSummary
         {
@@ -413,8 +419,6 @@ namespace Kcsara.Database.Web.api
           Id = f.Member.Id,
           Units = f.Units.ToArray()
         });
-
-      return result;
     }
   }
 }

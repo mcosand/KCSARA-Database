@@ -43,25 +43,25 @@
                 <ul class="menu">
                   @if (ViewData["MemberId"] != null)
                   {
-                    <li><a href="~/Members/Detail/@ViewData["MemberId"]"><i class="fa fa-home text-primary"></i> My Page</a></li> }
+                    <li><a href="~/Members/Detail/@ViewData["MemberId"]"><i class="fa fa-home text-primary"></i>My Page</a></li> }
                   <li>
-                    <a href="~/Account/Logout"><i class="fa fa-sign-out text-primary"></i> Logout</a>
+                    <a href="~/Account/Logout"><i class="fa fa-sign-out text-primary"></i>Logout</a>
                   </li>
                 </ul>
               </li>
             </ul>
           </li>
-          if (IsSectionDefined("pageSettings"))
-          {
+                  if (IsSectionDefined("pageSettings"))
+                  {
           <!-- Control Sidebar Toggle Button -->
-            <li>
-              <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
-            </li>
-          }
+          <li>
+            <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+          </li>
+                  }
         }
         else
         {
-          <li><i class="fa fa-sign-in"></i> @(Html.ActionLink<AccountController>(f => f.Login(), Strings.LoginPrompt))</li>
+          <li><i class="fa fa-sign-in"></i>@(Html.ActionLink<AccountController>(f => f.Login(), Strings.LoginPrompt))</li>
         }
       </ul>
     </div>
@@ -74,7 +74,7 @@
       <ul class="sidebar-menu">
         <li class="header">Main Navigation</li>
         <li class="treeview">
-          <a href="#"><i class="fa fa-user"></i><span>Members</span><i class="fa fa-angle-down pull-right"></i></a>
+          <a href="~/Members" onclick="return false;"><i class="fa fa-user"></i><span>Members</span><i class="fa fa-angle-down pull-right"></i></a>
           <ul class="treeview-menu">
             <li>
               <form action="#" method="get" class="sidebar-form" onsubmit="alert('not implemented'); return false;">
@@ -86,18 +86,18 @@
                 </div>
               </form>
             </li>
-            <li><a href="~/Members"><i class="fa fa-circle-o"></i> <span>Member List</span></a></li>
+            <li><a href="~/Members"><i class="fa fa-circle-o"></i><span>Member List</span></a></li>
           </ul>
         </li>
         <li class="treeview">
-          <a href="#"><i class="fa fa-book"></i> <span>Training</span><i class="fa fa-angle-down pull-right"></i></a>
+          <a href="#"><i class="fa fa-book"></i><span>Training</span><i class="fa fa-angle-down pull-right"></i></a>
           <ul class="treeview-menu">
-            <li><a href="~/Training/List/"><i class="fa fa-circle-o"></i> Rosters</a></li>
+            <li><a href="~/Training/List/"><i class="fa fa-circle-o"></i>Rosters</a></li>
           </ul>
         </li>
-        <li><a href="~/Missions/"><i class="fa fa-binoculars"></i> <span>Missions</span></a></li>
-        <li><a href="~/Units/"><i class="fa fa-users"></i> <span>Units</span></a></li>
-        <li><a href="~/Animals/"><i class="fa fa-paw"></i> <span>Animals</span></a></li>
+        <li><a href="~/Missions/"><i class="fa fa-binoculars"></i><span>Missions</span></a></li>
+        <li><a href="~/Units/"><i class="fa fa-users"></i><span>Units</span></a></li>
+        <li><a href="~/Animals/"><i class="fa fa-paw"></i><span>Animals</span></a></li>
       </ul>
     }
     @RenderSection("sidebar", false)
@@ -123,8 +123,17 @@
 @section head {@RenderSection("head", false)}
 @section scripts {
   @RenderSection("scripts", false)
+  <script type="text/ng-template" id="searchMission.html">
+    This is a mission result
+  </script>
+  <script type="text/ng-template" id="searchMember.html">
+    <strong>{{item.summary.name}}</strong><br/>
+    DEM# {{item.summary.dem}}
+  </script>
   <script type="text/ng-template" id="searchResult.html">
-  This is a result. {{item.type}}
+<button type="button"  ng-click="select(item)"  ng-class="getItemClasses($index)"  ng-repeat="item in searchResults" ng-mouseenter="onItemMouseenter($index)">
+<ng-include src="'search' + item.type + '.html'"></ng-include>
+</button>
   </script>
   <script type="text/javascript">
     angular.module('sarDatabase').controller('MainNavCtrl', ['$scope',
@@ -133,7 +142,17 @@
           searchOptions: {
             url: '@Url.Content("~/api/search/")',
             searchParam: 'q',
-            itemTemplateUrl: 'searchResult.html'
+            itemTemplateUrl: 'searchResult.html',
+            onSelect: function (item) {
+              if (item.type == 'Member') {
+                window.location.href = '@Url.Content("~/Members/Detail/")' + item.summary.id;
+              }
+              else {
+                console.log(item);
+              }
+            }
+        //    dataHolder: 'results',
+        //    nameAttr: 'type'
           }
         });
       }]);
