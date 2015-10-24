@@ -22,22 +22,50 @@ namespace Kcsara.Database.Web.api
     [HttpGet]
     public SearchResult[] Search(string q, SearchResultType[] t, int limit = 10)
     {
-      var last12Months = DateTime.Now.AddMonths(-12);
+      var now = DateTime.Now;
+      var last12Months = now.AddMonths(-12);
       var list = new List<SearchResult>();
       if (t == null || t.Any(f => f == SearchResultType.Member))
       {
         list.AddRange(
           MembersController.SummariesWithUnits(
-          db.Members.Where(f => f.FirstName.StartsWith(q) || f.LastName.StartsWith(q))
-          .OrderByDescending(f => f.MissionRosters.Count(g => g.TimeIn > last12Months))
+          db.Members.Where(f => (f.FirstName + " " + f.LastName).StartsWith(q)
+                             || (f.LastName + ", " + f.FirstName).StartsWith(q)
+                             || (f.DEM.StartsWith(q) || f.DEM.StartsWith("SR" + q)))
+          .OrderByDescending(f => f.Memberships.Any(g => g.Status.IsActive && (g.EndTime == null || g.EndTime > now)))
+          .ThenByDescending(f => f.MissionRosters.Count(g => g.TimeIn > last12Months))
           .ThenByDescending(f => f.MissionRosters.Count())
           .ThenBy(f => f.LastName)
           .ThenBy(f => f.FirstName)
           .ThenBy(f => f.Id)).Select((m, i) => new MemberSearchResult
           {
-            Score = 1000 - i,
+            Score = (m.Units.Length == 0 ? 300 : 1000) - i,
             Summary = m
           }));
+      }
+
+      if (t == null || t.Any(f => f == SearchResultType.Mission))
+      {
+        list.AddRange(
+          db.Missions.Where(f => f.StateNumber.StartsWith(q) || f.Title.Contains(q) || f.Location.Contains(q))
+          .OrderByDescending(f => f.StartTime)
+          .AsEnumerable()
+          .Select((f, i) =>
+          new MissionSearchResult
+          {
+            Score = ((f.StartTime > last12Months) ? 500 : 200) - i,
+            Summary = new EventSummary
+            {
+              Id = f.Id,
+              StateNumber = f.StateNumber,
+              Name = f.Title,
+              Location = f.Location,
+              Start = f.StartTime,
+              Stop = f.StopTime
+            }
+          })
+          );
+
       }
 
       return list.OrderByDescending(f => f.Score).Take(limit).ToArray();

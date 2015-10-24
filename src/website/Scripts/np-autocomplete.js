@@ -1,4 +1,4 @@
-// version 2.0.3
+// PATCHED from version 2.0.3
 // https://github.com/ng-pros/np-autocomplete/commit/723084c4e91c08eb4f2c4bcf03b87654669be459
 'use strict';
 
@@ -256,8 +256,8 @@
           var inputOffset = input.position();
 
           listElement.css({
-            top: inputOffset.top + input.outerHeight(),
-            width: input.outerWidth()
+            top: inputOffset.top + input.outerHeight()//,
+        //    width: input.outerWidth()
           });
 
           if (listElement.css('direction') === 'ltr') {

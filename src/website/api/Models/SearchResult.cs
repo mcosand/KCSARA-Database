@@ -22,6 +22,17 @@ namespace Kcsara.Database.Web.api.Models
     }
     public MemberSummary Summary { get; set; }
   }
+
+  public class MissionSearchResult : SearchResult
+  {
+    public MissionSearchResult()
+    {
+      this.Type = SearchResultType.Mission;
+    }
+
+    public EventSummary Summary { get; set; }
+  }
+
   public enum SearchResultType
   {
     Member,

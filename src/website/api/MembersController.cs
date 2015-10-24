@@ -417,7 +417,8 @@ namespace Kcsara.Database.Web.api
           Name = f.Member.FullName,
           WorkerNumber = f.Member.DEM,
           Id = f.Member.Id,
-          Units = f.Units.ToArray()
+          Units = f.Units.ToArray(),
+          Photo = f.Member.PhotoFile
         });
     }
   }

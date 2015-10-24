@@ -100,10 +100,12 @@ a {
 }
 
 .shadow-1,
+.search-img,
 header,
 aside.main-sidebar,
 .box-action-footer .btn:hover,
-.bootstrap-dialog-footer .btn:hover
+.bootstrap-dialog-footer .btn:hover,
+.search-results .list-group-item:hover
 {
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
     z-index:10;
@@ -122,10 +124,13 @@ aside.main-sidebar,
 .control-sidebar-bg,
 .sidebar-mini.sidebar-collapse .sidebar-menu > li:active > a > span:not(.pull-right),
 .sidebar-menu > li:not(.header):active > a,
-.sidebar-menu > li > ul.treeview-menu {
+.sidebar-menu > li > ul.treeview-menu,
+.search-results
+{
     box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
     z-index:30;
 }
+
 .shadow-4 {
     box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
     z-index:40;
@@ -218,3 +223,22 @@ aside.main-sidebar,
 .np‐autocomplete‐open input.form‐control { border‐bottom‐left‐radius: 0; border‐bottom‐right‐radius: 0; }
 .np‐autocomplete‐open .list‐group‐item:first‐child { border‐top‐left‐radius: 0; border‐top‐right‐radius: 0; }
 .np‐autocomplete‐wrapper .list‐group‐item.active strong { text‐shadow: none; }
+
+.list-group-item div {
+  white-space: nowrap;
+  vertical-align:top;
+}
+.search-img {
+  width: 48px;
+  height: 48px;
+  background-position: center center;
+  background-size: 48px 64px;
+  background-repeat: no-repeat;
+  border-radius: 50%;
+  display:inline-block;
+  margin: 0px 6px 0px -6px;
+  /*border: solid 1px #bbb;*/
+  /*position:absolute;
+  top: 6px;
+  left: 6px;*/
+}

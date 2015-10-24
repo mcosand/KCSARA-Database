@@ -23,6 +23,9 @@ namespace Kcsara.Database.Web.api.Models
     public string WorkerNumber { get; set; }
 
     [DataMember]
+    public string Photo { get; set; }
+
+    [DataMember]
     public NameIdPair[] Units { get; set; }
 
     public MemberSummary()

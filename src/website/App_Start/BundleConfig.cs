@@ -20,7 +20,7 @@ namespace Kcsara.Database.Web
         "~/Scripts/moment.js",
         "~/Scripts/angular.js",
         "~/Scripts/angular-modal-service.js",
-        "~/Scripts/np-autocomplete.min.js",
+        "~/Scripts/np-autocomplete.js",
         "~/Scripts/app.js",
         "~/scripts/site/modules/*.js"
         ));

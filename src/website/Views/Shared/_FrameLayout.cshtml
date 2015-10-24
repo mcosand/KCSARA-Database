@@ -124,11 +124,23 @@
 @section scripts {
   @RenderSection("scripts", false)
   <script type="text/ng-template" id="searchMission.html">
-    This is a mission result
+    <div>
+      <div class="search-img" ng-style="{'background-color': 'pink' }"></div>
+      <div style="display:inline-block">
+        <strong>{{item.summary.name}}</strong><br />
+        {{item.summary.start | date:'yyyy-MM-dd'}}<br/>
+        DEM# {{item.summary.stateNumber}}
+      </div>
+    </div>
   </script>
   <script type="text/ng-template" id="searchMember.html">
-    <strong>{{item.summary.name}}</strong><br/>
-    DEM# {{item.summary.dem}}
+    <div>
+      <div class="search-img" ng-style="{'background-image': 'url({{window.appRoot + '/content/auth/members/' + (item.summary.photo ? item.summary.photo : 'none.jpg')}})', opacity: item.summary.units.length ? 1.0 : 0.7 }"></div>
+      <div style="display:inline-block">
+        <strong>{{item.summary.name}}</strong><br />
+        DEM# {{item.summary.dem}}
+      </div>
+    </div>
   </script>
   <script type="text/ng-template" id="searchResult.html">
 <button type="button"  ng-click="select(item)"  ng-class="getItemClasses($index)"  ng-repeat="item in searchResults" ng-mouseenter="onItemMouseenter($index)">
@@ -143,16 +155,20 @@
             url: '@Url.Content("~/api/search/")',
             searchParam: 'q',
             itemTemplateUrl: 'searchResult.html',
+            listClass: 'list-group search-results',
+            limit: 8,
             onSelect: function (item) {
               if (item.type == 'Member') {
                 window.location.href = '@Url.Content("~/Members/Detail/")' + item.summary.id;
+              }
+              else if (item.type == "Mission") {
+                window.location.href = '@Url.Content("~/Missions/Roster/")' + item.summary.id;
               }
               else {
                 console.log(item);
               }
             }
-        //    dataHolder: 'results',
-        //    nameAttr: 'type'
+            // np-autocomplete.min.js modified to remove assignment of width
           }
         });
       }]);
