@@ -444,7 +444,7 @@ namespace Kcsar.Membership
         cmd.Parameters.AddWithValue("newname", role.Name);
         cmd.Parameters.AddWithValue("newnamelower", role.Name.ToLowerInvariant());
         cmd.Parameters.AddWithValue("name", originalRole ?? role.Name);
-        cmd.Parameters.AddWithValue("owners", string.Join(",", role.Owners.Select(f => f.ToString()).ToArray()));
+        cmd.Parameters.AddWithValue("owners", string.Join(",", role.Owners.ToArray()));
         cmd.Parameters.AddWithValue("destinations", string.Join(",", role.Destinations.ToArray()));
         cmd.Parameters.AddWithValue("email", (object)role.EmailAddress ?? DBNull.Value);
         connection.Open();
@@ -464,10 +464,10 @@ namespace Kcsar.Membership
 
     public ExtendedRole(string ownerList, string destinationList)
     {
-      this.Owners = new List<Guid>();
+      this.Owners = new List<string>();
       if (!string.IsNullOrEmpty(ownerList))
       {
-        this.Owners.AddRange(ownerList.Split(',').Select(f => new Guid(f)));
+        this.Owners.AddRange(ownerList.Split(','));
       }
 
       this.Destinations = new List<string>();
@@ -478,7 +478,7 @@ namespace Kcsar.Membership
     }
 
     public string Name { get; set; }
-    public List<Guid> Owners { get; private set; }
+    public List<string> Owners { get; private set; }
     public List<string> Destinations { get; private set; }
     public string EmailAddress { get; set; }
 

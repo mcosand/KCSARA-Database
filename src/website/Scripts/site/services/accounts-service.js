@@ -30,7 +30,7 @@
       }).success(function (data) {
         $.each(data, function (idx, group) {
           if (!self.groups[group]) {
-            self.groups[group] = { name: group, groups: [] };
+            self.groups[group] = { name: group, groups: [], canEdit: self.rolesIManage.indexOf(group) >= 0 };
             self.groups[group].groups.loaded = false;
             accountModel.groups.push($.extend({ collapsed: true, remove: false }, self.groups[group]));
           }

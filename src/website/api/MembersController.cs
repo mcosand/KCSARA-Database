@@ -31,6 +31,7 @@ namespace Kcsara.Database.Web.api
     }
 
     /// <summary>Gets account information for a given member.</summary>
+    /// <remarks>used by /account/detail/{username}</remarks>
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet]
@@ -407,6 +408,12 @@ namespace Kcsara.Database.Web.api
       return result;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <remarks>used by /account/detail/{username}, MissionLine app</remarks>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpGet]
     [Authorize(Roles = "cdb.users")]
     public IEnumerable<MemberSummary> ByUsername(string id)

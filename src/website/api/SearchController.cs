@@ -19,6 +19,14 @@ namespace Kcsara.Database.Web.api
       : base(db, log)
     { }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <remarks>used by Angular navigation chrome, /account/detail/{username} link member</remarks>
+    /// <param name="q"></param>
+    /// <param name="t"></param>
+    /// <param name="limit"></param>
+    /// <returns></returns>
     [HttpGet]
     public SearchResult[] Search(string q, string t, int limit = 10)
     {

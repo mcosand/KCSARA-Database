@@ -17,6 +17,7 @@ namespace Kcsara.Database.Services
     private IPrincipal user;
     private IKcsarContext context;
     public Guid UserId { get; private set; }
+    public string Username { get; private set; }
 
     public AuthService(IPrincipal user, IKcsarContext context)
     {
@@ -28,6 +29,7 @@ namespace Kcsara.Database.Services
       {
         UserId = context.Members.Where(f => f.Username == user.Identity.Name).Select(f => f.Id).FirstOrDefault();
       }
+      Username = user.Identity.Name;
     }
 
     public bool IsUserOrLocal(HttpRequestBase request)
@@ -116,21 +118,42 @@ namespace Kcsara.Database.Services
 
     public SarUnit[] GetUnitsIManage()
     {
-      List<SarUnit> list = new List<SarUnit>();
-      foreach (SarUnit u in (from unit in context.Units select unit))
-      {
-        if (IsInRole(u.DisplayName.Replace(" ", "").ToLowerInvariant() + ".membership"))
-        {
-          list.Add(u);
-        }
-      }
-      return list.ToArray();
+      return GetUnitsIManage_Internal().Values.ToArray();
     }
 
+    private Dictionary<string,SarUnit> GetUnitsIManage_Internal()
+    {
+      var bag = new Dictionary<string, SarUnit>();
+      foreach (SarUnit u in (from unit in context.Units select unit))
+      {
+        var group = u.DisplayName.Replace(" ", "").ToLowerInvariant() + ".membership";
+        if (IsInRole(group))
+        {
+          bag.Add(group, u);
+        }
+      }
+      return bag;
+    }
 
     public void DeleteUser(string id)
     {
       Membership.DeleteUser(id);
+    }
+
+    public IEnumerable<string> GetGroupsIManage()
+    {
+      if (IsAdmin)
+      {
+        return Roles.GetAllRoles();
+      }
+
+      List<string> groups = GetUnitsIManage_Internal().Keys.ToList();
+      groups.AddRange(((INestedRoleProvider)Roles.Provider).ExtendedGetAllRoles()
+        .Where(f => f.Owners.Any(g => g == user.Identity.Name))
+        .Select(f => f.Name)
+        );
+
+      return groups.Distinct();
     }
 
     public IEnumerable<string> GetGroupsForUser(string username)
@@ -138,7 +161,7 @@ namespace Kcsara.Database.Services
       return ((INestedRoleProvider)Roles.Provider).GetRolesForUser(username, false);
     }
 
-    public IEnumerable<string> GetGroupsFoGroup(string group)
+    public IEnumerable<string> GetGroupsForGroup(string group)
     {
       return ((INestedRoleProvider)Roles.Provider).GetRolesWithRole(group);
     }

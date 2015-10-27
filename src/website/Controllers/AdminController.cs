@@ -322,20 +322,20 @@ namespace Kcsara.Database.Web.Controllers
     {
       var groups = Kcsar.Membership.RoleProvider.GetRoles().OrderBy(x => x.Name);
       List<GroupView> model = new List<GroupView>();
-      Guid[] owners = groups.SelectMany(f => f.Owners).Distinct().ToArray();
-      var ownerDetails = (owners.Length > 0) ? this.db.Members.Where(GetSelectorPredicate<Member>(owners)).ToDictionary(f => f.Id, f => f) : new Dictionary<Guid, Member>();
+      string[] owners = groups.SelectMany(f => f.Owners).Distinct().ToArray();
+      var ownerDetails = (owners.Length > 0) ? this.db.Members.Where(f => owners.Contains(f.Username)).ToDictionary(f => f.Username, f => f) : new Dictionary<string, Member>();
 
       foreach (var group in groups)
       {
         GroupView view = new GroupView { Name = group.Name, EmailAddress = group.EmailAddress, Destinations = group.Destinations.ToArray() };
         List<ApiModels.MemberSummary> ownersView = new List<ApiModels.MemberSummary>();
-        foreach (Guid owner in group.Owners)
+        foreach (string owner in group.Owners)
         {
           Member m = ownerDetails[owner];
           ownersView.Add(new ApiModels.MemberSummary
           {
             Name = m.FullName,
-            Id = owner
+            Id = m.Id
           });
         }
         view.Owners = ownersView.ToArray();
@@ -570,7 +570,7 @@ namespace Kcsara.Database.Web.Controllers
 
       ModelState.SetModelValue("Owners", new ValueProviderResult(fields["Owners"], fields["Owners"], CultureInfo.CurrentUICulture));
       role.Owners.Clear();
-      role.Owners.AddRange((fields["Owners"] ?? "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(f => new Guid(f.Trim())));
+      role.Owners.AddRange((fields["Owners"] ?? "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(f => f.Trim()));
 
       ModelState.SetModelValue("Destinations", new ValueProviderResult(fields["Destinations"], fields["Destinations"], CultureInfo.CurrentUICulture));
       role.Destinations.Clear();
@@ -604,7 +604,7 @@ namespace Kcsara.Database.Web.Controllers
 
       ExtendedRole role = nested.ExtendedGetRole(id);
 
-      return role.Owners.Contains(Permissions.UserId);
+      return role.Owners.Contains(Permissions.Username);
     }
 
     [Authorize(Roles = "cdb.admins")]

@@ -9,6 +9,7 @@ namespace Kcsara.Database.Services
 
   public interface IAuthService
   {
+    string Username { get; }
     Guid UserId { get; }
     bool IsSelf(Guid id);
     bool IsSelf(string username);
@@ -25,6 +26,7 @@ namespace Kcsara.Database.Services
     bool ValidateUser(string username, string password);
 
     IEnumerable<string> GetGroupsForUser(string username);
-    IEnumerable<string> GetGroupsFoGroup(string group);
+    IEnumerable<string> GetGroupsForGroup(string group);
+    IEnumerable<string> GetGroupsIManage();
   }
 }

@@ -22,5 +22,6 @@ namespace Kcsar.Membership
     string[] GetRolesForUser(string username, bool recurse);
     bool IsUserInRole(string username, string roleName, bool recurse);
     string[] FindUsersInRole(string roleName, string usernameToMatch, bool recurse);
+    ExtendedRole[] ExtendedGetAllRoles();
   }
 }

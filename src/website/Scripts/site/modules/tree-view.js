@@ -10,7 +10,7 @@
         k = '<ul class="no-bullet">' +
               '<li data-ng-repeat="node in ' + e + '">' +
                 ' <div data-ng-click="selectNodeHead(node, $event)">' +
-                  '<input type="checkbox" class="input-control" ng-model="node.remove" ng-show="' + (canEdit && !(c.treeNested || false)) + '" ng-click="clickInput(node, $event)">' +
+                  '<input type="checkbox" class="input-control" ng-model="node.remove" ng-show="node.canEdit && ' + !(c.treeNested || false) + '" ng-click="clickInput(node, $event)">' +
                   '<i class="fa fa-fw fa-plus-square-o" data-ng-show="!node.' + d + '.loaded || (node.' + d + '.length && node.collapsed)" data-ng-click="selectNodeHead(node, $event)"></i>' +
                   '<i class="fa fa-fw fa-minus-square-o" data-ng-show="node.' + d + '.length && !node.collapsed" data-ng-click="selectNodeHead(node, $event)"></i>' +
                   '<i class="fa fa-fw" data-ng-hide="!node.' + d + '.loaded || node.' + d + '.length"></i>' +

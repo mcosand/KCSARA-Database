@@ -73,7 +73,7 @@
       <div class="box-body">
         <div data-angular-treeview="true" data-tree-model="account.groups" data-node-label="name" data-node-children="groups" data-can-edit="canAdmin" data-on-selected="onGroupSelected" data-on-remove="onGroupRemove"></div>
       </div>
-      <div ng-if="canAdmin" class="box-footer box-action-footer">
+      <div ng-if="canAdmin || canManageGroups()" class="box-footer box-action-footer">
         <div class="col-xs-6"><button class="btn" ng-disabled="!getGroupsToRemove().length" ng-click="nyi()">Remove From Groups</button></div>
         <div class="col-xs-6"><button class="btn" ng-click="nyi()">Add To Group</button></div>
       </div>
@@ -152,11 +152,13 @@
     angular.module('sarDatabase').controller('AccountDetailCtrl', ['$scope', 'AccountService', 'EditModalService',
       function ($scope, AccountService, EditModalService) {
         var accountModel = AccountService.initAccount(@Html.ToJson((object)ViewBag.Account));
+        AccountService.rolesIManage = @Html.ToJson((object)ViewBag.RolesIManage);
         $.extend($scope, {
           account: accountModel,
           groups: AccountService.groups,
           canAdmin: @Html.ToJson((object)ViewBag.CanAdmin),
           canEdit: @Html.ToJson((object)ViewBag.CanEdit),
+          canManageGroups: function() { return AccountService.rolesIManage.length > 0; },
           disableLockButton: @Html.ToJson(User.Identity.Name) == accountModel.name,
           options: { usePreciseDates: false },
           onGroupSelected: function (node) {

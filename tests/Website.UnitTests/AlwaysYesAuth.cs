@@ -79,7 +79,7 @@ namespace Internal.Website
       return new string[0];
     }
 
-    public IEnumerable<string> GetGroupsFoGroup(string group)
+    public IEnumerable<string> GetGroupsForGroup(string group)
     {
       return new string[0];
     }

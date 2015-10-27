@@ -39,12 +39,24 @@ namespace Kcsara.Database.Web.api
       this.formsAuth = formsAuth;
     }
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks>used by /account/detail/{username}</remarks>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [Authorize]
     public AccountInfo Get(string id)
     {
       return accountsService.Get(id);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <remarks>used by /account/detail/{username}</remarks>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [Authorize]
     public AccountInfo Put(AccountInfo id)
     {
@@ -105,6 +117,12 @@ namespace Kcsara.Database.Web.api
       return Get(id.Name);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <remarks>used by /account/detail/{username}</remarks>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpPost]
     [AllowAnonymous]
     public AccountInfo ResetPassword(string id)
@@ -153,6 +171,24 @@ namespace Kcsara.Database.Web.api
       return (canAdmin ? AccountPermissions.CanAdmin : AccountPermissions.None) | (canEdit ? AccountPermissions.CanEdit : AccountPermissions.None);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <remarks>used by /account/detail/{username}</remarks>
+    /// <returns></returns>
+    [HttpGet]
+    [Authorize]
+    public IEnumerable<string> RolesIManage()
+    {
+      return Permissions.GetGroupsIManage();
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <remarks>used by /account/detail/{username}</remarks>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpGet]
     [Authorize]
     public IEnumerable<string> RolesForUser(string id)
@@ -160,12 +196,17 @@ namespace Kcsara.Database.Web.api
       return Permissions.GetGroupsForUser(id);
     }
 
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <remarks>used by /account/detail/{username}</remarks>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpGet]
     [Authorize]
     public IEnumerable<string> RolesForRole(string id)
     {
-      return Permissions.GetGroupsFoGroup(id);
+      return Permissions.GetGroupsForGroup(id);
     }
 
     [HttpPost]

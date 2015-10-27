@@ -49,6 +49,7 @@ namespace Kcsara.Database.Web.Controllers
       }
       ViewBag.CanEdit = perms.HasFlag(api.AccountController.AccountPermissions.CanEdit);
       ViewBag.CanAdmin = perms.HasFlag(api.AccountController.AccountPermissions.CanAdmin);
+      ViewBag.RolesIManage = accountsApi.Value.RolesIManage();
       return View();
     }
 
