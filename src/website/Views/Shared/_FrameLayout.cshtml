@@ -120,7 +120,7 @@
   </script>
   <script type="text/ng-template" id="searchMember.html">
     <div>
-      <div class="search-img" ng-style="{'background-image': 'url({{window.appRoot + '/content/auth/members/' + (item.summary.photo ? item.summary.photo : 'none.jpg')}})', opacity: item.summary.units.length ? 1.0 : 0.7 }"></div>
+      <div class="search-img" ng-style="{'background-image': 'url(&quot;{{window.appRoot + '/content/auth/members/' + (item.summary.photo ? item.summary.photo : 'none.jpg')}}&quot;)', opacity: item.summary.units.length ? 1.0 : 0.7 }"></div>
       <div style="display:inline-block">
         <strong>{{item.summary.name}}</strong><br />
         DEM# {{item.summary.dem}}

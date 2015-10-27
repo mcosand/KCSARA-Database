@@ -15,6 +15,8 @@ namespace Kcsara.Database.Web.api
   [CamelCaseControllerConfig]
   public class SearchController : BaseApiController
   {
+    private static string allTypes = string.Join(",", Enum.GetNames(typeof(SearchResultType)));
+
     public SearchController(IKcsarContext db, ILog log)
       : base(db, log)
     { }
@@ -28,9 +30,9 @@ namespace Kcsara.Database.Web.api
     /// <param name="limit"></param>
     /// <returns></returns>
     [HttpGet]
-    public SearchResult[] Search(string q, string t, int limit = 10)
+    public SearchResult[] Search(string q, string t = null, int limit = 10)
     {
-      var searchTypes = (t ?? string.Empty).Split(',').Select(f => (SearchResultType)Enum.Parse(typeof(SearchResultType), f)).ToArray();
+      var searchTypes = (t ?? allTypes).Split(',').Select(f => (SearchResultType)Enum.Parse(typeof(SearchResultType), f)).ToArray();
 
       var now = DateTime.Now;
       var last12Months = now.AddMonths(-12);
