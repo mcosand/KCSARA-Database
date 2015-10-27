@@ -256,9 +256,11 @@
           var inputOffset = input.position();
 
           listElement.css({
-            top: inputOffset.top + input.outerHeight()//,
-        //    width: input.outerWidth()
+            top: inputOffset.top + input.outerHeight()
           });
+          if (!scope.options.noFixWidth) {
+            listElement.css({width: input.outerWidth() });
+          };
 
           if (listElement.css('direction') === 'ltr') {
             listElement.css('left', inputOffset.left);

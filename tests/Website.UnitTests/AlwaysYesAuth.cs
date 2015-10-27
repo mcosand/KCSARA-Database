@@ -83,5 +83,10 @@ namespace Internal.Website
     {
       return new string[0];
     }
+
+    public bool ValidateUser(string username, string password)
+    {
+      return true;
+    }
   }
 }

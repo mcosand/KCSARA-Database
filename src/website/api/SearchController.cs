@@ -20,12 +20,14 @@ namespace Kcsara.Database.Web.api
     { }
 
     [HttpGet]
-    public SearchResult[] Search(string q, SearchResultType[] t, int limit = 10)
+    public SearchResult[] Search(string q, string t, int limit = 10)
     {
+      var searchTypes = (t ?? string.Empty).Split(',').Select(f => (SearchResultType)Enum.Parse(typeof(SearchResultType), f)).ToArray();
+
       var now = DateTime.Now;
       var last12Months = now.AddMonths(-12);
       var list = new List<SearchResult>();
-      if (t == null || t.Any(f => f == SearchResultType.Member))
+      if (searchTypes.Any(f => f == SearchResultType.Member))
       {
         list.AddRange(
           MembersController.SummariesWithUnits(
@@ -44,7 +46,7 @@ namespace Kcsara.Database.Web.api
           }));
       }
 
-      if (t == null || t.Any(f => f == SearchResultType.Mission))
+      if (searchTypes.Any(f => f == SearchResultType.Mission))
       {
         list.AddRange(
           db.Missions.Where(f => f.StateNumber.StartsWith(q) || f.Title.Contains(q) || f.Location.Contains(q))

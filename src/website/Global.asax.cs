@@ -13,11 +13,9 @@ using Kcsar.Database.Model;
 using Kcsara.Database.Extensions;
 using Kcsara.Database.Services;
 using Kcsara.Database.Web.api;
-using Kcsara.Database.Web.Controllers;
 using log4net;
 using Ninject;
 using Ninject.Web.Common;
-using Kcsara.Database.Services.Accounts;
 
 namespace Kcsara.Database.Web
 {
@@ -34,9 +32,10 @@ namespace Kcsara.Database.Web
       myKernel.Bind<IKcsarContext>().To<KcsarContext>();
       myKernel.Bind<ILog>().ToMethod(context => LogManager.GetLogger("Default"));
       myKernel.Bind<IFormsAuthentication>().To<FormsAuthenticationWrapper>();
-      myKernel.Bind<MembershipProvider>().ToMethod(context => System.Web.Security.Membership.Provider);
+ //     myKernel.Bind<System.Web.Security.Membership>().ToConstant();
       myKernel.Bind<IAuthService>().To<AuthService>();
       myKernel.Bind<IPrincipal>().ToMethod(f => Thread.CurrentPrincipal);
+      myKernel.Bind<Func<IPrincipal>>().ToConstant((Func<IPrincipal>)(() => Thread.CurrentPrincipal));
       myKernel.Bind<IAppSettings>().To<AppSettings>();
       myKernel.Bind<IReportsService>().To<ReportsService>();
       myKernel.Bind<IExtensionProvider>().To<ExtensionProvider>().InSingletonScope();

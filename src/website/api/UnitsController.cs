@@ -26,9 +26,13 @@ namespace Kcsara.Database.Web.api
   [ModelValidationFilter]
   public class UnitsController : BaseApiController
   {
-    public UnitsController(Model.IKcsarContext db, ILog log)
+    readonly Lazy<MembersController> membersController;
+
+    public UnitsController(Lazy<MembersController> membersController, Model.IKcsarContext db, ILog log)
       : base(db, log)
-    { }
+    {
+      this.membersController = membersController;
+    }
 
     #region Applications
     [HttpPost]
@@ -105,7 +109,7 @@ namespace Kcsara.Database.Web.api
         query = query.Where(f => f.Unit.Id == id);
       }
 
-      MembersController members = new MembersController(this.db, this.log);
+      MembersController members = membersController.Value;
 
       var notDoneDocs = new[] { Model.DocumentStatus.NotApplicable.ToString(), Model.DocumentStatus.NotStarted.ToString() };
 

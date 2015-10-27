@@ -49,7 +49,7 @@
             <li>Member name {{account.linkedMember.name}}</li>
             <li>DEM# {{account.linkedMember.dem}}</li>
             <li>
-              Active Units <status-glyph test="account.linkedMember.units"></status-glyph>
+              Active Units <status-glyph test="account.linkedMember.units.length"></status-glyph>
               <ul>
                 <li ng-repeat="u in account.linkedMember.units">{{u.Name}}</li>
               </ul>
@@ -57,9 +57,10 @@
           </ul>
         </div>
       </div>
-      <div class="box-footer box-action-footer">
+      <div ng-if="canAdmin || account.linkedMember.id" class="box-footer box-action-footer">
         <div class="col-xs-12">
           <a ng-if="account.linkedMember.id" class="btn" ng-href="{{window.appRoot + '/Members/Detail/' + account.linkedMember.id}}">View Details Page</a>
+          <button ng-if="canAdmin && !account.linkedMember.id" class="btn" ng-click="linkMember()">Link Member</button>
         </div>
       </div>
     </div>
@@ -104,17 +105,50 @@
       <div class="form-group inline-form-group" ng-class="{ 'has-error': isInvalid(setPasswordForm, 'password')}">
         <label for="password" class="control-label"><input type="radio" value="set" ng-model="model.type" /> Specify Password:</label>
         <input name="password" type="text" ng-model="model.password" ng-change="model.type = 'set'"
-                ng-validate-password-characters ng-required="model.type == 'set'"
-                ng-model-options="{allowInvalid: true}"
-                class="form-control" />
+               ng-validate-password-characters ng-required="model.type == 'set'"
+               ng-model-options="{allowInvalid: true}"
+               class="form-control" />
         <div class="help-block" ng-if="isInvalid(setPasswordForm, 'password')">
-            <div ng-if="setPasswordForm.password.$error.passwordCharacters">Not a strong password.</div>
-          </div>
+          <div ng-if="setPasswordForm.password.$error.passwordCharacters">Not a strong password.</div>
+        </div>
       </div>
     </form>
-  </script>  
-
+  </script>
+  <script type="text/ng-template" id="linkMember.html">
+    <form name="memberForm">
+      <p>Select member to link to username <strong>{{model.name}}</strong></p>
+      <p>This action cannot be undone.</p>
+      <div class="form-group has-warning" ng-class="{'has-warning': model.linkMember && !model.linkMember.units.length, 'has-error': memberForm.memberId.$error.memberNotLinked}">
+        <input type="text" name="memberId" style="display:none" ng-model="model.memberId"  member-not-linked-validator />
+        <div np-autocomplete="options.searchOptions" ng-model="model.memberId" class="input-group">
+          <input type="text" name="q" class="form-control" placeholder="Search Members ..." />
+          <span class="input-group-btn">
+            <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
+          </span>
+        </div>
+        <div ng-if="memberForm.colorCode.$error.required">...</div>
+        <span class="help-block" ng-if="memberForm.memberId.$pending">Checking for existing account ...</span>
+        <span class="help-block" ng-if="memberForm.memberId.$error.memberNotLinked"><i class="fa fa-exclamation-circle"></i> User already has a login username.</span>
+        <span class="help-block" ng-if="model.linkMember && !model.linkMember.units.length"><i class="fa fa-warning"></i> Not active in any KCSARA units.</span>
+      </div>
+    </form>
+  </script>
   <script type="text/javascript">
+    angular.module('sarDatabase').directive('memberNotLinkedValidator', ['AccountService', '$q', function(AccountService, $q) {
+      return {
+        require : 'ngModel',
+        link : function($scope, element, attrs, ngModel) {
+          ngModel.$asyncValidators.memberNotLinked = function(memberId) {
+            var deferred = $q.defer();
+            if (!memberId) { deferred.resolve(false); }
+            else { AccountService.getMemberAccount(memberId).then(function(data) {
+              if (data) { deferred.reject(); } else { deferred.resolve(); }
+            }); }
+            return deferred.promise;
+          };
+        }
+      }
+    }])
     angular.module('sarDatabase').controller('AccountDetailCtrl', ['$scope', 'AccountService', 'EditModalService',
       function ($scope, AccountService, EditModalService) {
         var accountModel = AccountService.initAccount(@Html.ToJson((object)ViewBag.Account));
@@ -159,6 +193,33 @@
                 done: function(data) {
                   accountModel.merge(data);
                 }
+              });
+          },
+          linkMember: function() {
+            var model = $.extend({}, accountModel);
+            EditModalService.edit('linkMember.html',
+              'Link KCSARA Member',
+              model,
+              AccountService.save,
+              {
+                done: function(data) {
+                  accountModel.merge(data);
+                  AccountService.loadLinkedMember(accountModel.name);
+                },
+                searchOptions: {
+                  url: '@Url.Content("~/api/search/")',
+                  searchParam: 'q',
+                  itemTemplateUrl: 'searchResult.html',
+                  listClass: 'list-group search-results',
+                  params: {'t': 'Member'},
+                  limit: 8,
+                  nameAttr: 'summary.name',
+                  valueAttr: 'summary.id',
+                  onSelect: function (item) {
+                    model.linkMember = item.summary; },
+                  onDeselect: function() {
+                    delete model.linkMember; }
+                },
               });
           },
           changePassword: function() {

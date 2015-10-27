@@ -14,6 +14,9 @@ angular.module('editModals').controller('ModalController', [
       var bootstrapDialog = new BootstrapDialog({
         title: title,
         message: $element,
+        onhide: function(dialogRef) {
+          return true;
+        },
         buttons: [{
           label: options.saveText,
           cssClass: 'btn col-xs-3 col-xs-offset-6',
@@ -31,7 +34,10 @@ angular.module('editModals').controller('ModalController', [
             var btn = this;
             btn.disable().spin();
             save(model)
-              .then($scope.close)
+              .then(
+                function () { $scope.close() },
+                function () { alert('error performing save action'); }
+                )
               .finally(function () { btn.enable().stopSpin(); });
           }
         }, {
@@ -66,11 +72,15 @@ angular.module('editModals').service('EditModalService', ['ModalService', functi
         model: model,
         save: function (model) {
           console.log(model);
-          return saveAction(model).then(options.done || function() { }, options.fail || function() { });
+          var r = saveAction(model);
+          r.then(options.done || function () { }, options.fail || function () { });
+          return r;
         },
-        options: options
+        options: null
       }
-    }).then(function (modal) {
+    },
+    function (newScope) { $.extend(newScope, { options: options }); }
+    ).then(function (modal) {
       modal.controller.open();
     });
   }

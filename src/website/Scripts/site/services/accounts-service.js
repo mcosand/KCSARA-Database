@@ -69,7 +69,7 @@
       var deferred = $q.defer();
       if (accountModel.linkedMember.loaded) {
         deferred.resolve(accountModel.linkedMember);
-        return deferred;
+        return deferred.promise;
       }
       accountModel.linkedMember.loading = true;
       $http({
@@ -87,12 +87,24 @@
         deferred.resolve(data);
       })
       .error(function (response) { deferred.reject(response); });
+      return deferred.promise;
+    },
+    getMemberAccount: function(userId) {
+      var deferred = $q.defer();
+      $http({
+        method: 'GET',
+        url: window.appRoot + 'api/members/accountfor/' + userId
+      })
+      .success(function (data) { deferred.resolve(data); })
+      .error(function (response) { deferred.reject(response); });
+      return deferred.promise;
     },
     /*
      *
      */
     save: function (model) {
       var deferred = $q.defer();
+      if (model.linkedMember.loaded) delete model.linkedMember.loaded;
       $http({
         method: 'PUT',
         url: window.appRoot + 'api/account',

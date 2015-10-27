@@ -157,6 +157,7 @@
             itemTemplateUrl: 'searchResult.html',
             listClass: 'list-group search-results',
             limit: 8,
+            noFixWidth: true,
             onSelect: function (item) {
               if (item.type == 'Member') {
                 window.location.href = '@Url.Content("~/Members/Detail/")' + item.summary.id;

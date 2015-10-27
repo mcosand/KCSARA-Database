@@ -10,6 +10,7 @@ namespace Kcsara.Database.Web.api
   using System.Data.SqlClient;
   using System.IO;
   using System.Linq;
+  using System.Net;
   using System.Text.RegularExpressions;
   using System.Threading;
   using System.Threading.Tasks;
@@ -17,28 +18,23 @@ namespace Kcsara.Database.Web.api
   using System.Web.Profile;
   using System.Web.Security;
   using Kcsar.Database.Model;
-  using Kcsara.Database.Services.Accounts;
+  using Kcsara.Database.Services;
   using Kcsara.Database.Web.api.Models;
-  using Models.Account;
-  using Kcsara.Database.Web.Services;
   using log4net;
+  using ObjectModel.Accounts;
   using SarMembership = Kcsar.Membership;
-  using Database.Services;
-  using System.Net;
 
   [ModelValidationFilter]
   [CamelCaseControllerConfig]
   public class AccountController : BaseApiController
   {
     public const string APPLICANT_ROLE = "cdb.applicants";
-    readonly MembershipProvider membership;
     readonly AccountsService accountsService;
     readonly IFormsAuthentication formsAuth;
 
-    public AccountController(IKcsarContext db, AccountsService accountsSvc, IFormsAuthentication formsAuth, ILog log, MembershipProvider membership)
+    public AccountController(IKcsarContext db, AccountsService accountsSvc, IFormsAuthentication formsAuth, ILog log)
       : base(db, log)
     {
-      this.membership = membership;
       this.accountsService = accountsSvc;
       this.formsAuth = formsAuth;
     }
@@ -46,23 +42,7 @@ namespace Kcsara.Database.Web.api
     [Authorize]
     public AccountInfo Get(string id)
     {
-      id = id ?? User.Identity.Name;
-
-      var user = Membership.GetUser(id);
-      if (user == null)
-      {
-        return null;
-      }
-      return new AccountInfo
-      {
-        Name = id,
-        Approved = user.IsApproved,
-        Locked = user.IsLockedOut,
-        LastActive = user.LastActivityDate,
-        LastPassword = user.LastPasswordChangedDate,
-        LastLocked = user.LastLockoutDate < new DateTime(1900, 1, 1) ? (DateTimeOffset?)null : user.LastLockoutDate,
-        Email = user.Email
-      };
+      return accountsService.Get(id);
     }
 
     [Authorize]
@@ -94,6 +74,24 @@ namespace Kcsara.Database.Web.api
         if (user.IsApproved != id.Approved)
         {
           user.IsApproved = id.Approved;
+        }
+
+        Member memberToLink = null;
+        if (id.MemberId.HasValue)
+        {
+          memberToLink = db.Members.FirstOrDefault(f => f.Id == id.MemberId.Value);
+          if (memberToLink == null)
+          {
+            // member not found
+            throw new HttpResponseException(HttpStatusCode.BadRequest);
+          }
+
+          if (!string.IsNullOrWhiteSpace(memberToLink.Username) && !string.Equals(memberToLink.Username, id.Name, StringComparison.OrdinalIgnoreCase))
+          {
+            throw new InvalidOperationException("Can't link username " + id.Name + " to member " + memberToLink.Id.ToString() + ". Already linked to " + memberToLink.Username);
+          }
+          memberToLink.Username = id.Name;
+          db.SaveChanges();
         }
       }
 
@@ -292,7 +290,7 @@ namespace Kcsara.Database.Web.api
       if (!Regex.IsMatch(id, @"^[a-zA-Z0-9\.\-_]+$"))
         return "Can only contain numbers, letters, and the characters '.', '-', and '_'";
 
-      var existing = membership.GetUser(id, false);
+      var existing = accountsService.Get(id);
       return (existing == null) ? "Available" : "Not Available";
     }
 
@@ -372,7 +370,7 @@ namespace Kcsara.Database.Web.api
         return "Username must be less than 200 characters";
       if (!Regex.IsMatch(data.Username, @"^[a-zA-Z0-9\.\-_]+$"))
         return "Username can only contain numbers, letters, and the characters '.', '-', and '_'";
-      if (membership.GetUser(data.Username, false) != null)
+      if (accountsService.Get(data.Username) != null)
         return "Username is already taken";
 
 
@@ -384,10 +382,7 @@ namespace Kcsara.Database.Web.api
         return "Password must be less than 64 characters";
 
 
-      MembershipCreateStatus status;
-      var user = membership.CreateUser(data.Username, data.Password, data.Email, null, null, false, null, out status);
-      if (status != MembershipCreateStatus.Success)
-        return "Could not create user";
+      var user = accountsService.Create(data.Username, data.Password, data.Email);
 
       try
       {
@@ -417,7 +412,7 @@ namespace Kcsara.Database.Web.api
       catch (Exception ex)
       {
         log.Error(ex.ToString());
-        membership.DeleteUser(data.Username, true);
+        accountsService.Delete(data.Username);
         return "An error occured while creating your user account";
       }
 
@@ -431,16 +426,7 @@ namespace Kcsara.Database.Web.api
       if (data == null || string.IsNullOrWhiteSpace(data.Username) || string.IsNullOrWhiteSpace(data.Key))
         return false;
 
-      var user = membership.GetUser(data.Username, false);
-      if (user != null && data.Key.Equals((user.ProviderUserKey ?? "").ToString(), StringComparison.OrdinalIgnoreCase))
-      {
-        user.IsApproved = true;
-        membership.UpdateUser(user);
-
-        return true;
-      }
-
-      return false;
+      return accountsService.ApproveUser(data.Username, data.Key);
     }
 
     [HttpPost]
@@ -473,7 +459,7 @@ namespace Kcsara.Database.Web.api
     {
       foreach (var name in id)
       {
-        membership.DeleteUser(name, true);
+        accountsService.Delete(name);
         var member = db.Members.Single(f => f.Username == name);
         member.Username = "-" + member.Username;
       }

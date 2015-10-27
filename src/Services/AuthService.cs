@@ -1,14 +1,13 @@
 ﻿/*
  * Copyright 2010-2015 Matthew Cosand
  */
- namespace Kcsara.Database.Services
+namespace Kcsara.Database.Services
 {
   using System;
   using System.Collections.Generic;
   using System.Linq;
   using System.Security.Principal;
   using System.Web;
-  using System.Web.Profile;
   using System.Web.Security;
   using Kcsar.Database.Model;
   using Kcsar.Membership;
@@ -142,6 +141,11 @@
     public IEnumerable<string> GetGroupsFoGroup(string group)
     {
       return ((INestedRoleProvider)Roles.Provider).GetRolesWithRole(group);
+    }
+
+    public bool ValidateUser(string username, string password)
+    {
+      return Membership.ValidateUser(username, password);
     }
   }
 }

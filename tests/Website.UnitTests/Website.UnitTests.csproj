@@ -91,6 +91,10 @@
       <Project>{eae01ec9-f91d-4b72-a648-6ac96e688cce}</Project>
       <Name>Model</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\src\Services\Services.csproj">
+      <Project>{2e5c85da-32f0-43f1-83ed-026867aa2a6d}</Project>
+      <Name>Services</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\Website.DefaultStrings\Website.DefaultStrings.csproj">
       <Project>{bafa9145-d19c-4f31-9f1a-c937499e76d5}</Project>
       <Name>Website.DefaultStrings</Name>

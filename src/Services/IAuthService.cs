@@ -1,17 +1,11 @@
 ﻿/*
- * Copyright 2013-2014 Matthew Cosand
+ * Copyright 2013-2015 Matthew Cosand
  */
 namespace Kcsara.Database.Services
 {
   using System;
   using System.Collections.Generic;
-  using System.Linq;
   using System.Web;
-  using System.Web.Security;
-  using System.Security.Principal;
-  using System.Web.Profile;
-  using Kcsar.Membership;
-  using Kcsar.Database.Model;
 
   public interface IAuthService
   {
@@ -27,6 +21,8 @@ namespace Kcsara.Database.Services
     bool IsUserOrLocal(HttpRequestBase request);
     bool IsRoleForPerson(string role, Guid personId);
     bool IsRoleForUnit(string role, Guid unitId);
+
+    bool ValidateUser(string username, string password);
 
     IEnumerable<string> GetGroupsForUser(string username);
     IEnumerable<string> GetGroupsFoGroup(string group);

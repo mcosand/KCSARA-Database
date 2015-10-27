@@ -13,6 +13,7 @@ namespace Kcsar.Membership
   using System.Linq;
   using System.Web.Security;
   using System.Text.RegularExpressions;
+  using Kcsara.Database.Services;
 
   public class RoleProvider : SqlRoleProvider, INestedRoleProvider
   {

@@ -1,10 +1,9 @@
 ﻿/*
  * Copyright 2015 Matthew Cosand
  */
-namespace Kcsara.Database.Web.api.Models.Account
+namespace Kcsara.Database.ObjectModel.Accounts
 {
   using System;
-  using Kcsar.Membership;
 
   public class AccountInfo
   {
@@ -17,5 +16,7 @@ namespace Kcsara.Database.Web.api.Models.Account
     public string Email { get; set; }
 
     public string Password { get; set; }
+
+    public Guid? MemberId { get; set; }
   }
 }

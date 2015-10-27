@@ -1,21 +1,19 @@
 ﻿/*
- * Copyright 2009-2014 Matthew Cosand
+ * Copyright 2009-2015 Matthew Cosand
  */
 
 namespace Kcsar.Membership
 {
+  using System;
+  using System.Collections.Generic;
+  using System.Configuration;
+  using System.Linq;
+  using System.Net.Mail;
+  using System.Web.Security;
+  using Kcsara.Database.Services;
   using Kcsara.Database.Web.Membership;
   using Kcsara.Database.Web.Membership.Config;
   using log4net;
-  using System;
-  using System.Configuration;
-  using System.Net.Mail;
-  using System.Web.Profile;
-  using System.Web.Security;
-  using System.Linq;
-  using System.Collections.Generic;
-  using Newtonsoft.Json;
-  using Kcsara.Database.Web;
 
   public class MembershipProvider : SqlMembershipProvider, ISetPassword
   {
@@ -63,7 +61,7 @@ namespace Kcsar.Membership
       }
       catch (Exception ex)
       {
-        ex.Data.Add("name", Strings.DatabaseName);
+        //ex.Data.Add("name", Strings.DatabaseName);
         exceptions.Add(ex);
       }
 
@@ -82,7 +80,7 @@ namespace Kcsar.Membership
         msg.Subject = "KCSARA Password Changed";
         msg.Body = string.Format("You password has been changed.\n\nUsername: {0}\nPassword: {1}", username, newPassword);
 
-        Utils.SendMail(msg);
+        EmailService.SendMail(msg);
       }
     }
   }

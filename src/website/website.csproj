@@ -233,7 +233,6 @@
     <Compile Include="api\AccountController.cs" />
     <Compile Include="api\CamelCaseControllerAttribute.cs" />
     <Compile Include="api\Models\AccountRegistration.cs" />
-    <Compile Include="api\Models\Account\AccountInfo.cs" />
     <Compile Include="api\Models\Admin\ExecuteDatabaseScript.cs" />
     <Compile Include="api\Models\Event\EventSummary.cs" />
     <Compile Include="api\Models\MemberSummary.cs" />
@@ -313,8 +312,6 @@
     <Compile Include="Controllers\TrackController.cs" />
     <Compile Include="ExtensionProvider.cs" />
     <Compile Include="IAppSettings.cs" />
-    <Compile Include="Membership\Synchronizers\EsarOffice365.cs" />
-    <Compile Include="Services\AuthService.cs" />
     <Compile Include="Controllers\SarEventController.cs" />
     <Compile Include="Controllers\TrainingController.cs" />
     <Compile Include="Controllers\TrainingController_Documents.cs" />
@@ -340,16 +337,6 @@
     <Compile Include="HtmlHelperExtensions.cs" />
     <Compile Include="JsonDataContractBinder.cs" />
     <Compile Include="LinqExtensions.cs" />
-    <Compile Include="Membership\DatabaseProfileProvider.cs" />
-    <Compile Include="Membership\INestedRoleProvider.cs" />
-    <Compile Include="Membership\InvalidPasswordException.cs" />
-    <Compile Include="Membership\ISetPassword.cs" />
-    <Compile Include="Membership\KcsarUserProfile.cs" />
-    <Compile Include="Membership\MembershipProvider.cs" />
-    <Compile Include="Membership\PasswordSyncConfiguration.cs" />
-    <Compile Include="Membership\RoleProvider.cs" />
-    <Compile Include="Membership\Synchronizers\VisualSVN.cs" />
-    <Compile Include="Membership\Synchronizers\IPasswordSynchronizer.cs" />
     <Compile Include="Migrations\201209062229338_InitialMigration.cs" />
     <Compile Include="Migrations\201209062229338_InitialMigration.Designer.cs">
       <DependentUpon>201209062229338_InitialMigration.cs</DependentUpon>
@@ -385,12 +372,10 @@
     <Compile Include="NinjectScope.cs" />
     <Compile Include="Services\BadgeService.cs" />
     <Compile Include="Services\CardDatabaseService.cs" />
-    <Compile Include="Services\EmailService.cs" />
     <Compile Include="Services\EncryptionService.cs" />
     <Compile Include="Services\ExcelService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceAuthModule.cs" />
-    <Compile Include="Services\IAuthService.cs" />
     <Compile Include="Services\IReportsService.cs" />
     <Compile Include="Services\ReportsService.cs" />
     <Compile Include="Services\SheetAutoFitWrapper.cs" />
@@ -531,7 +516,6 @@
     <Content Include="help\new-member.html" />
     <Content Include="Scripts\angular-mocks.js" />
     <Content Include="Scripts\angular-modal-service.js" />
-    <Content Include="Scripts\angular-modal-service.min.js" />
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />
     <Content Include="Scripts\app.js" />
@@ -541,7 +525,6 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\html5.js" />
     <Content Include="Scripts\angular.min.js.map" />
-    <Content Include="Scripts\angular-modal-service.min.js.map" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
@@ -733,8 +716,10 @@
     <None Include="Web.Production.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="api\Models\Account\" />
     <Folder Include="App_Data\" />
     <Folder Include="Content\auth\documents\" />
+    <Folder Include="ObjectModel\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

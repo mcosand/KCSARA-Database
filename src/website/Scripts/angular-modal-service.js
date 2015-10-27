@@ -42,7 +42,7 @@
         return deferred.promise;
       };
 
-      self.showModal = function(options) {
+      self.showModal = function(options, scopeInit) {
 
         //  Create a deferred we'll resolve when the modal is ready.
         var deferred = $q.defer();
@@ -60,6 +60,7 @@
 
             //  Create a new scope for the modal.
             var modalScope = $rootScope.$new();
+            if (scopeInit) { scopeInit(modalScope); }
 
             //  Create the inputs object to the controller - this will include
             //  the scope, as well as all inputs provided.

@@ -4,31 +4,46 @@
 
 namespace Kcsara.Database.Web.api
 {
-  using Newtonsoft.Json;
   using System;
   using System.Collections.Generic;
-  using System.Linq;
-  using System.Linq.Expressions;
-  using System.Web.Http;
-  using System.Text.RegularExpressions;
-  using Kcsara.Database.Web.api.Models;
-  using Kcsar.Membership;
-  using System.Web.Profile;
-  using System.Threading;
   using System.Configuration;
-  using System.IO;
-  using Kcsara.Database.Web.Services;
-  using System.Web.Helpers;
-  using Model = Kcsar.Database.Model;
-  using log4net;
   using System.Data.Entity.SqlServer;
+  using System.Linq;
+  using System.Text.RegularExpressions;
+  using System.Web.Http;
+  using Database.Services;
+  using Kcsara.Database.Web.api.Models;
+  using Kcsara.Database.Web.Services;
+  using log4net;
+  using Newtonsoft.Json;
+  using ObjectModel.Accounts;
+  using Model = Kcsar.Database.Model;
 
   [ModelValidationFilter]
   public class MembersController : BaseApiController
   {
-    public MembersController(Model.IKcsarContext db, ILog log)
+    readonly Lazy<AccountsService> accounts;
+
+    public MembersController(Lazy<AccountsService> accounts, Model.IKcsarContext db, ILog log)
       : base(db, log)
-    { }
+    {
+      this.accounts = accounts;
+    }
+
+    /// <summary>Gets account information for a given member.</summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpGet]
+    public AccountInfo AccountFor(Guid id)
+    {
+      var username = db.Members.Where(f => f.Id == id).Select(f => f.Username).FirstOrDefault();
+      if (string.IsNullOrWhiteSpace(username))
+      {
+        return null;
+      }
+
+      return accounts.Value.Get(username);
+    }
 
     /// <summary>
     /// 

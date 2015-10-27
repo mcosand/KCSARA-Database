@@ -13,8 +13,8 @@ namespace Kcsara.Database.Web.Controllers
   using System.Web.Mvc;
   using System.Web.Security;
   using System.Web.UI;
-  using api.Models.Account;
   using Kcsar.Database.Model;
+  using Database.Services;
   using Kcsara.Database.Web;
   using Kcsara.Database.Web.Model;
   using Config = System.Configuration;
@@ -23,13 +23,14 @@ namespace Kcsara.Database.Web.Controllers
   public sealed class AccountController : BaseController
   {
     readonly Lazy<api.AccountController> accountsApi;
+    readonly Lazy<AuthService> authSvc;
 
-    public AccountController(Lazy<api.AccountController> accountsApi, IKcsarContext db, api.IFormsAuthentication formsAuth, System.Web.Security.MembershipProvider provider)
+    public AccountController(Lazy<api.AccountController> accountsApi, Lazy<AuthService> authSvc, IKcsarContext db, api.IFormsAuthentication formsAuth)
       : base(db)
     {
-      Provider = provider;
       FormsAuth = formsAuth;
       this.accountsApi = accountsApi;
+      this.authSvc = authSvc;
     }
 
     [Authorize]
@@ -195,11 +196,11 @@ namespace Kcsara.Database.Web.Controllers
       private set;
     }
 
-    public System.Web.Security.MembershipProvider Provider
-    {
-      get;
-      private set;
-    }
+    //public System.Web.Security.MembershipProvider Provider
+    //{
+    //  get;
+    //  private set;
+    //}
 
     [Authorize]
     [AcceptVerbs(HttpVerbs.Get)]
@@ -353,7 +354,7 @@ namespace Kcsara.Database.Web.Controllers
       if (ViewData.ModelState.IsValid)
       {
         // Attempt to login
-        bool loginSuccessful = Provider.ValidateUser(username, password);
+        bool loginSuccessful = authSvc.Value.ValidateUser(username, password);
 
         if (loginSuccessful)
         {
