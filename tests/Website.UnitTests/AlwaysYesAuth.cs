@@ -39,6 +39,14 @@ namespace Internal.Website
       get { return true; }
     }
 
+    public string Username
+    {
+      get
+      {
+        throw new NotImplementedException();
+      }
+    }
+
     public bool IsInRole(params string[] group)
     {
       return true;
@@ -87,6 +95,11 @@ namespace Internal.Website
     public bool ValidateUser(string username, string password)
     {
       return true;
+    }
+
+    public IEnumerable<string> GetGroupsIManage()
+    {
+      return new string[0];
     }
   }
 }
