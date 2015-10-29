@@ -512,8 +512,12 @@
     <Content Include="help\images\new-member-2.png" />
     <Content Include="help\images\new-member-3.png" />
     <Content Include="help\images\new-member-4.png" />
+    <Content Include="help\images\new-member-5.png" />
+    <Content Include="help\images\training-roster-1.JPG" />
+    <Content Include="help\images\training-roster-2.JPG" />
     <Content Include="help\index.html" />
     <Content Include="help\new-member.html" />
+    <Content Include="help\training-roster.html" />
     <Content Include="Scripts\angular-mocks.js" />
     <Content Include="Scripts\angular-modal-service.js" />
     <Content Include="Scripts\angular.js" />
