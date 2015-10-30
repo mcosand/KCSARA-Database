@@ -286,6 +286,11 @@
     <Content Include="Content\images\maps\base-e.png" />
     <Content Include="Content\images\maps\clue-e.png" />
     <Content Include="Content\images\maps\found-e.png" />
+    <Content Include="Content\images\maps\layers-2x.png" />
+    <Content Include="Content\images\maps\layers.png" />
+    <Content Include="Content\images\maps\marker-icon-2x.png" />
+    <Content Include="Content\images\maps\marker-icon.png" />
+    <Content Include="Content\images\maps\marker-shadow.png" />
     <Content Include="Content\images\maps\track.png" />
     <Content Include="Content\images\mime\unknown.png" />
     <Content Include="Content\images\roster-add-left.png" />
