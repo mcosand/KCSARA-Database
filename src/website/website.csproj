@@ -451,6 +451,7 @@
     <Content Include="Content\script\jquery.fileupload.js" />
     <Content Include="Content\script\jquery.iframe-transport.js" />
     <Content Include="Content\script\jquery.tablesorter.js" />
+    <Content Include="Content\script\jquery.tablesorter.min.js" />
     <Content Include="Content\script\jquery.tmpl.js" />
     <Content Include="Content\script\json2.js" />
     <Content Include="Content\script\suggest.person.js" />
