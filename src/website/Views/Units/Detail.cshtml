@@ -18,6 +18,11 @@
         @(Html.ActionLink<UnitsController>(x => x.DownloadRoster(u.Id, null), "Download Roster")) (Contact information for active members)<br />
         @(Html.ActionLink<UnitsController>(x => x.MissionReadyList(u.Id), "Download Mission Ready List"))<br />
         @(Html.ActionLink<TrainingController>(x => x.CoreCompReport(u.Id), "Download Core Competency Report"))<br />
+        <br/>
+        @foreach (var report in (Kcsara.Database.Extensions.Reports.UnitReportInfo[])ViewBag.UnitReports)
+        {
+          @(Html.ActionLink<UnitsController>(f => f.DownloadReport(u.Id, report.Key), report.Name))<br/>
+        }
       </div>
     </div>
   </div>

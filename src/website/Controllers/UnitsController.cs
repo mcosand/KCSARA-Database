@@ -1,31 +1,34 @@
 ﻿/*
- * Copyright 2008-2014 Matthew Cosand
+ * Copyright 2008-2015 Matthew Cosand
  */
 
 namespace Kcsara.Database.Web.Controllers
 {
-  using Kcsar.Database;
-  using Kcsar.Database.Model;
-  using Kcsara.Database.Web.Model;
   using System;
   using System.Collections.Generic;
   using System.Configuration;
-  using System.Drawing;
   using System.IO;
   using System.Linq;
   using System.Text;
   using System.Web.Mvc;
   using System.Xml;
+  using Database.Extensions;
+  using Database.Extensions.Reports;
+  using Kcsar.Database;
+  using Kcsar.Database.Model;
   using Kcsara.Database.Services;
+  using Kcsara.Database.Web.Model;
 
   /// <summary>Views related to SAR units.</summary>
   public class UnitsController : BaseController
   {
     private readonly IReportsService reports;
+    private readonly Lazy<IExtensionProvider> extensions;
 
-    public UnitsController(IReportsService reports, IKcsarContext db) : base(db)
+    public UnitsController(Lazy<IExtensionProvider> extensions, IReportsService reports, IKcsarContext db) : base(db)
     {
       this.reports = reports;
+      this.extensions = extensions;
     }
 
     /// <summary>Get a list of existing units.</summary>
@@ -314,7 +317,25 @@ namespace Kcsara.Database.Web.Controllers
 
       ViewBag.CanEditDocuments = api.UnitsController.CanEditDocuments(Permissions, id);
 
+      var unitReports = extensions.Value.For<IUnitReports>(unit);
+      ViewBag.UnitReports = (unitReports != null) ? unitReports.ListReports() : new UnitReportInfo[0];
+
       return View(unit);
+    }
+
+    [Authorize]
+    public ActionResult DownloadReport(Guid? id, string reportName)
+    {
+      SarUnit unit = (from u in this.db.Units.Include("StatusTypes") where u.Id == id select u).First();
+
+      var unitReports = extensions.Value.For<IUnitReports>(unit);
+      var info = unitReports.ListReports().FirstOrDefault(f => f.Key == reportName);
+
+      MemoryStream ms = new MemoryStream();
+      unitReports.RunReport(reportName, ms);
+      ms.Seek(0, SeekOrigin.Begin);
+
+      return File(ms, info.MimeType, string.Format("{0} {1:yyyy-MM-dd}.{2}", info.Name, DateTime.Now, info.Extension));
     }
 
     [Authorize]

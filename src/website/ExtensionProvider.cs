@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2014 Matthew Cosand
+ * Copyright 2014-2015 Matthew Cosand
  */
 namespace Kcsara.Database.Web
 {
@@ -42,11 +42,6 @@ namespace Kcsara.Database.Web
       catch (InvalidOperationException)
       {
         this.log.Error("Can't initialize database, does it need to be set up?");
-      }
-
-      if (unitCount == 0)
-      {
-        return;
       }
 
       foreach (var unit in units)

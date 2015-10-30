@@ -381,11 +381,11 @@ namespace Kcsara.Database.Web
         {
             get
             {
-                return this._sheet.HeaderFooter.firstHeader.CenteredText;
+                return this._sheet.HeaderFooter.FirstHeader.CenteredText;
             }
             set
             {
-                this._sheet.HeaderFooter.firstHeader.CenteredText = value;
+                this._sheet.HeaderFooter.FirstHeader.CenteredText = value;
             }
         }
 
@@ -394,11 +394,11 @@ namespace Kcsara.Database.Web
         {
             get
             {
-                return this._sheet.HeaderFooter.firstFooter.CenteredText;
+                return this._sheet.HeaderFooter.FirstFooter.CenteredText;
             }
             set
             {
-                this._sheet.HeaderFooter.firstFooter.CenteredText = value;
+                this._sheet.HeaderFooter.FirstFooter.CenteredText = value;
             }
         }
 
