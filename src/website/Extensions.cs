@@ -181,7 +181,7 @@ namespace Kcsara.Database.Web
 
         public static MvcHtmlString PopupActionButton<C>(this HtmlHelper helper, Expression<Action<C>> action, string linkText, int width, int height) where C : Controller
         {
-            return MvcHtmlString.Create(string.Format(@"<button class=""button"" onclick=""window.open('{0}', '{1}', 'width={2},height={3},scrollbars=1'); return false;"">{4}</button>",
+            return MvcHtmlString.Create(string.Format(@"<button class=""button btn"" onclick=""window.open('{0}', '{1}', 'width={2},height={3},scrollbars=1'); return false;"">{4}</button>",
                 helper.BuildUrlFromExpression(action),
                 System.Text.RegularExpressions.Regex.Replace(linkText, "[^a-z0-9]", "", System.Text.RegularExpressions.RegexOptions.IgnoreCase).ToLowerInvariant(),
                 width, height, linkText));

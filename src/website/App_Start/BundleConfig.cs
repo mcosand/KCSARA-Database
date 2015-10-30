@@ -31,6 +31,11 @@ namespace Kcsara.Database.Web
         "~/scripts/site/services/*.js"
         ));
 
+      bundles.Add(new ScriptBundle("~/scripts/ng-shim").Include(
+        "~/scripts/knockout-{version}.js",
+        "~/Content/script/jquery.tablesorter.js"
+        ));
+
       bundles.Add(new ScriptBundle("~/script/core").Include(
           "~/Scripts/jquery-{version}.js",
           "~/Content/script/json2.js",

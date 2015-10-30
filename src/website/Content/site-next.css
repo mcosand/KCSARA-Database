@@ -242,3 +242,10 @@ aside.main-sidebar,
   top: 6px;
   left: 6px;*/
 }
+
+
+@media print {
+  a:link:after, a:visited:after {
+    content: "";
+  }
+}

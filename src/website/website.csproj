@@ -688,10 +688,9 @@
     <Content Include="Views\Training\UploadDocument.aspx" />
     <Content Include="Views\Units\Applicants.aspx" />
     <Content Include="Views\Units\DeleteStatus.aspx" />
-    <Content Include="Views\Units\Detail.aspx" />
+    <None Include="Views\Units\Detail.cshtml" />
     <Content Include="Views\Units\EditStatus.aspx" />
-    <Content Include="Views\Units\Index.aspx" />
-    <Content Include="Views\Units\Roster.aspx" />
+    <None Include="Views\Units\Roster.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -717,6 +716,7 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
     <Content Include="Views\Account\Detail.cshtml" />
+    <Content Include="Views\Units\Index.cshtml" />
     <None Include="Web.Production.config" />
   </ItemGroup>
   <ItemGroup>
