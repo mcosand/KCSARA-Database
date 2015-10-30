@@ -693,9 +693,9 @@
     <Content Include="Views\Training\UploadDocument.aspx" />
     <Content Include="Views\Units\Applicants.aspx" />
     <Content Include="Views\Units\DeleteStatus.aspx" />
-    <None Include="Views\Units\Detail.cshtml" />
+    <Content Include="Views\Units\Detail.cshtml" />
     <Content Include="Views\Units\EditStatus.aspx" />
-    <None Include="Views\Units\Roster.cshtml" />
+    <Content Include="Views\Units\Roster.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
