@@ -73,7 +73,7 @@ $(document).ready(function () {
     $("#contactType").append("<option>" + types[t] + "</option>");
   }
 
-  contactForm = new ModelTable("#contacts_table", "#contactform");
+  contactForm = new ModelTable("#contacts_table", "#contactform", true);
   contactForm.height = 250;
   <%= canEdit ? "contactForm.canEdit = true;" : "" %>
   contactForm.getUrl = '<%= Url.Action("GetContacts", new { id = Model.Id }) %>';

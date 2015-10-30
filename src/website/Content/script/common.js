@@ -164,7 +164,7 @@ function isPropertyDefined(variable, property) {
 
 var ModelTables = [];
 
-function ModelTable(tableId, formid) {
+function ModelTable(tableId, formid, noSort) {
 
   this.tableId = tableId;
   this.formId = formid;
@@ -179,13 +179,14 @@ function ModelTable(tableId, formid) {
   this.onSubmitSuccess = function () { return true; };
   this.id = ModelTables.length;
   this.usesAPI = false;
+  this.noSort = noSort;
   ModelTables[this.id] = this;
 }
 
 ModelTable.prototype.Initialize = function()
 {
   this.WireForm();
-  $(this.tableId).tablesorter({ widgets: ['zebra'] });
+  if (!this.noSort) { $(this.tableId).tablesorter({ widgets: ['zebra'] }); }
   this.ReloadData();
 };
 
@@ -273,15 +274,16 @@ ModelTable.prototype.UpdateTable = function()
   }
 
   var table = $(this.tableId);
-  var list = table[0].config.sortList;
-  if (list.length == 0)
-  {
-    list = this.defaultSort;
-  }
+  if (table[0].config) {
+    var list = table[0].config.sortList;
+    if (list.length == 0) {
+      list = this.defaultSort;
+    }
 
-  table.trigger("update");
-  table.trigger("sorton", [list]);
-  table.trigger("applyWidgets");
+    table.trigger("update");
+    table.trigger("sorton", [list]);
+    table.trigger("applyWidgets");
+  }
 };
 
 ModelTable.prototype.storeIndexOf = function(store, key) {
