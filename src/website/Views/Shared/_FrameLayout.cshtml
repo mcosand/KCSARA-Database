@@ -8,7 +8,7 @@
     <span class="logo-mini"><span class="fa-stack fa-lg"><i class="fa fa-plus fa-stack-1x"></i><i class="fa fa-circle-thin fa-stack-2x"></i></span></span>
     <span class="logo-lg"><b>KCSARA Database</b></span>
   </a>
-  <nav class="navbar navbar-static-top" role="navigation" ng-controller="MainNavCtrl">
+  <nav class="navbar navbar-static-top" role="navigation">
     <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
       <span class="sr-only">Toggle navigation</span>
     </a>
@@ -17,7 +17,7 @@
         @if (User.Identity.IsAuthenticated)
         {
           <li>
-            <form class="navbar-form" role="search">
+            <form class="navbar-form hidden-xs" role="search" ng-controller="MainSearchCtrl">
               <div class="form-group">
                 <div np-autocomplete="searchOptions" class="input-group">
                   <input type="text" name="q" class="form-control" placeholder="Search ..." />
@@ -25,13 +25,6 @@
                     <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
                   </span>
                 </div>
-                @*<input type="text" class="form-control" placeholder="Search ..." />*@
-                @*<div class="input-group">
-                  <input type="text" name="q" placeholder="Search ..." />
-                  <span class="input-group-btn">
-                    <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
-                  </span>
-                </div>*@
               </div>
             </form>
           </li>
@@ -68,10 +61,20 @@
     </div>
   </nav>
 </header>
-<aside class="main-sidebar" ng-controller="MainNavCtrl">
+<aside class="main-sidebar">
   <section class="sidebar">
     @if (User.IsInRole("cdb.users"))
     {
+      <form class="visible-xs" style="margin:5px; border-radius:4px;" role="search" ng-controller="MainSearchCtrl">
+        <div class="form-group">
+          <div np-autocomplete="searchOptions" class="input-group">
+            <input type="text" name="q" class="form-control" placeholder="Search ..." />
+            <span class="input-group-btn">
+              <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+        </div>
+      </form>
       <ul class="sidebar-menu">
         <li class="header">Main Navigation</li>
         <li><a href="~/Members"><i class="fa fa-user"></i><span>Member List</span></a></li>
@@ -134,7 +137,7 @@
 </button>
   </script>
   <script type="text/javascript">
-    angular.module('sarDatabase').controller('MainNavCtrl', ['$scope',
+    angular.module('sarDatabase').controller('MainSearchCtrl', ['$scope',
       function ($scope) {
         $.extend($scope, {
           searchOptions: {
