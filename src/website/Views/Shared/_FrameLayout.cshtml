@@ -20,7 +20,7 @@
             <form class="navbar-form hidden-xs" role="search" ng-controller="MainSearchCtrl">
               <div class="form-group">
                 <div np-autocomplete="searchOptions" class="input-group">
-                  <input type="text" name="q" class="form-control" placeholder="Search ..." />
+                  <input type="text" name="q" class="form-control" placeholder="Search ..." autocomplete="off" />
                   <span class="input-group-btn">
                     <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
                   </span>
@@ -68,7 +68,7 @@
       <form class="visible-xs" style="margin:5px; border-radius:4px;" role="search" ng-controller="MainSearchCtrl">
         <div class="form-group">
           <div np-autocomplete="searchOptions" class="input-group">
-            <input type="text" name="q" class="form-control" placeholder="Search ..." />
+            <input type="text" name="q" class="form-control" placeholder="Search ..." autocomplete="off" />
             <span class="input-group-btn">
               <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
             </span>
