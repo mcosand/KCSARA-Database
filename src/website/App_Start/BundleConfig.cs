@@ -10,8 +10,6 @@ namespace Kcsara.Database.Web
   {
     public static void RegisterBundles(BundleCollection bundles)
     {
-      BundleTable.EnableOptimizations = false;
-
       bundles.Add(new ScriptBundle("~/scripts/ng-core").Include(
         "~/Scripts/modernizr-*",
         "~/Scripts/jquery-{version}.js",
