@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SmrReports_FieldSummary.cs" />
     <Compile Include="SmrReports_UnitRoster.cs" />
     <Compile Include="SmrReports.cs" />
   </ItemGroup>
@@ -73,8 +74,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="templates\fieldSummary.xlsx" />
     <None Include="packages.config" />
-    <EmbeddedResource Include="unitRoster.xlsx" />
+    <EmbeddedResource Include="templates\unitRoster.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="unit-logo.png" />
