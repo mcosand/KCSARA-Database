@@ -37,15 +37,15 @@ namespace SMR.Extensions
 
     public void RunReport(string key, Stream stream)
     {
-      var info = ListReports().FirstOrDefault(f => f.Key == key);
+      var info = ListReports().FirstOrDefault(f => string.Equals(f.Key, key, StringComparison.OrdinalIgnoreCase));
 
       ExcelPackage package;
-      using (var templateStream = typeof(SmrReports).Assembly.GetManifestResourceStream("SMR.Extensions." + key + ".xlsx"))
+      using (var templateStream = typeof(SmrReports).Assembly.GetManifestResourceStream("SMR.Extensions." + info.Key + ".xlsx"))
       {
         package = new ExcelPackage(templateStream);
       }
 
-      reportBuilders[key](this, package);
+      reportBuilders[info.Key](this, package);
 
       var sheet = package.Workbook.Worksheets[1];
       sheet.Cells[sheet.Dimension.Address].AutoFitColumns();

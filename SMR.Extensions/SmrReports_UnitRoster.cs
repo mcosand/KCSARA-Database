@@ -58,8 +58,9 @@ namespace SMR.Extensions
           col += 4;
         }
 
-        sheet.Cells[row, col++].Value = string.Format("{0:yyyy-MM-dd}", status[memberId].Activated > oldDate ? status[memberId].Activated : (DateTime?)null);
+        sheet.Cells[row, col++].Value = status[memberId].Activated > oldDate ? status[memberId].Activated : (DateTime?)null;
       }
+      sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
     }
   }
 }
