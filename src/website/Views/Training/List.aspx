@@ -24,7 +24,7 @@
         <% if (Page.User.IsInRole("cdb.trainingeditors"))
            { %>
           <td style="font-size:80%">
-            <%= Html.PopupActionLink<TrainingController>(x => x.Edit(m.Id), "Edit", 340) %>
+            <%= Html.PopupActionLink<TrainingController>(x => x.Edit(m.Id), "Edit", 400) %>
             <%= Html.PopupActionLink<TrainingController>(x => x.Delete(m.Id), "Delete", 200) %>
           </td>
           <% } %>

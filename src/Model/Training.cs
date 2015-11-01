@@ -25,10 +25,7 @@ namespace Kcsar.Database.Model
     [Required]
     public string Location { get; set; }
 
-    [ForeignKey("HostUnitId")]
-    public virtual SarUnit HostUnit { get; set; }
-
-    public Guid? HostUnitId { get; set; }
+    public virtual ICollection<SarUnit> HostUnits { get; set; }
 
     public Training()
       : base()
@@ -37,6 +34,7 @@ namespace Kcsar.Database.Model
       this.StartTime = DateTime.Now.Date;
       this.Roster = new List<TrainingRoster>();
       this.OfferedCourses = new List<TrainingCourse>();
+      this.HostUnits = new List<SarUnit>();
     }
 
     public override string ToString()

@@ -7,10 +7,18 @@
 <div class="MInfo""><%= this.ModelData(t) %></div>
 <h2><%= t.Title %></h2>
 <table>
-<% if (t.HostUnitId.HasValue) { %> <tr><th>Host Unit:</th><td><%: t.HostUnit.DisplayName %></td></tr> <% } %>
+<% if (t.HostUnits.Count > 0)
+  { %>
+  <tr><th>Host Units:</th><td>
+    <% foreach (SarUnit u in t.HostUnits.OrderBy(f => f.DisplayName))
+      { %>
+    <%: u.DisplayName %><br />
+    <%} %>
+    </td></tr>
+  <% } %>
 <tr><th>Courses:</th><td>
 <% foreach (TrainingCourse c in t.OfferedCourses)
-   { %>
+  { %>
 <%= c.DisplayName%><br />
 <% } %>
 </td></tr>

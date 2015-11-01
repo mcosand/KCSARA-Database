@@ -17,7 +17,7 @@ namespace SMR.Extensions
 
       // Find trainings where SMR either hosted, or it was not hosted and an SMR member attended.
       var trainings = me.db.Value.TrainingRosters.Where(
-        f => (f.Training.HostUnit.DisplayName == "SMR" || f.Training.HostUnit == null)
+        f => (f.Training.HostUnits.Any(g => g.DisplayName == "SMR" || f.Training.HostUnits.Count == 0))
         && f.Person.Memberships.Any(h =>
                       h.Status.IsActive
                    && h.Unit.DisplayName == "SMR"

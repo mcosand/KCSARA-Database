@@ -736,12 +736,8 @@ namespace Kcsara.Database.Web.Controllers
 
       ViewData["OfferedCourses"] = new MultiSelectList(courseList, "Key", "Value", offered);
 
-      var units = new[] { new { Id = (Guid?)null, Name = "-- None --" } }
-        .Concat(db.Units.OrderBy(f => f.DisplayName)
-                  .Select(f => new { Id = (Guid?)f.Id, Name = f.DisplayName }))
-        .ToList();
-
-      ViewData["HostUnitId"] = new SelectList(units, "Id", "Name", evt.HostUnitId);
+      var hostUnits = db.Units.ToDictionary(f => f.Id.ToString(), f => f.DisplayName);
+      ViewData["HostUnits"] = new MultiSelectList(hostUnits.OrderBy(f => f.Value), "Key", "Value", evt.HostUnits.Select(f => f.Id.ToString()).ToArray());
 
       return base.InternalEdit(evt);
     }
@@ -750,14 +746,20 @@ namespace Kcsara.Database.Web.Controllers
     {
       base.OnProcessingEventModel(evt, fields);
 
-      evt.OfferedCourses.Clear();
-
-      if (!string.IsNullOrWhiteSpace(fields["HostUnitId"]))
+      evt.HostUnits.Clear();
+      if (fields["HostUnits"] != null)
       {
-        evt.HostUnitId = new Guid(fields["HostUnitId"]);
-        evt.HostUnit = this.db.Units.Single(f => f.Id == evt.HostUnitId.Value);
+        foreach (SarUnit unit in db.Units)
+        {
+          if (fields["HostUnits"].ToLower().Contains(unit.Id.ToString()))
+          {
+            evt.HostUnits.Add(unit);
+          }
+        }
       }
 
+
+      evt.OfferedCourses.Clear();
       if (fields["OfferedCourses"] != null)
       {
         foreach (TrainingCourse course in (from c in this.db.TrainingCourses select c))
@@ -1229,7 +1231,7 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
 
     protected override IQueryable<Training> GetEventSource()
     {
-      return this.db.Trainings.Include("OfferedCourses").Include("HostUnit").Include("Roster.TrainingAwards");
+      return this.db.Trainings.Include("OfferedCourses").Include("HostUnits").Include("Roster.TrainingAwards");
     }
   }
 

@@ -15,7 +15,7 @@
         <tr><td>State #:</td><td><%= Html.EditorFor(f => f.StateNumber).ToString() +Html.ValidationMessage("StateNumber")%></td></tr>
         <tr><td>Start Time:</td><td><%= Html.EditorFor(f => f.StartTime).ToString() + Html.ValidationMessage("StartTime") %></td></tr>
         <tr><td>Stop Time:</td><td><%= Html.EditorFor(f => f.StopTime).ToString() + Html.ValidationMessage("StopTime") %></td></tr>
-        <tr><td>Host Unit:</td><td><%= Html.DropDownList("HostUnitId") %></td></tr>
+        <tr><td>Host Units:</td><td><%= Html.ListBox("HostUnits") %></td></tr>
         <tr><td>Courses Offered:</td><td><%= Html.ListBox("OfferedCourses")%></td></tr>
       </table>
       <br />
