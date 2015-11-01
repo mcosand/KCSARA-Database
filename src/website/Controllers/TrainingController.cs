@@ -1,13 +1,8 @@
 ﻿/*
- * Copyright 2009-2014 Matthew Cosand
+ * Copyright 2009-2015 Matthew Cosand
  */
-
 namespace Kcsara.Database.Web.Controllers
 {
-  using Kcsar.Database;
-  using Kcsar.Database.Model;
-  using Kcsara.Database.Web.Model;
-  using ApiModels = Kcsara.Database.Web.api.Models;
   using System;
   using System.Collections.Generic;
   using System.Configuration;
@@ -15,10 +10,13 @@ namespace Kcsara.Database.Web.Controllers
   using System.Globalization;
   using System.IO;
   using System.Linq;
-  using System.Text;
   using System.Text.RegularExpressions;
   using System.Web.Mvc;
   using System.Xml;
+  using Kcsar.Database;
+  using Kcsar.Database.Model;
+  using Kcsara.Database.Web.Model;
+  using ApiModels = Kcsara.Database.Web.api.Models;
 
   public partial class TrainingController : SarEventController<Training, TrainingRoster>
   {
@@ -107,15 +105,15 @@ namespace Kcsara.Database.Web.Controllers
                  Source = "rule",
                  ReferenceId = a.Id
                }).AsEnumerable().Select(f => new ApiModels.TrainingRecord
-                    {
-                      Course = f.Course,
-                      Member = f.Member,
-                      Comments = f.Comments,
-                      Completed = string.Format(GetDateFormat(), f.Completed),
-                      Expires = string.Format(GetDateFormat(), f.Expires),
-                      Source = f.Source,
-                      ReferenceId = f.ReferenceId
-                    }).First();
+               {
+                 Course = f.Course,
+                 Member = f.Member,
+                 Comments = f.Comments,
+                 Completed = string.Format(GetDateFormat(), f.Completed),
+                 Expires = string.Format(GetDateFormat(), f.Expires),
+                 Source = f.Source,
+                 ReferenceId = f.ReferenceId
+               }).First();
       ViewData["docs"] = (from d in this.db.Documents where d.ReferenceId == award.ReferenceId select new DocumentView { Id = d.Id, Title = d.FileName, Reference = d.ReferenceId, Type = d.Type, Size = d.Size }).ToArray();
 
       return View(award);
@@ -738,6 +736,13 @@ namespace Kcsara.Database.Web.Controllers
 
       ViewData["OfferedCourses"] = new MultiSelectList(courseList, "Key", "Value", offered);
 
+      var units = new[] { new { Id = (Guid?)null, Name = "-- None --" } }
+        .Concat(db.Units.OrderBy(f => f.DisplayName)
+                  .Select(f => new { Id = (Guid?)f.Id, Name = f.DisplayName }))
+        .ToList();
+
+      ViewData["HostUnitId"] = new SelectList(units, "Id", "Name", evt.HostUnitId);
+
       return base.InternalEdit(evt);
     }
 
@@ -746,6 +751,12 @@ namespace Kcsara.Database.Web.Controllers
       base.OnProcessingEventModel(evt, fields);
 
       evt.OfferedCourses.Clear();
+
+      if (!string.IsNullOrWhiteSpace(fields["HostUnitId"]))
+      {
+        evt.HostUnitId = new Guid(fields["HostUnitId"]);
+        evt.HostUnit = this.db.Units.Single(f => f.Id == evt.HostUnitId.Value);
+      }
 
       if (fields["OfferedCourses"] != null)
       {
@@ -1152,7 +1163,7 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
           wrap.SetCellValue(trainee.LastName, row, col++);
           wrap.SetCellValue(trainee.FirstName, row, col++);
           wrap.SetCellValue(trainee.BirthDate.HasValue ? ((trainee.BirthDate.Value.AddYears(21) > DateTime.Today) ? "Y" : "A") : "?", row, col++);
-          wrap.SetCellValue(trainee.Gender.ToString().Substring(0,1), row, col++);
+          wrap.SetCellValue(trainee.Gender.ToString().Substring(0, 1), row, col++);
           wrap.SetCellValue(string.Join("\n", trainee.ContactNumbers.Where(f => f.Type.ToLowerInvariant() == "phone" && f.Subtype.ToLowerInvariant() == "home").Select(f => f.Value).ToArray()), row, col++);
           wrap.SetCellValue(string.Join("\n", trainee.ContactNumbers.Where(f => f.Type.ToLowerInvariant() == "phone" && f.Subtype.ToLowerInvariant() == "cell").Select(f => f.Value).ToArray()), row, col++);
           wrap.SetCellValue(string.Join("\n", trainee.ContactNumbers.Where(f => f.Type.ToLowerInvariant() == "email").Select(f => f.Value).ToArray()), row, col++);
@@ -1218,7 +1229,7 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
 
     protected override IQueryable<Training> GetEventSource()
     {
-      return this.db.Trainings.Include("OfferedCourses").Include("Roster.TrainingAwards");
+      return this.db.Trainings.Include("OfferedCourses").Include("HostUnit").Include("Roster.TrainingAwards");
     }
   }
 

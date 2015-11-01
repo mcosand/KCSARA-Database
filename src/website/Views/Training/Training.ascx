@@ -7,6 +7,7 @@
 <div class="MInfo""><%= this.ModelData(t) %></div>
 <h2><%= t.Title %></h2>
 <table>
+<% if (t.HostUnitId.HasValue) { %> <tr><th>Host Unit:</th><td><%: t.HostUnit.DisplayName %></td></tr> <% } %>
 <tr><th>Courses:</th><td>
 <% foreach (TrainingCourse c in t.OfferedCourses)
    { %>
