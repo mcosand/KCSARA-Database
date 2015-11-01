@@ -120,6 +120,10 @@
     <Compile Include="Migrations\201508302250059_Tracks.Designer.cs">
       <DependentUpon>201508302250059_Tracks.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201511010058236_TrainingHostUnit.cs" />
+    <Compile Include="Migrations\201511010058236_TrainingHostUnit.Designer.cs">
+      <DependentUpon>201511010058236_TrainingHostUnit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Migrator.cs" />
     <Compile Include="MemberUnitDocument.cs" />
     <Compile Include="MemberMedical.cs" />
@@ -242,6 +246,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201508302250059_Tracks.resx">
       <DependentUpon>201508302250059_Tracks.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201511010058236_TrainingHostUnit.resx">
+      <DependentUpon>201511010058236_TrainingHostUnit.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

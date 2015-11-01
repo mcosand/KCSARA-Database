@@ -1,11 +1,8 @@
 ﻿/*
- * Copyright 2009-2014 Matthew Cosand
+ * Copyright 2009-2015 Matthew Cosand
  */
-
 namespace Kcsar.Database.Model
 {
-  using System;
-  using System.Linq;
   using System.Collections.Generic;
   using System.ComponentModel.DataAnnotations;
 
@@ -19,6 +16,7 @@ namespace Kcsar.Database.Model
     public string Comments { get; set; }
     public virtual ICollection<MissionRoster> MissionRosters { get; set; }
     public virtual ICollection<TrainingCourse> TrainingCourses { get; set; }
+    public virtual ICollection<Training> HostedTrainings { get; set; }
     public virtual ICollection<UnitMembership> Memberships { get; set; }
     public virtual ICollection<UnitStatus> StatusTypes { get; set; }
     public bool HasOvertime { get; set; }

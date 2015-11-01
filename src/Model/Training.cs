@@ -1,12 +1,12 @@
 ﻿/*
- * Copyright 2009-2014 Matthew Cosand
+ * Copyright 2009-2015 Matthew Cosand
  */
-
 namespace Kcsar.Database.Model
 {
   using System;
   using System.Collections.Generic;
   using System.ComponentModel.DataAnnotations;
+  using System.ComponentModel.DataAnnotations.Schema;
   using System.Linq;
   using System.Text.RegularExpressions;
 
@@ -25,6 +25,10 @@ namespace Kcsar.Database.Model
     [Required]
     public string Location { get; set; }
 
+    [ForeignKey("HostUnitId")]
+    public virtual SarUnit HostUnit { get; set; }
+
+    public Guid? HostUnitId { get; set; }
 
     public Training()
       : base()

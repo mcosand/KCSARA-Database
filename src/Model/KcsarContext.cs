@@ -88,6 +88,12 @@ namespace Kcsar.Database.Model
       modelBuilder.Entity<Animal>().HasMany(f => f.Owners).WithRequired(f => f.Animal).WillCascadeOnDelete();
       modelBuilder.Entity<Member>().HasMany(f => f.Animals).WithRequired(f => f.Owner).WillCascadeOnDelete();
       modelBuilder.Entity<Member>().HasMany(f => f.ExternalLogins).WithRequired(f => f.Member).WillCascadeOnDelete();
+      modelBuilder.Entity<Training>().HasMany(f => f.OfferedCourses).WithMany(f => f.Trainings).Map(cs =>
+      {
+        cs.MapLeftKey("Training_Id");
+        cs.MapRightKey("TrainingCourse_Id");
+        cs.ToTable("TrainingTrainingCourses");
+      });
     }
 
     public Func<UnitMembership, bool> GetActiveMembershipFilter(Guid? unit, DateTime time)
