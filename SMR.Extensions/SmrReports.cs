@@ -20,7 +20,8 @@ namespace SMR.Extensions
     static readonly Dictionary<string, Action<SmrReports, ExcelPackage>> reportBuilders = new Dictionary<string, Action<SmrReports, ExcelPackage>>
     {
       {"unitRoster", UnitRoster },
-      {"fieldSummary", FieldSummary }
+      {"fieldSummary", FieldSummary },
+      {"trainingList", TrainingList }
     };
 
     public SmrReports(Lazy<IKcsarContext> db)
@@ -33,7 +34,8 @@ namespace SMR.Extensions
       return new[]
       {
         new UnitReportInfo { Key = "unitRoster", Name = "SMR Unit Roster", MimeType = XlsxMime, Extension = "xlsx" },
-        new UnitReportInfo { Key = "fieldSummary", Name = "SMR Field Member Status Summary", MimeType = XlsxMime, Extension = "xlsx" }
+        new UnitReportInfo { Key = "fieldSummary", Name = "SMR Field Member Status Summary", MimeType = XlsxMime, Extension = "xlsx" },
+        new UnitReportInfo { Key = "trainingList", Name = "SMR Unit Training List", MimeType = XlsxMime, Extension = "xlsx" }
       };
     }
 
