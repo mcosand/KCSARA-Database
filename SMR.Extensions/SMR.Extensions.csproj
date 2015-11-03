@@ -58,7 +58,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MissionInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SmrReports_MissionRosters.cs" />
     <Compile Include="SmrReports_MissionList.cs" />
     <Compile Include="SmrReports_TrainingList.cs" />
     <Compile Include="SmrReports_FieldSummary.cs" />
@@ -81,6 +83,7 @@
     <EmbeddedResource Include="templates\unitRoster.xlsx" />
     <EmbeddedResource Include="templates\trainingList.xlsx" />
     <EmbeddedResource Include="templates\missionList.xlsx" />
+    <EmbeddedResource Include="templates\missionRosters.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="unit-logo.png" />

@@ -7,6 +7,7 @@ namespace SMR.Extensions
   using System.Collections.Specialized;
   using System.Data.Entity.SqlServer;
   using System.Linq;
+  using Kcsar.Database.Model;
   using OfficeOpenXml;
   using OfficeOpenXml.Style;
 
@@ -25,17 +26,9 @@ namespace SMR.Extensions
       DateTime start = new DateTime(year, 1, 1);
       DateTime stop = new DateTime(year + 1, 1, 1);
 
-      var rosters = me.db.Value.MissionRosters.Where(f => f.Unit.DisplayName == "SMR" && f.Mission.StartTime >= start && f.Mission.StartTime < stop);
-      var missions = rosters.Select(f => f.Mission).Distinct().Select(f => new
-      {
-        f.Id,
-        f.StartTime,
-        f.StateNumber,
-        f.Title,
-        f.Location,
-        f.MissionType
-      }).OrderByDescending(f => f.StartTime).ToArray();
-      
+      IQueryable<MissionRoster> rosters = GetMissionRostersQuery(me, start, stop);
+      MissionInfo[] missions = GetMissions(rosters);
+
       var stats = rosters.GroupBy(f => f.Mission.Id)
         .Select(f => new
         {

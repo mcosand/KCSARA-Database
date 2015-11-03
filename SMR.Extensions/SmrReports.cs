@@ -24,7 +24,8 @@ namespace SMR.Extensions
       {"unitRoster", UnitRoster },
       {"fieldSummary", FieldSummary },
       {"trainingList", TrainingList },
-      {"missionList", MissionList }
+      {"missionList", MissionList },
+      {"missionRosters", MissionRosters }
     };
 
     public SmrReports(Lazy<IKcsarContext> db)
@@ -39,7 +40,8 @@ namespace SMR.Extensions
         new UnitReportInfo { Key = "unitRoster", Name = "SMR Unit Roster", MimeType = XlsxMime, Extension = "xlsx" },
         new UnitReportInfo { Key = "fieldSummary", Name = "SMR Field Member Status Summary", MimeType = XlsxMime, Extension = "xlsx" },
         new UnitReportInfo { Key = "trainingList", Name = "SMR Unit Training List", MimeType = XlsxMime, Extension = "xlsx" },
-        new UnitReportInfo { Key = "missionList", Name = "SMR Mission List", MimeType = XlsxMime, Extension = "xlsx", Parameters = new Dictionary<string,string> { { "year", DateTime.Today.Year.ToString() } } }
+        new UnitReportInfo { Key = "missionList", Name = "SMR Mission List", MimeType = XlsxMime, Extension = "xlsx", Parameters = new Dictionary<string,string> { { "year", DateTime.Today.Year.ToString() } } },
+        new UnitReportInfo { Key = "missionRosters", Name = "SMR Mission Rosters", MimeType = XlsxMime, Extension = "xlsx", Parameters = new Dictionary<string,string> { { "year", DateTime.Today.Year.ToString() } } }
       };
     }
 
@@ -57,6 +59,24 @@ namespace SMR.Extensions
 
       package.SaveAs(stream);
       package.Dispose();
+    }
+
+    private static MissionInfo[] GetMissions(IQueryable<MissionRoster> rosters)
+    {
+      return rosters.Select(f => f.Mission).Distinct().Select(f => new MissionInfo
+      {
+        Id = f.Id,
+        StartTime = f.StartTime,
+        StateNumber = f.StateNumber,
+        Title = f.Title,
+        Location = f.Location,
+        MissionType = f.MissionType
+      }).OrderByDescending(f => f.StartTime).ToArray();
+    }
+
+    private static IQueryable<MissionRoster> GetMissionRostersQuery(SmrReports me, DateTime start, DateTime stop)
+    {
+      return me.db.Value.MissionRosters.Where(f => f.Unit.DisplayName == "SMR" && f.Mission.StartTime >= start && f.Mission.StartTime < stop);
     }
   }
 }
