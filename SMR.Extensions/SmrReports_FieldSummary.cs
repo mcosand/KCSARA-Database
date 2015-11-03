@@ -4,13 +4,14 @@
 namespace SMR.Extensions
 {
   using System;
+  using System.Collections.Specialized;
   using System.Linq;
   using Kcsar.Database.Model;
   using OfficeOpenXml;
 
   public partial class SmrReports
   {
-    private static void FieldSummary(SmrReports me, ExcelPackage package)
+    private static void FieldSummary(SmrReports me, ExcelPackage package, NameValueCollection queries)
     {
       var sheet = package.Workbook.Worksheets[1];
       

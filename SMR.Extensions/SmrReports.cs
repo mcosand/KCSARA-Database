@@ -5,6 +5,7 @@ namespace SMR.Extensions
 {
   using System;
   using System.Collections.Generic;
+  using System.Collections.Specialized;
   using System.IO;
   using System.Linq;
   using Kcsar.Database.Model;
@@ -17,11 +18,13 @@ namespace SMR.Extensions
 
     readonly Lazy<IKcsarContext> db;
 
-    static readonly Dictionary<string, Action<SmrReports, ExcelPackage>> reportBuilders = new Dictionary<string, Action<SmrReports, ExcelPackage>>
+    static readonly Dictionary<string, Action<SmrReports, ExcelPackage, NameValueCollection>> reportBuilders =
+      new Dictionary<string, Action<SmrReports, ExcelPackage, NameValueCollection>>
     {
       {"unitRoster", UnitRoster },
       {"fieldSummary", FieldSummary },
-      {"trainingList", TrainingList }
+      {"trainingList", TrainingList },
+      {"missionList", MissionList }
     };
 
     public SmrReports(Lazy<IKcsarContext> db)
@@ -35,11 +38,12 @@ namespace SMR.Extensions
       {
         new UnitReportInfo { Key = "unitRoster", Name = "SMR Unit Roster", MimeType = XlsxMime, Extension = "xlsx" },
         new UnitReportInfo { Key = "fieldSummary", Name = "SMR Field Member Status Summary", MimeType = XlsxMime, Extension = "xlsx" },
-        new UnitReportInfo { Key = "trainingList", Name = "SMR Unit Training List", MimeType = XlsxMime, Extension = "xlsx" }
+        new UnitReportInfo { Key = "trainingList", Name = "SMR Unit Training List", MimeType = XlsxMime, Extension = "xlsx" },
+        new UnitReportInfo { Key = "missionList", Name = "SMR Mission List", MimeType = XlsxMime, Extension = "xlsx", Parameters = new Dictionary<string,string> { { "year", DateTime.Today.Year.ToString() } } }
       };
     }
 
-    public void RunReport(string key, Stream stream)
+    public void RunReport(string key, Stream stream, NameValueCollection queries)
     {
       var info = ListReports().FirstOrDefault(f => string.Equals(f.Key, key, StringComparison.OrdinalIgnoreCase));
 
@@ -49,7 +53,7 @@ namespace SMR.Extensions
         package = new ExcelPackage(templateStream);
       }
 
-      reportBuilders[info.Key](this, package);
+      reportBuilders[info.Key](this, package, queries);
 
       package.SaveAs(stream);
       package.Dispose();

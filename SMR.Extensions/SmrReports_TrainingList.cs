@@ -3,15 +3,14 @@
  */
 namespace SMR.Extensions
 {
-  using System;
+  using System.Collections.Specialized;
   using System.Data.Entity.SqlServer;
   using System.Linq;
-  using Kcsar.Database.Model;
   using OfficeOpenXml;
 
   public partial class SmrReports
   {
-    private static void TrainingList(SmrReports me, ExcelPackage package)
+    private static void TrainingList(SmrReports me, ExcelPackage package, NameValueCollection queries)
     {
       var sheet = package.Workbook.Worksheets[1];
 

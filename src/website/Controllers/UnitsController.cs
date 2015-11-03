@@ -6,6 +6,7 @@ namespace Kcsara.Database.Web.Controllers
 {
   using System;
   using System.Collections.Generic;
+  using System.Collections.Specialized;
   using System.Configuration;
   using System.IO;
   using System.Linq;
@@ -332,7 +333,7 @@ namespace Kcsara.Database.Web.Controllers
       var info = unitReports.ListReports().FirstOrDefault(f => f.Key == reportName);
 
       MemoryStream ms = new MemoryStream();
-      unitReports.RunReport(reportName, ms);
+      unitReports.RunReport(reportName, ms, Request.QueryString);
       ms.Seek(0, SeekOrigin.Begin);
 
       return File(ms, info.MimeType, string.Format("{0} {1:yyyy-MM-dd}.{2}", info.Name, DateTime.Now, info.Extension));

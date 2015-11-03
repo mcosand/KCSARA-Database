@@ -21,7 +21,8 @@
         <br/>
         @foreach (var report in (Kcsara.Database.Extensions.Reports.UnitReportInfo[])ViewBag.UnitReports)
         {
-          @(Html.ActionLink<UnitsController>(f => f.DownloadReport(u.Id, report.Key), report.Name))<br/>
+          var args = string.Join("", report.Parameters.Select(f => "&" + f.Key + "=" + f.Value));
+          <a href="~/Units/DownloadReport/@(u.Id)?reportName=@report.Key@args">@report.Name</a><br/>
         }
       </div>
     </div>
