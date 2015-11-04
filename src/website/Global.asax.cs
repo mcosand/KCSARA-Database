@@ -28,6 +28,8 @@ namespace Kcsara.Database.Web
     public static IKernel myKernel;
     static MvcApplication()
     {
+      log4net.Config.XmlConfigurator.ConfigureAndWatch(new System.IO.FileInfo("log4net.config"));
+
       myKernel = new StandardKernel();
       myKernel.Bind<IKcsarContext>().To<KcsarContext>();
       myKernel.Bind<ILog>().ToMethod(context => LogManager.GetLogger("Default"));
@@ -84,18 +86,18 @@ namespace Kcsara.Database.Web
       var log = LogManager.GetLogger("global.asax");
 
       var httpException = exc as HttpException;
-      if (httpException != null)
-      {
-        if (httpException.ErrorCode == -2147467259)
-        {
-          log.Info("Potentially dangerous request: " + Request.RawUrl, httpException);
-          statusCode = 400;
-        }
-      }
-      else
-      {
+      //if (httpException != null)
+      //{
+      //  if (httpException.ErrorCode == -2147467259)
+      //  {
+      //    log.Info("Potentially dangerous request: " + Request.RawUrl, httpException);
+      //    statusCode = 400;
+      //  }
+      //}
+      //else
+      //{
         log.Error(Request.RawUrl, exc);
-      }
+      //}
 
       if (Request.RawUrl.ToLowerInvariant().StartsWith("/api/"))
       {
