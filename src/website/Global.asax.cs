@@ -1,25 +1,24 @@
 ﻿/*
- * Copyright 2008-2014 Matthew Cosand
+ * Copyright 2008-2015 Matthew Cosand
  */
-using System;
-using System.Security.Principal;
-using System.Threading;
-using System.Web;
-using System.Web.Http;
-using System.Web.Mvc;
-using System.Web.Optimization;
-using System.Web.Routing;
-using System.Web.Security;
-using Kcsar.Database.Model;
-using Kcsara.Database.Extensions;
-using Kcsara.Database.Services;
-using Kcsara.Database.Web.api;
-using log4net;
-using Ninject;
-using Ninject.Web.Common;
-
 namespace Kcsara.Database.Web
 {
+  using System;
+  using System.Security.Principal;
+  using System.Threading;
+  using System.Web;
+  using System.Web.Http;
+  using System.Web.Mvc;
+  using System.Web.Optimization;
+  using System.Web.Routing;
+  using Kcsar.Database.Model;
+  using Kcsara.Database.Extensions;
+  using Kcsara.Database.Services;
+  using Kcsara.Database.Web.api;
+  using log4net;
+  using Ninject;
+  using Ninject.Web.Common;
+
   // Note: For instructions on enabling IIS6 or IIS7 classic mode, 
   // visit http://go.microsoft.com/?LinkId=9394801
 
@@ -33,7 +32,6 @@ namespace Kcsara.Database.Web
       myKernel.Bind<IKcsarContext>().To<KcsarContext>();
       myKernel.Bind<ILog>().ToMethod(context => LogManager.GetLogger("Default"));
       myKernel.Bind<IFormsAuthentication>().To<FormsAuthenticationWrapper>();
- //     myKernel.Bind<System.Web.Security.Membership>().ToConstant();
       myKernel.Bind<IAuthService>().To<AuthService>();
       myKernel.Bind<IPrincipal>().ToMethod(f => Thread.CurrentPrincipal);
       myKernel.Bind<Func<IPrincipal>>().ToConstant((Func<IPrincipal>)(() => Thread.CurrentPrincipal));
@@ -47,12 +45,13 @@ namespace Kcsara.Database.Web
       myKernel.Bind<AccountsService>().ToSelf().InSingletonScope();
     }
 
-    protected void Session_Start(Object sender, EventArgs e)
+    protected void Session_Start(object sender, EventArgs e)
     {
       decimal result;
       var browser = Request.Browser;
       if (browser.Browser == "IE" && decimal.TryParse(browser.Version, out result) && result < 8.0M)
       {
+        LogManager.GetLogger("global.asax").Warn("User tried to access with IE < 9");
         Response.Write("This site requires Internet Explorer 8 or greater");
         Response.End();
       }
@@ -64,17 +63,17 @@ namespace Kcsara.Database.Web
 
       GlobalConfiguration.Configure(config => WebApiConfig.Register(config, myKernel));
 
-     // AreaRegistration.RegisterAllAreas();
-
       FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
       RouteConfig.RegisterRoutes(RouteTable.Routes);
       BundleConfig.RegisterBundles(BundleTable.Bundles);
       Kcsar.Database.Model.Document.StorageRoot = Server.MapPath("~/content/auth/documents/");
+
+      LogManager.GetLogger("global.asax").Info("Site has started");
     }
 
     protected override Ninject.IKernel CreateKernel()
-    {      
-      return MvcApplication.myKernel;
+    {
+      return myKernel;
     }
 
     void Application_Error(object sender, EventArgs e)
@@ -82,7 +81,7 @@ namespace Kcsara.Database.Web
       int statusCode = 500;
       Exception exc = Server.GetLastError();
 
-      var log = LogManager.GetLogger("global");
+      var log = LogManager.GetLogger("global.asax");
 
       var httpException = exc as HttpException;
       if (httpException != null)
@@ -102,7 +101,7 @@ namespace Kcsara.Database.Web
       {
         Response.StatusCode = statusCode;
         Server.ClearError();
-      }      
+      }
     }
   }
 }
