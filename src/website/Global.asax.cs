@@ -4,6 +4,7 @@
 using System;
 using System.Security.Principal;
 using System.Threading;
+using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -74,6 +75,34 @@ namespace Kcsara.Database.Web
     protected override Ninject.IKernel CreateKernel()
     {      
       return MvcApplication.myKernel;
+    }
+
+    void Application_Error(object sender, EventArgs e)
+    {
+      int statusCode = 500;
+      Exception exc = Server.GetLastError();
+
+      var log = LogManager.GetLogger("global");
+
+      var httpException = exc as HttpException;
+      if (httpException != null)
+      {
+        if (httpException.ErrorCode == -2147467259)
+        {
+          log.Info("Potentially dangerous request: " + Request.RawUrl, httpException);
+          statusCode = 400;
+        }
+      }
+      else
+      {
+        log.Error(Request.RawUrl, exc);
+      }
+
+      if (Request.RawUrl.ToLowerInvariant().StartsWith("/api/"))
+      {
+        Response.StatusCode = statusCode;
+        Server.ClearError();
+      }      
     }
   }
 }

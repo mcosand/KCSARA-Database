@@ -77,5 +77,12 @@ namespace Kcsara.Database.Web.api
     {
       return "{0:yyyy-MM-dd}";
     }
+
+    [HttpGet]
+    [Authorize]
+    public string ThrowInApi()
+    {
+      throw new InvalidOperationException("Throwing as requested. I hope you find what you're looking for.");
+    }
   }
 }

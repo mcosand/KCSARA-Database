@@ -1,0 +1,19 @@
+﻿@{
+  ViewBag.Title = "Site Error";
+}
+<div class="row">
+  <div class="col-sm-6 col-xs-12">
+    <div class="box box-primary">
+      <div class="box-header with-border">
+        <h3 class="box-title">Site Error</h3>
+      </div>
+      <div class="box-body">
+        <p>An error has occurred. The site administrator will be notified.</p>
+        @if (ViewBag.Message != null)
+        {
+          <p>@ViewBag.Message</p>
+        }
+      </div>
+    </div>
+  </div>
+</div>

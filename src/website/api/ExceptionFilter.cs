@@ -1,27 +1,17 @@
 ﻿/*
- * Copyright 2012-2014 Matthew Cosand
+ * Copyright 2012-2015 Matthew Cosand
  */
-using System.Web.Http.Filters;
-using System.Net.Http;
-using System.Net;
-using log4net;
-
-namespace Kcsara.Database.Web.api
+ namespace Kcsara.Database.Web.api
 {
-    public class ExceptionFilter : ExceptionFilterAttribute
-    {
-        public override void OnException(HttpActionExecutedContext context)
-        {
-            LogManager.GetLogger("Kcsara.Database.Web.api").ErrorFormat("UNHANDLED: {0}", context.Exception.ToString());
+  using System.Web.Http.Filters;
+  using log4net;
 
-            if (context.Response == null)
-            {
-                context.Response = new HttpResponseMessage();
-            }
-            context.Response.StatusCode = HttpStatusCode.InternalServerError;
-            context.Response.Content = new StringContent("General Error");
-            base.OnException(context);
-            new WebRequestErrorEventMvc("An unhandled exception has occurred in API.", this, 103005, context.Exception).Raise();
-        }
+  public class ExceptionFilter : ExceptionFilterAttribute
+  {
+    public override void OnException(HttpActionExecutedContext context)
+    {
+      LogManager.GetLogger("Kcsara.Database.Web.api").Error(context.Request.RequestUri.AbsoluteUri, context.Exception);
+      base.OnException(context);
     }
+  }
 }

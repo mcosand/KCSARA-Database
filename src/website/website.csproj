@@ -53,13 +53,6 @@
       <HintPath>..\..\packages\Castle.Core.3.2.0\lib\net45\Castle.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Elmah">
-      <HintPath>..\..\packages\elmah.corelibrary.1.2.2\lib\Elmah.dll</HintPath>
-    </Reference>
-    <Reference Include="Elmah.Mvc, Version=2.1.2.1389, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Elmah.Mvc.2.1.2\lib\net40\Elmah.Mvc.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
@@ -272,7 +265,6 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="BlockRenderer.cs" />
     <Compile Include="CapturingResponseFilter.cs" />
-    <Content Include="App_Readme\Elmah.txt" />
     <Content Include="Content\AdminLTE.css" />
     <Content Include="Content\AdminLTE.min.css" />
     <Content Include="Content\auth\animals\none.jpg" />
@@ -339,7 +331,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="HandleErrorHm.cs" />
     <Compile Include="HtmlHelperExtensions.cs" />
     <Compile Include="JsonDataContractBinder.cs" />
     <Compile Include="LinqExtensions.cs" />
@@ -569,7 +560,6 @@
     <Content Include="Views\Account\InactiveMemberAccounts.aspx" />
     <Content Include="Views\Account\Index.aspx" />
     <Content Include="Views\Account\Login.aspx" />
-    <Content Include="Views\Account\Mobile\Login.aspx" />
     <Content Include="Views\Account\ReAuth.aspx" />
     <Content Include="Views\Account\ResetPassword.aspx" />
     <Content Include="Views\Account\ResetPasswordDone.aspx" />
@@ -601,7 +591,6 @@
     <Content Include="Views\Home\Index.aspx" />
     <Content Include="Views\Home\MeshGraphs.aspx" />
     <Content Include="Views\Home\MeshStatus.aspx" />
-    <Content Include="Views\Home\Mobile\Index.aspx" />
     <Content Include="Views\Log\Index.aspx" />
     <Content Include="Views\Log\LogTable.ascx" />
     <Content Include="Views\Map\Index.aspx" />
@@ -647,8 +636,6 @@
     <Content Include="Views\Missions\List.aspx" />
     <Content Include="Views\Missions\Log.aspx" />
     <Content Include="Views\Missions\Mission.ascx" />
-    <Content Include="Views\Missions\Mobile\List.aspx" />
-    <Content Include="Views\Missions\Mobile\Roster.aspx" />
     <Content Include="Views\Missions\PendingDocuments.aspx" />
     <Content Include="Views\Missions\ReportStatus.aspx" />
     <Content Include="Views\Missions\ResponderEmails.aspx" />
@@ -668,7 +655,6 @@
     <Content Include="Views\Shared\Close.aspx" />
     <Content Include="Views\Shared\ClosePopup.aspx" />
     <Content Include="Views\Shared\EditRoster.aspx" />
-    <Content Include="Views\Shared\Error.aspx" />
     <Content Include="Views\Shared\EventRoster.ascx" />
     <Content Include="Views\Shared\ICS211.aspx" />
     <Content Include="Views\Shared\Review4x4Roster.aspx" />
@@ -724,6 +710,7 @@
     <Content Include="Scripts\jquery-2.1.4.min.map" />
     <Content Include="Views\Account\Detail.cshtml" />
     <Content Include="Views\Units\Index.cshtml" />
+    <Content Include="Views\Home\Error.cshtml" />
     <None Include="Web.Production.config" />
   </ItemGroup>
   <ItemGroup>

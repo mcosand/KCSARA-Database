@@ -1,16 +1,14 @@
 ﻿/*
- * Copyright 2012-2014 Matthew Cosand
+ * Copyright 2012-2015 Matthew Cosand
  */
-using System.Web;
-using System.Web.Mvc;
-
 namespace Kcsara.Database.Web
 {
-    public class FilterConfig
+  using System.Web.Mvc;
+
+  public class FilterConfig
+  {
+    public static void RegisterGlobalFilters(GlobalFilterCollection filters)
     {
-        public static void RegisterGlobalFilters(GlobalFilterCollection filters)
-        {
-          //  filters.Add(new HandleErrorHmAttribute());
-        }
     }
+  }
 }

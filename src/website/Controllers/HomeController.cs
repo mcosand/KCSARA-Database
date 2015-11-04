@@ -4,17 +4,15 @@
 
 namespace Kcsara.Database.Web.Controllers
 {
-  using System.Collections.Generic;
   using System;
-  using System.Web.Mvc;
-  using Kcsar.Database.Model;
-  using Kcsara.Database.Web.Model;
-  using System.Xml.Linq;
-  using System.Linq;
-  using Kcsara.Database.Geo;
-  using System.IO;
   using System.Data.Entity.Spatial;
+  using System.Linq;
+  using System.Web.Mvc;
+  using System.Xml.Linq;
+  using Kcsar.Database.Model;
+  using Kcsara.Database.Geo;
   using Kcsara.Database.Services;
+  using Kcsara.Database.Web.Model;
 
   public class HomeController : BaseController
   {
@@ -22,7 +20,7 @@ namespace Kcsara.Database.Web.Controllers
     public HomeController(IKcsarContext db, IReportsService reports, IAppSettings settings)
       : base(db, settings)
     {
-      System.Data.Entity.Database.SetInitializer<MeshNodeEntities>(new System.Data.Entity.DropCreateDatabaseIfModelChanges<MeshNodeEntities>());
+      System.Data.Entity.Database.SetInitializer(new System.Data.Entity.DropCreateDatabaseIfModelChanges<MeshNodeEntities>());
       this.reports = reports;
     }
 
@@ -37,6 +35,15 @@ namespace Kcsara.Database.Web.Controllers
     {
       ViewData["Title"] = "About Page";
 
+      return View();
+    }
+
+    public ActionResult Error(string message)
+    {
+      if (!string.IsNullOrWhiteSpace(message))
+      {
+        ViewBag.Message = message;
+      }
       return View();
     }
 
@@ -255,103 +262,7 @@ namespace Kcsara.Database.Web.Controllers
       return new ContentResult { Content = "Thanks", ContentType = "text/plain" };
     }
 
-    /*        [Authorize]
-            public FilePathResult GetApplicationData()
-            {
 
-                string filename = Server.MapPath("~/Content/auth/downloads/" + string.Format("{0}.sdf", Guid.NewGuid()));
-                System.Data.Entity.Database.SetInitializer(new System.Data.Entity.DropCreateDatabaseAlways<TrackingApplicationContext>());
-
-                using (TrackingApplicationContext data = new TrackingApplicationContext(filename))
-                {
-                    //MissionApplicationData model = new MissionApplicationData();
-
-                    using (var ctx = GetContext())
-                    {
-                        var courses = (from c in ctx.TrainingCourses where c.WacRequired > 0 select c).OrderBy(x => x.DisplayName).ToList();
-
-                        //var query = ctx.GetActiveMembers(null, DateTime.Now, "ContactNumbers", "Memberships.Unit", "Memberships.Status").ToArray();
-                        var query = ctx.Members.Include("ComputedAwards.Course").ToArray();
-
-                        var memberships = ctx.UnitMemberships.Include("Unit").Where(f => f.Status.IsActive && f.EndTime == null).ToDictionary(f => f, f => f.Person.Id);
-                        var numbers = ctx.PersonContact.ToDictionary(f => f, f => f.Person.Id);
-
-                        Dictionary<Guid, AppModel.SarUnit> units = new Dictionary<Guid,AppModel.SarUnit>();
-                        Func<Kcsar.Database.Model.SarUnit, AppModel.SarUnit> acquireUnit = u => { if (!units.ContainsKey(u.Id)) { units.Add(u.Id, new AppModel.SarUnit { Id = u.Id, Name = u.DisplayName }); } return units[u.Id]; };
-
-                        foreach (var row in query)
-                        {
-                            var member = new AppModel.DatabaseMember
-                            {
-                                Id = row.Id,
-                                FirstName = row.FirstName,
-                                LastName = row.LastName,
-                                DEM = row.DEM,
-                                WacType = row.WacLevel.ToString(),
-                                IsActive = memberships.Any(f => f.Value == row.Id)
-                            };
-                        
-                            foreach (var unit in memberships.Where(f => f.Value == row.Id).Select(f => acquireUnit(f.Key.Unit)))
-                            {
-                                member.UnitMembership.Add(new AppModel.SarUnitMember { Responder = member, Unit = unit });
-                            }
-
-                            var expirations = Kcsar.Database.Model.CompositeTrainingStatus.Compute(row, courses, DateTime.Now);
-                            member.TrainedUntil = expirations.Expirations.Any(f => f.Value.Status == ExpirationFlags.Missing) ? null : expirations.Expirations.Min(f => f.Value.Expires);
-
-                            if (!string.IsNullOrWhiteSpace(row.PhotoFile))
-                            {
-                                string photoFile = Server.MapPath(MembersController.PhotosStoreRelativePath + row.PhotoFile);
-                                try
-                                {
-                                    using (System.Drawing.Image img = System.Drawing.Image.FromFile(photoFile))
-                                    {
-                                        using (var thumb = img.GetThumbnailImage(45, 60, () => { return false; }, System.IntPtr.Zero))
-                                        {
-                                            using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
-                                            {
-                                                thumb.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
-                                                member.Photo = new byte[ms.Length];
-                                                ms.Position = 0;
-                                                ms.Read(member.Photo, 0, (int)ms.Length);
-                                            }
-                                        }
-                                    }
-                                }
-                                catch (System.IO.FileNotFoundException)
-                                {
-                                }
-                            }
-                            data.Members.Add(member);
-                        }
-
-                        data.MetaData.Add(new AppModel.DatabaseDownloadInfo
-                        {
-                            Generated = DateTime.Now,
-                            Id = Guid.NewGuid(),
-                            SchemaVersion = 1,
-                            Source = Request.Url.GetLeftPart(UriPartial.Path)
-                        });
-
-                        //    model.Members = query.Select(m =>
-                        //                new MissionApplicationMember
-                        //                {
-                        //                    Id = m.Id,
-                        //                    First = m.FirstName,
-                        //                    Last = m.LastName,
-                        //                    WorkerNumber = m.DEM,
-                        //                    WacType = m.WacLevel.ToString(),
-                        //                    Contacts = m.ContactNumbers.Select(f => new MemberContactView { Id = f.Id, Priority = f.Priority, Value = f.Value, Type = f.Type, SubType = f.Subtype }).ToArray(),
-                        //                    Units = m.Memberships.Where(f => f.Status.IsActive && (f.EndTime == null || f.EndTime > DateTime.Now)).Select(f => new NameIdViewModel { Name = f.Unit.DisplayName, Id = f.Unit.Id }).ToArray()
-                        //                })
-                        //    .ToArray();
-                    }
-                    data.SaveChanges();
-                }
-                return new FilePathResult(filename, "application/octet-stream") { FileDownloadName = "database.sdf" };
-                //return Data(model);
-            }
-     */
     /// <summary>
     /// 
     /// </summary>
