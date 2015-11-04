@@ -71,7 +71,7 @@
             <% if (Page.User.IsInRole("cdb.admins")) { %>
             <li><%= Html.ActionLink<LogController>(f => f.Index(), "Change Log") %></li>
             <% } %>
-          <li><%= Html.ActionLink<AccountController>(f => f.Index(), "My Account") %></li>
+          <li><%= Html.ActionLink<AccountController>(f => f.Detail(Page.User.Identity.Name), "My Account") %></li>
           <% } %>
         </ul>
         <p id="showMInfoP" style="color:#888888; display:none"><input type="checkbox" id="showMInfo" />Show change info</p>

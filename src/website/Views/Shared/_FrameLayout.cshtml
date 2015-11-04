@@ -37,25 +37,25 @@
                 <ul class="menu">
                   @if (ViewData["MemberId"] != null)
                   {
-                    <li><a href="~/Members/Detail/@ViewData["MemberId"]"><i class="fa fa-home text-primary"></i>My Page</a></li> }
-                  <li>
-                    <a href="~/Account/Logout"><i class="fa fa-sign-out text-primary"></i>Logout</a>
-                  </li>
+                    <li><a href="~/Members/Detail/@ViewData["MemberId"]"><i class="fa fa-fw fa-home text-primary"></i>My Page</a></li>
+                  }
+                  <li><a href="~/Account/Detail/@User.Identity.Name"><i class="fa fa-fw fa-keyboard-o text-primary"></i>My Account</a></li>
+                  <li><a href="~/Account/Logout"><i class="fa fa-fw fa-sign-out text-primary"></i>Logout</a></li>
                 </ul>
               </li>
             </ul>
           </li>
-                  if (IsSectionDefined("pageSettings"))
-                  {
+          if (IsSectionDefined("pageSettings"))
+          {
           <!-- Control Sidebar Toggle Button -->
-          <li>
-            <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
-          </li>
-                  }
+            <li>
+              <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+            </li>
+          }
         }
         else
         {
-          <li><i class="fa fa-sign-in"></i>@(Html.ActionLink<AccountController>(f => f.Login(), Strings.LoginPrompt))</li>
+          <li><a href="~/Account/Login"><i class="fa fa-sign-in"></i> @Strings.LoginPrompt</a></li>
         }
       </ul>
     </div>
@@ -117,7 +117,7 @@
       <div class="search-img" ng-style="{'background-color': 'pink' }"></div>
       <div style="display:inline-block">
         <strong>{{item.summary.name}}</strong><br />
-        {{item.summary.start | date:'yyyy-MM-dd'}}<br/>
+        {{item.summary.start | date:'yyyy-MM-dd'}}<br />
         DEM# {{item.summary.stateNumber}}
       </div>
     </div>
@@ -132,9 +132,9 @@
     </div>
   </script>
   <script type="text/ng-template" id="searchResult.html">
-<button type="button"  ng-click="select(item)"  ng-class="getItemClasses($index)"  ng-repeat="item in searchResults" ng-mouseenter="onItemMouseenter($index)">
-<ng-include src="'search' + item.type + '.html'"></ng-include>
-</button>
+    <button type="button" ng-click="select(item)" ng-class="getItemClasses($index)" ng-repeat="item in searchResults" ng-mouseenter="onItemMouseenter($index)">
+      <ng-include src="'search' + item.type + '.html'"></ng-include>
+    </button>
   </script>
   <script type="text/javascript">
     angular.module('sarDatabase').controller('MainSearchCtrl', ['$scope',
