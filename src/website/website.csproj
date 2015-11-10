@@ -516,6 +516,7 @@
     <Content Include="help\index.html" />
     <Content Include="help\new-member.html" />
     <Content Include="help\training-roster.html" />
+    <Content Include="robots.txt" />
     <Content Include="Scripts\angular-mocks.js" />
     <Content Include="Scripts\angular-modal-service.js" />
     <Content Include="Scripts\angular.js" />
@@ -610,7 +611,6 @@
     <Content Include="Views\Members\MemberMemberships.ascx" />
     <Content Include="Views\Members\MemberRequiredTraining.ascx" />
     <Content Include="Views\Members\MemberTrainingAwards.ascx" />
-    <Content Include="Views\Members\NewEsarTrainee.aspx" />
     <Content Include="Views\Members\PhotoPreview.aspx" />
     <Content Include="Views\Members\PhotoUpload.aspx" />
     <Content Include="Views\Members\Promotions.aspx" />

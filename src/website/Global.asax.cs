@@ -4,6 +4,7 @@
 namespace Kcsara.Database.Web
 {
   using System;
+  using System.IO;
   using System.Security.Principal;
   using System.Threading;
   using System.Web;
@@ -26,11 +27,17 @@ namespace Kcsara.Database.Web
   {
     // This is static until legacy code learns to ask for dependencies in constructors
     public static IKernel myKernel;
+
     static MvcApplication()
     {
-      log4net.Config.XmlConfigurator.ConfigureAndWatch(new System.IO.FileInfo("log4net.config"));
-
       myKernel = new StandardKernel();
+    }
+
+    private void SetupDependencies()
+    {
+      FileInfo logConfigPath = new FileInfo(Server.MapPath("~/log4net.config"));
+      log4net.Config.XmlConfigurator.ConfigureAndWatch(logConfigPath);
+
       myKernel.Bind<IKcsarContext>().To<KcsarContext>();
       myKernel.Bind<ILog>().ToMethod(context => LogManager.GetLogger("Default"));
       myKernel.Bind<IFormsAuthentication>().To<FormsAuthenticationWrapper>();
@@ -47,6 +54,9 @@ namespace Kcsara.Database.Web
       myKernel.Bind<AccountsService>().ToSelf().InSingletonScope();
     }
 
+    private static object kernelLock = new object();
+    private static bool shouldSetupDependencies = true;
+
     protected void Session_Start(object sender, EventArgs e)
     {
       decimal result;
@@ -61,6 +71,18 @@ namespace Kcsara.Database.Web
 
     protected override void OnApplicationStarted()
     {
+      if (shouldSetupDependencies)
+      {
+        lock (kernelLock)
+        {
+          if (shouldSetupDependencies)
+          {
+            shouldSetupDependencies = false;
+            SetupDependencies();
+          }
+        }
+      }
+
       base.OnApplicationStarted();
 
       GlobalConfiguration.Configure(config => WebApiConfig.Register(config, myKernel));
@@ -85,19 +107,18 @@ namespace Kcsara.Database.Web
 
       var log = LogManager.GetLogger("global.asax");
 
+      var message = Request.RawUrl;
+
       var httpException = exc as HttpException;
-      //if (httpException != null)
-      //{
-      //  if (httpException.ErrorCode == -2147467259)
-      //  {
-      //    log.Info("Potentially dangerous request: " + Request.RawUrl, httpException);
-      //    statusCode = 400;
-      //  }
-      //}
-      //else
-      //{
-        log.Error(Request.RawUrl, exc);
-      //}
+      if (httpException != null)
+      {
+        if (httpException.Message.Contains(" was not found or does not implement"))
+        {
+          message += " Referrer: " + Request.UrlReferrer;
+        }
+      }
+
+      log.Error(message, exc);
 
       if (Request.RawUrl.ToLowerInvariant().StartsWith("/api/"))
       {
