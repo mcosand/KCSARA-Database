@@ -265,6 +265,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="BlockRenderer.cs" />
     <Compile Include="CapturingResponseFilter.cs" />
+    <Content Include="apple-touch-icon.png" />
     <Content Include="Content\AdminLTE.css" />
     <Content Include="Content\AdminLTE.min.css" />
     <Content Include="Content\auth\animals\none.jpg" />
