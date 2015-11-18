@@ -34,16 +34,29 @@
         <h3 class="box-title">Applications</h3>
       </div>
       <div class="box-body">
-        @if ((bool)ViewBag.CanApply)
+        @if ((ApplicationStatus)ViewBag.AppStatus != ApplicationStatus.No)
         {
           <p>@u.DisplayName is currently taking applications.</p>
+          if ((ApplicationStatus)ViewBag.AppStatus == ApplicationStatus.Yes)
+          {
+            if ((bool)ViewBag.CanApply)
+            {
           <button data-bind="jqButtonEnable: applyEnabled, click: doApply">Apply Now</button>
+            } else
+            {
+              <p>You are already a member or an applicant.</p>
+            }
+          }
+          else if (!string.IsNullOrWhiteSpace(ViewBag.AppText))
+          {
+            <p>@ViewBag.AppText</p>
+          }
         }
         else
         {
           <p>@u.DisplayName is not currently taking applications.</p>
-          if (!string.IsNullOrWhiteSpace(ViewBag.NoApplyReason))
-          { <p>&quot;@ViewBag.NoApplyReason&quot;</p>}
+          if (!string.IsNullOrWhiteSpace(ViewBag.AppText))
+          { <p>@ViewBag.AppText</p>}
         }
       </div>
     </div>

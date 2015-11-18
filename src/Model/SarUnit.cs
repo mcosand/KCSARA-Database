@@ -21,7 +21,10 @@ namespace Kcsar.Database.Model
     public virtual ICollection<UnitStatus> StatusTypes { get; set; }
     public bool HasOvertime { get; set; }
 
-    public string NoApplicationsText { get; set; }
+    public string ApplicationsText { get; set; }
+
+    public ApplicationStatus ApplicationStatus { get; set; }
+
     public virtual ICollection<UnitDocument> Documents { get; set; }
     public virtual ICollection<UnitContact> Contacts { get; set; }
     public virtual ICollection<UnitApplicant> Applicants { get; set; }

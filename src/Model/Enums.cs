@@ -152,4 +152,11 @@ namespace Kcsar.Database.Model
     DecimalMinutes,
     DegreesMinutesSeconds
   }
+
+  public enum ApplicationStatus
+  {
+    No,
+    Yes,
+    External
+  }
 }

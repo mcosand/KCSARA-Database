@@ -58,12 +58,13 @@ namespace Kcsara.Database.Web.Controllers
       ViewData["Title"] = "New Member Application";
       ViewData.Add("hideMenu", true);
 
-      ViewBag.Units = this.db.Units.Where(f => f.NoApplicationsText != "never").OrderBy(f => f.LongName)
+      ViewBag.Units = this.db.Units.Where(f => f.ApplicationStatus != ApplicationStatus.No).OrderBy(f => f.LongName)
           .Select(f => new UnitApplicationInfoViewModel
           {
             Contact = f.Contacts.Where(g => g.Purpose == "applications" && g.Type == "email").Select(g => g.Value).FirstOrDefault(),
             Name = f.LongName,
-            NoAppReason = f.NoApplicationsText,
+            AppText = f.ApplicationsText,
+            Status = f.ApplicationStatus,
             Id = f.Id
           });
       return View();

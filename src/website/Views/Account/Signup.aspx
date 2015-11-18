@@ -1,5 +1,4 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<dynamic>" %>
-
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
     <h2>Search and Rescue Volunteer Application</h2>
@@ -34,12 +33,12 @@
         </fieldset>
         <fieldset>
             <legend>Select Units:</legend>
-            <p>Choose at least one unit for which you would like to volunteer. Questions about the application process may be directed to listed email contact.</p>
+            <p>Choose at least one unit for which you would like to volunteer.</p>
             <table>
                 <% foreach (var unit in ViewBag.Units) { %>
-                  <tr><td><input type="checkbox" <%= unit.IsAcceptingApps ? "" : "disabled=\"disabled\"" %> data-bind="checked: Units" value="<%: unit.Id %>" /></td>
+                  <tr><td><input type="checkbox" <%= unit.Status == Kcsar.Database.Model.ApplicationStatus.Yes ? "" : "disabled=\"disabled\"" %> data-bind="checked: Units" value="<%: unit.Id %>" /></td>
                       <td><%= unit.Name %></td>
-                      <td><% if(unit.IsAcceptingApps) { %><a href="mailto:<%= (string)unit.Contact %>"><%= (string)unit.Contact %></a><% } else { %><%: (string)unit.NoAppReason %><% } %></td>
+                      <td><% if(unit.Status == Kcsar.Database.Model.ApplicationStatus.Yes) { %> Questions about the application process may be directed to <a href="mailto:<%= (string)unit.Contact %>"><%= (string)unit.Contact %></a><% } else { %><%: (string)unit.AppText %><% } %></td>
                   </tr>
                 <% } %>
             </table>
