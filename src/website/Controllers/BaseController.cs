@@ -69,6 +69,8 @@ namespace Kcsara.Database.Web.Controllers
           ViewBag.LoginUserName = member.FullName;
         }
       }
+
+      ViewBag.GoogleAnalytics = ConfigurationManager.AppSettings["GoogleAnalytics"];
     }
 
     protected Expression<Func<T, bool>> GetSelectorPredicate<T>(IEnumerable<Guid> ids) where T : IModelObject
