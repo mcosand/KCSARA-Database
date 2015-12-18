@@ -14,10 +14,11 @@ namespace Kcsar.Database.Model
     IDbSet<Animal> Animals { get; set; }
     IDbSet<AnimalMission> AnimalMissions { get; set; }
     IDbSet<AnimalOwner> AnimalOwners { get; set; }
-    IDbSet<Mission> Missions { get; set; }
+    IDbSet<SarEvent> Events { get; set; }
+    IDbSet<Mission_Old> Missions { get; set; }
     IDbSet<MissionDetails> MissionDetails { get; set; }
     IDbSet<MissionLog> MissionLog { get; set; }
-    IDbSet<MissionRoster> MissionRosters { get; set; }
+    IDbSet<MissionRoster_Old> MissionRosters { get; set; }
     IDbSet<MissionGeography> MissionGeography { get; set; }
     IDbSet<Member> Members { get; set; }
     IDbSet<PersonAddress> PersonAddress { get; set; }
@@ -26,11 +27,11 @@ namespace Kcsar.Database.Model
     IDbSet<Subject> Subjects { get; set; }
     IDbSet<SubjectGroup> SubjectGroups { get; set; }
     IDbSet<SubjectGroupLink> SubjectGroupLinks { get; set; }
-    IDbSet<Training> Trainings { get; set; }
+    IDbSet<Training_Old> Trainings { get; set; }
     IDbSet<TrainingAward> TrainingAward { get; set; }
     IDbSet<TrainingCourse> TrainingCourses { get; set; }
     IDbSet<Document> Documents { get; set; }
-    IDbSet<TrainingRoster> TrainingRosters { get; set; }
+    IDbSet<TrainingRoster_Old> TrainingRosters { get; set; }
     IDbSet<TrainingRule> TrainingRules { get; set; }
     IDbSet<SarUnit> Units { get; set; }
     IDbSet<UnitApplicant> UnitApplicants { get; set; }

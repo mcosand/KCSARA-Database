@@ -5,38 +5,27 @@
 namespace Kcsar.Database.Model
 {
   using System;
-  using System.Linq;
   using System.Collections.Generic;
   using System.ComponentModel.DataAnnotations;
+  using System.ComponentModel.DataAnnotations.Schema;
 
-  public class MissionRoster : ModelObject, IRosterEntry<Mission, MissionRoster>, IRosterEntry, IModelObject
+  [Table("TrainingRosters")]
+  public class TrainingRoster_Old : ModelObject, IRosterEntry<Training_Old, TrainingRoster_Old>
   {
-    public const string ROLE_FIELD = "Field";
-    public const string ROLE_BASE = "Base";
-    public const string ROLE_NO_ROLE = "Responder";
-    public const string ROLE_IN_TOWN = "InTown";
-    public const string ROLE_UNIT_LEAD = "OL";
-    public static readonly string[] RoleTypes = new string[] { ROLE_FIELD, ROLE_UNIT_LEAD, ROLE_BASE, ROLE_IN_TOWN, ROLE_NO_ROLE };
-
-    public string InternalRole { get; set; }
     public DateTime? TimeIn { get; set; }
     public DateTime? TimeOut { get; set; }
     public int? Miles { get; set; }
     public string Comments { get; set; }
-
-    [Required]
-    public virtual Mission Mission { get; set; }
-    [Required]
     public virtual Member Person { get; set; }
-    [Required]
-    public virtual SarUnit Unit { get; set; }
-    public virtual ICollection<AnimalMission> Animals { get; set; }
-    public double? OvertimeHours { get; set; }
+    public virtual Training_Old Training { get; set; }
+    public virtual ICollection<TrainingAward> TrainingAwards { get; set; }
+    public virtual ICollection<ComputedTrainingAward> ComputedAwards { get; set; }
+    public int? OvertimeHours { get; set; }
 
-    public MissionRoster()
-      : base()
+    public TrainingRoster_Old()
     {
-      this.Animals = new List<AnimalMission>();
+      this.TrainingAwards = new List<TrainingAward>();
+      this.ComputedAwards = new List<ComputedTrainingAward>();
     }
 
     public double? Hours
@@ -52,35 +41,40 @@ namespace Kcsar.Database.Model
       }
     }
 
-    public IRosterEvent<Mission, MissionRoster> GetRosterEvent()
+    bool timeInDirty = false;
+    bool timeOutDirty = false;
+
+    public IRosterEvent<Training_Old, TrainingRoster_Old> GetRosterEvent()
     {
-      return this.Mission;
+      return this.Training;
+    }
+
+    public Func<TrainingRoster_Old, Training_Old> RosterToEventFunc
+    {
+      get { return x => x.Training; }
     }
 
     public IRosterEvent GetEvent()
     {
-      return this.Mission;
+      return this.Training;
     }
 
     public void SetEvent(IRosterEvent sarEvent)
     {
-      // Passing a non-mission IRosterEvent here will (and should) throw a cast exception.
-      this.Mission = (Mission)sarEvent;
+      // Passing a non-training IRosterEvent here will (and should) throw a cast exception.
+      this.Training = (Training_Old)sarEvent;
     }
-
-    bool timeInDirty = false;
-    bool timeOutDirty = false;
 
     public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-      if (!MissionRoster.RoleTypes.Contains(this.InternalRole))
-      {
-        yield return new ValidationResult("Must be one of '" + string.Join(",", MissionRoster.RoleTypes) + "'", new[] { "Role" });
-      }
-
       foreach (var result in ValidateTimeInOut())
       {
         yield return result;
+      }
+
+      if (this.Miles.HasValue && this.Miles.Value < 0)
+      {
+        yield return new ValidationResult("Invalid", new[] { "Miles" });
       }
     }
 
@@ -103,19 +97,14 @@ namespace Kcsar.Database.Model
           yield break;
         }
 
-        if (this.OvertimeHours.HasValue && this.OvertimeHours.Value < 0)
-        {
-          yield return new ValidationResult("Overtime hours must be >= 0", new[] { "OvertimeHours" });
-        }
-
-        // Load the Person again, along with all the mission rosters, so we can search through them...
+        // Load the Person again, along with all the Training rosters, so we can search through them...
 
         //  InA    InThis  OutThis    OutA
         //  InA    InThis   OutA    OutThis
         //  InThis   InA    OutThis    OutA
         //  InThis   InA    OutA     OutThis
 
-        foreach (MissionRoster row in this.Person.MissionRosters)
+        foreach (TrainingRoster_Old row in this.Person.TrainingRosters)
         {
           if (row.Id == this.Id || !row.TimeOut.HasValue/* || row.EntityState == System.Data.EntityState.Deleted*/)
           {
@@ -124,7 +113,7 @@ namespace Kcsar.Database.Model
 
           if ((row.TimeIn <= this.TimeIn && row.TimeOut.Value > this.TimeIn) || (this.TimeIn <= row.TimeIn && this.TimeOut.Value > row.TimeIn))
           {
-            yield return new ValidationResult(string.Format("Conflicts with another roster entry, where TimeIn={0} and TimeOut={1}", row.TimeIn, row.TimeOut), new[] { field });
+            yield return new ValidationResult(string.Format("Conflicts with another roster entry, where TimeIn={0} and TimeOut={1}", row.TimeIn, row.TimeOut), new[]{field});
           }
         }
       }
@@ -132,7 +121,7 @@ namespace Kcsar.Database.Model
 
     public override string GetReportHtml()
     {
-      return string.Format("[<b>{0}</b>] [<b>{1}</b>] In:{2}, Out:{3}, Miles:{4}", this.Mission.Title, this.Person.FullName, this.TimeIn, this.TimeOut, this.Miles);
+      return string.Format("[<b>{0}</b>] [<b>{1}</b>] In:{2}, Out:{3}, Miles:{4}", this.Training.Title, this.Person.FullName, this.TimeIn, this.TimeOut, this.Miles);
     }
 
     public override string ToString()

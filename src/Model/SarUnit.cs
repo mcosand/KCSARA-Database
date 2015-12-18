@@ -14,9 +14,9 @@ namespace Kcsar.Database.Model
     public string LongName { get; set; }
     public string County { get; set; }
     public string Comments { get; set; }
-    public virtual ICollection<MissionRoster> MissionRosters { get; set; }
+    public virtual ICollection<MissionRoster_Old> MissionRosters { get; set; }
     public virtual ICollection<TrainingCourse> TrainingCourses { get; set; }
-    public virtual ICollection<Training> HostedTrainings { get; set; }
+    public virtual ICollection<Training_Old> HostedTrainings { get; set; }
     public virtual ICollection<UnitMembership> Memberships { get; set; }
     public virtual ICollection<UnitStatus> StatusTypes { get; set; }
     public bool HasOvertime { get; set; }

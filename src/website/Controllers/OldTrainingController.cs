@@ -18,7 +18,7 @@ namespace Kcsara.Database.Web.Controllers
   using Kcsara.Database.Web.Model;
   using ApiModels = Kcsara.Database.Web.api.Models;
 
-  public partial class TrainingController : SarEventController<Training, TrainingRoster>
+  public partial class TrainingController : OldSarEventController<Training_Old, TrainingRoster_Old>
   {
     public TrainingController(IKcsarContext db) : base(db) { }
 
@@ -32,7 +32,7 @@ namespace Kcsara.Database.Web.Controllers
     public ActionResult ReportStatus()
     {
       IEnumerable<EventReportStatusView> model;
-      IQueryable<Training> source = this.db.Trainings;
+      IQueryable<Training_Old> source = this.db.Trainings;
 
       var docCount = (from d in this.db.Documents group d by d.ReferenceId into g select new { Id = g.Key, Count = g.Count() }).ToDictionary(f => f.Id, f => f.Count);
 
@@ -58,7 +58,7 @@ namespace Kcsara.Database.Web.Controllers
       return View(model);
     }
 
-    protected override void DeleteDependentObjects(Training evt)
+    protected override void DeleteDependentObjects(Training_Old evt)
     {
       base.DeleteDependentObjects(evt);
       foreach (var roster in this.db.TrainingRosters.Include("TrainingAwards").Where(f => f.Training.Id == evt.Id))
@@ -610,21 +610,21 @@ namespace Kcsara.Database.Web.Controllers
 
     #endregion
 
-    protected override TrainingRoster AddNewRow(Guid id)
+    protected override TrainingRoster_Old AddNewRow(Guid id)
     {
-      TrainingRoster row = new TrainingRoster { Id = id };
+      TrainingRoster_Old row = new TrainingRoster_Old { Id = id };
       this.db.TrainingRosters.Add(row);
       return row;
     }
 
-    protected override void AddEventToContext(Training newEvent)
+    protected override void AddEventToContext(Training_Old newEvent)
     {
       this.db.Trainings.Add(newEvent);
     }
 
     private List<Guid> dirtyAwardMembers = new List<Guid>();
 
-    protected override void OnProcessingRosterInput(TrainingRoster row, FormCollection fields)
+    protected override void OnProcessingRosterInput(TrainingRoster_Old row, FormCollection fields)
     {
       base.OnProcessingRosterInput(row, fields);
 
@@ -707,7 +707,7 @@ namespace Kcsara.Database.Web.Controllers
       this.db.SaveChanges();
     }
 
-    protected override void OnDeletingRosterRow(TrainingRoster row)
+    protected override void OnDeletingRosterRow(TrainingRoster_Old row)
     {
       base.OnDeletingRosterRow(row);
 
@@ -727,7 +727,7 @@ namespace Kcsara.Database.Web.Controllers
       }
     }
 
-    protected override ActionResult InternalEdit(Training evt)
+    protected override ActionResult InternalEdit(Training_Old evt)
     {
       var courses = (from c in this.db.TrainingCourses orderby c.DisplayName select c);
 
@@ -742,7 +742,7 @@ namespace Kcsara.Database.Web.Controllers
       return base.InternalEdit(evt);
     }
 
-    protected override void OnProcessingEventModel(Training evt, FormCollection fields)
+    protected override void OnProcessingEventModel(Training_Old evt, FormCollection fields)
     {
       base.OnProcessingEventModel(evt, fields);
 
@@ -1219,17 +1219,17 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
 
 
 
-    protected override void RemoveEvent(Training oldEvent)
+    protected override void RemoveEvent(Training_Old oldEvent)
     {
       this.db.Trainings.Remove(oldEvent);
     }
 
-    protected override void RemoveRosterRow(TrainingRoster row)
+    protected override void RemoveRosterRow(TrainingRoster_Old row)
     {
       this.db.TrainingRosters.Remove(row);
     }
 
-    protected override IQueryable<Training> GetEventSource()
+    protected override IQueryable<Training_Old> GetEventSource()
     {
       return this.db.Trainings.Include("OfferedCourses").Include("HostUnits").Include("Roster.TrainingAwards");
     }

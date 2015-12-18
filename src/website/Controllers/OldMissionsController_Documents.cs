@@ -274,12 +274,12 @@ namespace Kcsara.Database.Web.Controllers
 
     protected override void AddRosterRowFrom4x4Sheet(ExpandedRowsContext model, SarUnit unit, IRosterEntry row)
     {
-      MissionRoster mrow = (MissionRoster)row;
+      MissionRoster_Old mrow = (MissionRoster_Old)row;
 
       Guid personId = mrow.Person.Id;
-      MissionRoster newRow = new MissionRoster
+      MissionRoster_Old newRow = new MissionRoster_Old
       {
-        Mission = (Mission)model.SarEvent,
+        Mission = (Mission_Old)model.SarEvent,
         Unit = unit,
         Person = this.db.Members.Include("MissionRosters").Single(f => f.Id == personId),
         TimeIn = mrow.TimeIn,

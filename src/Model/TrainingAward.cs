@@ -22,7 +22,7 @@ namespace Kcsar.Database.Model
     public virtual Member Member { get; set; }
     [Required]
     public virtual TrainingCourse Course { get; set; }
-    public virtual TrainingRoster Roster { get; set; }
+    public virtual TrainingRoster_Old Roster { get; set; }
 
 
     [NotMapped]

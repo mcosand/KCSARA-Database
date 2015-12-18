@@ -1,0 +1,69 @@
+﻿@{
+  ViewBag.Title = (string)ViewBag.EventTypeText + " List";
+  ViewBag.NgController = "EventListCtrl";
+}
+@section header {
+  <h1>@ViewBag.EventTypeText List</h1>
+}
+<div class="row">
+  <div class="col-sm-12 col-xs-12">
+    <div class="box box-primary">
+      <div class="box-header with-border">
+        <div class="pull-right">
+          <div>
+            <div>
+              <strong>Year: </strong>
+              <select class="form-control" style="display:inline; width:initial" ng-model="year" ng-options="item as item for item in years"><option value="">All</option></select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="box-body no-padding">
+        <table class="table table-striped table-condensed">
+          <thead><tr><th class="hidden-xs">DEM</th><th>Date</th><th>Name</th><th class="text-right hidden-xs">Persons</th><th class="text-right hidden-xs hidden-sm">Hours</th><th class="text-right hidden-xs hidden-sm">Miles</th></tr></thead>
+          <tbody ng-cloak>
+            <tr ng-repeat="e in list">
+              <td class="hidden-xs">{{e.number}}</td>
+              <td>{{e.date.toDate() | date:'M/d/yyyy'}}</td>
+              <td><a href="/NewMissions/Roster/{{e.id}}">{{e.title}}</a></td>
+              <td class="text-right hidden-xs">{{e.people}}</td>
+              <td class="text-right hidden-xs hidden-sm">{{e.hours | number:2}}</td>
+              <td class="text-right hidden-xs hidden-sm">{{e.miles}}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th class="hidden-xs"></th>
+              <th></th>
+              <th>{{list.length}} Missions</th>
+              <th class="text-right hidden-xs">{{list.people}}</th>
+              <th class="text-right hidden-xs hidden-sm">{{list.hours | number:2}}</th>
+              <th class="text-right hidden-xs hidden-sm">{{list.miles}}</th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <div ng-if="list.loading" class="overlay">
+        <i class="fa fa-refresh fa-spin"></i>
+      </div>
+    </div>
+  </div>
+</div>
+@section scripts {
+  <script type="text/javascript">
+    angular.module('sarDatabase').controller('EventListCtrl', ['$scope', 'EventsService', function($scope, EventsService) {
+      $.extend($scope, {
+        list: [],
+        years: [@(ViewBag.Year == null ? string.Empty : ViewBag.Year)],
+        year: @(ViewBag.Year == null ? "null" : ViewBag.Year)
+        });
+      $scope.$watch("year", function(newValue, oldValue) {
+        if (newValue != oldValue) EventsService.list($scope.list, '@ViewBag.EventRoute', newValue);
+      });
+      EventsService.list($scope.list, '@ViewBag.EventRoute', $scope.year);
+      EventsService.years($scope.years, '@ViewBag.EventRoute').then(function(list) {
+        $scope.year = list.length > 0 ? list[0] : null;
+      });
+    }]);
+  </script>
+}

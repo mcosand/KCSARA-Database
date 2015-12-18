@@ -17,7 +17,7 @@ namespace Kcsara.Database.Web.Controllers
   using Kcsara.Database.Web.Model;
   using ApiModels = Kcsara.Database.Web.api.Models;
 
-  public partial class MissionsController : SarEventController<Mission, MissionRoster>
+  public partial class MissionsController : OldSarEventController<Mission_Old, MissionRoster_Old>
   {
     public MissionsController(IKcsarContext db) : base(db) { }
 
@@ -126,7 +126,7 @@ namespace Kcsara.Database.Web.Controllers
       Subject subject = new Subject();
       this.db.Subjects.Add(subject);
 
-      Mission mission;
+      Mission_Old mission;
       SubjectGroup group;
 
       if (!string.IsNullOrEmpty(fields["GroupId"]))
@@ -415,7 +415,7 @@ namespace Kcsara.Database.Web.Controllers
     public ActionResult DeleteSubject(Guid id, FormCollection fields)
     {
       SubjectGroupLink link = (from l in this.db.SubjectGroupLinks.Include(f => f.Group.Mission).Include(f => f.Group.SubjectLinks).Include(f => f.Subject.GroupLinks) where l.Id == id select l).First();
-      Mission m = link.Group.Mission;
+      Mission_Old m = link.Group.Mission;
 
       if (link.Subject.GroupLinks.Count == 1)
       {
@@ -472,7 +472,7 @@ namespace Kcsara.Database.Web.Controllers
     public ActionResult MoveSubjectToGroup(Guid id, int newGroup)
     {
       SubjectGroupLink link = (from l in this.db.SubjectGroupLinks.Include(f => f.Group.Mission) where l.Id == id select l).First();
-      Mission m = link.Group.Mission;
+      Mission_Old m = link.Group.Mission;
       SubjectGroup oldGroup = link.Group;
 
       link.Group = (from b in this.db.SubjectGroups where b.Mission.Id == link.Group.Mission.Id && b.Number == newGroup select b).FirstOrDefault();
@@ -510,7 +510,7 @@ namespace Kcsara.Database.Web.Controllers
       }
     }
 
-    private void RenumberSubjectGroups(Mission mission)
+    private void RenumberSubjectGroups(Mission_Old mission)
     {
       //var navProp = this.db.SubjectGroups.l.Entry(mission).Reference(f => f.SubjectGroups);
       //if (!navProp.IsLoaded) navProp.Load();
@@ -600,7 +600,7 @@ namespace Kcsara.Database.Web.Controllers
     public ActionResult ResponderEmails(Guid id, Guid? unitId)
     {
       ViewData["missionId"] = id;
-      Mission m = this.GetEvent(GetEventSource(), id);
+      Mission_Old m = this.GetEvent(GetEventSource(), id);
 
       ViewData["title"] = string.Format("Responder Emails :: {0} {1}", m.StateNumber, m.Title);
 
@@ -613,7 +613,7 @@ namespace Kcsara.Database.Web.Controllers
     public ActionResult Log(Guid id)
     {
       ViewData["missionId"] = id;
-      Mission m = this.GetEvent(GetEventSource().Include(f => f.Log.Select(g => g.Person)).Include(f => f.Details), id);
+      Mission_Old m = this.GetEvent(GetEventSource().Include(f => f.Log.Select(g => g.Person)).Include(f => f.Details), id);
       ViewData["title"] = string.Format("Log :: {0} {1}", m.StateNumber, m.Title);
       return View(m);
     }
@@ -742,7 +742,7 @@ namespace Kcsara.Database.Web.Controllers
       TryUpdateModel(log, new string[] { "Time", "Data" });
 
       Guid missionId = new Guid(fields["Mission"]);
-      Mission mission = (from m in this.db.Missions where m.Id == missionId select m).First();
+      Mission_Old mission = (from m in this.db.Missions where m.Id == missionId select m).First();
       log.Mission = mission;
 
       if (string.IsNullOrEmpty(fields["pid_a"]))
@@ -834,7 +834,7 @@ namespace Kcsara.Database.Web.Controllers
       return this.UserInRole("cdb.missioneditors");
     }
 
-    protected override void OnProcessingEventModel(Mission evt, FormCollection fields)
+    protected override void OnProcessingEventModel(Mission_Old evt, FormCollection fields)
     {
       base.OnProcessingEventModel(evt, fields);
       TryUpdateModel(evt, new string[] { "CountyNumber" }, fields.ToValueProvider());
@@ -844,7 +844,7 @@ namespace Kcsara.Database.Web.Controllers
       }
     }
 
-    protected override ActionResult InternalEdit(Mission evt)
+    protected override ActionResult InternalEdit(Mission_Old evt)
     {
       ViewData["MissionType"] = new MultiSelectList(ConfigurationManager.AppSettings["EnumMissionType"].Split(','), (evt.MissionType ?? "").Split(','));
       return base.InternalEdit(evt);
@@ -882,7 +882,7 @@ namespace Kcsara.Database.Web.Controllers
         ViewData["maxYear"] = DateTime.Now.Year;
       }
 
-      IQueryable<Mission> source = this.db.Missions;
+      IQueryable<Mission_Old> source = this.db.Missions;
       if (unit.HasValue)
       {
         source = source.Where(f => f.Roster.Any(g => g.Unit.Id == unit.Value));
@@ -918,7 +918,7 @@ namespace Kcsara.Database.Web.Controllers
 
       ViewData["filtered"] = unit.HasValue;
 
-      return View("List", model);
+      return View("~/Views/Missions/List.aspx", model);
     }
 
     /// <summary>
@@ -936,7 +936,7 @@ namespace Kcsara.Database.Web.Controllers
       }
 
       IEnumerable<EventReportStatusView> model;
-      IQueryable<Mission> source = this.db.Missions;
+      IQueryable<Mission_Old> source = this.db.Missions;
       if (unit.HasValue)
       {
         source = source.Where(f => f.Roster.Any(g => g.Unit.Id == unit.Value));
@@ -976,7 +976,7 @@ namespace Kcsara.Database.Web.Controllers
     {
       if (!User.IsInRole("cdb.users")) return GetLoginError();
 
-      IQueryable<MissionRoster> source = this.db.MissionRosters;
+      IQueryable<MissionRoster_Old> source = this.db.MissionRosters;
       if (unitId.HasValue)
       {
         source = source.Where(f => f.Unit.Id == unitId.Value);
@@ -1002,7 +1002,7 @@ namespace Kcsara.Database.Web.Controllers
       if (!User.IsInRole("cdb.users")) return GetLoginError();
 
       IEnumerable<EventSummaryView> model;
-      IQueryable<Mission> source = this.db.Missions;
+      IQueryable<Mission_Old> source = this.db.Missions;
       if (unit.HasValue)
       {
         source = source.Where(f => f.Roster.Any(g => g.Unit.Id == unit.Value));
@@ -1051,7 +1051,7 @@ namespace Kcsara.Database.Web.Controllers
 
     //}
 
-    protected override void ApplyListFilter(ref IEnumerable<Mission> query)
+    protected override void ApplyListFilter(ref IEnumerable<Mission_Old> query)
     {
       base.ApplyListFilter(ref query);
 
@@ -1081,11 +1081,11 @@ namespace Kcsara.Database.Web.Controllers
       base.OnBuildingRosterModel(id);
       ViewData["missionId"] = id;
       ViewData["UnitList"] = (from u in this.db.Units orderby u.County + ":" + u.DisplayName select u).ToArray();
-      ViewData["RoleTypes"] = MissionRoster.RoleTypes;
+      ViewData["RoleTypes"] = MissionRoster_Old.RoleTypes;
 
     }
 
-    protected override void OnDeletingRosterRow(MissionRoster row)
+    protected override void OnDeletingRosterRow(MissionRoster_Old row)
     {
       while (row.Animals.Count > 0)
       {
@@ -1095,7 +1095,7 @@ namespace Kcsara.Database.Web.Controllers
       base.OnDeletingRosterRow(row);
     }
 
-    protected override void OnProcessingRosterInput(MissionRoster row, FormCollection fields)
+    protected override void OnProcessingRosterInput(MissionRoster_Old row, FormCollection fields)
     {
       base.OnProcessingRosterInput(row, fields);
 
@@ -1184,14 +1184,14 @@ namespace Kcsara.Database.Web.Controllers
 
     }
 
-    protected override MissionRoster AddNewRow(Guid id)
+    protected override MissionRoster_Old AddNewRow(Guid id)
     {
-      MissionRoster row = new MissionRoster { Id = id };
+      MissionRoster_Old row = new MissionRoster_Old { Id = id };
       this.db.MissionRosters.Add(row);
       return row;
     }
 
-    protected override void RemoveRosterRow(MissionRoster row)
+    protected override void RemoveRosterRow(MissionRoster_Old row)
     {
       this.db.MissionRosters.Remove(row);
     }
@@ -1221,7 +1221,7 @@ namespace Kcsara.Database.Web.Controllers
       }
 
       Guid unitId = Guid.Empty;
-      IQueryable<MissionRoster> source = this.db.MissionRosters;
+      IQueryable<MissionRoster_Old> source = this.db.MissionRosters;
       if (!string.IsNullOrEmpty(unit))
       {
         source = this.db.MissionRosters.Include(f => f.Unit);
@@ -1243,7 +1243,7 @@ namespace Kcsara.Database.Web.Controllers
 
       if (unitId != Guid.Empty)
       {
-        rostersByPerson = (IOrderedQueryable<MissionRoster>)rostersByPerson.Where(f => f.Unit.Id == unitId);
+        rostersByPerson = (IOrderedQueryable<MissionRoster_Old>)rostersByPerson.Where(f => f.Unit.Id == unitId);
       }
 
       var totals = new Dictionary<RosterSummaryRow, Member>();
@@ -1251,7 +1251,7 @@ namespace Kcsara.Database.Web.Controllers
       Guid lastPerson = Guid.Empty;
       Guid lastMission = Guid.Empty;
       RosterSummaryRow currentRow = null;
-      foreach (MissionRoster mr in rostersByPerson)
+      foreach (MissionRoster_Old mr in rostersByPerson)
       {
         if (mr.Person.Id != lastPerson)
         {
@@ -1399,7 +1399,7 @@ select new { P = g.Key, Hours = g.Sum(f => f.Hours), Miles = g.Sum(f => f.Miles)
       List<Guid> uniquePerson = new List<Guid>();
       List<Guid> totalMissions = new List<Guid>();
 
-      foreach (MissionRoster mr in rosterByUnit.ToArray())
+      foreach (MissionRoster_Old mr in rosterByUnit.ToArray())
       {
         if (mr.Unit != lastUnit)
         {
@@ -1540,17 +1540,17 @@ select new { P = g.Key, Hours = g.Sum(f => f.Hours), Miles = g.Sum(f => f.Miles)
       return Data(rows.ToArray());
     }
 
-    protected override IQueryable<Mission> GetEventSource()
+    protected override IQueryable<Mission_Old> GetEventSource()
     {
       return this.db.Missions.Include(f => f.Roster.Select(g => g.Unit)).Include(f => f.Roster.Select(g => g.Animals)).Include(f => f.Roster.Select(g => g.Person.Animals.Select(h => h.Animal)));
     }
 
-    protected override void AddEventToContext(Mission newEvent)
+    protected override void AddEventToContext(Mission_Old newEvent)
     {
       this.db.Missions.Add(newEvent);
     }
 
-    protected override void RemoveEvent(Mission oldEvent)
+    protected override void RemoveEvent(Mission_Old oldEvent)
     {
       this.db.Missions.Remove(oldEvent);
     }

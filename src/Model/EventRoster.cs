@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2009-2014 Matthew Cosand
+ * Copyright 2015 Matthew Cosand
  */
 
 namespace Kcsar.Database.Model
@@ -7,23 +7,24 @@ namespace Kcsar.Database.Model
   using System;
   using System.Collections.Generic;
   using System.ComponentModel.DataAnnotations;
+  using System.ComponentModel.DataAnnotations.Schema;
 
-  public class TrainingRoster : ModelObject, IRosterEntry<Training, TrainingRoster>
+  public class EventRoster : ModelObject
   {
     public DateTime? TimeIn { get; set; }
     public DateTime? TimeOut { get; set; }
     public int? Miles { get; set; }
     public string Comments { get; set; }
     public virtual Member Person { get; set; }
-    public virtual Training Training { get; set; }
-    public virtual ICollection<TrainingAward> TrainingAwards { get; set; }
-    public virtual ICollection<ComputedTrainingAward> ComputedAwards { get; set; }
+    public virtual SarEvent Event { get; set; }
+//    public virtual ICollection<TrainingAward> TrainingAwards { get; set; }
+//    public virtual ICollection<ComputedTrainingAward> ComputedAwards { get; set; }
     public int? OvertimeHours { get; set; }
 
-    public TrainingRoster()
+    public EventRoster()
     {
-      this.TrainingAwards = new List<TrainingAward>();
-      this.ComputedAwards = new List<ComputedTrainingAward>();
+ //     this.TrainingAwards = new List<TrainingAward>();
+ //     this.ComputedAwards = new List<ComputedTrainingAward>();
     }
 
     public double? Hours
@@ -41,27 +42,6 @@ namespace Kcsar.Database.Model
 
     bool timeInDirty = false;
     bool timeOutDirty = false;
-
-    public IRosterEvent<Training, TrainingRoster> GetRosterEvent()
-    {
-      return this.Training;
-    }
-
-    public Func<TrainingRoster, Training> RosterToEventFunc
-    {
-      get { return x => x.Training; }
-    }
-
-    public IRosterEvent GetEvent()
-    {
-      return this.Training;
-    }
-
-    public void SetEvent(IRosterEvent sarEvent)
-    {
-      // Passing a non-training IRosterEvent here will (and should) throw a cast exception.
-      this.Training = (Training)sarEvent;
-    }
 
     public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
@@ -102,7 +82,7 @@ namespace Kcsar.Database.Model
         //  InThis   InA    OutThis    OutA
         //  InThis   InA    OutA     OutThis
 
-        foreach (TrainingRoster row in this.Person.TrainingRosters)
+        foreach (TrainingRoster_Old row in this.Person.TrainingRosters)
         {
           if (row.Id == this.Id || !row.TimeOut.HasValue/* || row.EntityState == System.Data.EntityState.Deleted*/)
           {
@@ -119,7 +99,7 @@ namespace Kcsar.Database.Model
 
     public override string GetReportHtml()
     {
-      return string.Format("[<b>{0}</b>] [<b>{1}</b>] In:{2}, Out:{3}, Miles:{4}", this.Training.Title, this.Person.FullName, this.TimeIn, this.TimeOut, this.Miles);
+      return string.Format("[<b>{0}</b>] [<b>{1}</b>] In:{2}, Out:{3}, Miles:{4}", this.Event.Title, this.Person.FullName, this.TimeIn, this.TimeOut, this.Miles);
     }
 
     public override string ToString()

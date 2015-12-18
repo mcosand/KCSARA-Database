@@ -34,7 +34,7 @@
     public void AddEntry()
     {
       Member member;
-      Mission mission;
+      Mission_Old mission;
       int rowCount;
       using (var db = context.GetDb())
       {

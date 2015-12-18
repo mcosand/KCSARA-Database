@@ -22,10 +22,11 @@ namespace Kcsar.Database.Model
     public IDbSet<Animal> Animals { get; set; }
     public IDbSet<AnimalMission> AnimalMissions { get; set; }
     public IDbSet<AnimalOwner> AnimalOwners { get; set; }
-    public IDbSet<Mission> Missions { get; set; }
+    public IDbSet<SarEvent> Events { get; set; }
+    public IDbSet<Mission_Old> Missions { get; set; }
     public IDbSet<MissionDetails> MissionDetails { get; set; }
     public IDbSet<MissionLog> MissionLog { get; set; }
-    public IDbSet<MissionRoster> MissionRosters { get; set; }
+    public IDbSet<MissionRoster_Old> MissionRosters { get; set; }
     public IDbSet<MissionGeography> MissionGeography { get; set; }
     public IDbSet<Member> Members { get; set; }
     public IDbSet<PersonAddress> PersonAddress { get; set; }
@@ -35,11 +36,11 @@ namespace Kcsar.Database.Model
     public IDbSet<Subject> Subjects { get; set; }
     public IDbSet<SubjectGroup> SubjectGroups { get; set; }
     public IDbSet<SubjectGroupLink> SubjectGroupLinks { get; set; }
-    public IDbSet<Training> Trainings { get; set; }
+    public IDbSet<Training_Old> Trainings { get; set; }
     public IDbSet<TrainingAward> TrainingAward { get; set; }
     public IDbSet<TrainingCourse> TrainingCourses { get; set; }
     public IDbSet<Document> Documents { get; set; }
-    public IDbSet<TrainingRoster> TrainingRosters { get; set; }
+    public IDbSet<TrainingRoster_Old> TrainingRosters { get; set; }
     public IDbSet<TrainingRule> TrainingRules { get; set; }
     public IDbSet<SarUnit> Units { get; set; }
     public IDbSet<UnitApplicant> UnitApplicants { get; set; }
@@ -79,8 +80,8 @@ namespace Kcsar.Database.Model
     protected override void OnModelCreating(DbModelBuilder modelBuilder)
     {
       base.OnModelCreating(modelBuilder);
-      modelBuilder.Entity<Mission>().HasOptional(f => f.Details).WithRequired(f => f.Mission).WillCascadeOnDelete();
-      modelBuilder.Entity<Mission>().HasMany(f => f.Log).WithRequired(f => f.Mission).WillCascadeOnDelete();
+      modelBuilder.Entity<Mission_Old>().HasOptional(f => f.Details).WithRequired(f => f.Mission).WillCascadeOnDelete();
+      modelBuilder.Entity<Mission_Old>().HasMany(f => f.Log).WithRequired(f => f.Mission).WillCascadeOnDelete();
       modelBuilder.Entity<Member>().HasOptional(f => f.MedicalInfo).WithRequired(f => f.Member);
       modelBuilder.Entity<Member>().HasMany(f => f.Memberships).WithRequired(f => f.Person).WillCascadeOnDelete();
       modelBuilder.Entity<Member>().HasMany(f => f.Addresses).WithRequired(f => f.Person).WillCascadeOnDelete();
@@ -88,11 +89,18 @@ namespace Kcsar.Database.Model
       modelBuilder.Entity<Animal>().HasMany(f => f.Owners).WithRequired(f => f.Animal).WillCascadeOnDelete();
       modelBuilder.Entity<Member>().HasMany(f => f.Animals).WithRequired(f => f.Owner).WillCascadeOnDelete();
       modelBuilder.Entity<Member>().HasMany(f => f.ExternalLogins).WithRequired(f => f.Member).WillCascadeOnDelete();
-      modelBuilder.Entity<Training>().HasMany(f => f.OfferedCourses).WithMany(f => f.Trainings).Map(cs =>
+      modelBuilder.Entity<Training_Old>().HasMany(f => f.OfferedCourses).WithMany(f => f.Trainings).Map(cs =>
       {
         cs.MapLeftKey("Training_Id");
         cs.MapRightKey("TrainingCourse_Id");
         cs.ToTable("TrainingTrainingCourses");
+      });
+
+      modelBuilder.Entity<SarUnit>().HasMany(f => f.HostedTrainings).WithMany(f => f.HostUnits).Map(cs =>
+      {
+        cs.MapLeftKey("SarUnit_Id");
+        cs.MapRightKey("Training_Id");
+        cs.ToTable("TrainingSarUnits");
       });
     }
 
@@ -431,9 +439,9 @@ namespace Kcsar.Database.Model
 
               double sum = 0;
               DateTime startDate = DateTime.Now;
-              foreach (MissionRoster roster in missions)
+              foreach (MissionRoster_Old roster in missions)
               {
-                if (roster.TimeIn.HasValue && (roster.InternalRole != MissionRoster.ROLE_IN_TOWN && roster.InternalRole != MissionRoster.ROLE_NO_ROLE))
+                if (roster.TimeIn.HasValue && (roster.InternalRole != MissionRoster_Old.ROLE_IN_TOWN && roster.InternalRole != MissionRoster_Old.ROLE_NO_ROLE))
                 {
                   startDate = roster.TimeIn.Value;
                   sum += roster.Hours ?? 0.0;

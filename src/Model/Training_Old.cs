@@ -1,43 +1,41 @@
 ﻿/*
- * Copyright 2009-2014 Matthew Cosand
+ * Copyright 2009-2015 Matthew Cosand
  */
-
 namespace Kcsar.Database.Model
 {
   using System;
   using System.Collections.Generic;
   using System.ComponentModel.DataAnnotations;
+  using System.ComponentModel.DataAnnotations.Schema;
   using System.Linq;
   using System.Text.RegularExpressions;
 
-  public class Mission : ModelObject, IRosterEvent<Mission, MissionRoster>
+  [Table("Trainings")]
+  public class Training_Old : ModelObject, IRosterEvent<Training_Old, TrainingRoster_Old>
   {
+    [Required]
     public string Title { get; set; }
     public string County { get; set; }
     public string StateNumber { get; set; }
-    public string CountyNumber { get; set; }
-    public string MissionType { get; set; }
     public DateTime StartTime { get; set; }
     public DateTime? StopTime { get; set; }
+    public Guid? Previous { get; set; }
     public string Comments { get; set; }
+    public virtual ICollection<TrainingRoster_Old> Roster { get; set; }
+    public virtual ICollection<TrainingCourse> OfferedCourses { get; set; }
+    [Required]
     public string Location { get; set; }
-    public bool ReportCompleted { get; set; }
 
-    public virtual ICollection<Mission> Followups { get; set; }
-    public virtual Mission Previous { get; set; }
+    public virtual ICollection<SarUnit> HostUnits { get; set; }
 
-    public virtual ICollection<MissionLog> Log { get; set; }
-    public virtual ICollection<MissionRoster> Roster { get; set; }
-
-    public virtual MissionDetails Details { get; set; }
-    public virtual ICollection<SubjectGroup> SubjectGroups { get; set; }
-    public virtual ICollection<MissionGeography> MissionGeography { get; set; }
-
-    public Mission()
+    public Training_Old()
       : base()
     {
-      this.StartTime = DateTime.Now.Date;
       this.County = "King";
+      this.StartTime = DateTime.Now.Date;
+      this.Roster = new List<TrainingRoster_Old>();
+      this.OfferedCourses = new List<TrainingCourse>();
+      this.HostUnits = new List<SarUnit>();
     }
 
     public override string ToString()
@@ -50,12 +48,7 @@ namespace Kcsar.Database.Model
 
     public override string GetReportHtml()
     {
-      return string.Format("{0} <b>{1}</b> Start:{2}, Type:{3}, County:{4}, Completed:{5}", this.StateNumber, this.Title, this.StartTime, this.MissionType, this.County, this.StopTime);
-    }
-
-    IEnumerable<MissionRoster> IRosterEvent<Mission, MissionRoster>.Roster
-    {
-      get { return (IEnumerable<MissionRoster>)this.Roster; }
+      return string.Format("<b>{0}</b> Start:{1}, County:{2}, Completed:{3}", this.Title, this.StartTime, this.StateNumber, this.StopTime);
     }
 
     public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
@@ -91,20 +84,19 @@ namespace Kcsar.Database.Model
         }
       }
 
-      if (!string.IsNullOrEmpty(this.StateNumber) && !Regex.IsMatch(this.StateNumber, @"^\d{2}\-\d{4}$") && !Regex.IsMatch(this.StateNumber, @"^\d{2}\-ES\-\d{3}$", RegexOptions.IgnoreCase))
+      if (!string.IsNullOrEmpty(this.StateNumber) && !Regex.IsMatch(this.StateNumber, @"\d{2}\-T-\d{4}"))
       {
-        yield return new ValidationResult("Must be in form 00-0000 or 00-ES-000", new[] { "StateNumber" });
-      }
-
-      if (!string.IsNullOrEmpty(this.CountyNumber) && this.County.Equals("King", StringComparison.OrdinalIgnoreCase) && !Regex.IsMatch(this.CountyNumber, @"^\d{2}\-\d{6}$"))
-      {
-        yield return new ValidationResult("Must be in form 00-000000", new[] { "CountyNumber" });
-      }
-
-      if (this.Previous != null && this.Previous.Id == this.Id)
-      {
-        yield return new ValidationResult("Can't link a mission to itself", new[] { "Previous" });
+        yield return new ValidationResult("Must be in form 00-T-0000", new[] { "StateNumber" });
       }
     }
+
+    #region IRosterEvent<Training,TrainingRoster> Members
+
+    IEnumerable<TrainingRoster_Old> IRosterEvent<Training_Old, TrainingRoster_Old>.Roster
+    {
+      get { return (IEnumerable<TrainingRoster_Old>)this.Roster; }
+    }
+
+    #endregion
   }
 }

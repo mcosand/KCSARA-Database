@@ -31,7 +31,7 @@ namespace Kcsar.Database.Model
     public string Cause { get; set; }
     public string Behavior { get; set; }
     public string Comments { get; set; }
-    public virtual Mission Mission { get; set; }
+    public virtual Mission_Old Mission { get; set; }
     public virtual ICollection<SubjectGroupLink> SubjectLinks { get; set; }
 
     public SubjectGroup()

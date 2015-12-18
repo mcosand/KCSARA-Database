@@ -33,7 +33,7 @@ namespace Kcsara.Database.Web.Controllers
     [HttpPost]
     public ActionResult UploadGpx(Guid id, FormCollection fields)
     {
-      Mission mission = this.db.Missions.Single(f => f.Id == id);
+      Mission_Old mission = this.db.Missions.Single(f => f.Id == id);
       string kind = null;
       string desc = null;
 
@@ -368,7 +368,7 @@ namespace Kcsara.Database.Web.Controllers
       Guid lastMission = Guid.Empty;
       int excluded = 0;
 
-      Dictionary<Mission, GeographyView> views = new Dictionary<Mission, GeographyView>();
+      Dictionary<Mission_Old, GeographyView> views = new Dictionary<Mission_Old, GeographyView>();
 
       foreach (MissionGeography geo in query.ToList().OrderBy(f => f.Mission.StartTime).ThenBy(f => f.Mission.StateNumber).ThenBy(f => f.Mission.Id).ThenBy(f => f.Geography.STDimension()).ThenByDescending(f => f.Kind))
       {
@@ -473,7 +473,7 @@ namespace Kcsara.Database.Web.Controllers
     {
       MapDataView data = (MapDataView)GetGeography(id, false).Data;
 
-      Mission m = (from mission in this.db.Missions where mission.Id == id select mission).FirstOrDefault();
+      Mission_Old m = (from mission in this.db.Missions where mission.Id == id select mission).FirstOrDefault();
 
       XNamespace ns = "http://earth.google.com/kml/2.1";
       KmlBuilder kml = (new KmlBuilder { Name = string.Format("{0}: {1}", m.StateNumber, m.Title), Description = "" }).AddIconStyles(this.AbsoluteUrl(Url.Content("~/content/images/maps")));
@@ -552,7 +552,7 @@ namespace Kcsara.Database.Web.Controllers
     public ActionResult Geography(Guid id)
     {
       MapDataView model = new MapDataView();
-      Mission m = (from g in this.db.Missions where g.Id == id select g).First();
+      Mission_Old m = (from g in this.db.Missions where g.Id == id select g).First();
       ViewData["Title"] = string.Format("Mission Geography{0}", " :: " + m.StateNumber + " " + m.Title);
       ViewData["mission"] = m;
 

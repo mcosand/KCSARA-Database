@@ -61,7 +61,7 @@ namespace SMR.Extensions
       package.Dispose();
     }
 
-    private static MissionInfo[] GetMissions(IQueryable<MissionRoster> rosters)
+    private static MissionInfo[] GetMissions(IQueryable<MissionRoster_Old> rosters)
     {
       return rosters.Select(f => f.Mission).Distinct().Select(f => new MissionInfo
       {
@@ -74,7 +74,7 @@ namespace SMR.Extensions
       }).OrderByDescending(f => f.StartTime).ToArray();
     }
 
-    private static IQueryable<MissionRoster> GetMissionRostersQuery(SmrReports me, DateTime start, DateTime stop)
+    private static IQueryable<MissionRoster_Old> GetMissionRostersQuery(SmrReports me, DateTime start, DateTime stop)
     {
       return me.db.Value.MissionRosters.Where(f => f.Unit.DisplayName == "SMR" && f.Mission.StartTime >= start && f.Mission.StartTime < stop);
     }

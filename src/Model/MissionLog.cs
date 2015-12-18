@@ -12,7 +12,7 @@ namespace Kcsar.Database.Model
   {
     public DateTime Time { get; set; }
     public string Data { get; set; }
-    public virtual Mission Mission { get; set; }
+    public virtual Mission_Old Mission { get; set; }
     public virtual Member Person { get; set; }
 
     public override string GetReportHtml()

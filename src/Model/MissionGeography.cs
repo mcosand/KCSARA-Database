@@ -20,7 +20,7 @@ namespace Kcsar.Database.Model
     public string Description { get; set; }
     public string LocationBinary { get; set; }
     public string LocationText { get; set; }
-    public virtual Mission Mission { get; set; }
+    public virtual Mission_Old Mission { get; set; }
 
     private SqlGeography geog = null;
     [NotMapped]

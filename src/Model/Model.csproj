@@ -132,6 +132,14 @@
     <Compile Include="Migrations\201511180615300_SarUnitApplyStatus.Designer.cs">
       <DependentUpon>201511180615300_SarUnitApplyStatus.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201512170431394_DeprecateEventTables.cs" />
+    <Compile Include="Migrations\201512170431394_DeprecateEventTables.Designer.cs">
+      <DependentUpon>201512170431394_DeprecateEventTables.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201512170737052_NewEventTable.cs" />
+    <Compile Include="Migrations\201512170737052_NewEventTable.Designer.cs">
+      <DependentUpon>201512170737052_NewEventTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Migrator.cs" />
     <Compile Include="MemberUnitDocument.cs" />
     <Compile Include="MemberMedical.cs" />
@@ -141,8 +149,10 @@
     <Compile Include="Migrations\201309050314287_UnitDocuments.Designer.cs">
       <DependentUpon>201309050314287_UnitDocuments.cs</DependentUpon>
     </Compile>
+    <Compile Include="SarEvent.cs" />
     <Compile Include="SensitiveInfoAccess.cs" />
     <Compile Include="TrackPoint.cs" />
+    <Compile Include="EventRoster.cs" />
     <Compile Include="UnitApplicant.cs" />
     <Compile Include="UnitContact.cs" />
     <Compile Include="UnitDocument.cs" />
@@ -184,13 +194,13 @@
     <Compile Include="MissionLog.cs" />
     <Compile Include="ITrainingAward.cs" />
     <Compile Include="SarUnit.cs" />
-    <Compile Include="Training.cs" />
+    <Compile Include="Training_Old.cs" />
     <Compile Include="TrainingAward.cs" />
     <Compile Include="TrainingExpirationSummary.cs" />
-    <Compile Include="TrainingRoster.cs" />
-    <Compile Include="Mission.cs" />
+    <Compile Include="TrainingRoster_Old.cs" />
+    <Compile Include="Mission_Old.cs" />
     <Compile Include="IRosterEvent.cs" />
-    <Compile Include="MissionRoster.cs" />
+    <Compile Include="MissionRoster_Old.cs" />
     <Compile Include="PersonAddress.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="IModelObject.cs" />
@@ -263,6 +273,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201511180615300_SarUnitApplyStatus.resx">
       <DependentUpon>201511180615300_SarUnitApplyStatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512170431394_DeprecateEventTables.resx">
+      <DependentUpon>201512170431394_DeprecateEventTables.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512170737052_NewEventTable.resx">
+      <DependentUpon>201512170737052_NewEventTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

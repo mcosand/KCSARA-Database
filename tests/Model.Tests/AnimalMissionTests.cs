@@ -21,8 +21,8 @@ namespace Internal.Database.Model
 
       var am = new AnimalMission()
       {
-        MissionRoster = new MissionRoster {
-          Mission = new Mission { Title = missionName },
+        MissionRoster = new MissionRoster_Old {
+          Mission = new Mission_Old { Title = missionName },
           TimeIn = timein,
           TimeOut = timeout
         },

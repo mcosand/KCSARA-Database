@@ -38,12 +38,13 @@ namespace Kcsar.Database.Model
     public MemberStatus Status { get; set; }
     public virtual MemberMedical MedicalInfo { get; set; }
 
+    public virtual ICollection<EventRoster> Rosters { get; set; }
     public virtual ICollection<MissionLog> MissionLogs { get; set; }
-    public virtual ICollection<MissionRoster> MissionRosters { get; set; }
+    public virtual ICollection<MissionRoster_Old> MissionRosters { get; set; }
     public virtual ICollection<PersonAddress> Addresses { get; set; }
     public virtual ICollection<PersonContact> ContactNumbers { get; set; }
     public virtual ICollection<TrainingAward> TrainingAwards { get; set; }
-    public virtual ICollection<TrainingRoster> TrainingRosters { get; set; }
+    public virtual ICollection<TrainingRoster_Old> TrainingRosters { get; set; }
     public virtual ICollection<UnitMembership> Memberships { get; set; }
     public virtual ICollection<ComputedTrainingAward> ComputedAwards { get; set; }
     public virtual ICollection<AnimalOwner> Animals { get; set; }
@@ -60,7 +61,8 @@ namespace Kcsar.Database.Model
       this.ChangedBy = Thread.CurrentPrincipal.Identity.Name;
 
       this.MissionLogs = new List<MissionLog>();
-      this.MissionRosters = new List<MissionRoster>();
+      this.MissionRosters = new List<MissionRoster_Old>();
+      Rosters = new List<EventRoster>();
       this.Addresses = new List<PersonAddress>();
       this.ContactNumbers = new List<PersonContact>();
       this.ExternalLogins = new List<ExternalLogin>();

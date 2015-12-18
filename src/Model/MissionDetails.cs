@@ -36,7 +36,7 @@ namespace Kcsar.Database.Model
     public string Comments { get; set; }
     public string EquipmentNotes { get; set; }
     public int? Topography { get; set; }
-    public virtual Mission Mission { get; set; }
+    public virtual Mission_Old Mission { get; set; }
     public virtual Member Person { get; set; }
 
     public override string ToString()

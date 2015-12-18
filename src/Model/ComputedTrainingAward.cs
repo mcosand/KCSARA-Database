@@ -21,7 +21,7 @@ namespace Kcsar.Database.Model
         public virtual TrainingRule Rule { get; set; }
         public virtual Member Member { get; set; }
         public DateTime? Completed { get; set; }
-        public virtual TrainingRoster Roster { get; set; }
+        public virtual TrainingRoster_Old Roster { get; set; }
 
         public ComputedTrainingAward(TrainingAward award)
             : this()

@@ -26,7 +26,7 @@ namespace SMR.Extensions
       DateTime start = new DateTime(year, 1, 1);
       DateTime stop = new DateTime(year + 1, 1, 1);
 
-      IQueryable<MissionRoster> rosterQuery = GetMissionRostersQuery(me, start, stop);
+      IQueryable<MissionRoster_Old> rosterQuery = GetMissionRostersQuery(me, start, stop);
       MissionInfo[] missions = GetMissions(rosterQuery);
 
       var rosters = rosterQuery

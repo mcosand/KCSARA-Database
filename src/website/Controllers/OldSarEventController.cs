@@ -15,11 +15,11 @@ namespace Kcsara.Database.Web.Controllers
   using System.Web.Mvc;
   using System.Data.Entity.Validation;
 
-  public abstract class SarEventController<E, R> : BaseController, IEventController
+  public abstract class OldSarEventController<E, R> : BaseController, IEventController
     where R : class, IRosterEntry<E, R>, new()
     where E : class, IRosterEvent<E, R>, new()
   {
-    public SarEventController(IKcsarContext db) : base(db) { }
+    public OldSarEventController(IKcsarContext db) : base(db) { }
 
     [Authorize]
     public virtual ActionResult Index()
@@ -634,7 +634,7 @@ namespace Kcsara.Database.Web.Controllers
 
       return new ExpandedRowsContext
       {
-        Type = (typeof(E) == typeof(Mission)) ? RosterType.Mission : RosterType.Training,
+        Type = (typeof(E) == typeof(Mission_Old)) ? RosterType.Mission : RosterType.Training,
         EventId = sarEvent.Id,
         NumDays = numDays,
         Rows = goodRows.OrderBy(f => (f.Person == null) ? "" : f.Person.ReverseName).ToList(),
@@ -649,7 +649,7 @@ namespace Kcsara.Database.Web.Controllers
     {
       var model = BuildRosterModel(id);
       Dictionary<Guid, string> numbers = new Dictionary<Guid, string>();
-      var source = (model.SarEvent is Mission)
+      var source = (model.SarEvent is Mission_Old)
           ? this.db.MissionRosters.Where(f => f.Mission.Id == id).Select(f => f.Person.Id).Distinct()
           : this.db.TrainingRosters.Where(f => f.Training.Id == id).Select(f => f.Person.Id).Distinct();
 
@@ -709,15 +709,15 @@ namespace Kcsara.Database.Web.Controllers
 
       ExpandedRowsContext model = new ExpandedRowsContext();
       model.EventId = Guid.NewGuid();
-      if (typeof(E) == typeof(Mission))
+      if (typeof(E) == typeof(Mission_Old))
       {
         model.Type = RosterType.Mission;
-        model.SarEvent = new Mission { Id = model.EventId };
+        model.SarEvent = new Mission_Old { Id = model.EventId };
       }
       else
       {
         model.Type = RosterType.Training;
-        model.SarEvent = new Training { Id = model.EventId };
+        model.SarEvent = new Training_Old { Id = model.EventId };
       }
       model.SarEvent.StateNumber = sheet.CellAt(9, 2).StringValue.Split(' ')[0];
       model.SarEvent.Title = sheet.CellAt(10, 2).StringValue;
@@ -781,7 +781,7 @@ namespace Kcsara.Database.Web.Controllers
           }
         }
 
-        MissionRoster missionRoster = roster as MissionRoster;
+        MissionRoster_Old missionRoster = roster as MissionRoster_Old;
         if (missionRoster != null)
         {
           missionRoster.Unit = unit;

@@ -14,7 +14,7 @@
 
       using (var db = context.GetDb())
       {
-        Mission m = new Mission
+        Mission_Old m = new Mission_Old
         {
           Title = "Mission " + Guid.NewGuid().ToString(),
           Location = "somewhere",

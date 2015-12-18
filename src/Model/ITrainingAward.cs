@@ -14,6 +14,6 @@ namespace Kcsar.Database.Model
         DateTime? Expiry { get; }
         TrainingCourse Course { get; }
         TrainingRule Rule { get; }
-        TrainingRoster Roster { get; }
+        TrainingRoster_Old Roster { get; }
     }
 }

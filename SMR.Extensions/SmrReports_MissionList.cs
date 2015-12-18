@@ -26,7 +26,7 @@ namespace SMR.Extensions
       DateTime start = new DateTime(year, 1, 1);
       DateTime stop = new DateTime(year + 1, 1, 1);
 
-      IQueryable<MissionRoster> rosters = GetMissionRostersQuery(me, start, stop);
+      IQueryable<MissionRoster_Old> rosters = GetMissionRostersQuery(me, start, stop);
       MissionInfo[] missions = GetMissions(rosters);
 
       var stats = rosters.GroupBy(f => f.Mission.Id)

@@ -141,12 +141,12 @@ namespace Kcsara.Database.Web.Controllers
 
     protected override void AddRosterRowFrom4x4Sheet(ExpandedRowsContext model, SarUnit unit, IRosterEntry row)
     {
-      TrainingRoster mrow = (TrainingRoster)row;
+      TrainingRoster_Old mrow = (TrainingRoster_Old)row;
 
       Guid personId = mrow.Person.Id;
-      TrainingRoster newRow = new TrainingRoster
+      TrainingRoster_Old newRow = new TrainingRoster_Old
       {
-        Training = (Training)model.SarEvent,
+        Training = (Training_Old)model.SarEvent,
         Person = this.db.Members.Include("TrainingRosters").Single(f => f.Id == personId),
         TimeIn = mrow.TimeIn,
         TimeOut = mrow.TimeOut,

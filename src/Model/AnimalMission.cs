@@ -9,7 +9,7 @@ namespace Kcsar.Database.Model
     public const string ReportFormat = "<b>[{0}] [{1}]</b> In:{2} Out:{3}";
 
     public virtual Animal Animal { get; set; }
-    public virtual MissionRoster MissionRoster { get; set; }
+    public virtual MissionRoster_Old MissionRoster { get; set; }
 
     public override string GetReportHtml()
     {

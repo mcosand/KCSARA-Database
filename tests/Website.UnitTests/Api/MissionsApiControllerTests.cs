@@ -22,7 +22,7 @@ namespace Internal.Website.Api
     [Test]
     public void GetResponderEmails_EmptyRoster()
     {
-      var responders = new InMemoryDbSet<MissionRoster>();
+      var responders = new InMemoryDbSet<MissionRoster_Old>();
 
       var dataMock = new Mock<IKcsarContext>();
       dataMock.SetupGet(f => f.MissionRosters).Returns(responders);

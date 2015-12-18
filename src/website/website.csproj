@@ -226,8 +226,10 @@
     </Compile>
     <Compile Include="api\AccountController.cs" />
     <Compile Include="api\CamelCaseControllerAttribute.cs" />
+    <Compile Include="api\EventsController.cs" />
     <Compile Include="api\Models\AccountRegistration.cs" />
     <Compile Include="api\Models\Admin\ExecuteDatabaseScript.cs" />
+    <Compile Include="api\Models\Event\EventList.cs" />
     <Compile Include="api\Models\Event\EventSummary.cs" />
     <Compile Include="api\Models\MemberSummary.cs" />
     <Compile Include="api\Models\MemberUnitDocument.cs" />
@@ -300,20 +302,21 @@
     <Compile Include="Controllers\AdminController_Documents.cs" />
     <Compile Include="Controllers\AnimalsController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\EventsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\IEventController.cs" />
     <Compile Include="Controllers\LogController.cs" />
     <Compile Include="Controllers\MapController.cs" />
     <Compile Include="Controllers\MembersController.cs" />
-    <Compile Include="Controllers\MissionsController.cs" />
-    <Compile Include="Controllers\MissionsController_Documents.cs" />
-    <Compile Include="Controllers\MissionsController_Geography.cs" />
+    <Compile Include="Controllers\OldMissionsController.cs" />
+    <Compile Include="Controllers\OldMissionsController_Documents.cs" />
+    <Compile Include="Controllers\OldMissionsController_Geography.cs" />
     <Compile Include="Controllers\TrackController.cs" />
     <Compile Include="ExtensionProvider.cs" />
     <Compile Include="IAppSettings.cs" />
-    <Compile Include="Controllers\SarEventController.cs" />
-    <Compile Include="Controllers\TrainingController.cs" />
-    <Compile Include="Controllers\TrainingController_Documents.cs" />
+    <Compile Include="Controllers\OldSarEventController.cs" />
+    <Compile Include="Controllers\OldTrainingController.cs" />
+    <Compile Include="Controllers\OldTrainingController_Documents.cs" />
     <Compile Include="Controllers\UnitsController.cs" />
     <Compile Include="Data\DataActionResult.cs" />
     <Compile Include="Data\JsonDataContractResult.cs" />
@@ -552,6 +555,7 @@
     <Content Include="Scripts\site\models\database-account.js" />
     <Content Include="Scripts\site\modules\edit-modals.js" />
     <Content Include="Scripts\site\modules\tree-view.js" />
+    <Content Include="Scripts\site\services\events-service.js" />
     <Content Include="Scripts\site\services\accounts-service.js" />
     <Content Include="Scripts\ViewModels.js" />
     <Content Include="Sql\AuthDatabase_Create.sql" />
@@ -713,6 +717,9 @@
     <Content Include="Views\Account\Detail.cshtml" />
     <Content Include="Views\Units\Index.cshtml" />
     <Content Include="Views\Home\Error.cshtml" />
+    <Content Include="Views\NewMissions\Index.cshtml" />
+    <Content Include="Views\NewTraining\Index.cshtml" />
+    <Content Include="Views\Shared\EventList.cshtml" />
     <None Include="Web.Production.config" />
   </ItemGroup>
   <ItemGroup>
