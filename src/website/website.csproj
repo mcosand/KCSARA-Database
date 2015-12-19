@@ -566,7 +566,7 @@
     <Content Include="Views\Account\ChangePasswordSuccess.aspx" />
     <Content Include="Views\Account\InactiveMemberAccounts.aspx" />
     <Content Include="Views\Account\Index.aspx" />
-    <Content Include="Views\Account\Login.aspx" />
+    <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\ReAuth.aspx" />
     <Content Include="Views\Account\ResetPassword.aspx" />
     <Content Include="Views\Account\ResetPasswordDone.aspx" />
