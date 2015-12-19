@@ -2,130 +2,128 @@
   Layout = "~/Views/Shared/_Layout.cshtml";
   ViewBag.NgApp = "sarDatabase";
 }
-
-<header class="main-header">
-  <a href="~/" class="logo">
-    <span class="logo-mini"><span class="fa-stack fa-lg"><i class="fa fa-plus fa-stack-1x"></i><i class="fa fa-circle-thin fa-stack-2x"></i></span></span>
-    <span class="logo-lg"><b>KCSARA Database</b></span>
-  </a>
-  <nav class="navbar navbar-static-top" role="navigation">
-    <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
-      <span class="sr-only">Toggle navigation</span>
-    </a>
-    <div class="navbar-custom-menu">
-      <ul class="nav navbar-nav">
-        @if (User.Identity.IsAuthenticated)
-        {
-          <li>
-            <form class="navbar-form hidden-xs" role="search" ng-controller="MainSearchCtrl">
-              <div class="form-group">
-                <div np-autocomplete="searchOptions" class="input-group">
-                  <input type="text" name="q" class="form-control" placeholder="Search ..." autocomplete="off" />
-                  <span class="input-group-btn">
-                    <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
-                  </span>
-                </div>
-              </div>
-            </form>
-          </li>
-          <li class="dropdown notifications-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              @(ViewBag.LoginUserName ?? string.Format("{0} {1}", ((Kcsar.Membership.KcsarUserProfile)Profile).FirstName, ((Kcsar.Membership.KcsarUserProfile)Profile).LastName))
-            </a>
-            <ul class="dropdown-menu">
+<body class="skin-yellow sidebar-mini" @(ViewBag.NgController != null ? new HtmlString("ng-controller=\"" + ViewBag.NgController + "\"") : new HtmlString(string.Empty))>
+  <div class="wrapper">
+    <header class="main-header">
+      <a href="~/" class="logo">
+        <span class="logo-mini"><span class="fa-stack fa-lg"><i class="fa fa-plus fa-stack-1x"></i><i class="fa fa-circle-thin fa-stack-2x"></i></span></span>
+        <span class="logo-lg"><b>KCSARA Database</b></span>
+      </a>
+      <nav class="navbar navbar-static-top" role="navigation">
+        <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+          <span class="sr-only">Toggle navigation</span>
+        </a>
+        <div class="navbar-custom-menu">
+          <ul class="nav navbar-nav">
+            @if (User.Identity.IsAuthenticated)
+            {
               <li>
-                <ul class="menu">
-                  @if (ViewData["MemberId"] != null)
-                  {
-                    <li><a href="~/Members/Detail/@ViewData["MemberId"]"><i class="fa fa-fw fa-home text-primary"></i>My Page</a></li>
-                  }
-                  <li><a href="~/Account/Detail/@User.Identity.Name"><i class="fa fa-fw fa-keyboard-o text-primary"></i>My Account</a></li>
-                  <li><a href="~/Account/Logout"><i class="fa fa-fw fa-sign-out text-primary"></i>Logout</a></li>
+                <form class="navbar-form hidden-xs" role="search" ng-controller="MainSearchCtrl">
+                  <div class="form-group">
+                    <div np-autocomplete="searchOptions" class="input-group">
+                      <input type="text" name="q" class="form-control" placeholder="Search ..." autocomplete="off" />
+                      <span class="input-group-btn">
+                        <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
+                      </span>
+                    </div>
+                  </div>
+                </form>
+              </li>
+              <li class="dropdown notifications-menu">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                  @(ViewBag.LoginUserName ?? string.Format("{0} {1}", ((Kcsar.Membership.KcsarUserProfile)Profile).FirstName, ((Kcsar.Membership.KcsarUserProfile)Profile).LastName))
+                </a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <ul class="menu">
+                      @if (ViewData["MemberId"] != null)
+                      {
+                        <li><a href="~/Members/Detail/@ViewData["MemberId"]"><i class="fa fa-fw fa-home text-primary"></i>My Page</a></li>
+                      }
+                      <li><a href="~/Account/Detail/@User.Identity.Name"><i class="fa fa-fw fa-keyboard-o text-primary"></i>My Account</a></li>
+                      <li><a href="~/Account/Logout"><i class="fa fa-fw fa-sign-out text-primary"></i>Logout</a></li>
+                    </ul>
+                  </li>
                 </ul>
               </li>
-            </ul>
-          </li>
-          if (IsSectionDefined("pageSettings"))
-          {
+              if (IsSectionDefined("pageSettings"))
+              {
           <!-- Control Sidebar Toggle Button -->
-            <li>
-              <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
-            </li>
-          }
-        }
-        else
-        {
-          <li><a href="~/Account/Login"><i class="fa fa-sign-in"></i> @Strings.LoginPrompt</a></li>
-        }
-      </ul>
-    </div>
-  </nav>
-</header>
-<aside class="main-sidebar">
-  <section class="sidebar">
-    @if (User.IsInRole("cdb.users"))
-    {
-      <form class="visible-xs" style="margin:5px; border-radius:4px;" role="search" ng-controller="MainSearchCtrl">
-        <div class="form-group">
-          <div np-autocomplete="searchOptions" class="input-group">
-            <input type="text" name="q" class="form-control" placeholder="Search ..." autocomplete="off" />
-            <span class="input-group-btn">
-              <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
-            </span>
-          </div>
+                <li>
+                  <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+                </li>
+              }
+            }
+            else
+            {
+              <li><a href="~/Account/Login"><i class="fa fa-sign-in"></i> @Strings.LoginPrompt</a></li>
+            }
+          </ul>
         </div>
-      </form>
-      <ul class="sidebar-menu">
-        <li class="header">Main Navigation</li>
-        <li><a href="~/Members"><i class="fa fa-user"></i><span>Member List</span></a></li>
-        <li @MenuActive("Training", "treeview")>
-          <a href="#"><i class="fa fa-book"></i><span>Training</span><i class="fa fa-angle-down pull-right"></i></a>
-          <ul class="treeview-menu">
-            <li @MenuActive("Training/Index")><a href="~/NewTraining/"><i class="fa fa-circle-o"></i>Overview</a></li>
-            <li @MenuActive("Training/List")><a href="~/NewTraining/List/"><i class="fa fa-circle-o"></i>Rosters</a></li>
-          </ul>
-        </li>
-        <li @MenuActive("Missions", "treeview")>
-          <a href="#"><i class="fa fa-binoculars"></i><span>Missions</span><i class="fa fa-angle-down pull-right"></i></a>
-          <ul class="treeview-menu">
-            <li @MenuActive("Missions/Index")><a href="~/NewMissions/"><i class="fa fa-circle-o"></i>Overview</a></li>
-            <li @MenuActive("Missions/List")><a href="~/NewMissions/List/"><i class="fa fa-circle-o"></i>Rosters</a></li>
-          </ul>
-        </li>
-        <li><a href="~/Units/"><i class="fa fa-users"></i><span>Units</span></a></li>
-        <li><a href="~/Animals/"><i class="fa fa-paw"></i><span>Animals</span></a></li>
-      </ul>
-    }
-    @RenderSection("sidebar", false)
-  </section>
-</aside>
-<div class="content-wrapper">
-  <section class="content-header">
-    @RenderSection("header", false)
-  </section>
-  <section class="content">
-    @RenderBody()
-  </section>
-</div>
-<footer class="main-footer">
-  <strong>King County Search and Rescue Association</strong>
-</footer>
-<aside class="control-sidebar control-sidebar-dark">
-  <div class="tab-content">
-    @RenderSection("pageSettings", false)
+      </nav>
+    </header>
+    <aside class="main-sidebar">
+      <section class="sidebar">
+        @if (User.IsInRole("cdb.users"))
+        {
+          <form class="visible-xs" style="margin:5px; border-radius:4px;" role="search" ng-controller="MainSearchCtrl">
+            <div class="form-group">
+              <div np-autocomplete="searchOptions" class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Search ..." autocomplete="off" />
+                <span class="input-group-btn">
+                  <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
+                </span>
+              </div>
+            </div>
+          </form>
+            <ul class="sidebar-menu">
+              <li class="header">Main Navigation</li>
+              <li><a href="~/Members"><i class="fa fa-user"></i><span>Member List</span></a></li>
+              <li @MenuActive("Training", "treeview")>
+                <a href="#"><i class="fa fa-book"></i><span>Training</span><i class="fa fa-angle-down pull-right"></i></a>
+                <ul class="treeview-menu">
+                  <li @MenuActive("Training/Index")><a href="~/NewTraining/"><i class="fa fa-circle-o"></i>Overview</a></li>
+                  <li @MenuActive("Training/List")><a href="~/NewTraining/List/"><i class="fa fa-circle-o"></i>Rosters</a></li>
+                </ul>
+              </li>
+              <li @MenuActive("Missions", "treeview")>
+                <a href="#"><i class="fa fa-binoculars"></i><span>Missions</span><i class="fa fa-angle-down pull-right"></i></a>
+                <ul class="treeview-menu">
+                  <li @MenuActive("Missions/Index")><a href="~/NewMissions/"><i class="fa fa-circle-o"></i>Overview</a></li>
+                  <li @MenuActive("Missions/List")><a href="~/NewMissions/List/"><i class="fa fa-circle-o"></i>Rosters</a></li>
+                </ul>
+              </li>
+              <li><a href="~/Units/"><i class="fa fa-users"></i><span>Units</span></a></li>
+              <li><a href="~/Animals/"><i class="fa fa-paw"></i><span>Animals</span></a></li>
+            </ul>
+        }
+        @RenderSection("sidebar", false)
+      </section>
+    </aside>
+    <div class="content-wrapper">
+      <section class="content-header">
+        @RenderSection("header", false)
+      </section>
+      <section class="content">
+        @RenderBody()
+      </section>
+    </div>
+    <footer class="main-footer">
+      <strong>King County Search and Rescue Association</strong>
+    </footer>
+    <aside class="control-sidebar control-sidebar-dark">
+      <div class="tab-content">
+        @RenderSection("pageSettings", false)
+      </div>
+    </aside>
+    <div class="control-sidebar-bg"></div>
   </div>
-</aside>
-<div class="control-sidebar-bg"></div>
-@section head {@RenderSection("head", false)}
-@helper MenuActive(string path, string addClasses = "") {
-var activePath = ((string)(ViewBag.ActiveMenu) ?? string.Empty);
-@Html.Raw(string.Format("class=\"{0}{1}{2}\"",
-  addClasses,
-  addClasses.Length > 0 ? " " : string.Empty,
-  (activePath + '/').ToLowerInvariant().StartsWith(path.ToLowerInvariant() + '/') ? " active" : string.Empty));
-  }
-@section scripts {
   @RenderSection("scripts", false)
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $.AdminLTE.layout.activate()
+    })
+  </script>
   <script type="text/ng-template" id="searchMission.html">
     <div>
       <div class="search-img" ng-style="{'background-color': 'pink' }"></div>
@@ -177,4 +175,14 @@ var activePath = ((string)(ViewBag.ActiveMenu) ?? string.Empty);
         });
       }]);
   </script>
+</body>
+
+@section head {@RenderSection("head", false)}
+@helper MenuActive(string path, string addClasses = "")
+    {
+var activePath = ((string)(ViewBag.ActiveMenu) ?? string.Empty);
+  @Html.Raw(string.Format("class=\"{0}{1}{2}\"",
+  addClasses,
+  addClasses.Length > 0 ? " " : string.Empty,
+  (activePath + '/').ToLowerInvariant().StartsWith(path.ToLowerInvariant() + '/') ? " active" : string.Empty));
 }

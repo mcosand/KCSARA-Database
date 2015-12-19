@@ -1,48 +1,100 @@
-<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+@{
+  Layout = "~/Views/Shared/_Layout.cshtml";
+  ViewBag.Title = Strings.Login;
+}
 
-<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-  <div style="position:relative; margin: 2em auto; width: 667px; height: 500px; border: solid 5px Black; background-color:White">
-    <img style="position: absolute; top: 15px; left: 15px; width: 637px; height: 470px; z-index: 0;"
-    src="<%= Url.Content("~/Content/images/mtn1.jpg") %>" alt="" />
+<body class="hold-transition skin-yellow layout-top-nav">
+  <div class="wrapper">
 
-    <center>
-          <div style="display:inline-table; position:relative; z-index:1; margin: 5em auto; border: solid 1px Black; padding: .5em; background-color: #EEEEEE">
-
-        <div style="padding:1.5em; font-weight:bold; font-size:120%; color:Black"><%: Strings.GroupName %></div>
-        <%= Html.ValidationSummary() %>
-        <% using (Html.BeginForm())
-           { %>
-        <table>
-          <tr>
-            <td>Username:</td>
-            <td>
-              <%= Html.TextBox("username")%><br />
-              <%= Html.ValidationMessage("username")%>
-            </td>
-          </tr>
-          <tr>
-            <td>Password:</td>
-            <td>
-              <%= Html.Password("password")%><br />
-              <%= Html.ValidationMessage("password")%>
-            </td>
-          </tr>
-          <tr style="display:none;">
-            <td></td>
-            <td>
-              <%= Html.CheckBox("rememberMe")%>
-              Remember me</td>
-          </tr>
-          <tr>
-            <td></td>
-            <td>
-              <%= Html.SubmitButton("login", Strings.Login) %>
-              <div style="font-size:70%; margin-top:1em"><%= Html.ActionLink<AccountController>(f => f.ResetPassword(string.Empty), "Forgotten Password") %></div>
-              <div style="font-size:70%;"><%= Html.ActionLink<AccountController>(f => f.Register(), "Register New Account") %></div>
-            </td>
-          </tr>
-        </table>
-        <% } %>
+    <header class="main-header">
+      <nav class="navbar navbar-static-top">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <a href="~/" class="navbar-brand" style="font-size:20px"><b>KCSARA Database</b></a>
+          </div>
+          @if (User.Identity.IsAuthenticated)
+          {
+            <div class="navbar-custom-menu hidden-xs">
+              <ul class="nav navbar-nav">
+                <!-- User Account Menu -->
+                <li class="dropdown user-menu user">
+                  <!-- hidden-xs hides the username on small devices so only the image appears. -->
+                  <a href="#">@(ViewBag.LoginUserName ?? string.Format("{0} {1}", ((Kcsar.Membership.KcsarUserProfile)Profile).FirstName, ((Kcsar.Membership.KcsarUserProfile)Profile).LastName))</a>
+                </li>
+              </ul>
+            </div>
+          }
         </div>
-      </center>
-  </div></asp:Content>
+      </nav>
+    </header>
+    <!-- Full Width Column -->
+    <div class="content-wrapper">
+      <div class="container">
+        <!-- Main content -->
+        <section class="content">
+          <div class="row">
+            <div class="col-xs-12 col-sm-8 col-lg-6 col-sm-offset-2 col-lg-offset-3">
+              <form class="form-horizontal" method="post">
+
+                <div class="box" style="margin-top:3em">
+                  <div class="box-header with-border login-header hidden-xs">
+
+                  </div>
+                  <div class="box-body">
+                    <div class="form-horizontal">
+                      <div class="form-group">
+                        <label for="password" class=" col-sm-2 control-label">Username:</label>
+                        <div class="col-sm-10">
+                          <input id="username" name="username" type="text" value="" class="form-control" />
+                          <span class="field-validation-valid" data-valmsg-for="username" data-valmsg-replace="true"></span>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="password" class="col-sm-2 control-label">Password:</label>
+                        <div class="col-sm-10">
+                          <input id="password" name="password" type="password" value="" class="form-control" />
+                          <span class="field-validation-valid" data-valmsg-for="password" data-valmsg-replace="true"></span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group hidden">
+                      <div class="col-sm-offset-2 col-sm-10">
+                        <div class="checkbox">
+                          <label>
+                            <input type="checkbox" name="rememberMe" value="true"> Remember me
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="box-footer box-action-footer">
+                    <div class="col-xs-12">
+                      <input id="login" class="btn text-bold" name="login" type="submit" value="Login" />
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12 col-sm-8 col-lg-6 col-sm-offset-2 col-lg-offset-3 text-right">
+              <div style="font-size:90%;"><a href="/Account/ResetPassword">Forgotten Password</a></div>
+              <div style="font-size:90%;"><a href="/Account/Register">Register New Account</a></div>
+            </div>
+          </div>
+        </section>
+        <!-- /.content -->
+      </div>
+      <!-- /.container -->
+    </div>
+    <!-- /.content-wrapper -->
+    <footer class="main-footer">
+      <strong>King County Search and Rescue Association</strong>
+    </footer>
+  </div>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $.AdminLTE.layout.activate()
+    })
+  </script>
+</body>

@@ -243,6 +243,13 @@ aside.main-sidebar,
   left: 6px;*/
 }
 
+.login-header {
+  height: 150px;
+  background-image: url(images/login-header.jpg);
+  background-repeat: no-repeat;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}
 
 @media print {
   a:link:after, a:visited:after {

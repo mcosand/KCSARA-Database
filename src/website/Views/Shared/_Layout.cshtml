@@ -20,14 +20,5 @@
 
   @RenderSection("head", false)
 </head>
-<body class="skin-yellow sidebar-mini" @(ViewBag.NgController != null ? new HtmlString("ng-controller=\"" + ViewBag.NgController + "\"") : new HtmlString(string.Empty))>
-  <div class="wrapper">
-    @RenderBody()
-  </div>
-  @RenderSection("scripts", false)
-  <script type="text/javascript">
-  $(document).ready(function() {
-  $.AdminLTE.layout.activate()
-  })
-  </script>
-</body></html>
+@RenderBody()
+</html>

@@ -339,7 +339,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs(HttpVerbs.Post)]
-    public ActionResult Login(string username, string password, bool rememberMe, string returnUrl, int? id, int? p)
+    public ActionResult Login(string username, string password, string returnUrl, int? id, int? p, bool rememberMe = false)
     {
       ViewData["PageTitle"] = "Login";
 
