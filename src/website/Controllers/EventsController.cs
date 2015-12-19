@@ -5,6 +5,7 @@ namespace Kcsara.Database.Web.Controllers
 {
   using System;
   using System.Collections.Generic;
+  using System.Configuration;
   using System.Linq;
   using System.Web;
   using System.Web.Mvc;
@@ -30,6 +31,8 @@ namespace Kcsara.Database.Web.Controllers
     public ActionResult Index()
     {
       ViewBag.ActiveMenu = menuGroup + "/Index";
+      ViewData["showESAR"] = !string.IsNullOrWhiteSpace(ConfigurationManager.AppSettings["showKCESAR"]);
+
       return View();
     }
 
