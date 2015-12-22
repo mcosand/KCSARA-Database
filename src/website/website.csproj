@@ -600,7 +600,7 @@
     <Content Include="Views\Animals\Index.aspx" />
     <Content Include="Views\Animals\PhotoPreview.aspx" />
     <Content Include="Views\Animals\PhotoUpload.aspx" />
-    <Content Include="Views\Home\Index.aspx" />
+    <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\MeshGraphs.aspx" />
     <Content Include="Views\Home\MeshStatus.aspx" />
     <Content Include="Views\Log\Index.aspx" />
