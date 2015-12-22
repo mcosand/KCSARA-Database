@@ -1,4 +1,4 @@
-<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Missions/Missions.Master" Inherits="System.Web.Mvc.ViewPage<Mission>" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Missions/Missions.Master" Inherits="System.Web.Mvc.ViewPage<Mission_Old>" %>
 <%@ Import Namespace="Kcsar.Database.Model" %>
 <%@ Import Namespace="Kcsara.Database.Web" %>
 <%@ Import Namespace="Kcsara.Database.Web.Controllers" %>

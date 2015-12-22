@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" AutoEventWireup="true" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Training>>" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" AutoEventWireup="true" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Training_Old>>" %>
 <%@ Import Namespace="Kcsara.Database.Web.Controllers" %>
 <%@ Import Namespace="Kcsar.Database.Model" %>
 <asp:Content ID="Content2" ContentPlaceHolderID="HeadContent" runat="server">

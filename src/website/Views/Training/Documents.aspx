@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Training/Trainings.Master" Inherits="System.Web.Mvc.ViewPage<Training>" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Training/Trainings.Master" Inherits="System.Web.Mvc.ViewPage<Training_Old>" %>
 <%@ Import Namespace="Kcsar.Database.Model" %>
 <%@ Import Namespace="Kcsara.Database.Web.Controllers" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">

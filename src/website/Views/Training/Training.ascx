@@ -1,7 +1,7 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" Inherits="ViewUserControl<Kcsar.Database.Model.Training>" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" Inherits="ViewUserControl<Kcsar.Database.Model.Training_Old>" %>
 <%@ Import Namespace="Kcsar.Database.Model" %>
 <%@ Import Namespace="Kcsara.Database.Web.Controllers" %>
-<% Training t = ViewData.Model; %>
+<% Training_Old t = ViewData.Model; %>
 
 <div>
 <div class="MInfo""><%= this.ModelData(t) %></div>

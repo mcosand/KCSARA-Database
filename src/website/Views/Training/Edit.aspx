@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" AutoEventWireup="true" Inherits="ViewPage<Training>" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" AutoEventWireup="true" Inherits="ViewPage<Training_Old>" %>
 <%@ Import Namespace="Kcsar.Database.Model" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">

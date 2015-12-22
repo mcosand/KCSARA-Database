@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<Training>" MasterPageFile="~/Views/Shared/Core.Master" %>
+﻿<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<Training_Old>" MasterPageFile="~/Views/Shared/Core.Master" %>
 <%@ Import Namespace="Kcsar.Database.Model" %>
 <%@ Import Namespace="Kcsara.Database.Web.Controllers" %>
 
