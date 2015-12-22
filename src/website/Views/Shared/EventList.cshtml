@@ -5,6 +5,8 @@
 @section header {
   <h1>@ViewBag.EventTypeText List</h1>
 }
+<div ng-if="can.create" ng-click="startCreate()" class="shadow-3" style="position:fixed; bottom:1.5em; right: 1.5em; cursor:pointer; border-radius:50%; background-color: #f39c12; z-index:1000"><i class="fa fa-2x fa-plus" style="color:white; padding:.4em .4em .3em .4em"></i></div>
+
 <div class="row">
   <div class="col-sm-12 col-xs-12">
     <div class="box box-primary">
@@ -19,16 +21,49 @@
         </div>
       </div>
       <div class="box-body no-padding">
-        <table class="table table-striped table-condensed">
-          <thead><tr><th class="hidden-xs">DEM</th><th>Date</th><th>Name</th><th class="text-right hidden-xs">Persons</th><th class="text-right hidden-xs hidden-sm">Hours</th><th class="text-right hidden-xs hidden-sm">Miles</th></tr></thead>
+        <table class="table table-striped table-hover table-condensed">
+          <thead>
+            <tr>
+              <th class="hidden-xs">DEM</th>
+              <th>Date</th>
+              <th>Name</th>
+              <th class="text-right hidden-xs">Persons</th>
+              <th class="text-right hidden-xs hidden-sm">Hours</th>
+              <th class="text-right hidden-xs hidden-sm">Miles</th>
+            </tr>
+          </thead>
           <tbody ng-cloak>
-            <tr ng-repeat="e in list">
-              <td class="hidden-xs">{{e.number}}</td>
-              <td>{{e.date.toDate() | date:'M/d/yyyy'}}</td>
-              <td><a href="/NewMissions/Roster/{{e.id}}">{{e.title}}</a></td>
-              <td class="text-right hidden-xs">{{e.people}}</td>
-              <td class="text-right hidden-xs hidden-sm">{{e.hours | number:2}}</td>
-              <td class="text-right hidden-xs hidden-sm">{{e.miles}}</td>
+            <tr ng-repeat="e in list" ng-click="showInfo(e)">
+              <td ng-if="detailedEvent != e" class="hidden-xs">{{e.number}}</td>
+              <td ng-if="detailedEvent != e">{{e.date.toDate() | date:'M/d/yyyy'}}</td>
+              <td ng-if="detailedEvent != e" style="position:relative">{{e.title}}
+                <div class="parent-hover-show" style="position:absolute; right:5px; top:5px;">
+                  <a ng-href="{{tabLink('documents', e.id)}}" ng-click="$event.stopPropagation()" title="View Documents"><i class="fa fa-fw fa-file-text-o"></i></a>
+                  <a ng-href="{{tabLink('roster', e.id)}}" ng-click="$event.stopPropagation()" title="View Roster"><i class="fa fa-fw fa-list-alt"></i></a>
+                </div>
+              </td>
+              <td ng-if="detailedEvent != e" class="text-right hidden-xs">{{e.people}}</td>
+              <td ng-if="detailedEvent != e" class="text-right hidden-xs hidden-sm">{{e.hours | number:2}}</td>
+              <td ng-if="detailedEvent != e" class="text-right hidden-xs hidden-sm">{{e.miles}}</td>
+              <td ng-if="detailedEvent == e" class="active shadow-2" colspan="7" style="border-top:solid 1px #bbb; border-bottom: solid 1px #bbb">
+                <div class="row">
+                  <div class="col-xs-12 col-sm-6">
+                    <h4 style="margin: 0px; font-weight:bold">{{e.title}}</h4>
+                    <div><strong>DEM#:</strong> {{e.number}}</div>
+                    <div><strong>Started:</strong> {{e.date.toDate() | date: 'EEE M/d/yyyy h:mm a'}}</div>
+                    <div style="margin:.4em 0px .7em;"><strong>Persons:</strong> {{e.people}} <strong>Hours:</strong> {{e.hours | number: 2}} <strong>Miles:</strong> {{e.miles}}</div>
+                  </div>
+                  <div class="col-xs-6 col-sm-3">
+                    <div><a ng-href="{{tabLink('roster', e.id)}}" ng-click="$event.stopPropagation()"><i class="fa fa-fw fa-list-alt"></i> Roster</a></div>
+                    <div><a ng-href="{{tabLink('log', e.id)}}" ng-click="$event.stopPropagation()"><i class="fa fa-fw fa-pencil-square-o"></i> Log</a></div>
+                    <div><a ng-href="{{tabLink('documents', e.id)}}" ng-click="$event.stopPropagation()"><i class="fa fa-fw fa-file-text-o"></i> Documents</a></div>
+                  </div>
+                  <div class="col-xs-6 col-sm-3">
+                    <div id="eventMap" ng-if="detailedEvent.baseLocation" class="static-map" style="height:7em; width:100%; border:solid 1px black" ng-click="mapClick(e.id, $event);"></div>
+                    <div ng-if="!detailedEvent.baseLocation" style="margin: auto; width:100%; text-align:center; height:7em">Unknown Base Location</div>
+                  </div>
+                </div>
+              </td>
             </tr>
           </tbody>
           <tfoot>
@@ -49,14 +84,42 @@
     </div>
   </div>
 </div>
+@section head {@Styles.Render("~/style/map")}
 @section scripts {
+  <script src="//maps.google.com/maps/api/js?v=3.2&sensor=false"></script>
+  @Scripts.Render("~/scripts/map")
   <script type="text/javascript">
     angular.module('sarDatabase').controller('EventListCtrl', ['$scope', 'EventsService', function($scope, EventsService) {
       $.extend($scope, {
         list: [],
         years: [@(ViewBag.Year == null ? string.Empty : ViewBag.Year)],
-        year: @(ViewBag.Year == null ? "null" : ViewBag.Year)
-        });
+        year: @(ViewBag.Year == null ? "null" : ViewBag.Year),
+        detailedEvent: null,
+        eventMap: null,
+        showInfo: function(e) {
+          $scope.detailedEvent = ($scope.detailedEvent == e) ? null : e;
+          if ($scope.detailedEvent && $scope.detailedEvent.baseLocation) {
+            window.setTimeout(function() {
+              $scope.eventMap = L.map('eventMap', {zoomControl:false, attributionControl:false, dragging: false, touchZoom: false, scrollWheelZoom: false, doubleClickZoom: false, boxZoom: false})
+                .setView([$scope.detailedEvent.baseLocation.lat, $scope.detailedEvent.baseLocation.lng], 10);
+              L.kcsarStaticMap($scope.eventMap, {showLayers: false, defaultBase: 'OpenStreetMap'});
+            }, 5);
+          }
+        },
+        tabLink: function(action, id) {
+          return window.appRoot + '@ViewBag.EventRoute/' + action + '/' + id;
+        },
+        mapClick: function(id, $event) {
+          alert('hi');
+          $event.stopPropagation();
+        },
+        startCreate: function() {
+          window.document.location = window.appRoot + "@(ViewBag.EventRoute)/Create";
+        },
+        can: {
+          create: @(User.IsInRole("cdb." + ViewBag.EventTypeText.ToLower() + "editors").ToString().ToLower())
+        }
+      });
       $scope.$watch("year", function(newValue, oldValue) {
         if (newValue != oldValue) EventsService.list($scope.list, '@ViewBag.EventRoute', newValue);
       });

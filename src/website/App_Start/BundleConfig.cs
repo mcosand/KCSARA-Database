@@ -93,11 +93,17 @@ namespace Kcsara.Database.Web
       bundles.Add(new StyleBundle("~/style/print").Include(
           "~/Content/print-styles.css"));
 
-      bundles.Add(new StyleBundle("~/scripts/leaflet").Include(
-        "~/scripts/lib/leaflet.js",
-        "~/scripts/lib/TileLayer.GeoJSON.js",
-        "~/scripts/lib/leaflet.google.js"
+      bundles.Add(new StyleBundle("~/scripts/map").Include(
+        "~/scripts/mapbox-{version}.js",
+        "~/scripts/TileLayer.GeoJSON.js",
+        "~/scripts/leaflet.google.js",
+        "~/scripts/site/map.js"
        ));
+
+      bundles.Add(new StyleBundle("~/style/map").Include(
+        "~/Content/mapbox.css",
+        "~/Content/site-mapbox.css"
+        ));
     }
   }
 }

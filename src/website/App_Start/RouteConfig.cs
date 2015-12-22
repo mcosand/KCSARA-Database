@@ -23,6 +23,23 @@ namespace Kcsara.Database.Web
         );
 
       routes.MapRoute(
+        name: "NewMissionList",
+        url: "Missions/List/{id}",
+        defaults: new { controller = "NewMissions", action = "List", id = UrlParameter.Optional });
+      routes.MapRoute(
+        name: "NewMissionIndex",
+        url: "Missions/",
+        defaults: new { controller = "NewMissions", action = "Index" });
+      routes.MapRoute(
+        name: "NewTrainingList",
+        url: "Training/List/{id}",
+        defaults: new { controller = "NewTraining", action = "List", id = UrlParameter.Optional });
+      routes.MapRoute(
+        name: "NewTrainingIndex",
+        url: "Training/",
+        defaults: new { controller = "NewTraining", action = "Index" });
+
+      routes.MapRoute(
           name: "Default",
           url: "{controller}/{action}/{id}",
           defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }

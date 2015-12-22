@@ -8,7 +8,15 @@
   <div class="col-sm-6 col-xs-12">
     <div class="box box-primary">
       <div class="box-body">
-        Blah
+        <ul>
+          <li>
+            @(Html.ActionLink<NewMissionsController>(x => x.List(null), "Past Missions (Rosters)"))
+          </li>
+        </ul>
+        <ul>
+          <li>@(Html.ActionLink<MissionsController>(f => f.Yearly(DateTime.Today.Year), "Yearly Statistics"))</li>
+          <li>@(Html.ActionLink<MissionsController>(f => f.MissionsKML(null, null), "Open missions Google Earth"))</li>
+        </ul>
       </div>
     </div>
   </div>

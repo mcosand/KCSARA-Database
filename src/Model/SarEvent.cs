@@ -25,6 +25,11 @@ namespace Kcsar.Database.Model
     public bool ReportCompleted { get; set; }
 
     public virtual ICollection<SarEvent> Followups { get; set; }
+
+    [Column("Previous_Id")]
+    public Guid? PreviousId { get; set; }
+
+    [ForeignKey("PreviousId")]
     public virtual SarEvent Previous { get; set; }
 
     //   public virtual ICollection<MissionLog> Log { get; set; }
@@ -102,14 +107,48 @@ namespace Kcsar.Database.Model
         yield return new ValidationResult("Can't link a mission to itself", new[] { "Previous" });
       }
     }
-
-
   }
   public class Mission : SarEvent
   {
+    public static Mission FromOldModel(Mission_Old m)
+    {
+      var newMission = new Mission
+      {
+        Id = m.Id,
+        ChangedBy = m.ChangedBy,
+        CountyNumber = m.CountyNumber,
+        County = m.County,
+        Comments = m.Comments,
+        Location = m.Location,
+        MissionType = m.MissionType,
+        PreviousId = m.Previous == null ? (Guid?)null : m.Previous.Id,
+        ReportCompleted = m.ReportCompleted,
+        StartTime = m.StartTime,
+        StopTime = m.StopTime,
+        StateNumber = m.StateNumber,
+        Title = m.Title
+      };
+      return newMission;
+    }
   }
 
   public class Training : SarEvent
   {
+    public static Training FromOldModel(Training_Old t)
+    {
+      var newTraining = new Training
+      {
+        Id = t.Id,
+        ChangedBy = t.ChangedBy,
+        County = t.County,
+        Comments = t.Comments,
+        Location = t.Location,
+        StartTime = t.StartTime,
+        StopTime = t.StopTime,
+        StateNumber = t.StateNumber,
+        Title = t.Title
+      };
+      return newTraining;
+    }
   }
 }

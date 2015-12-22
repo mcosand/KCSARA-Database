@@ -14,7 +14,7 @@
     public Guid Id { get; set; }
 
     [Required]
-    public Member Member { get; set; }
+    public virtual Member Member { get; set; }
 
     [Key]
     [Column(Order = 1)]

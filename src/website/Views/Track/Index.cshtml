@@ -2,9 +2,9 @@
   ViewBag.Title = "Track Responders";
 }
 @section head {
-  @Styles.Render("~/content/leaflet.css")
+  @Styles.Render("~/style/map")
   <script src="//maps.google.com/maps/api/js?v=3.2&sensor=false"></script>
-  @Scripts.Render("~/scripts/leaflet")
+  @Scripts.Render("~/scripts/map")
   <style type="text/css">
   body {
     padding: 0px;
@@ -14,10 +14,6 @@
   #map {
     width: 100%;
     height: 600px;
-  }
-
-  .leaflet-control-layers-toggle {
-    background-image: url(@Url.Content("~/content/images/maps/layers.png"));
   }
   </style>
 

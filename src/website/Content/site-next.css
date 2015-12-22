@@ -251,6 +251,18 @@ aside.main-sidebar,
   border-top-right-radius: 3px;
 }
 
+.table-hover tbody tr{
+  cursor: pointer;
+}
+
+td:hover .parent-hover-show {
+  visibility: visible;
+}
+
+td .parent-hover-show {
+  visibility: hidden;
+}
+
 @media print {
   a:link:after, a:visited:after {
     content: "";
