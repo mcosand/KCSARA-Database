@@ -143,6 +143,18 @@ aside.main-sidebar,
   z-index:29
 }
 
+.info-box-sm {
+  min-height:50px;
+}
+.info-box-sm .info-box-icon {
+    height: 50px;
+    width: 50px;
+    font-size: 25px;
+    line-height: 50px;
+}
+.info-box-sm .info-box-content {
+  margin-left: 50px;
+}
 .bootstrap-dialog.type-primary .modal-header {
     background-color: #f39c12;
 }
@@ -266,5 +278,11 @@ td .parent-hover-show {
 @media print {
   a:link:after, a:visited:after {
     content: "";
+  }
+}
+
+@media (max-width: 768px) {
+  section.content {
+    padding: 15px 0px;
   }
 }

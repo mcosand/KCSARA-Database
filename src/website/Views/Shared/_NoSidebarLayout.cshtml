@@ -1,0 +1,69 @@
+@{
+  Layout = "~/Views/Shared/_Layout.cshtml";
+  ViewBag.NgApp = (ViewBag.NgController == null) ? null : "sarDatabase";
+}
+
+<body class="hold-transition skin-yellow layout-top-nav" @(ViewBag.NgController != null ? new HtmlString("ng-controller=\"" + ViewBag.NgController + "\"") : new HtmlString(string.Empty))>
+  <div class="wrapper">
+
+    <header class="main-header">
+      <nav class="navbar navbar-static-top" role="navigation">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <a href="~/" class="navbar-brand" style="font-size:20px"><b>KCSARA Database</b></a>
+          </div>
+          @if (User.Identity.IsAuthenticated)
+          {
+            <div class="navbar-custom-menu @((ViewBag.HideAccountWhenXS ?? false) ? "hidden-xs" : string.Empty)">
+              <ul class="nav navbar-nav">
+                <!-- User Account Menu -->
+                <li class="dropdown notifications-menu user-menu user">
+                  <!-- hidden-xs hides the username on small devices so only the image appears. -->
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">@(ViewBag.LoginUserName ?? string.Format("{0} {1}", ((Kcsar.Membership.KcsarUserProfile)Profile).FirstName, ((Kcsar.Membership.KcsarUserProfile)Profile).LastName))</a>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <ul class="menu">
+                        @if (ViewData["MemberId"] != null)
+                        {
+                          <li><a href="~/Members/Detail/@ViewData["MemberId"]"><i class="fa fa-fw fa-home text-primary"></i>My Page</a></li>
+                        }
+                        <li><a href="~/Account/Detail/@User.Identity.Name"><i class="fa fa-fw fa-keyboard-o text-primary"></i>My Account</a></li>
+                        <li><a href="~/Account/Logout"><i class="fa fa-fw fa-sign-out text-primary"></i>Logout</a></li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          }
+        </div>
+      </nav>
+    </header>
+    <!-- Full Width Column -->
+    <div class="content-wrapper">
+      <div class="@((ViewBag.UseContainer ?? false) ? "container" : "container-fluid")">
+        <section class="content-header">
+          @RenderSection("header", false)
+        </section>
+        <!-- Main content -->
+        <section class="content">
+          @RenderBody()
+        </section>
+        <!-- /.content -->
+      </div>
+      <!-- /.content-wrapper -->
+    </div>
+    <!-- /.container -->
+    <footer class="main-footer">
+      <strong>King County Search and Rescue Association</strong>
+    </footer>
+  </div>
+
+  @RenderSection("scripts", false)
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $.AdminLTE.layout.activate()
+    })
+  </script>
+</body>
+@section head {@RenderSection("head", false)}

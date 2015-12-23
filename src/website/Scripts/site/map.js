@@ -9,11 +9,10 @@
   };
 }
 
-
-
 L.kcsarSetupMap = function (map, options) {
   options = $.extend({
     showLayers: true,
+    showResponders: false,
     defaultBase: 'Google Streets'
   }, options);
 
@@ -75,12 +74,15 @@ L.kcsarSetupMap = function (map, options) {
     }
   });//.addTo(map);
 
-  var trackLayer = L.layerGroup([]).addTo(map);
 
   var overlays = {
-    "Responders": trackLayer,
     "Trails": trailsLayer,
     "Contours (ft)": geoTileLayer
+  }
+
+  if (options.showResponders) {
+    var trackLayer = L.layerGroup([]).addTo(map);
+    overlays["Responders"] = trackLayer
   }
 
   if (options.showLayers) {

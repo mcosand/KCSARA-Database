@@ -725,6 +725,7 @@
     <Content Include="Views\NewMissions\Index.cshtml" />
     <Content Include="Views\NewTraining\Index.cshtml" />
     <Content Include="Views\Shared\EventList.cshtml" />
+    <Content Include="Views\Shared\_NoSidebarLayout.cshtml" />
     <None Include="Web.Production.config" />
   </ItemGroup>
   <ItemGroup>

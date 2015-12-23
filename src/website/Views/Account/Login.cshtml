@@ -1,100 +1,56 @@
 @{
-  Layout = "~/Views/Shared/_Layout.cshtml";
+  Layout = "~/Views/Shared/_NoSidebarLayout.cshtml";
   ViewBag.Title = Strings.Login;
+  ViewBag.UseContainer = true;
+  ViewBag.HideAccountWhenXS = true;
 }
+<div class="row">
+  <div class="col-xs-12 col-sm-8 col-lg-6 col-sm-offset-2 col-lg-offset-3">
+    <form class="form-horizontal" method="post">
 
-<body class="hold-transition skin-yellow layout-top-nav">
-  <div class="wrapper">
+      <div class="box" style="margin-top:3em">
+        <div class="box-header with-border login-header hidden-xs">
 
-    <header class="main-header">
-      <nav class="navbar navbar-static-top">
-        <div class="container-fluid">
-          <div class="navbar-header">
-            <a href="~/" class="navbar-brand" style="font-size:20px"><b>KCSARA Database</b></a>
-          </div>
-          @if (User.Identity.IsAuthenticated)
-          {
-            <div class="navbar-custom-menu hidden-xs">
-              <ul class="nav navbar-nav">
-                <!-- User Account Menu -->
-                <li class="dropdown user-menu user">
-                  <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                  <a href="#">@(ViewBag.LoginUserName ?? string.Format("{0} {1}", ((Kcsar.Membership.KcsarUserProfile)Profile).FirstName, ((Kcsar.Membership.KcsarUserProfile)Profile).LastName))</a>
-                </li>
-              </ul>
-            </div>
-          }
         </div>
-      </nav>
-    </header>
-    <!-- Full Width Column -->
-    <div class="content-wrapper">
-      <div class="container">
-        <!-- Main content -->
-        <section class="content">
-          <div class="row">
-            <div class="col-xs-12 col-sm-8 col-lg-6 col-sm-offset-2 col-lg-offset-3">
-              <form class="form-horizontal" method="post">
-
-                <div class="box" style="margin-top:3em">
-                  <div class="box-header with-border login-header hidden-xs">
-
-                  </div>
-                  <div class="box-body">
-                    <div class="form-horizontal">
-                      <div class="form-group">
-                        <label for="password" class=" col-sm-2 control-label">Username:</label>
-                        <div class="col-sm-10">
-                          <input id="username" name="username" type="text" value="" class="form-control" autofocus="autofocus"/>
-                          <span class="field-validation-valid" data-valmsg-for="username" data-valmsg-replace="true"></span>
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <label for="password" class="col-sm-2 control-label">Password:</label>
-                        <div class="col-sm-10">
-                          <input id="password" name="password" type="password" value="" class="form-control" />
-                          <span class="field-validation-valid" data-valmsg-for="password" data-valmsg-replace="true"></span>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="form-group hidden">
-                      <div class="col-sm-offset-2 col-sm-10">
-                        <div class="checkbox">
-                          <label>
-                            <input type="checkbox" name="rememberMe" value="true"> Remember me
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="box-footer box-action-footer">
-                    <div class="col-xs-12">
-                      <input id="login" class="btn text-bold" name="login" type="submit" value="Login" />
-                    </div>
-                  </div>
-                </div>
-              </form>
+        <div class="box-body">
+          <div class="form-horizontal">
+            <div class="form-group">
+              <label for="password" class=" col-sm-2 control-label">Username:</label>
+              <div class="col-sm-10">
+                <input id="username" name="username" type="text" value="" class="form-control" autofocus="autofocus" />
+                <span class="field-validation-valid" data-valmsg-for="username" data-valmsg-replace="true"></span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="password" class="col-sm-2 control-label">Password:</label>
+              <div class="col-sm-10">
+                <input id="password" name="password" type="password" value="" class="form-control" />
+                <span class="field-validation-valid" data-valmsg-for="password" data-valmsg-replace="true"></span>
+              </div>
             </div>
           </div>
-          <div class="row">
-            <div class="col-xs-12 col-sm-8 col-lg-6 col-sm-offset-2 col-lg-offset-3 text-right">
-              <div style="font-size:90%;"><a href="/Account/ResetPassword">Forgotten Password</a></div>
-              <div style="font-size:90%;"><a href="/Account/Register">Register New Account</a></div>
+          <div class="form-group hidden">
+            <div class="col-sm-offset-2 col-sm-10">
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" name="rememberMe" value="true"> Remember me
+                </label>
+              </div>
             </div>
           </div>
-        </section>
-        <!-- /.content -->
+        </div>
+        <div class="box-footer box-action-footer">
+          <div class="col-xs-12">
+            <input id="login" class="btn text-bold" name="login" type="submit" value="Login" />
+          </div>
+        </div>
       </div>
-      <!-- /.container -->
-    </div>
-    <!-- /.content-wrapper -->
-    <footer class="main-footer">
-      <strong>King County Search and Rescue Association</strong>
-    </footer>
+    </form>
   </div>
-  <script type="text/javascript">
-    $(document).ready(function () {
-      $.AdminLTE.layout.activate()
-    })
-  </script>
-</body>
+</div>
+<div class="row">
+  <div class="col-xs-12 col-sm-8 col-lg-6 col-sm-offset-2 col-lg-offset-3 text-right">
+    <div style="font-size:90%;"><a href="/Account/ResetPassword">Forgotten Password</a></div>
+    <div style="font-size:90%;"><a href="/Account/Register">Register New Account</a></div>
+  </div>
+</div>
