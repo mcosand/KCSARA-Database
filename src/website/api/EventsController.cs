@@ -32,14 +32,14 @@ namespace Kcsara.Database.Web.api
         query = query.Where(f => f.StartTime >= dateStart && f.StartTime < dateEnd);
       }
 
-      var result = (from e in query.SelectMany(f => f.Roster)
+      var result = (from e in query.SelectMany(f => f.Roster).DefaultIfEmpty()
                     group e by 1 into g
                     select new EventList
                     {
-                      People = g.Select(f => f.Person.Id).Distinct().Count(),
+                      People = g.DefaultIfEmpty().Select(f => (Guid?)f.Person.Id).Where(f => f != null).Distinct().Count(),
                       Hours = Math.Round(g.Sum(f => SqlFunctions.DateDiff("minute", f.TimeIn, f.TimeOut) / 15.0) ?? 0.0) / 4.0,
                       Miles = g.Sum(f => f.Miles)
-                    }).Single();
+                    }).SingleOrDefault();
 
       result.Events = query
         .OrderBy(f => f.StartTime)
@@ -49,9 +49,9 @@ namespace Kcsara.Database.Web.api
           Number = f.StateNumber,
           Date = f.StartTime,
           Title = f.Title,
-          People = f.Roster.Select(g => g.Person.Id).Distinct().Count(),
-          Hours = Math.Round(f.Roster.Sum(g => SqlFunctions.DateDiff("minute", g.TimeIn, g.TimeOut) / 15.0) ?? 0.0) / 4.0,
-          Miles = f.Roster.Sum(g => g.Miles)
+          People = f.Roster.DefaultIfEmpty().Select(g => (Guid?)g.Person.Id).Where(g => g != null).Distinct().Count(),
+          Hours = Math.Round(f.Roster.DefaultIfEmpty().Sum(g => SqlFunctions.DateDiff("minute", g.TimeIn, g.TimeOut) / 15.0) ?? 0.0) / 4.0,
+          Miles = f.Roster.DefaultIfEmpty().Sum(g => g.Miles)
         });
 
       return result;
