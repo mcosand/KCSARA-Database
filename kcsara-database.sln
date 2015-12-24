@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "website", "src\website\website.csproj", "{08C9837D-088B-4942-B656-EBBAC783F850}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "website-old", "src\website-old\website-old.csproj", "{08C9837D-088B-4942-B656-EBBAC783F850}"
 	ProjectSection(ProjectDependencies) = postProject
 		{BAFA9145-D19C-4F31-9F1A-C937499E76D5} = {BAFA9145-D19C-4F31-9F1A-C937499E76D5}
 		{F56A1669-1009-4203-8045-C890F9F93A2E} = {F56A1669-1009-4203-8045-C890F9F93A2E}

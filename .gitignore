@@ -1,6 +1,6 @@
 run.log*
-src/website/Content/auth/*
-src/website/Properties/PublishProfiles/
+src/website-old/Content/auth/*
+src/website-old/Properties/PublishProfiles/
 
 # Build Folders (you can keep bin if you'd like, to store dlls and pdbs)
 [Bb]in/

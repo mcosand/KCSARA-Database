@@ -100,9 +100,9 @@
       <Project>{bafa9145-d19c-4f31-9f1a-c937499e76d5}</Project>
       <Name>Website.DefaultStrings</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\src\website\website.csproj">
+    <ProjectReference Include="..\..\src\website-old\website-old.csproj">
       <Project>{08c9837d-088b-4942-b656-ebbac783f850}</Project>
-      <Name>website</Name>
+      <Name>website-old</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
