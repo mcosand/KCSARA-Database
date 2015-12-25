@@ -1,6 +1,7 @@
 run.log*
 src/website-old/Content/auth/*
 src/website-old/Properties/PublishProfiles/
+src/website/node_modules/**/*
 
 # Build Folders (you can keep bin if you'd like, to store dlls and pdbs)
 [Bb]in/
