@@ -33,7 +33,13 @@
   },
 
   "frameworks": {
-    "dnx451": { }
+    "dnx451": {
+      "dependencies": {
+        "Kcsar.Database.Model": "1.0.0-*",
+        "Kcsara.Database.Services": "1.0.0-*",
+        "Kcsara.Database.Web.Strings": "1.0.0-*"
+      }
+    }
   },
 
   "exclude": [

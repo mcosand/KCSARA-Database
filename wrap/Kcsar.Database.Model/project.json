@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0-*",
+  "frameworks": {
+    "net451": {
+      "wrappedProject": "../../src/Model/Model.csproj",
+      "bin": {
+        "assembly": "../../src/Model/obj/{configuration}/Kcsar.Database.Model.dll",
+        "pdb": "../../src/Model/obj/{configuration}/Kcsar.Database.Model.pdb"
+      },
+      "dependencies": {
+        "EntityFramework": "6.1.3",
+        "Microsoft.SqlServer.Types": "1.0.0-*"
+      }
+    }
+  }
+}
