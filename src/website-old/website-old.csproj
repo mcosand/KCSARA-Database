@@ -282,7 +282,6 @@
     <Content Include="Content\images\maps\base-e.png" />
     <Content Include="Content\images\maps\clue-e.png" />
     <Content Include="Content\images\maps\found-e.png" />
-    <Content Include="Content\images\maps\icons-000000%402x.png" />
     <Content Include="Content\images\maps\layers-2x.png" />
     <Content Include="Content\images\maps\layers.png" />
     <Content Include="Content\images\maps\marker-icon-2x.png" />
@@ -453,7 +452,6 @@
     <Content Include="Content\script\json2.js" />
     <Content Include="Content\script\suggest.person.js" />
     <Content Include="Content\script\timepicker.js" />
-    <Content Include="Content\site-mapbox.css" />
     <Content Include="Content\skins\skin-green.css" />
     <Content Include="Content\skins\skin-yellow.css" />
     <Content Include="Content\skins\skin-green.min.css" />
@@ -543,10 +541,7 @@
     <Content Include="Scripts\knockout-3.3.0.js" />
     <Content Include="Scripts\knockout.mapping-latest.debug.js" />
     <Content Include="Scripts\knockout.mapping-latest.js" />
-    <Content Include="Scripts\leaflet.google.js" />
     <Content Include="Scripts\leaflet.js" />
-    <Content Include="Scripts\site\map.js" />
-    <Content Include="Scripts\TileLayer.GeoJSON.js" />
     <Content Include="Scripts\mapbox-2.2.3.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\moment.js" />
@@ -591,7 +586,6 @@
     <Content Include="Views\Animals\Index.aspx" />
     <Content Include="Views\Animals\PhotoPreview.aspx" />
     <Content Include="Views\Animals\PhotoUpload.aspx" />
-    <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\MeshGraphs.aspx" />
     <Content Include="Views\Home\MeshStatus.aspx" />
     <Content Include="Views\Log\Index.aspx" />

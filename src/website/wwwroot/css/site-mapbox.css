@@ -4,7 +4,7 @@
   }
 
 .leaflet-container .leaflet-control-attribution:after, .leaflet-container .leaflet-control-layers-toggle, .leaflet-container .leaflet-control-zoom-in, .leaflet-container .leaflet-control-zoom-out, .leaflet-container .mapbox-icon, .mapbox-button-icon:before {
-  background-image: url(images/maps/icons-000000@2x.png);
+  background-image: url(../images/maps/icons-000000@2x.png);
 }
 
 .static-map.leaflet-container {
