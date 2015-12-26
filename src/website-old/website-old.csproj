@@ -382,7 +382,6 @@
     <Compile Include="Services\IReportsService.cs" />
     <Compile Include="Services\ReportsService.cs" />
     <Compile Include="Services\SheetAutoFitWrapper.cs" />
-    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\common.css" />
@@ -455,7 +454,6 @@
     <Content Include="Content\script\suggest.person.js" />
     <Content Include="Content\script\timepicker.js" />
     <Content Include="Content\site-mapbox.css" />
-    <Content Include="Content\site-next.css" />
     <Content Include="Content\skins\skin-green.css" />
     <Content Include="Content\skins\skin-yellow.css" />
     <Content Include="Content\skins\skin-green.min.css" />
@@ -555,13 +553,7 @@
     <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\np-autocomplete.js" />
     <Content Include="Scripts\nprogress.js" />
-    <Content Include="Scripts\site\directives\password-validator.js" />
-    <Content Include="Scripts\site\directives\status-glyph.js" />
-    <Content Include="Scripts\site\models\database-account.js" />
     <Content Include="Scripts\site\modules\edit-modals.js" />
-    <Content Include="Scripts\site\modules\tree-view.js" />
-    <Content Include="Scripts\site\services\events-service.js" />
-    <Content Include="Scripts\site\services\accounts-service.js" />
     <Content Include="Scripts\ViewModels.js" />
     <Content Include="Sql\AuthDatabase_Create.sql" />
     <Content Include="Sql\AuthDatabase_Update.sql" />
@@ -571,7 +563,6 @@
     <Content Include="Views\Account\ChangePasswordSuccess.aspx" />
     <Content Include="Views\Account\InactiveMemberAccounts.aspx" />
     <Content Include="Views\Account\Index.aspx" />
-    <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\ReAuth.aspx" />
     <Content Include="Views\Account\ResetPassword.aspx" />
     <Content Include="Views\Account\ResetPasswordDone.aspx" />
@@ -716,8 +707,6 @@
     <Content Include="Templates\Report\missionready-template.xls" />
     <Content Include="Views\Track\Index.cshtml" />
     <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\Shared\_FrameLayout.cshtml" />
-    <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
     <Content Include="Views\Account\Detail.cshtml" />
     <Content Include="Views\Units\Index.cshtml" />
@@ -725,7 +714,6 @@
     <Content Include="Views\NewMissions\Index.cshtml" />
     <Content Include="Views\NewTraining\Index.cshtml" />
     <Content Include="Views\Shared\EventList.cshtml" />
-    <Content Include="Views\Shared\_NoSidebarLayout.cshtml" />
     <None Include="Web.Production.config" />
   </ItemGroup>
   <ItemGroup>

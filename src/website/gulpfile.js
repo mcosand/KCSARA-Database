@@ -1,4 +1,4 @@
-﻿/// <binding Clean='clean' />
+﻿/// <binding BeforeBuild='min' Clean='clean' />
 "use strict";
 
 var gulp = require("gulp"),
@@ -11,7 +11,7 @@ var paths = {
     webroot: "./wwwroot/"
 };
 
-paths.js = paths.webroot + "js/**/*.js";
+paths.js = paths.webroot + "js/*.js";
 paths.minJs = paths.webroot + "js/**/*.min.js";
 paths.css = paths.webroot + "css/**/*.css";
 paths.minCss = paths.webroot + "css/**/*.min.css";
@@ -29,11 +29,18 @@ gulp.task("clean:css", function (cb) {
 gulp.task("clean", ["clean:js", "clean:css"]);
 
 gulp.task("min:js", function () {
-    return gulp.src([paths.js, "!" + paths.minJs], { base: "." })
+  return gulp.src([paths.js, paths.webroot + "js/modules/*.js", "!" + paths.minJs], { base: "." })
         .pipe(concat(paths.concatJsDest))
         .pipe(uglify())
         .pipe(gulp.dest("."));
 });
+
+gulp.task("min:sar-database", function () {
+  return gulp.src([paths.webroot + "js/*/**/*.js", "!" + paths.minJs, "!" + paths.webroot + "js/modules/*.js"], { base: "." })
+        .pipe(concat(paths.webroot + "js/sar-database.min.js"))
+        .pipe(uglify())
+        .pipe(gulp.dest("."));
+})
 
 gulp.task("min:css", function () {
     return gulp.src([paths.css, "!" + paths.minCss])
@@ -42,4 +49,4 @@ gulp.task("min:css", function () {
         .pipe(gulp.dest("."));
 });
 
-gulp.task("min", ["min:js", "min:css"]);
+gulp.task("min", ["min:js", "min:sar-database", "min:css"]);

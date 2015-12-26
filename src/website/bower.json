@@ -5,6 +5,15 @@
     "bootstrap": "3.3.5",
     "jquery": "2.1.4",
     "jquery-validation": "1.14.0",
-    "jquery-validation-unobtrusive": "3.2.4"
+    "jquery-validation-unobtrusive": "3.2.4",
+    "np-autocomplete": "~2.0.4",
+    "angular": "~1.4.8",
+    "font-awesome": "fontawesome#~4.5.0",
+    "AdminLTE": "adminlte#~2.3.2",
+    "moment": "~2.10.6",
+    "angular-modal-service": "~0.6.9"
+  },
+  "resolutions": {
+    "angular": "~1.4.8"
   }
 }
