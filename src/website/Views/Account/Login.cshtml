@@ -1,5 +1,5 @@
 ﻿@{
-  Layout = "~/Views/Shared/_NoSidebarLayout.cshtml";
+  Layout = User.Identity.IsAuthenticated ? "~/Views/Shared/_FrameLayout.cshtml" : "~/Views/Shared/_NoSidebarLayout.cshtml";
   ViewBag.Title = "Login";
   ViewBag.UseContainer = true;
   ViewBag.HideAccountWhenXS = true;

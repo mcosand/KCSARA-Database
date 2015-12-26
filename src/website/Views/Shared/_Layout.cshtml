@@ -1,6 +1,6 @@
 ﻿@{ 
   ViewBag.NgModules = ViewBag.NgModules ?? new List<string>();
-  ViewBag.NgModules.AddRange(new[] { "editModals", "ng-pros.directive.autocomplete" });
+  ViewBag.NgModules.AddRange(new[] { "ng-pros.directive.autocomplete" });
 }
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" @(ViewBag.NgApp != null ? new HtmlString("ng-app=\"" + ViewBag.NgApp + "\"") : new HtmlString(string.Empty))>
@@ -11,13 +11,31 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta content="width=device-width, initial-scale=1, minimum-scale=1, user-scalable=yes" name="viewport">
   <link rel="apple-touch-icon" href="~/apple-touch-icon.png" />
-  <title>@ViewData["Title"] - @Strings.DatabaseName</title>
+  <title>@ViewData["Title"] - KCSARA Database</title>
   <script type="text/javascript">window.appRoot = '@Url.Content("~/")'; var errorUrl = '@Url.RouteUrl("DefaultApi", new { httproute="", Controller = "telemetry", Action="error" })';</script>
-  @Styles.Render("~/Content/bootstrap")
-  @Scripts.Render("~/scripts/ng-core")
-  <script type="text/javascript">angular.module('sarDatabase', @Html.ToJson((object)(ViewBag.NgModules ?? new object[0])));</script>
-  @Scripts.Render("~/scripts/ng-site")
+  <environment names="Development">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/lib/np-autocomplete/dist/np-autocomplete.min.css" />
+    <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.css" />
+    <link rel="stylesheet" href="~/lib/AdminLTE/dist/css/AdminLTE.css" />
+    <link rel="stylesheet" href="~/lib/AdminLTE/dist/css/skins/skin-yellow.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+  </environment>
 
+  <script src="~/lib/jquery/dist/jquery.js"></script>
+  <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+  <script src="~/lib/moment/moment.js"></script>
+  <script src="~/lib/angular/angular.js"></script>
+  <script src="~/lib/angular-modal-service/dst/angular-modal-service.js"></script>
+  <script src="~/lib/np-autocomplete/dist/np-autocomplete.min.js"></script>
+  <script src="~/lib/AdminLTE/dist/js/app.js"></script>
+  <script src="~/js/modules/tree-view.js"></script>
+  <script type="text/javascript">angular.module('sarDatabase', @Html.ToJson((object)(ViewBag.NgModules ?? new object[0])));</script>
+  <script src="~/js/models/database-account.js"></script>
+  <script src="~/js/services/accounts-service.js"></script>
+  <script src="~/js/services/events-service.js"></script>
+  
   @RenderSection("head", false)
 </head>
 @RenderBody()
