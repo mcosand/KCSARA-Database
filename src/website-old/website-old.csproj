@@ -226,11 +226,8 @@
     </Compile>
     <Compile Include="api\AccountController.cs" />
     <Compile Include="api\CamelCaseControllerAttribute.cs" />
-    <Compile Include="api\EventsController.cs" />
     <Compile Include="api\Models\AccountRegistration.cs" />
     <Compile Include="api\Models\Admin\ExecuteDatabaseScript.cs" />
-    <Compile Include="api\Models\Event\EventList.cs" />
-    <Compile Include="api\Models\Event\EventSummary.cs" />
     <Compile Include="api\Models\MemberSummary.cs" />
     <Compile Include="api\Models\MemberUnitDocument.cs" />
     <Compile Include="api\Models\SearchResult.cs" />
@@ -302,8 +299,6 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\AdminController_Documents.cs" />
     <Compile Include="Controllers\AnimalsController.cs" />
-    <Compile Include="Controllers\BaseController.cs" />
-    <Compile Include="Controllers\EventsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\IEventController.cs" />
     <Compile Include="Controllers\LogController.cs" />
@@ -705,9 +700,6 @@
     <Content Include="Views\Account\Detail.cshtml" />
     <Content Include="Views\Units\Index.cshtml" />
     <Content Include="Views\Home\Error.cshtml" />
-    <Content Include="Views\NewMissions\Index.cshtml" />
-    <Content Include="Views\NewTraining\Index.cshtml" />
-    <Content Include="Views\Shared\EventList.cshtml" />
     <None Include="Web.Production.config" />
   </ItemGroup>
   <ItemGroup>

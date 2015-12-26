@@ -13,7 +13,7 @@ angular.module('sarDatabase').service('EventsService', ['$http', '$q', function 
 
       $http({
         method: 'GET',
-        url: window.appRoot + 'api/events/list/' + year + '?types=' + eventType,
+        url: window.appRoot + 'api/' + eventType + '/list/' + (year || '')
       }).success(function (data) {
         $.each(data.events, function (idx, evt) {
           evt.date = moment(evt.date);
@@ -33,7 +33,7 @@ angular.module('sarDatabase').service('EventsService', ['$http', '$q', function 
 
       $http({
         method: 'GET',
-        url: window.appRoot + 'api/events/years/?types=' + eventType
+        url: window.appRoot + 'api/' + eventType + '/years'
       }).success(function (data) {
         list.length = 0;
         list.push.apply(list, data);

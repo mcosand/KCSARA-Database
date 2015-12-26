@@ -10,13 +10,13 @@
       <div class="box-body">
         <ul>
           <li>
-            @(Html.ActionLink<NewMissionsController>(x => x.List(null), "Past Missions (Rosters)"))
+            <a asp-action="List">Past Missions (Rosters)</a>
           </li>
         </ul>
-        <ul>
+        @*<ul>
           <li>@(Html.ActionLink<MissionsController>(f => f.Yearly(DateTime.Today.Year), "Yearly Statistics"))</li>
           <li>@(Html.ActionLink<MissionsController>(f => f.MissionsKML(null, null), "Open missions Google Earth"))</li>
-        </ul>
+        </ul>*@
       </div>
     </div>
   </div>

@@ -1,52 +1,52 @@
 ﻿/*
- * Copyright 2008-2014 Matthew Cosand
+ * Copyright 2008-2015 Matthew Cosand
  */
 namespace Kcsara.Database.Web.Controllers
 {
-  using Kcsar.Database.Model;
-  using Kcsar.Membership;
-  using Kcsara.Database.Web.Model;
-  using Kcsara.Database.Web.Services;
-  using MvcContrib.UI;
   using System;
   using System.Collections.Generic;
-  using System.Configuration;
-  using System.Drawing;
   using System.Globalization;
-  using System.IO;
   using System.Linq;
   using System.Linq.Expressions;
-  using System.Net.Mail;
-  using System.Runtime.Serialization;
-  using System.Text.RegularExpressions;
-  using System.Web;
-  using System.Web.Mvc;
-  using System.Web.Security;
+  using System.Threading;
+  using Kcsar.Database.Model;
   using Kcsara.Database.Services;
+  using Microsoft.AspNet.Mvc;
+  using Microsoft.AspNet.Mvc.Filters;
 
   public class BaseController : Controller
   {
     public Func<string, bool> UserInRole;
-    public Func<string, object> GetSessionValue;
-    public Action<string, object> SetSessionValue;
+ //   public Func<string, object> GetSessionValue;
+ //   public Action<string, object> SetSessionValue;
     public IAuthService Permissions = null;
-    protected readonly IAppSettings settings;
+//    protected readonly IAppSettings settings;
     protected readonly IKcsarContext db;
     
     public BaseController(IKcsarContext db)
-      : this(db, Ninject.ResolutionExtensions.Get<IAppSettings>(MvcApplication.myKernel))
-    {
-    }
+    //  : this(db, Ninject.ResolutionExtensions.Get<IAppSettings>(MvcApplication.myKernel))
+    //{
+    //}
 
-    public BaseController(IKcsarContext db, IAppSettings settings)
+    //public BaseController(IKcsarContext db, IAppSettings settings)
       : base()
     {
       this.db = db;
-      this.settings = settings;
+//      this.settings = settings;
 
       UserInRole = (f => User.IsInRole(f));
-      GetSessionValue = (f => Session[f]);
-      SetSessionValue = ((f, v) => Session[f] = v);
+ //     GetSessionValue = (f => Session[f]);
+ //     SetSessionValue = ((f, v) => Session[f] = v);
+    }
+
+    public override void OnActionExecuting(ActionExecutingContext context)
+    {
+      CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+      Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+      CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
+      Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+
+      base.OnActionExecuting(context);
     }
 
     protected string GetDateFormat()
@@ -54,7 +54,7 @@ namespace Kcsara.Database.Web.Controllers
       return "{0:yyyy-MM-dd}";
     }
 
-    protected override void Initialize(System.Web.Routing.RequestContext requestContext)
+/*    protected override void Initialize(System.Web.Routing.RequestContext requestContext)
     {
       base.Initialize(requestContext);
       Permissions = new AuthService(User, this.db);
@@ -70,7 +70,7 @@ namespace Kcsara.Database.Web.Controllers
         }
       }
     }
-
+    */
     protected Expression<Func<T, bool>> GetSelectorPredicate<T>(IEnumerable<Guid> ids) where T : IModelObject
     {
       var o = Expression.Parameter(typeof(T), "o");
@@ -81,7 +81,7 @@ namespace Kcsara.Database.Web.Controllers
           .Aggregate((accum, clause) => Expression.Or(accum, clause));
       return Expression.Lambda<Func<T, bool>>(body, o);
     }
-
+/*
     protected DataActionResult GetLoginError()
     {
       Response.StatusCode = 403;
@@ -102,12 +102,13 @@ namespace Kcsara.Database.Web.Controllers
 
       return isDataContract ? (DataActionResult)(new XmlDataContractResult(model)) : new XmlDataResult(model);
     }
-
+    */
+    /*
     protected string AbsoluteUrl(string relative)
     {
       return Request.Url.GetLeftPart(UriPartial.Authority) + relative;
     }
-
+    
 
     [Authorize]
     [HttpGet]
@@ -323,5 +324,6 @@ namespace Kcsara.Database.Web.Controllers
       string loginUrl = FormsAuthentication.LoginUrl + redirectUrl;
       return new RedirectResult(loginUrl);
     }
+    */
   }
 }

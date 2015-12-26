@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright 2015 Matthew Cosand
  */
-namespace Kcsara.Database.Web.api
+namespace Kcsara.Database.Web.ViewModels
 {
   using System.Collections.Generic;
 

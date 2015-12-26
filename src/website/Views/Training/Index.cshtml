@@ -9,13 +9,13 @@
     <div class="box box-primary">
       <div class="box-body">
         <ul>
-          <li>
+          @*<li>
             @(Html.ActionLink<TrainingController>(x => x.CourseList(null, null, null, null), "Course List"))
-          </li>
+          </li>*@
           <li>
-            @(Html.ActionLink<NewTrainingController>(x => x.List(null), "Past Trainings (Rosters)"))
+            <a asp-action="List">Past Trainings (Rosters)</a>
           </li>
-          <li>@(Html.ActionLink<TrainingController>(x => x.RequiredTrainingReport(), "Required Training Report") )</li>
+          @*<li>@(Html.ActionLink<TrainingController>(x => x.RequiredTrainingReport(), "Required Training Report") )</li>
           <li>@(Html.ActionLink<TrainingController>(x => x.CoreCompReport(null), "Core Competency Report (all members)") )</li>
           @if (User.IsInRole("cdb.trainingeditors")) {
           <li>@(Html.ActionLink<TrainingController>(x => x.Rules(), "View Training Equivalencies"))</li>
@@ -35,7 +35,7 @@
               <a href="@Url.Action("EligibleEmails", "Training")/?eligibleFor=2728797e-f4d5-4b29-bf69-076a9c5e0ae7&haveFinished=d10f2fb4-c920-4ef0-8b33-a2ce97416b2b">Course II</a>
               <a href="@Url.Action("EligibleEmails", "Training")/?eligibleFor=e7626c46-a494-4954-ab68-fe46c1a680d4&haveFinished=2728797e-f4d5-4b29-bf69-076a9c5e0ae7&haveFinished=6D826AB0-0802-47AA-9C4E-833B39F863EC&haveFinished=7F104382-FC66-4A8A-8A38-A72DEF66716A">Course III</a>
             </li>
-          }
+          }*@
         </ul>
       </div>
     </div>
