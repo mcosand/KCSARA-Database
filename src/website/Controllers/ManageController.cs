@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Mvc;
@@ -11,9 +9,9 @@ using website.Models;
 using website.Services;
 using website.ViewModels.Manage;
 
-namespace website.Controllers
+namespace Kcsara.Database.Web.Controllers
 {
-    [Authorize]
+  [Authorize]
     public class ManageController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;

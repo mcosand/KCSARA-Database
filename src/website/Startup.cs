@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Kcsar.Database.Model;
+using log4net;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -12,6 +13,7 @@ using Microsoft.Data.Entity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using website.Models;
 using website.Services;
@@ -49,17 +51,21 @@ namespace website
               options.UseSqlServer(Configuration["Data:AuthStore:ConnectionString"]));
 
       services.AddTransient<IKcsarContext, KcsarContext>(svc => new KcsarContext(Configuration["Data:DataStore:ConnectionString"]));
+      services.AddTransient<Lazy<IKcsarContext>, Lazy<IKcsarContext>>(svc => new Lazy<IKcsarContext>(() => new KcsarContext(Configuration["Data:DataStore:ConnectionString"])));
+      services.AddSingleton(svc => LogManager.GetLogger("log"));
 
       services.AddIdentity<ApplicationUser, IdentityRole>()
           .AddUserManager<ApplicationUserManager>()
           .AddEntityFrameworkStores<ApplicationDbContext>()
           .AddDefaultTokenProviders();
 
-      services.AddMvc(options => {
-                           var jsonOutputFormatter = new JsonOutputFormatter();
-                           jsonOutputFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                           options.OutputFormatters.Insert(0, jsonOutputFormatter);
-                         });
+      services.AddMvc(options =>
+      {
+        var jsonOutputFormatter = new JsonOutputFormatter();
+        jsonOutputFormatter.SerializerSettings.Converters.Add(new StringEnumConverter());
+        jsonOutputFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+        options.OutputFormatters.Insert(0, jsonOutputFormatter);
+      });
 
       // Add application services.
       services.AddTransient<IEmailSender, AuthMessageSender>();

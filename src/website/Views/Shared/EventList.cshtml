@@ -5,7 +5,7 @@
 @section header {
   <h1>@ViewBag.EventTypeText List</h1>
 }
-<div ng-if="can.create" ng-click="startCreate()" class="shadow-3" style="position:fixed; bottom:1.5em; right: 1.5em; cursor:pointer; border-radius:50%; background-color: #f39c12; z-index:1000"><i class="fa fa-2x fa-plus" style="color:white; padding:.4em .4em .3em .4em"></i></div>
+<div ng-cloak ng-if="can.create" ng-click="startCreate()" class="shadow-3" style="position:fixed; bottom:1.5em; right: 1.5em; cursor:pointer; border-radius:50%; background-color: #f39c12; z-index:1000"><i class="fa fa-2x fa-plus" style="color:white; padding:.4em .4em .3em .4em"></i></div>
 
 <div class="row">
   <div class="col-sm-12 col-xs-12">
@@ -94,6 +94,20 @@
   <script type="text/javascript" src="~/lib/TileLayer.GeoJSON.js"></script>
   <script type="text/javascript" src="~/js/maps/map.js"></script>
   <script type="text/javascript">
+    function scrollToTop(callback) {
+      if ($('html').scrollTop()) {
+        $('html').animate({ scrollTop: 0 }, {duration: 200, complete: callback});
+        return;
+      }
+
+      if ($('body').scrollTop()) {
+        $('body').animate({ scrollTop: 0 }, {duration: 200, complete: callback});
+        return;
+      }
+
+      callback();
+    }
+
     angular.module('sarDatabase').controller('EventListCtrl', ['$scope', 'EventsService', function($scope, EventsService) {
       $.extend($scope, {
         list: [],
@@ -119,10 +133,10 @@
           $event.stopPropagation();
         },
         startCreate: function() {
-          window.document.location = window.appRoot + "@(ViewBag.EventRoute)/Create";
+          scrollToTop(function() { alert('open create wizard')})
         },
         can: {
-          create: @(User.IsInRole("cdb." + ViewBag.EventTypeText.ToLower() + "editors").ToString().ToLower())
+          create: true//@(User.IsInRole("cdb." + ViewBag.EventTypeText.ToLower() + "editors").ToString().ToLower())
           }
       });
       $scope.$watch("year", function(newValue, oldValue) {

@@ -11,6 +11,7 @@ namespace Kcsara.Database.Web.Controllers
   using System.Threading;
   using Kcsar.Database.Model;
   using Kcsara.Database.Services;
+  using log4net;
   using Microsoft.AspNet.Mvc;
   using Microsoft.AspNet.Mvc.Filters;
 
@@ -22,8 +23,9 @@ namespace Kcsara.Database.Web.Controllers
     public IAuthService Permissions = null;
 //    protected readonly IAppSettings settings;
     protected readonly IKcsarContext db;
-    
-    public BaseController(IKcsarContext db)
+    protected readonly ILog log;
+
+    public BaseController(IKcsarContext db, ILog log)
     //  : this(db, Ninject.ResolutionExtensions.Get<IAppSettings>(MvcApplication.myKernel))
     //{
     //}
@@ -32,7 +34,7 @@ namespace Kcsara.Database.Web.Controllers
       : base()
     {
       this.db = db;
-//      this.settings = settings;
+      this.log = log;
 
       UserInRole = (f => User.IsInRole(f));
  //     GetSessionValue = (f => Session[f]);

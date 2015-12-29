@@ -13,7 +13,7 @@ using website.Models;
 using website.Services;
 using website.ViewModels.Account;
 
-namespace website.Controllers
+namespace Kcsara.Database.Web.Controllers
 {
     [Authorize]
     public class AccountController : Controller

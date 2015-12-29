@@ -228,16 +228,12 @@
     <Compile Include="api\CamelCaseControllerAttribute.cs" />
     <Compile Include="api\Models\AccountRegistration.cs" />
     <Compile Include="api\Models\Admin\ExecuteDatabaseScript.cs" />
-    <Compile Include="api\Models\MemberSummary.cs" />
     <Compile Include="api\Models\MemberUnitDocument.cs" />
-    <Compile Include="api\Models\SearchResult.cs" />
     <Compile Include="api\Models\TrainingCourse.cs" />
     <Compile Include="api\Models\TrainingRecord.cs" />
     <Compile Include="api\Models\UnitDocument.cs" />
-    <Compile Include="api\SearchController.cs" />
     <Compile Include="api\TrackController.cs" />
     <Compile Include="api\UnitsController.cs" />
-    <Compile Include="api\MembersController.cs" />
     <Compile Include="api\MissionsController.cs" />
     <Compile Include="api\DocumentsController.cs" />
     <Compile Include="api\ExceptionFilter.cs" />
@@ -247,7 +243,6 @@
     <Compile Include="api\Models\EmergencyContact.cs" />
     <Compile Include="api\Models\MemberMedical.cs" />
     <Compile Include="api\Models\MembersApplication.cs" />
-    <Compile Include="api\Models\NameIdPair.cs" />
     <Compile Include="api\ModelValidationFilterAttribute.cs">
       <SubType>Code</SubType>
     </Compile>

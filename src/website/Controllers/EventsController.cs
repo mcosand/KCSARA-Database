@@ -9,16 +9,18 @@ namespace Kcsara.Database.Web.Controllers
   using System.Data.Entity.SqlServer;
   using System.Linq;
   using Kcsar.Database.Model;
+  using log4net;
   using Microsoft.AspNet.Authorization;
   using Microsoft.AspNet.Mvc;
   using ViewModels;
+
   [Authorize]
   public abstract class EventsController : BaseController
   {
     public abstract string MenuGroup { get; }
     public abstract string EventTypeText { get; }
 
-    public EventsController(IKcsarContext db/*, IAppSettings settings*/) : base(db/*, settings*/)
+    public EventsController(IKcsarContext db, ILog log/*, IAppSettings settings*/) : base(db, log/*, settings*/)
     {
     }
  
@@ -138,7 +140,7 @@ namespace Kcsara.Database.Web.Controllers
   {
     public override string EventTypeText { get { return "Mission"; } }
     public override string MenuGroup { get { return "Missions";  } }
-    public MissionsController(IKcsarContext db/*, IAppSettings settings*/) : base(db/*, settings*/)
+    public MissionsController(IKcsarContext db, ILog log/*, IAppSettings settings*/) : base(db, log/*, settings*/)
     {
 
     }
@@ -149,7 +151,7 @@ namespace Kcsara.Database.Web.Controllers
     public override string EventTypeText { get { return "Training"; } }
     public override string MenuGroup { get { return "Training";  } }
 
-    public TrainingController(IKcsarContext db/*, IAppSettings settings*/) : base(db/*, settings*/)
+    public TrainingController(IKcsarContext db, ILog log/*, IAppSettings settings*/) : base(db, log/*, settings*/)
     {
 
     }
