@@ -236,6 +236,10 @@ aside.main-sidebar,
 .np‐autocomplete‐open .list‐group‐item:first‐child { border‐top‐left‐radius: 0; border‐top‐right‐radius: 0; }
 .np‐autocomplete‐wrapper .list‐group‐item.active strong { text‐shadow: none; }
 
+.np-autocomplete-wrapper .list-group {
+  width:auto !important;
+}
+
 .list-group-item div {
   white-space: nowrap;
   vertical-align:top;
