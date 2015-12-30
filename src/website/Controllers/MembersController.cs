@@ -25,7 +25,7 @@ namespace Kcsara.Database.Web.Controllers
   {
     readonly Lazy<AccountsService> accounts;
 
-    public MembersController(Lazy<AccountsService> accounts, Model.IKcsarContext db, ILog log)
+    public MembersController(Lazy<AccountsService> accounts, Lazy<Model.IKcsarContext> db, ILog log)
       : base(db, log)
     {
       this.accounts = accounts;
@@ -38,7 +38,7 @@ namespace Kcsara.Database.Web.Controllers
     [HttpGet]
     public AccountInfo AccountFor(Guid id)
     {
-      var username = db.Members.Where(f => f.Id == id).Select(f => f.Username).FirstOrDefault();
+      var username = dbFactory.Value.Members.Where(f => f.Id == id).Select(f => f.Username).FirstOrDefault();
       if (string.IsNullOrWhiteSpace(username))
       {
         return null;
@@ -369,7 +369,7 @@ namespace Kcsara.Database.Web.Controllers
     {
       id = id.TrimStart('S', 'R');
 
-      var result = db.Members.Where(f => f.DEM == id || f.DEM == "SR" + id)
+      var result = dbFactory.Value.Members.Where(f => f.DEM == id || f.DEM == "SR" + id)
         .OrderBy(f => f.LastName).ThenBy(f => f.FirstName)
         .AsEnumerable()
         .Select(f => new MemberSummary
@@ -395,7 +395,7 @@ namespace Kcsara.Database.Web.Controllers
         id.Substring(id.Length - 7, 3),
         id.Substring(id.Length - 4, 4));
 
-      var result = db.Members.Where(f => f.ContactNumbers.Any(g => SqlFunctions.PatIndex(pattern, g.Value) > 0))
+      var result = dbFactory.Value.Members.Where(f => f.ContactNumbers.Any(g => SqlFunctions.PatIndex(pattern, g.Value) > 0))
         .AsEnumerable()
         .Select(f => new MemberSummary
         {

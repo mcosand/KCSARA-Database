@@ -22,10 +22,10 @@ namespace Kcsara.Database.Web.Controllers
  //   public Action<string, object> SetSessionValue;
     public IAuthService Permissions = null;
 //    protected readonly IAppSettings settings;
-    protected readonly IKcsarContext db;
+    protected readonly Lazy<IKcsarContext> dbFactory;
     protected readonly ILog log;
 
-    public BaseController(IKcsarContext db, ILog log)
+    public BaseController(Lazy<IKcsarContext> dbFactory, ILog log)
     //  : this(db, Ninject.ResolutionExtensions.Get<IAppSettings>(MvcApplication.myKernel))
     //{
     //}
@@ -33,7 +33,7 @@ namespace Kcsara.Database.Web.Controllers
     //public BaseController(IKcsarContext db, IAppSettings settings)
       : base()
     {
-      this.db = db;
+      this.dbFactory = dbFactory;
       this.log = log;
 
       UserInRole = (f => User.IsInRole(f));

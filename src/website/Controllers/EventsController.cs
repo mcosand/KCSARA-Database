@@ -20,7 +20,7 @@ namespace Kcsara.Database.Web.Controllers
     public abstract string MenuGroup { get; }
     public abstract string EventTypeText { get; }
 
-    public EventsController(IKcsarContext db, ILog log/*, IAppSettings settings*/) : base(db, log/*, settings*/)
+    public EventsController(Lazy<IKcsarContext> db, ILog log/*, IAppSettings settings*/) : base(db, log/*, settings*/)
     {
     }
  
@@ -109,7 +109,7 @@ namespace Kcsara.Database.Web.Controllers
 
     private IQueryable<SarEvent> GetEventsOfType(string types)
     {
-      IQueryable<SarEvent> query = db.Events;
+      IQueryable<SarEvent> query = dbFactory.Value.Events;
 
       if (types.ToUpperInvariant() == "MISSIONS")
       {
@@ -140,7 +140,7 @@ namespace Kcsara.Database.Web.Controllers
   {
     public override string EventTypeText { get { return "Mission"; } }
     public override string MenuGroup { get { return "Missions";  } }
-    public MissionsController(IKcsarContext db, ILog log/*, IAppSettings settings*/) : base(db, log/*, settings*/)
+    public MissionsController(Lazy<IKcsarContext> db, ILog log/*, IAppSettings settings*/) : base(db, log/*, settings*/)
     {
 
     }
@@ -151,7 +151,7 @@ namespace Kcsara.Database.Web.Controllers
     public override string EventTypeText { get { return "Training"; } }
     public override string MenuGroup { get { return "Training";  } }
 
-    public TrainingController(IKcsarContext db, ILog log/*, IAppSettings settings*/) : base(db, log/*, settings*/)
+    public TrainingController(Lazy<IKcsarContext> db, ILog log/*, IAppSettings settings*/) : base(db, log/*, settings*/)
     {
 
     }
