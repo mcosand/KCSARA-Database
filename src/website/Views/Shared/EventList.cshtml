@@ -1,12 +1,15 @@
 ﻿@{
   ViewBag.Title = (string)ViewBag.EventTypeText + " List";
   ViewBag.NgController = "EventListCtrl";
+  bool canEdit = true;
 }
 @section header {
   <h1>@ViewBag.EventTypeText List</h1>
 }
-<div ng-cloak ng-if="can.create" ng-click="startCreate()" class="shadow-3" style="position:fixed; bottom:1.5em; right: 1.5em; cursor:pointer; border-radius:50%; background-color: #f39c12; z-index:1000"><i class="fa fa-2x fa-plus" style="color:white; padding:.4em .4em .3em .4em"></i></div>
-
+@if (canEdit)
+{
+  <div ng-cloak ng-if="can.create" ng-click="startCreate()" class="shadow-3" style="position:fixed; bottom:1.5em; right: 1.5em; cursor:pointer; border-radius:50%; background-color: #f39c12; z-index:1000"><i class="fa fa-2x fa-plus" style="color:white; padding:.4em .4em .3em .4em"></i></div>
+}
 <div class="row">
   <div class="col-sm-12 col-xs-12">
     <div class="box box-primary">
@@ -33,7 +36,7 @@
             </tr>
           </thead>
           <tbody ng-cloak>
-            <tr ng-repeat="e in list" ng-click="showInfo(e)">
+            <tr ng-repeat="e in list" ng-click="showInfo(e)" ng-cloak>
               <td ng-if="detailedEvent != e" class="hidden-xs">{{e.number}}</td>
               <td ng-if="detailedEvent != e">{{e.date.toDate() | date:'M/d/yyyy'}}</td>
               <td ng-if="detailedEvent != e" style="position:relative">
@@ -88,27 +91,102 @@
 @section head {<link rel="stylesheet" type="text/css" href="~/lib/mapbox.js/mapbox.css" />
   <link rel="stylesheet" type="text/css" href="~/css/sar-map.min.css" />}
 @section scripts {
+  @if (canEdit)
+  {
+    <script type="text/ng-template" id="create.html">
+      <div class="modal-header">
+        <button type="button" class="close" ng-click="modal.dismiss('close')" aria-hidden="true"><i class="fa fa-times"></i></button>
+        <h3 class="modal-title">Create {{modal.dialog.eventType}}</h3>
+      </div>
+      <div class="modal-body">
+        <div class="form-horizontal" style="padding-right:1em">
+          <div class="step">
+            <div>
+              <div class="step-circle">1</div>
+              <div class="step-line"></div>
+            </div>
+            <div>
+              <div class="step-title">Basic Information</div>
+              <div class="step-body">
+                <div class="form-group">
+                  <label>Title</label>
+                  <input type="text" class="form-control" placeholder="Title" ng-required="true" ng-model="modal.model.title" />
+                </div>
+                <div class="form-group has-feedback">
+                  <label>Location</label>
+                  <div class="input-group" np-autocomplete="modal.dialog.locationSearchOptions">
+                    <div class="input-group-btn">
+                      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{modal.model.locationType}} <span class="caret"></span></button>
+                      <ul class="dropdown-menu">
+                        <li><a href="#" ng-click="modal.dialog.setLocationType('WKP')">WKP - Well Known Place</a></li>
+                        <li><a href="#" ng-click="modal.dialog.setLocationType('Address')">Address</a></li>
+                        <li><a href="#" ng-click="modal.dialog.setLocationType('Coordinates')">Coordinates</a></li>
+                      </ul>
+                    </div>
+                    <input type="text" class="form-control" ng-model="modal.model.location" placeholder="Location" />
+                  </div>
+                  <span class="fa fa-globe form-control-feedback" aria-hidden="true" ng-class="{'text-success': modal.model.locationIsKnown}"></span>
+                  <span class="sr-only">(known location))</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="step">
+            <div>
+              <div class="step-circle">2</div>
+              <div class="step-line"></div>
+            </div>
+            <div>
+              <div class="step-title">Location</div>
+              <div class="step-body">
+                Location map and stuff
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        @*<a class="btn" ng-class="{'btn-primary': !modal.lastStep, 'btn-default': modal.lastStep}">Next</a>*@
+        <a class="btn" ng-class="{'btn-primary': modal.lastStep, 'btn-default': !modal.lastStep}">Create</a>
+      </div>
+    </script>
+  }
   <script src="//maps.google.com/maps/api/js?v=3.2&sensor=false"></script>
   <script type="text/javascript" src="~/lib/mapbox.js/mapbox.uncompressed.js"></script>
   <script type="text/javascript" src="~/lib/leaflet.google.js"></script>
   <script type="text/javascript" src="~/lib/TileLayer.GeoJSON.js"></script>
   <script type="text/javascript" src="~/js/maps/map.js"></script>
+  @if (canEdit)
+  {
+    <script type="text/javascript">
+      function scrollToTop(callback) {
+        if ($('html').scrollTop()) {
+          $('html').animate({ scrollTop: 0 }, {duration: 200, complete: callback});
+          return;
+        }
+
+        if ($('body').scrollTop()) {
+          $('body').animate({ scrollTop: 0 }, {duration: 200, complete: callback});
+          return;
+        }
+
+        callback();
+      }
+
+      angular.module('sarDatabase').controller('CreateEventCtrl', ['$uibModalInstance', 'dialog', 'model', function($uibModalInstance, dialog, model) {
+        var modal = this;
+        modal.dismiss = function(reason) {
+          $uibModalInstance.dismiss(reason);
+        }
+        modal.dialog = dialog;
+        modal.model = model;
+        modal.isBasicOpen = true;
+        modal.lastStep = false;
+      }]);
+    </script>
+  }
   <script type="text/javascript">
-    function scrollToTop(callback) {
-      if ($('html').scrollTop()) {
-        $('html').animate({ scrollTop: 0 }, {duration: 200, complete: callback});
-        return;
-      }
-
-      if ($('body').scrollTop()) {
-        $('body').animate({ scrollTop: 0 }, {duration: 200, complete: callback});
-        return;
-      }
-
-      callback();
-    }
-
-    angular.module('sarDatabase').controller('EventListCtrl', ['$scope', 'EventsService', function($scope, EventsService) {
+    angular.module('sarDatabase').controller('EventListCtrl', ['$scope', '$uibModal', 'EventsService', function($scope, $uibModal, EventsService) {
       $.extend($scope, {
         list: [],
         years: [@(ViewBag.Year == null ? string.Empty : ViewBag.Year)],
@@ -133,11 +211,51 @@
           $event.stopPropagation();
         },
         startCreate: function() {
-          scrollToTop(function() { alert('open create wizard')})
+          scrollToTop(function() {
+            var model = {
+              locationType: 'WKP',
+
+            };
+            var locationSearchOptions = {
+              searchParam: 'q',
+              itemTemplateUrl: 'searchResult.html',
+              listClass: 'list-group search-results',
+              limit: 8,
+              noFixWidth: true,
+              onSelect: function (item) {
+                model.locationIsKnown = true;
+                //debugger;
+              },
+              setType: function(val) {
+                locationSearchOptions.url = '@Url.Content("~/api/map/find/")' + val + "/";
+              }
+              // np-autocomplete.min.js modified to remove assignment of width
+            };
+            locationSearchOptions.setType(model.locationType);
+            var modalInstance = $uibModal.open({
+              templateUrl: 'create.html',
+              controller: 'CreateEventCtrl',
+              controllerAs: 'modal',
+              resolve: {
+                model: function() { return model },
+                dialog: function() { return {
+                  eventType: '@ViewBag.EventTypeText',
+                  locationSearchOptions: locationSearchOptions,
+                  setLocationType: function(val) { console.log('set location type: '+ val); model.locationType = val; locationSearchOptions.setType(val) }
+                }}
+              }
+            });
+            modalInstance.result
+            .then(function(data) {
+              alert('closed');
+            }, function(reason) {
+              //  alert('dismissed');
+            });
+          });
         },
         can: {
           create: true//@(User.IsInRole("cdb." + ViewBag.EventTypeText.ToLower() + "editors").ToString().ToLower())
-          }
+        }
       });
       $scope.$watch("year", function(newValue, oldValue) {
         if (newValue != oldValue) EventsService.list($scope.list, '@ViewBag.EventRoute', newValue);

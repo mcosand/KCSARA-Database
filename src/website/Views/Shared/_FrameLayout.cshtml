@@ -65,37 +65,37 @@
     <aside class="main-sidebar">
       <section class="sidebar">
         @*@if (User.IsInRole("cdb.users"))
-        {*@
-          <form class="visible-xs" style="margin:5px; border-radius:4px;" role="search" ng-controller="MainSearchCtrl">
-            <div class="form-group">
-              <div np-autocomplete="searchOptions" class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="Search ..." autocomplete="off" />
-                <span class="input-group-btn">
-                  <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
-                </span>
-              </div>
+          {*@
+        <form class="visible-xs" style="margin:5px; border-radius:4px;" role="search" ng-controller="MainSearchCtrl">
+          <div class="form-group">
+            <div np-autocomplete="searchOptions" class="input-group">
+              <input type="text" name="q" class="form-control" placeholder="Search ..." autocomplete="off" />
+              <span class="input-group-btn">
+                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
+              </span>
             </div>
-          </form>
-            <ul class="sidebar-menu">
-              <li class="header">Main Navigation</li>
-              <li><a href="~/Members"><i class="fa fa-user"></i><span>Member List</span></a></li>
-              <li sar-menu-name="Training" class="treeview">
-                <a href="#"><i class="fa fa-book"></i><span>Training</span><i class="fa fa-angle-down pull-right"></i></a>
-                <ul class="treeview-menu">
-                  <li sar-menu-name="Training/Index"><a href="~/Training/"><i class="fa fa-circle-o"></i>Overview</a></li>
-                  <li sar-menu-name="Training/List"><a href="~/Training/List/"><i class="fa fa-circle-o"></i>Rosters</a></li>
-                </ul>
-              </li>
-              <li sar-menu-name="Missions" class="treeview">
-                <a href="#"><i class="fa fa-binoculars"></i><span>Missions</span><i class="fa fa-angle-down pull-right"></i></a>
-                <ul class="treeview-menu">
-                  <li sar-menu-name="Missions/Index"><a href="~/Missions/"><i class="fa fa-circle-o"></i>Overview</a></li>
-                  <li sar-menu-name="Missions/List"><a href="~/Missions/List/"><i class="fa fa-circle-o"></i>Rosters</a></li>
-                </ul>
-              </li>
-              <li><a href="~/Units/"><i class="fa fa-users"></i><span>Units</span></a></li>
-              <li><a href="~/Animals/"><i class="fa fa-paw"></i><span>Animals</span></a></li>
+          </div>
+        </form>
+        <ul class="sidebar-menu">
+          <li class="header">Main Navigation</li>
+          <li><a href="~/Members"><i class="fa fa-user"></i><span>Member List</span></a></li>
+          <li sar-menu-name="Training" class="treeview">
+            <a href="#"><i class="fa fa-book"></i><span>Training</span><i class="fa fa-angle-down pull-right"></i></a>
+            <ul class="treeview-menu">
+              <li sar-menu-name="Training/Index"><a href="~/Training/"><i class="fa fa-circle-o"></i>Overview</a></li>
+              <li sar-menu-name="Training/List"><a href="~/Training/List/"><i class="fa fa-circle-o"></i>Rosters</a></li>
             </ul>
+          </li>
+          <li sar-menu-name="Missions" class="treeview">
+            <a href="#"><i class="fa fa-binoculars"></i><span>Missions</span><i class="fa fa-angle-down pull-right"></i></a>
+            <ul class="treeview-menu">
+              <li sar-menu-name="Missions/Index"><a href="~/Missions/"><i class="fa fa-circle-o"></i>Overview</a></li>
+              <li sar-menu-name="Missions/List"><a href="~/Missions/List/"><i class="fa fa-circle-o"></i>Rosters</a></li>
+            </ul>
+          </li>
+          <li><a href="~/Units/"><i class="fa fa-users"></i><span>Units</span></a></li>
+          <li><a href="~/Animals/"><i class="fa fa-paw"></i><span>Animals</span></a></li>
+        </ul>
         @*}*@
         @RenderSection("sidebar", false)
       </section>

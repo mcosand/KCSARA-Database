@@ -1,6 +1,6 @@
-﻿@{ 
+﻿@{
   ViewBag.NgModules = ViewBag.NgModules ?? new List<string>();
-  ViewBag.NgModules.AddRange(new[] { "ng-pros.directive.autocomplete" });
+  ViewBag.NgModules.AddRange(new[] { "ng-pros.directive.autocomplete", "ui.bootstrap" });
 }
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" @(ViewBag.NgApp != null ? new HtmlString("ng-app=\"" + ViewBag.NgApp + "\"") : new HtmlString(string.Empty))>
@@ -31,11 +31,43 @@
   <script src="~/lib/np-autocomplete/dist/np-autocomplete.min.js"></script>
   <script src="~/lib/AdminLTE/dist/js/app.js"></script>
   <script src="~/js/modules/tree-view.js"></script>
-  <script type="text/javascript">angular.module('sarDatabase', @Html.ToJson((object)(ViewBag.NgModules ?? new object[0])));</script>
+  <script src="~/lib/ui.bootstrap/src/stackedMap/stackedMap.js"></script>
+  <script src="~/lib/ui.bootstrap/src/modal/modal.js"></script>
+  <script src="~/lib/ui.bootstrap/src/collapse/collapse.js"></script>
+  <script src="~/lib/ui.bootstrap/src/accordion/accordion.js"></script>
+    <script type="text/ng-template" id="template/modal/backdrop.html">
+    <div uib-modal-animation-class="fade"
+         modal-in-class="in"
+         ng-style="{'z-index': 1040 + (index && 1 || 0) + index*10}"></div>
+  </script>
+  <script type="text/ng-template" id="template/modal/window.html">
+    <div modal-render="{{$isRendered}}" tabindex="-1" role="dialog" class="modal"
+         uib-modal-animation-class="fade"
+         modal-in-class="in"
+         ng-style="{'z-index': 1050 + index*10, display: 'block'}">
+      <div class="modal-dialog" ng-class="size ? 'modal-' + size : ''"><div class="modal-content" uib-modal-transclude></div></div>
+    </div>
+  </script>
+  <script type="text/ng-template" id="template/accordion/accordion.html">
+    <div class="panel-group" ng-transclude></div>
+  </script>
+  <script type="text/ng-template" id="template/accordion/accordion-group.html">
+    <div class="panel {{panelClass || 'panel-default'}}">
+      <div class="panel-heading" ng-keypress="toggleOpen($event)">
+        <h4 class="panel-title">
+          <a href="" tabindex="0" class="accordion-toggle" ng-click="toggleOpen()" uib-accordion-transclude="heading"><span ng-class="{'text-muted': isDisabled}">{{heading}}</span></a>
+        </h4>
+      </div>
+      <div class="panel-collapse collapse" uib-collapse="!isOpen">
+        <div class="panel-body" ng-transclude></div>
+      </div>
+    </div>
+  </script>
+  <script type="text/javascript">angular.module("ui.bootstrap", ["ui.bootstrap.modal", "ui.bootstrap.accordion"]); angular.module('sarDatabase', @Html.ToJson((object)(ViewBag.NgModules ?? new object[0])));</script>
   <script src="~/js/models/database-account.js"></script>
   <script src="~/js/services/accounts-service.js"></script>
   <script src="~/js/services/events-service.js"></script>
-  
+
   @RenderSection("head", false)
 </head>
 @RenderBody()
