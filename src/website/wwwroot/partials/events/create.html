@@ -1,0 +1,59 @@
+﻿<div class="modal-header">
+  <button type="button" class="close" ng-click="modal.dismiss('close')" aria-hidden="true"><i class="fa fa-times"></i></button>
+  <h3 class="modal-title">Create {{modal.dialog.eventType}}</h3>
+</div>
+<div class="modal-body">
+  <div class="form-horizontal" style="padding-right:1em">
+    <div class="step">
+      <div>
+        <div class="step-circle">1</div>
+        <div class="step-line"></div>
+      </div>
+      <div>
+        <div class="step-title">Basic Information</div>
+        <div class="step-body">
+          <div class="form-group">
+            <label>Title</label>
+            <input type="text" class="form-control" placeholder="Title" ng-required="true" ng-model="modal.model.title" />
+          </div>
+          <div class="form-group has-feedback">
+            <label>Location</label>
+            <div class="input-group" np-autocomplete="modal.locationSearchOptions">
+              <div class="input-group-btn">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{modal.model.locationType}} <span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                  <li><a href="#" ng-click="modal.setLocationType('WKP')">WKP - Well Known Place</a></li>
+                  <li><a href="#" ng-click="modal.setLocationType('Address')">Address</a></li>
+                  <li><a href="#" ng-click="modal.setLocationType('Coordinates')">Coordinates</a></li>
+                </ul>
+              </div>
+              <input type="text" class="form-control" ng-model="modal.model.location" placeholder="Location" />
+            </div>
+            <span class="fa fa-globe form-control-feedback" aria-hidden="true" ng-class="{'text-success': modal.model.locationIsKnown}"></span>
+            <span class="sr-only">(known location))</span>
+          </div>
+          <div class="form-group">
+            <label>Start Time</label>
+            <input type="text" class="form-control" placeholder="Start Time" ng-required="true" ng-model="modal.model.startText" ng-model-options="{getterSetter:true}" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div>
+        <div class="step-circle">2</div>
+        <div class="step-line"></div>
+      </div>
+      <div>
+        <div class="step-title">Location</div>
+        <div class="step-body">
+          Location map and stuff
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <!-- <a class="btn" ng-class="{'btn-primary': !modal.lastStep, 'btn-default': modal.lastStep}">Next</a> -->
+  <a class="btn" ng-class="{'btn-primary': modal.lastStep, 'btn-default': !modal.lastStep}">Create</a>
+</div>
