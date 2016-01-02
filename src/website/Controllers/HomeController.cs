@@ -1,13 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Kcsar.Database.Model;
-using Kcsara.Database.Web.ViewModels;
-using Microsoft.AspNet.Mvc;
-
+﻿/*
+ * Copyright 2015 Matthew Cosand
+ */
 namespace Kcsara.Database.Web.Controllers
 {
+  using System;
+  using System.Collections.Generic;
+  using System.Linq;
+  using Kcsar.Database.Model;
+  using Kcsara.Database.Web.Models;
+  using Microsoft.AspNet.Mvc;
+
   public class HomeController : Controller
   {
     private readonly Lazy<IKcsarContext> db;
@@ -98,7 +100,6 @@ namespace Kcsara.Database.Web.Controllers
             }
           })
           );
-
       }
 
       return list.OrderByDescending(f => f.Score).Take(limit).ToArray();

@@ -2,7 +2,7 @@
  * Copyright 2009-2015 Matthew Cosand
  */
 
-namespace Kcsar
+namespace Kcsara.Database.Web
 {
   using Newtonsoft.Json;
   using Newtonsoft.Json.Converters;
@@ -12,10 +12,12 @@ namespace Kcsar
   {
     public static JsonSerializerSettings GetJsonSettings()
     {
-      JsonSerializerSettings settings = new JsonSerializerSettings
-      {
-        ContractResolver = new CamelCasePropertyNamesContractResolver()
-      };
+      return DecorateJsonSettings(new JsonSerializerSettings());
+    }
+
+    public static JsonSerializerSettings DecorateJsonSettings(JsonSerializerSettings settings)
+    {
+      settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
       settings.Converters.Add(new StringEnumConverter());
       return settings;
     }

@@ -22,7 +22,7 @@ namespace Kcsar.Database.Model
     public IDbSet<Animal> Animals { get; set; }
     public IDbSet<AnimalMission> AnimalMissions { get; set; }
     public IDbSet<AnimalOwner> AnimalOwners { get; set; }
-    public IDbSet<SarEvent> Events { get; set; }
+    public IDbSet<SarEventRow> Events { get; set; }
     public IDbSet<Mission_Old> Missions { get; set; }
     public IDbSet<MissionDetails> MissionDetails { get; set; }
     public IDbSet<MissionLog> MissionLog { get; set; }
@@ -102,6 +102,11 @@ namespace Kcsar.Database.Model
         cs.MapRightKey("Training_Id");
         cs.ToTable("TrainingSarUnits");
       });
+
+      modelBuilder.Entity<SarEventRow>()
+        .Map<SarEventRow>(m => m.Requires("Discriminator").HasValue(string.Empty).IsRequired())
+        .Map<MissionRow>(m => m.Requires("Discriminator").HasValue("Mission").IsRequired())
+        .Map<TrainingRow>(m => m.Requires("Discriminator").HasValue("Training").IsRequired());
     }
 
     public Func<UnitMembership, bool> GetActiveMembershipFilter(Guid? unit, DateTime time)

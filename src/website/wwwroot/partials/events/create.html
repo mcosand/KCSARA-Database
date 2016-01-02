@@ -1,9 +1,9 @@
-﻿<div class="modal-header">
-  <button type="button" class="close" ng-click="modal.dismiss('close')" aria-hidden="true"><i class="fa fa-times"></i></button>
-  <h3 class="modal-title">Create {{modal.dialog.eventType}}</h3>
-</div>
-<div class="modal-body">
-  <div class="form-horizontal" style="padding-right:1em">
+﻿<form name="modal.createForm" ng-submit="modal.submit()" novalidate="novalidate" class="form-horizontal">
+  <div class="modal-header">
+    <button type="button" class="close" ng-click="modal.dismiss('close')" aria-hidden="true"><i class="fa fa-times"></i></button>
+    <h3 class="modal-title">Create {{modal.dialog.eventType}}</h3>
+  </div>
+  <div class="modal-body">
     <div class="step">
       <div>
         <div class="step-circle">1</div>
@@ -13,33 +13,101 @@
         <div class="step-title">Basic Information</div>
         <div class="step-body">
           <div class="form-group">
-            <label>Title</label>
-            <input type="text" class="form-control" placeholder="Title" ng-required="true" ng-model="modal.model.title" />
+            <label class="col-sm-2 control-label">Title</label>
+            <div class="col-sm-10">
+              <input type="text" name="name" class="form-control" placeholder="Title" ng-required="true" ng-model="modal.model.name" required />
+              <span class="text-danger" ng-show="modal.createForm.name.$touched || modal.createForm.$submitted">
+                <span ng-show="modal.createForm.name.$error.required">Required</span>
+                <span ng-show="modal.createForm.name.$error.server">{{modal.errors.name}}</span>
+              </span>
+            </div>
           </div>
           <div class="form-group has-feedback">
-            <label>Location</label>
-            <div class="input-group" np-autocomplete="modal.locationSearchOptions">
-              <div class="input-group-btn">
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{modal.model.locationType}} <span class="caret"></span></button>
-                <ul class="dropdown-menu">
-                  <li><a href="#" ng-click="modal.setLocationType('WKP')">WKP - Well Known Place</a></li>
-                  <li><a href="#" ng-click="modal.setLocationType('Address')">Address</a></li>
-                  <li><a href="#" ng-click="modal.setLocationType('Coordinates')">Coordinates</a></li>
-                </ul>
-              </div>
-              <input type="text" class="form-control" ng-model="modal.model.location" placeholder="Location" />
+            <label class="col-sm-2 control-label">Location</label>
+            <div class="col-sm-10">
+              <input type="text" name="location" class="form-control" placeholder="Location" ng-required="true" ng-model="modal.model.location" required />
+              <span class="text-danger" ng-show="modal.createForm.location.$touched || modal.createForm.$submitted">
+                <span ng-show="modal.createForm.location.$error.required">Required</span>
+                <span ng-show="modal.createForm.location.$error.server">{{modal.errors.location}}</span>
+              </span>
             </div>
-            <span class="fa fa-globe form-control-feedback" aria-hidden="true" ng-class="{'text-success': modal.model.locationIsKnown}"></span>
-            <span class="sr-only">(known location))</span>
           </div>
           <div class="form-group">
-            <label>Start Time</label>
-            <input type="text" class="form-control" placeholder="Start Time" ng-required="true" ng-model="modal.model.startText" ng-model-options="{getterSetter:true}" />
+            <label class="col-sm-2 col-xs-12 control-label">County</label>
+            <div class="col-sm-4 col-xs-6">
+              <select class="form-control" ng-model="modal.model.county">
+                <option value="adams">Adams</option>
+                <option value="asotin">Asotin</option>
+                <option value="benton">Benton</option>
+                <option value="chelan">Chelan</option>
+                <option value="clallam">Clallam</option>
+                <option value="clark">Clark</option>
+                <option value="columbia">Columbia</option>
+                <option value="cowlitz">Cowlitz</option>
+                <option value="douglas">Douglas</option>
+                <option value="ferry">Ferry</option>
+                <option value="franklin">Franklin</option>
+                <option value="garfield">Garfield</option>
+                <option value="grant">Grant</option>
+                <option value="grays harbor">Grays Harbor</option>
+                <option value="island">Island</option>
+                <option value="jefferson">Jefferson</option>
+                <option value="king">King</option>
+                <option value="kitsap">Kitsap</option>
+                <option value="kittitas">Kittitas</option>
+                <option value="klickitat">Klickitat</option>
+                <option value="lewis">Lewis</option>
+                <option value="lincoln">Lincoln</option>
+                <option value="mason">Mason</option>
+                <option value="okanogan">Okanogan</option>
+                <option value="pacific">Pacific</option>
+                <option value="pend orielle">Pend Orielle</option>
+                <option value="pierce">Pierce</option>
+                <option value="san juan">San Juan</option>
+                <option value="skagit">Skagit</option>
+                <option value="skamania">Skamania</option>
+                <option value="snohomish">Snohomish</option>
+                <option value="spokane">Spokane</option>
+                <option value="stevens">Stevens</option>
+                <option value="thurston">Thurston</option>
+                <option value="wahkiakum">Wahkiakum</option>
+                <option value="walla walla">Walla Walla</option>
+                <option value="whatcom">Whatcom</option>
+                <option value="whitman">Whitman</option>
+                <option value="yakima">Yakima</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 col-xs-12 control-label">State #</label>
+            <div class="col-sm-4 col-xs-6">
+              <input type="text" class="form-control" placeholder="State #" ng-model="modal.model.stateNumber" server-error />
+              <div class="text-danger" ng-show="modal.createForm.stateNumber.$touched || modal.createForm.$submitted">
+                <span ng-show="modal.createForm.stateNumber.$error.server">{{modal.errors.stateNumber}}</span>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 col-xs-12 control-label">Start Time</label>
+            <div class="col-sm-4 col-xs-6">
+              <input type="text" name="start" class="form-control" placeholder="Start Time" ng-model="modal.model.startText" ng-model-options="{getterSetter:true, updateOn:'blur'}" server-error required />
+              <div class="text-danger" ng-show="modal.createForm.start.$touched || modal.createForm.$submitted">
+                <span ng-show="modal.createForm.start.$error.required">Required</span>
+                <span ng-show="modal.createForm.start.$error.server">{{modal.errors.start}}</span>
+              </div>
+            </div>
+            <label class="col-sm-2 col-xs-12 control-label">Stop Time</label>
+            <div class="col-sm-4 col-xs-6">
+              <input type="text" name="stop" class="col-sm-10 form-control" placeholder="Stop Time" ng-model="modal.model.stopText" ng-model-options="{getterSetter:true, updateOn:'blur'}" server-error />
+              <div class="text-danger" ng-show="modal.createForm.stop.$touched || modal.createForm.$submitted">
+                <span ng-show="modal.createForm.stop.$error.server">{{modal.errors.stop}}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="step">
+    <!--<div class="step">
       <div>
         <div class="step-circle">2</div>
         <div class="step-line"></div>
@@ -50,10 +118,11 @@
           Location map and stuff
         </div>
       </div>
-    </div>
+    </div>-->
+
   </div>
-</div>
-<div class="modal-footer">
-  <!-- <a class="btn" ng-class="{'btn-primary': !modal.lastStep, 'btn-default': modal.lastStep}">Next</a> -->
-  <a class="btn" ng-class="{'btn-primary': modal.lastStep, 'btn-default': !modal.lastStep}">Create</a>
-</div>
+  <div class="modal-footer">
+    <!-- <a class="btn" ng-class="{'btn-primary': !modal.lastStep, 'btn-default': modal.lastStep}">Next</a> -->
+    <button type="submit" class="btn btn-primary" ng-class="{'btn-primary': modal.lastStep, 'btn-default': !modal.lastStep}">Create</button>
+  </div>
+</form>

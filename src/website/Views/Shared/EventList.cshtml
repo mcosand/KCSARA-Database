@@ -11,7 +11,7 @@
   <div ng-cloak ng-if="can.create" ng-click="startCreate()" class="shadow-3" style="position:fixed; bottom:1.5em; right: 1.5em; cursor:pointer; border-radius:50%; background-color: #f39c12; z-index:1000"><i class="fa fa-2x fa-plus" style="color:white; padding:.4em .4em .3em .4em"></i></div>
 }
 <div class="row">
-  <div class="col-sm-12 col-xs-12">
+  <div class="col-xs-12">
     <div class="box box-primary">
       <div class="box-header with-border">
         <div class="pull-right">
@@ -118,42 +118,45 @@
         callback();
       }
 
-      angular.module('sarDatabase').controller('CreateEventCtrl', ['$uibModalInstance', 'dialog', 'model', function($uibModalInstance, dialog, model) {
+      angular.module('sarDatabase').controller('CreateEventCtrl', ['$uibModalInstance', 'dialog', 'model', 'EventsService', function($uibModalInstance, dialog, model, EventsService) {
         var modal = this;
         modal.dismiss = function(reason) {
           $uibModalInstance.dismiss(reason);
+        }
+        modal.submit = function () {
+          if (!modal.createForm.$valid) return;
+
+          modal.errors = {}; //clean up previous server errors
+
+          EventsService.save(modal.model, dialog.eventRoute)
+          .then(function () {
+            $uibModalInstance.close(modal.model);
+          }, function (response) {
+            angular.forEach(response.errors, function (errors, field) {
+              if (modal.createForm[field] !== undefined) { modal.createForm[field].$setValidity('server', false); }
+              modal.errors[field] = errors;
+            });
+          });
         }
         modal.dialog = dialog;
         modal.model = model;
         modal.isBasicOpen = true;
         modal.lastStep = false;
-        modal.locationSearchOptions = {
-          searchParam: 'q',
-          itemTemplateUrl: 'searchResult.html',
-          listClass: 'list-group search-results',
-          limit: 8,
-          noFixWidth: true,
-          onSelect: function (item) {
-            model.locationIsKnown = true;
-            //debugger;
-          },
-          setType: function(val) {
-            modal.locationSearchOptions.url = window.appRoot + 'api/map/find/' + val + '/';
-          }
-          // np-autocomplete.min.js modified to remove assignment of width
-        };
-        modal.locationSearchOptions.setType(model.locationType);
-        modal.setLocationType = function(val) { console.log('set location type: '+ val); model.locationType = val; modal.locationSearchOptions.setType(val) }
-
       }]);
     </script>
   }
   <script type="text/javascript">
-    angular.module('sarDatabase').controller('EventListCtrl', ['$scope', '$uibModal', 'EventsService', function($scope, $uibModal, EventsService) {
+    angular.module('sarDatabase').controller('EventListCtrl', ['$scope', '$rootScope', '$location', '$uibModal', 'EventsService',
+      function ($scope, $rootScope, $location, $uibModal, EventsService) {
+        var loadList = function (year) {
+          console.log('changing year' + year)
+          EventsService.list($scope.list, '@ViewBag.EventRoute', year);
+          $location.path(year);
+        }
       $.extend($scope, {
         list: [],
-        years: [@(ViewBag.Year == null ? string.Empty : ViewBag.Year)],
-        year: @(ViewBag.Year == null ? "null" : ViewBag.Year),
+        years: [],
+        year: new Date().getFullYear(),
         detailedEvent: null,
         eventMap: null,
         showInfo: function(e) {
@@ -167,36 +170,58 @@
           }
         },
         tabLink: function(action, id) {
-          return window.appRoot + '@ViewBag.EventRoute/' + action + '/' + id;
+          return window.appRoot + '@ViewBag.EventRoute/' + id + '#/' + action;
         },
         mapClick: function(id, $event) {
           alert('hi');
           $event.stopPropagation();
         },
-        startCreate: function() {
+        startCreate: function () {
+          var parts = $location.path().split('/');
+          if (parts.length < 1) { parts.push(''); }
+          if (parts.length < 2) { parts.push($scope.year); }
+          if (parts.length < 3) { parts.push('create'); }
+          parts[2] = "create";
+          $location.path(parts.join('/'));
+        },
+        showCreateDialog: function() {
           scrollToTop(function() {
             var model = {
-              locationType: 'WKP',
               start: moment(),
-              startText: function(val) {
-                return (arguments.length ? (model.start = val) : model.start);
-              }
+              startText: function (val) {
+                if (arguments.length && val) {
+                  model.start = moment(val, ["YYYY-MM-DD HH:mm", "YYYY-MM-DD HHmm", "MM/DD/YYYY HH:mm", "MM/DD/YYYY HHmm"]);
+                  model.start.toJSON = function () { return model.start.format("YYYY-MM-DDTHH:mm") };
+                  return model.start;
+                } else if (arguments.length) {
+                  model.start = null;
+                } else {
+                  return model.start.format('YYYY-MM-DD HH:mm');
+                }
+              },
+              county: 'king'
             };
+            model.start.toJSON = function () { return model.start.format("YYYY-MM-DDTHH:mm") };
+
             var modalInstance = $uibModal.open({
               templateUrl: window.appRoot + 'partials/events/create.html',
               controller: 'CreateEventCtrl',
               controllerAs: 'modal',
+              size: 'lg',
               resolve: {
                 model: function() { return model },
                 dialog: function() { return {
                   eventType: '@ViewBag.EventTypeText',
+                  eventRoute: '@ViewBag.EventRoute'
                 }}
               }
             });
             modalInstance.result
-            .then(function(data) {
-              alert('closed');
-            }, function(reason) {
+            .then(function (data) {
+              loadList(data.start.year());
+              $location.path($location.path().toUpperCase().replace('/CREATE', ''));
+            }, function (reason) {
+              $location.path($location.path().toUpperCase().replace('/CREATE', ''));
               //  alert('dismissed');
             });
           });
@@ -206,7 +231,19 @@
         }
       });
       $scope.$watch("year", function(newValue, oldValue) {
-        if (newValue != oldValue) EventsService.list($scope.list, '@ViewBag.EventRoute', newValue);
+        if (newValue == oldValue) return;
+        loadList(newValue);
+       });
+      $rootScope.$on('$locationChangeStart', function(event, newUrl, oldUrl) {
+        console.log(newUrl);
+        var parts = $location.path().split('/');
+        if (parts.length < 2) return; // The route will get '/' prepended and we'll come back around
+        var hashYear = parts[1];
+        hashYear = parseInt(hashYear);
+        if (!isNaN(hashYear)) { $scope.year = hashYear; if ($scope.years.length == 0) { $scope.years = [hashYear]; }}
+        if ((parts[parts.length-1] || '').toLowerCase() == "create") {
+          $scope.showCreateDialog();
+        }
       });
       EventsService.list($scope.list, '@ViewBag.EventRoute', $scope.year);
       EventsService.years($scope.years, '@ViewBag.EventRoute').then(function(list) {

@@ -14,7 +14,7 @@ namespace Kcsar.Database.Model
     IDbSet<Animal> Animals { get; set; }
     IDbSet<AnimalMission> AnimalMissions { get; set; }
     IDbSet<AnimalOwner> AnimalOwners { get; set; }
-    IDbSet<SarEvent> Events { get; set; }
+    IDbSet<SarEventRow> Events { get; set; }
     IDbSet<Mission_Old> Missions { get; set; }
     IDbSet<MissionDetails> MissionDetails { get; set; }
     IDbSet<MissionLog> MissionLog { get; set; }

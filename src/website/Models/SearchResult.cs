@@ -1,7 +1,7 @@
 ﻿/*
- * Copyright 2013-2014 Matthew Cosand
+ * Copyright 2013-2016 Matthew Cosand
  */
-namespace Kcsara.Database.Web.ViewModels
+namespace Kcsara.Database.Web.Models
 {
   public class SearchResponse
   {

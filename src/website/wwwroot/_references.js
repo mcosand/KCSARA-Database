@@ -1,6 +1,7 @@
 ﻿/// <autosync enabled="true" />
 /// <reference path="../gulpfile.js" />
 /// <reference path="js/directives/password-validator.js" />
+/// <reference path="js/directives/server-error.js" />
 /// <reference path="js/directives/status-glyph.js" />
 /// <reference path="js/maps/map.js" />
 /// <reference path="js/models/database-account.js" />

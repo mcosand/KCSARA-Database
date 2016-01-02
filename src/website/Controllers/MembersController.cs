@@ -6,19 +6,14 @@ namespace Kcsara.Database.Web.Controllers
 {
   using System;
   using System.Collections.Generic;
-  using System.Configuration;
   using System.Data.Entity.SqlServer;
   using System.Linq;
   using System.Text.RegularExpressions;
-  //using System.Web.Http;
   using Database.Services;
-  //using Kcsara.Database.Web.api.Models;
-  //using Kcsara.Database.Web.Services;
   using log4net;
   using Microsoft.AspNet.Mvc;
-  using Newtonsoft.Json;
+  using Models;
   using ObjectModel.Accounts;
-  using ViewModels;
   using Model = Kcsar.Database.Model;
 
   public class MembersController : BaseController

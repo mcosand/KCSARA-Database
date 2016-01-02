@@ -1,7 +1,7 @@
 ﻿/*
- * Copyright 2015 Matthew Cosand
+ * Copyright 2015-2016 Matthew Cosand
  */
-namespace Kcsara.Database.Web.ViewModels
+namespace Kcsara.Database.Web.Models
 {
   using System.Collections.Generic;
 

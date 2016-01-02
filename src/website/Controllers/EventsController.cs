@@ -12,18 +12,24 @@ namespace Kcsara.Database.Web.Controllers
   using log4net;
   using Microsoft.AspNet.Authorization;
   using Microsoft.AspNet.Mvc;
-  using ViewModels;
+  using Models;
+  using Services;
 
   [Authorize]
-  public abstract class EventsController : BaseController
+  public abstract class EventsController<RowType, ViewModelType> : BaseController
+    where RowType : SarEventRow, new()
+    where ViewModelType : EventSummary, new()
   {
+    private readonly IEventsService<ViewModelType> service;
+
     public abstract string MenuGroup { get; }
     public abstract string EventTypeText { get; }
 
-    public EventsController(Lazy<IKcsarContext> db, ILog log/*, IAppSettings settings*/) : base(db, log/*, settings*/)
+    public EventsController(Lazy<IEventsService<ViewModelType>> service, Lazy<IKcsarContext> db, ILog log/*, IAppSettings settings*/) : base(db, log/*, settings*/)
     {
+      this.service = service.Value;
     }
- 
+
     //protected override void Initialize(RequestContext requestContext)
     //{
     //  base.Initialize(requestContext);
@@ -68,56 +74,41 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [HttpGet]
-    [Route("api/[controller]/list/{id:int?}")]
-    public EventList ApiList(int? id = null)
+    [Route("api/[controller]/list/{year:int?}")]
+    public EventList ApiList(int? year = null)
     {
-      var types = RouteData.Values["controller"].ToString();
-
-      IQueryable<SarEvent> query = GetEventsOfType(types);
-
-      if (id != null)
-      {
-        var dateStart = new DateTime(id.Value, 1, 1);
-        var dateEnd = dateStart.AddYears(1);
-        query = query.Where(f => f.StartTime >= dateStart && f.StartTime < dateEnd);
-      }
-
-      var result = (from e in query.SelectMany(f => f.Roster).DefaultIfEmpty()
-                    group e by 1 into g
-                    select new EventList
-                    {
-                      People = g.DefaultIfEmpty().Select(f => (Guid?)f.Person.Id).Where(f => f != null).Distinct().Count(),
-                      Hours = Math.Round(g.Sum(f => SqlFunctions.DateDiff("minute", f.TimeIn, f.TimeOut) / 15.0) ?? 0.0) / 4.0,
-                      Miles = g.Sum(f => f.Miles)
-                    }).SingleOrDefault();
-
-      result.Events = query
-        .OrderBy(f => f.StartTime)
-        .Select(f => new
-        {
-          Id = f.Id,
-          Number = f.StateNumber,
-          Date = f.StartTime,
-          Title = f.Title,
-          People = f.Roster.DefaultIfEmpty().Select(g => (Guid?)g.Person.Id).Where(g => g != null).Distinct().Count(),
-          Hours = Math.Round(f.Roster.DefaultIfEmpty().Sum(g => SqlFunctions.DateDiff("minute", g.TimeIn, g.TimeOut) / 15.0) ?? 0.0) / 4.0,
-          Miles = f.Roster.DefaultIfEmpty().Sum(g => g.Miles)
-        });
-
-      return result;
+      return service.List(year);
     }
 
-    private IQueryable<SarEvent> GetEventsOfType(string types)
+    [HttpPost]
+    [HandleException]
+    [Route("api/[controller]")]
+    public ViewModelType ApiCreate([FromBody] ViewModelType evt)
     {
-      IQueryable<SarEvent> query = dbFactory.Value.Events;
+      if (evt.Id != Guid.Empty) throw new StatusCodeException(System.Net.HttpStatusCode.BadRequest, "Id should be blank for POST requests");
+      return service.Save(evt);
+    }
+
+    [HttpPut]
+    [HandleException]
+    [Route("api/[controller]")]
+    public ViewModelType ApiUpdate([FromBody] ViewModelType evt)
+    {
+      if (evt.Id == Guid.Empty) throw new StatusCodeException(System.Net.HttpStatusCode.BadRequest, "Id is required");
+      return service.Save(evt);
+    }
+
+    private IQueryable<SarEventRow> GetEventsOfType(string types)
+    {
+      IQueryable<SarEventRow> query = dbFactory.Value.Events;
 
       if (types.ToUpperInvariant() == "MISSIONS")
       {
-        query = query.OfType<Mission>();
+        query = query.OfType<MissionRow>();
       }
       else if (types.ToUpperInvariant() == "TRAINING")
       {
-        query = query.OfType<Training>();
+        query = query.OfType<TrainingRow>();
       }
 
       return query;
@@ -129,29 +120,29 @@ namespace Kcsara.Database.Web.Controllers
     {
       var types = RouteData.Values["controller"].ToString();
 
-      IQueryable<SarEvent> query = GetEventsOfType(types);
+      IQueryable<SarEventRow> query = GetEventsOfType(types);
 
       return query.Select(f => (int)SqlFunctions.DatePart("year", f.StartTime)).Distinct().Where(f => f > 1900).OrderByDescending(f => f);
     }
 
   }
 
-  public class MissionsController : EventsController
+  public class MissionsController : EventsController<MissionRow, Mission>
   {
     public override string EventTypeText { get { return "Mission"; } }
-    public override string MenuGroup { get { return "Missions";  } }
-    public MissionsController(Lazy<IKcsarContext> db, ILog log/*, IAppSettings settings*/) : base(db, log/*, settings*/)
+    public override string MenuGroup { get { return "Missions"; } }
+    public MissionsController(Lazy<IEventsService<Mission>> service, Lazy<IKcsarContext> db, ILog log/*, IAppSettings settings*/) : base(service, db, log/*, settings*/)
     {
 
     }
   }
 
-  public class TrainingController : EventsController
+  public class TrainingController : EventsController<TrainingRow, EventSummary>
   {
     public override string EventTypeText { get { return "Training"; } }
-    public override string MenuGroup { get { return "Training";  } }
+    public override string MenuGroup { get { return "Training"; } }
 
-    public TrainingController(Lazy<IKcsarContext> db, ILog log/*, IAppSettings settings*/) : base(db, log/*, settings*/)
+    public TrainingController(Lazy<IEventsService<EventSummary>> service, Lazy<IKcsarContext> db, ILog log/*, IAppSettings settings*/) : base(service, db, log/*, settings*/)
     {
 
     }

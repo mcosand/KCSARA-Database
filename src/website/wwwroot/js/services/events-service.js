@@ -42,6 +42,22 @@ angular.module('sarDatabase').service('EventsService', ['$http', '$q', function 
       })
       .error(function (response) { deferred.reject(response); });
       return deferred.promise;
-    }
+    },
+    save: function (model, type) {
+      var deferred = $q.defer();
+      //if (model.linkedMember.loaded) delete model.linkedMember.loaded;
+      $http({
+        method: model['id'] ? 'PUT' : 'POST',
+        url: window.appRoot + 'api/' + type,
+        data: model,
+      })
+      .success(function (data) {
+        data.start = moment(data.start);
+        if (data.stop) { data.stop = moment(data.stop); }
+        deferred.resolve(data);
+      })
+      .error(function (response) { deferred.reject(response); })
+      return deferred.promise;
+    },
   });
 }]);

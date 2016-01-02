@@ -11,7 +11,7 @@ namespace Kcsar.Database.Model
   using System.Text.RegularExpressions;
 
   [Table("Events")]
-  public class SarEvent : ModelObject
+  public class SarEventRow : ModelObject
   {
     public string Title { get; set; }
     public string County { get; set; }
@@ -24,13 +24,13 @@ namespace Kcsar.Database.Model
     public string Location { get; set; }
     public bool ReportCompleted { get; set; }
 
-    public virtual ICollection<SarEvent> Followups { get; set; }
+    public virtual ICollection<SarEventRow> Followups { get; set; }
 
     [Column("Previous_Id")]
     public Guid? PreviousId { get; set; }
 
     [ForeignKey("PreviousId")]
-    public virtual SarEvent Previous { get; set; }
+    public virtual SarEventRow Previous { get; set; }
 
     //   public virtual ICollection<MissionLog> Log { get; set; }
     public virtual ICollection<EventRoster> Roster { get; set; }
@@ -39,7 +39,7 @@ namespace Kcsar.Database.Model
     //  public virtual ICollection<SubjectGroup> SubjectGroups { get; set; }
     //  public virtual ICollection<MissionGeography> MissionGeography { get; set; }
 
-    public SarEvent()
+    public SarEventRow()
       : base()
     {
       this.StartTime = DateTime.Now.Date;
@@ -108,11 +108,11 @@ namespace Kcsar.Database.Model
       }
     }
   }
-  public class Mission : SarEvent
+  public class MissionRow : SarEventRow
   {
-    public static Mission FromOldModel(Mission_Old m)
+    public static MissionRow FromOldModel(Mission_Old m)
     {
-      var newMission = new Mission
+      var newMission = new MissionRow
       {
         Id = m.Id,
         ChangedBy = m.ChangedBy,
@@ -132,11 +132,11 @@ namespace Kcsar.Database.Model
     }
   }
 
-  public class Training : SarEvent
+  public class TrainingRow : SarEventRow
   {
-    public static Training FromOldModel(Training_Old t)
+    public static TrainingRow FromOldModel(Training_Old t)
     {
-      var newTraining = new Training
+      var newTraining = new TrainingRow
       {
         Id = t.Id,
         ChangedBy = t.ChangedBy,

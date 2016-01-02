@@ -5,9 +5,9 @@ namespace Kcsara.Database.Web.Controllers
 {
   using System;
   using Kcsar.Database.Model;
-  using Kcsara.Database.Web.ViewModels;
   using log4net;
   using Microsoft.AspNet.Mvc;
+  using Models;
 
   public class MapController : BaseController
   {

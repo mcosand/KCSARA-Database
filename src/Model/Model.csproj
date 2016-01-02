@@ -149,7 +149,7 @@
     <Compile Include="Migrations\201309050314287_UnitDocuments.Designer.cs">
       <DependentUpon>201309050314287_UnitDocuments.cs</DependentUpon>
     </Compile>
-    <Compile Include="SarEvent.cs" />
+    <Compile Include="SarEventRow.cs" />
     <Compile Include="SensitiveInfoAccess.cs" />
     <Compile Include="TrackPoint.cs" />
     <Compile Include="EventRoster.cs" />

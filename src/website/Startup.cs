@@ -1,20 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Kcsar.Database.Model;
+using Kcsara.Database.Web.Services;
 using log4net;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Formatters;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
 using website.Models;
 using website.Services;
 
@@ -50,9 +45,13 @@ namespace website
           .AddDbContext<ApplicationDbContext>(options =>
               options.UseSqlServer(Configuration["Data:AuthStore:ConnectionString"]));
 
-      services.AddTransient<IKcsarContext, KcsarContext>(svc => new KcsarContext(Configuration["Data:DataStore:ConnectionString"]));
+      //services.AddTransient<IKcsarContext, KcsarContext>(svc => new KcsarContext(Configuration["Data:DataStore:ConnectionString"]));
       services.AddTransient<Lazy<IKcsarContext>, Lazy<IKcsarContext>>(svc => new Lazy<IKcsarContext>(() => new KcsarContext(Configuration["Data:DataStore:ConnectionString"])));
+      services.AddSingleton<Func<IKcsarContext>, Func<IKcsarContext>>(svc => () => new KcsarContext(Configuration["Data:DataStore:ConnectionString"]));
       services.AddSingleton(svc => LogManager.GetLogger("log"));
+
+      services.AddSingleton(svc => new Lazy<IEventsService<Kcsara.Database.Web.Models.Mission>>(() => new MissionsService(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
+      services.AddSingleton(svc => new Lazy<IEventsService<Kcsara.Database.Web.Models.EventSummary>>(() => new EventsService<TrainingRow, Kcsara.Database.Web.Models.EventSummary>(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
 
       services.AddIdentity<ApplicationUser, IdentityRole>()
           .AddUserManager<ApplicationUserManager>()
@@ -62,9 +61,11 @@ namespace website
       services.AddMvc(options =>
       {
         var jsonOutputFormatter = new JsonOutputFormatter();
-        jsonOutputFormatter.SerializerSettings.Converters.Add(new StringEnumConverter());
-        jsonOutputFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+        Kcsara.Database.Web.Utils.DecorateJsonSettings(jsonOutputFormatter.SerializerSettings);
         options.OutputFormatters.Insert(0, jsonOutputFormatter);
+        var inputFormatter = new JsonInputFormatter();
+        Kcsara.Database.Web.Utils.DecorateJsonSettings(inputFormatter.SerializerSettings);
+        options.InputFormatters.Insert(0, inputFormatter);
       });
 
       // Add application services.

@@ -90,6 +90,11 @@ a {
     color: #008d4c;
   }
 
+  .modal-footer .btn-primary {
+    color: white;
+    background-color: #008d4c;
+  }
+
   .box-action-footer .btn {
     width: 100%;
   }
@@ -394,4 +399,8 @@ td .parent-hover-show {
 .step-title {
   line-height: 32px;
   font-weight: bold;
+}
+
+form.ng-submitted input.ng-invalid {
+  border: solid 1px #a94442;
 }

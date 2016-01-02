@@ -1,8 +1,7 @@
 ﻿/*
- * Copyright 2009-2015 Matthew Cosand
+ * Copyright 2009-2016 Matthew Cosand
  */
-
-namespace Kcsara.Database.Web.ViewModels
+namespace Kcsara.Database.Web.Models
 {
   using System;
   using Kcsar.Database.Model;

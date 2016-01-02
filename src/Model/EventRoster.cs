@@ -16,7 +16,7 @@ namespace Kcsar.Database.Model
     public int? Miles { get; set; }
     public string Comments { get; set; }
     public virtual Member Person { get; set; }
-    public virtual SarEvent Event { get; set; }
+    public virtual SarEventRow Event { get; set; }
 //    public virtual ICollection<TrainingAward> TrainingAwards { get; set; }
 //    public virtual ICollection<ComputedTrainingAward> ComputedAwards { get; set; }
     public int? OvertimeHours { get; set; }

@@ -9,6 +9,8 @@ namespace Kcsar.Database.Model
 
   public static class Utils
   {
+    public static readonly DateTime SarEpoch = new DateTime(1950, 1, 1);
+
     public static readonly string[] CountyNames = new string[] {
                     "Adams","Asotin","Benton","Chelan","Clallam","Clark","Columbia","Cowlitz","Douglas","Ferry","Franklin","Garfield","Grant","Grays Harbor","Island","Jefferson",
                     "King","Kitsap","Kittitas","Klickitat","Lewis","Lincoln","Mason","Okanogan","Pacific","Pend Oreille","Pierce","San Juan","Skagit","Skamania","Snohomish",
