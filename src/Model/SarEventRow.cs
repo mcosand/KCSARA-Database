@@ -25,6 +25,7 @@ namespace Kcsar.Database.Model
     public bool ReportCompleted { get; set; }
 
     public virtual ICollection<SarEventRow> Followups { get; set; }
+    public virtual ICollection<EventLogRow> Log { get; set; }
 
     [Column("Previous_Id")]
     public Guid? PreviousId { get; set; }

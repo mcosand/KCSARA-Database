@@ -140,6 +140,10 @@
     <Compile Include="Migrations\201512170737052_NewEventTable.Designer.cs">
       <DependentUpon>201512170737052_NewEventTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201601030008454_EventLogs.cs" />
+    <Compile Include="Migrations\201601030008454_EventLogs.Designer.cs">
+      <DependentUpon>201601030008454_EventLogs.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Migrator.cs" />
     <Compile Include="MemberUnitDocument.cs" />
     <Compile Include="MemberMedical.cs" />
@@ -191,7 +195,7 @@
     <Compile Include="SubjectGroupLink.cs" />
     <Compile Include="TrainingCourse.cs" />
     <Compile Include="PersonContact.cs" />
-    <Compile Include="MissionLog.cs" />
+    <Compile Include="EventLogRow.cs" />
     <Compile Include="ITrainingAward.cs" />
     <Compile Include="SarUnit.cs" />
     <Compile Include="Training_Old.cs" />
@@ -279,6 +283,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201512170737052_NewEventTable.resx">
       <DependentUpon>201512170737052_NewEventTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601030008454_EventLogs.resx">
+      <DependentUpon>201601030008454_EventLogs.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

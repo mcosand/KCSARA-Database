@@ -11,8 +11,8 @@
     "font-awesome": "fontawesome#~4.5.0",
     "AdminLTE": "adminlte#~2.3.2",
     "moment": "~2.10.6",
-    "angular-modal-service": "~0.6.9",
-    "mapbox.js": "~2.2.3"
+    "mapbox.js": "~2.2.3",
+    "angular-material": "~1.0.1"
   },
   "resolutions": {
     "angular": "~1.4.8"

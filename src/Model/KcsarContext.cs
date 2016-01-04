@@ -25,7 +25,7 @@ namespace Kcsar.Database.Model
     public IDbSet<SarEventRow> Events { get; set; }
     public IDbSet<Mission_Old> Missions { get; set; }
     public IDbSet<MissionDetails> MissionDetails { get; set; }
-    public IDbSet<MissionLog> MissionLog { get; set; }
+    public IDbSet<EventLogRow> EventLogs { get; set; }
     public IDbSet<MissionRoster_Old> MissionRosters { get; set; }
     public IDbSet<MissionGeography> MissionGeography { get; set; }
     public IDbSet<Member> Members { get; set; }
@@ -81,7 +81,7 @@ namespace Kcsar.Database.Model
     {
       base.OnModelCreating(modelBuilder);
       modelBuilder.Entity<Mission_Old>().HasOptional(f => f.Details).WithRequired(f => f.Mission).WillCascadeOnDelete();
-      modelBuilder.Entity<Mission_Old>().HasMany(f => f.Log).WithRequired(f => f.Mission).WillCascadeOnDelete();
+      modelBuilder.Entity<SarEventRow>().HasMany(f => f.Log).WithRequired(f => f.Event).WillCascadeOnDelete();
       modelBuilder.Entity<Member>().HasOptional(f => f.MedicalInfo).WithRequired(f => f.Member);
       modelBuilder.Entity<Member>().HasMany(f => f.Memberships).WithRequired(f => f.Person).WillCascadeOnDelete();
       modelBuilder.Entity<Member>().HasMany(f => f.Addresses).WithRequired(f => f.Person).WillCascadeOnDelete();

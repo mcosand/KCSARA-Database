@@ -17,9 +17,15 @@ namespace Kcsara.Database.Web.Services
   /// <typeparam name="ModelType"></typeparam>
   public interface IEventsService<ModelType> where ModelType : EventSummary, new()
   {
+    ModelType Get(Guid id);
+
     EventList List(int? year);
 
     ModelType Save(ModelType model);
+
+    IEnumerable<LogEntry> Logs(Guid eventId);
+
+    LogEntry SaveLog(Guid eventId, LogEntry entry);
   }
 
   /// <summary>
@@ -38,6 +44,22 @@ namespace Kcsara.Database.Web.Services
     {
       this.dbFactory = dbFactory;
       this.log = log;
+    }
+
+    public IEnumerable<LogEntry> Logs(Guid eventId)
+    {
+      using (var db = dbFactory())
+      {
+        return db.EventLogs.Where(f => f.EventId == eventId).OrderByDescending(f => f.Time)
+          .Select(f => new LogEntry
+          {
+            Id = f.Id,
+            Time = f.Time,
+            Message = f.Data,
+            LoggedBy = (f.Person == null) ? (f.Person.FirstName + " " + f.Person.LastName) : null
+          })
+          .ToList();
+      }
     }
 
     public EventList List(int? year)
@@ -80,6 +102,24 @@ namespace Kcsara.Database.Web.Services
       }
     }
 
+    public ModelType Get(Guid id)
+    {
+      using (var db = dbFactory())
+      {
+        var result = db.Events.OfType<RowType>().SingleOrDefault(f => f.Id == id);
+        if (result == null) throw new NotFoundException();
+
+        var model = new ModelType
+        {
+          Id = result.Id,
+          Name = result.Title,
+          Location = result.Location,
+          StateNumber = result.StateNumber,
+          Start = result.StartTime
+        };
+        return model;
+      }
+    }
     public ModelType Save(ModelType model)
     {
       using (var db = dbFactory())
@@ -130,7 +170,64 @@ namespace Kcsara.Database.Web.Services
     protected virtual void InternalApiSaveProcessModel(ModelType evt, RowType row, Dictionary<string, string> errors)
     {
     }
+
+    public LogEntry SaveLog(Guid eventId, LogEntry entry)
+    {
+      Dictionary<string, string> errors = new Dictionary<string, string>();
+
+      using (var db = dbFactory())
+      {
+        var theEvent = db.Events.SingleOrDefault(f => f.Id == eventId);
+        if (theEvent == null)
+        {
+          throw new NotFoundException();
+        }
+
+        var row = theEvent.Log.SingleOrDefault(f => f.Id == entry.Id);
+        if (row == null && entry.Id == Guid.Empty)
+        {
+          row = new EventLogRow()
+          {
+            EventId = eventId
+          };
+          db.Events.Single(f => f.Id == eventId).Log.Add(row);
+        }
+
+        if (row.EventId != eventId)
+        {
+          throw new StatusCodeException(System.Net.HttpStatusCode.BadRequest, "Can't change a log entry's event");
+        }
+
+        if (row.Time != entry.Time)
+        {
+          row.Time = entry.Time;
+        }
+        if (row.Time < theEvent.StartTime.AddMonths(-1) || row.Time > theEvent.StartTime.AddMonths(1))
+        {
+          errors.Add("Time", "Out of range.");
+        }
+
+        if (row.Data != entry.Message)
+        {
+          row.Data = entry.Message;
+        }
+        if (string.IsNullOrWhiteSpace(row.Data))
+        {
+          errors.Add("Message", "Required");
+        }
+
+        if (errors.Count > 0)
+        {
+          throw new ModelErrorsException(errors);
+        }
+
+        db.SaveChanges();
+        entry.Id = row.Id;
+        return entry;
+      }
+    }
   }
+
 
   /// <summary>
   /// 

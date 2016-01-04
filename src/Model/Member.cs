@@ -39,7 +39,7 @@ namespace Kcsar.Database.Model
     public virtual MemberMedical MedicalInfo { get; set; }
 
     public virtual ICollection<EventRoster> Rosters { get; set; }
-    public virtual ICollection<MissionLog> MissionLogs { get; set; }
+    public virtual ICollection<EventLogRow> MissionLogs { get; set; }
     public virtual ICollection<MissionRoster_Old> MissionRosters { get; set; }
     public virtual ICollection<PersonAddress> Addresses { get; set; }
     public virtual ICollection<PersonContact> ContactNumbers { get; set; }
@@ -60,7 +60,7 @@ namespace Kcsar.Database.Model
       this.LastChanged = DateTime.Now;
       this.ChangedBy = Thread.CurrentPrincipal.Identity.Name;
 
-      this.MissionLogs = new List<MissionLog>();
+      this.MissionLogs = new List<EventLogRow>();
       this.MissionRosters = new List<MissionRoster_Old>();
       Rosters = new List<EventRoster>();
       this.Addresses = new List<PersonAddress>();

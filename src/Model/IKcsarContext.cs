@@ -17,7 +17,7 @@ namespace Kcsar.Database.Model
     IDbSet<SarEventRow> Events { get; set; }
     IDbSet<Mission_Old> Missions { get; set; }
     IDbSet<MissionDetails> MissionDetails { get; set; }
-    IDbSet<MissionLog> MissionLog { get; set; }
+    IDbSet<EventLogRow> EventLogs { get; set; }
     IDbSet<MissionRoster_Old> MissionRosters { get; set; }
     IDbSet<MissionGeography> MissionGeography { get; set; }
     IDbSet<Member> Members { get; set; }

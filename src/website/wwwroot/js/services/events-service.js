@@ -59,5 +59,46 @@ angular.module('sarDatabase').service('EventsService', ['$http', '$q', function 
       .error(function (response) { deferred.reject(response); })
       return deferred.promise;
     },
+    logs: function (fillList, eventType, eventId) {
+      var deferred = $q.defer();
+
+      fillList.length = 0;
+      fillList.loading = true;
+
+      $http({
+        method: 'GET',
+        url: window.appRoot + 'api/' + eventType + '/' + eventId + '/logs'
+      }).success(function (data) {
+        $.each(data, function (idx, evt) {
+          evt.eventId = eventId;
+          evt.time = moment(evt.time);
+          var day = moment(evt.time);
+          day.startOf('day');
+          if (fillList.length == 0 || fillList[fillList.length - 1].date.format() != day.format()) {
+            fillList.push({ date: day, logs: [] });
+          }
+          fillList[fillList.length - 1].logs.push(evt);
+        });
+        delete fillList.loading;
+        fillList.loaded = true;
+        deferred.resolve(data);
+      })
+      .error(function (response) { deferred.reject(response); });
+    },
+    saveLog: function (model, type) {
+      var deferred = $q.defer();
+      //if (model.linkedMember.loaded) delete model.linkedMember.loaded;
+      $http({
+        method: model['id'] ? 'PUT' : 'POST',
+        url: window.appRoot + 'api/' + type + '/' + model.eventId + '/log',
+        data: model,
+      })
+      .success(function (data) {
+        data.time = moment(data.time);
+        deferred.resolve(data);
+      })
+      .error(function (response) { deferred.reject(response); })
+      return deferred.promise;
+    },
   });
 }]);

@@ -28,7 +28,6 @@ namespace Kcsar.Database.Model
     public virtual ICollection<Mission_Old> Followups { get; set; }
     public virtual Mission_Old Previous { get; set; }
 
-    public virtual ICollection<MissionLog> Log { get; set; }
     public virtual ICollection<MissionRoster_Old> Roster { get; set; }
 
     public virtual MissionDetails Details { get; set; }

@@ -30,12 +30,7 @@ namespace Kcsara.Database.Web.Controllers
       this.service = service.Value;
     }
 
-    //protected override void Initialize(RequestContext requestContext)
-    //{
-    //  base.Initialize(requestContext);
-    //  menuGroup = ControllerContext.RouteData.Values["controller"].ToString().ToLowerInvariant().Replace("new", string.Empty);
-    //}
-
+    [Route("/[controller]")]
     public ActionResult Index()
     {
       ViewBag.ActiveMenu = MenuGroup + "/Index";
@@ -44,33 +39,20 @@ namespace Kcsara.Database.Web.Controllers
       return View();
     }
 
-    public ActionResult List(string id = null)
+    [Route("/[controller]/List")]
+    public ActionResult List()
     {
-      int yearInt = DateTime.Now.Year;
-      if (string.IsNullOrWhiteSpace(id))
-      {
-        yearInt = DateTime.Now.Year;
-      }
-      else if (int.TryParse(id, out yearInt))
-      {
-        if (yearInt < 0)
-        {
-          yearInt = DateTime.Now.Year + yearInt;
-        }
-      }
-      else if (string.Equals(id, "all", StringComparison.OrdinalIgnoreCase))
-      {
-        yearInt = 0;
-      }
-
       ViewBag.ActiveMenu = MenuGroup + "/List";
       ViewBag.EventTypeText = EventTypeText;
       ViewBag.EventRoute = MenuGroup;
-      if (yearInt > 0)
-      {
-        ViewBag.Year = yearInt;
-      }
       return View("EventList");
+    }
+
+    [Route("[controller]/{id}")]
+    public ActionResult View(Guid id)
+    {
+      ViewBag.EventRoute = MenuGroup;
+      return View("EventView", service.Get(id));
     }
 
     [HttpGet]
@@ -125,7 +107,30 @@ namespace Kcsara.Database.Web.Controllers
       return query.Select(f => (int)SqlFunctions.DatePart("year", f.StartTime)).Distinct().Where(f => f > 1900).OrderByDescending(f => f);
     }
 
+    [HttpGet]
+    [Route("api/[controller]/{eventId}/logs")]
+    public IEnumerable<LogEntry> ApiLogs(Guid eventId)
+    {
+      return service.Logs(eventId);
+    }
+
+    [HttpPost]
+    [HttpPut]
+    [Route("api/[controller]/{eventId}/log")]
+    public LogEntry ApiLogSave(Guid eventId, [FromBody] LogEntry entry)
+    {
+      return service.SaveLog(eventId, entry);
+    }
+
+    [HttpGet]
+    [Route("api/[controller]/{eventId}/documents")]
+    public IEnumerable<DocumentInfo> ApiDocuments(Guid eventId)
+    {
+      return service.Documents(eventId);
+    }
   }
+
+
 
   public class MissionsController : EventsController<MissionRow, Mission>
   {

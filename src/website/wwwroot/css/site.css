@@ -57,6 +57,10 @@ ul {
   border-top-color: #f39c12;
 }
 
+.box-header h3 {
+  margin: 0px;
+}
+
 a {
   color: #008d4c;
 }
@@ -403,4 +407,8 @@ td .parent-hover-show {
 
 form.ng-submitted input.ng-invalid {
   border: solid 1px #a94442;
+}
+
+.list-item-tight {
+  min-height: 36px;
 }

@@ -1,0 +1,149 @@
+﻿@model Kcsara.Database.Web.Models.EventSummary
+@{
+  ViewBag.Title = "Event Details";
+  ViewBag.NgController = "EventViewCtrl";
+  bool canEdit = true;
+}
+@section header {
+  <h1>@Model.StateNumber @Model.Name</h1>
+  <div>@Model.Location</div>
+  <div>@Model.Start.ToString("MMM dd yyyy")</div>
+}
+
+<md-tabs md-dynamic-height md-border-bottom class="md-whiteframe-4dp">
+  <md-tab label="Mission" md-active="isActive('info')">
+    <md-content class="md-padding">
+      <h1 class="md-display-2">Mission</h1>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis ante augue. Phasellus volutpat neque ac dui mattis vulputate. Etiam consequat aliquam cursus. In sodales pretium ultrices. Maecenas lectus est, sollicitudin consectetur felis nec, feugiat ultricies mi.</p>
+    </md-content>
+  </md-tab>
+  @*<md-tab label="Roster">
+      <md-content class="md-padding">
+        <h1 class="md-display-2">Roster</h1>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis ante augue. Phasellus volutpat neque ac dui mattis vulputate. Etiam consequat aliquam cursus. In sodales pretium ultrices. Maecenas lectus est, sollicitudin consectetur felis nec, feugiat ultricies mi. Aliquam erat volutpat. Nam placerat, tortor in ultrices porttitor, orci enim rutrum enim, vel tempor sapien arcu a tellus. Vivamus convallis sodales ante varius gravida. Curabitur a purus vel augue ultrices ultricies id a nisl. Nullam malesuada consequat diam, a facilisis tortor volutpat et. Sed urna dolor, aliquet vitae posuere vulputate, euismod ac lorem. Sed felis risus, pulvinar at interdum quis, vehicula sed odio. Phasellus in enim venenatis, iaculis tortor eu, bibendum ante. Donec ac tellus dictum neque volutpat blandit. Praesent efficitur faucibus risus, ac auctor purus porttitor vitae. Phasellus ornare dui nec orci posuere, nec luctus mauris semper.</p>
+        <p>Morbi viverra, ante vel aliquet tincidunt, leo dolor pharetra quam, at semper massa orci nec magna. Donec posuere nec sapien sed laoreet. Etiam cursus nunc in condimentum facilisis. Etiam in tempor tortor. Vivamus faucibus egestas enim, at convallis diam pulvinar vel. Cras ac orci eget nisi maximus cursus. Nunc urna libero, viverra sit amet nisl at, hendrerit tempor turpis. Maecenas facilisis convallis mi vel tempor. Nullam vitae nunc leo. Cras sed nisl consectetur, rhoncus sapien sit amet, tempus sapien.</p>
+        <p>Integer turpis erat, porttitor vitae mi faucibus, laoreet interdum tellus. Curabitur posuere molestie dictum. Morbi eget congue risus, quis rhoncus quam. Suspendisse vitae hendrerit erat, at posuere mi. Cras eu fermentum nunc. Sed id ante eu orci commodo volutpat non ac est. Praesent ligula diam, congue eu enim scelerisque, finibus commodo lectus.</p>
+      </md-content>
+    </md-tab>*@
+  <md-tab label="Log" md-active="isActive('log')">
+    <md-content class="md-padding" ng-controller="EventLogCtrl" ng-if="isActive('log')">
+      @if (canEdit)
+      {
+        <div ng-cloak ng-if="can.create" ng-click="startCreate()" class="shadow-3" style="position:fixed; bottom:1.5em; right: 1.5em; cursor:pointer; border-radius:50%; background-color: #f39c12; z-index:1000"><i class="fa fa-2x fa-plus" style="color:white; padding:.4em .4em .3em .4em"></i></div>
+      }
+      <md-list>
+        <md-list-item ng-if="logs.length == 0">No log entries.</md-list-item>
+        <div ng-repeat="day in logs">
+          <md-subheader>{{dateText(day.date)}}</md-subheader>
+          <md-list-item ng-repeat="item in day.logs" ng-click="openLog(item, false)" class="list-item-tight">
+            <div style="vertical-align:top"><strong>{{item.time.format('HHmm')}}</strong></div>
+            <div style="padding:0em 0em 1em 1em">{{item.message}}</div>
+          </md-list-item>
+        </div>
+      </md-list>
+    </md-content>
+  </md-tab>
+  @*<md-tab label="Map"></md-tab>
+    <md-tab label="Subjects"></md-tab>
+    <md-tab label="Documents">
+      <md-content class="md-padding">
+        <h1 class="md-display-2">Documents</h1>
+        <p>Integer turpis erat, porttitor vitae mi faucibus, laoreet interdum tellus. Curabitur posuere molestie dictum. Morbi eget congue risus, quis rhoncus quam. Suspendisse vitae hendrerit erat, at posuere mi. Cras eu fermentum nunc. Sed id ante eu orci commodo volutpat non ac est. Praesent ligula diam, congue eu enim scelerisque, finibus commodo lectus.</p>
+      </md-content>
+    </md-tab>*@
+</md-tabs>
+
+<script type="text/javascript">
+  angular.module('sarDatabase').controller('EventViewCtrl', ['$scope', '$rootScope', '$location', '$uibModal', 'EventsService',
+    function ($scope, $rootScope, $location, $uibModal, EventsService) {
+      $.extend($scope, {
+        isActive: function (tab) {
+          if ($location.path() == "" && tab == "info") return true;
+          return $location.path().toLowerCase().indexOf('/' + tab) == 0;
+        }
+      });
+    }]);
+  angular.module('sarDatabase').controller('CreateLogCtrl', ['$uibModalInstance', 'dialog', 'model', 'EventsService', function($uibModalInstance, dialog, model, EventsService) {
+    var modal = this;
+    modal.dismiss = function(reason) {
+      $uibModalInstance.dismiss(reason);
+    }
+    modal.submit = function () {
+      if (!modal.createForm.$valid) return;
+
+      modal.errors = {}; //clean up previous server errors
+
+      EventsService.saveLog(modal.model, dialog.eventRoute)
+      .then(function () {
+        $uibModalInstance.close(modal.model);
+      }, function (response) {
+        angular.forEach(response.errors, function (errors, field) {
+          if (modal.createForm[field] !== undefined) { modal.createForm[field].$setValidity('server', false); }
+          modal.errors[field] = errors;
+        });
+      });
+    }
+    modal.dialog = dialog;
+    modal.model = model;
+  }]);
+  angular.module('sarDatabase').controller('EventLogCtrl', ['$scope', '$rootScope', '$uibModal', 'EventsService',
+  function ($scope, $rootScope, $uibModal, EventsService) {
+    $.extend($scope, {
+      logs: [],
+      dateText: function (date) {
+        return date.calendar(null, {
+          sameDay: '[Today] dddd MM/DD/YYYY',
+          nextDay: '[Tomorrow]',
+          nextWeek: 'dddd',
+          lastDay: '[Yesterday] dddd MM/DD/YYYY',
+          lastWeek: '[Last] dddd MM/DD/YYYY',
+          sameElse: 'MM/DD/YYYY dddd'
+        });
+      },
+      openLog: function(model, isCreate) {
+        model.time.toJSON = function () { return model.time.format("YYYY-MM-DDTHH:mm") };
+        model.timeText = function (val) {
+          if (arguments.length && val) {
+            model.time = moment(val, ["YYYY-MM-DD HH:mm", "YYYY-MM-DD HHmm", "MM/DD/YYYY HH:mm", "MM/DD/YYYY HHmm"]);
+            model.time.toJSON = function () { return model.time.format("YYYY-MM-DDTHH:mm") };
+            return model.time;
+          } else if (arguments.length) {
+            model.time = null;
+          } else {
+            return model.time.format('YYYY-MM-DD HH:mm');
+          }
+        };
+        var modalInstance = $uibModal.open({
+          templateUrl: window.appRoot + 'partials/events/edit-log.html',
+          controller: 'CreateLogCtrl',
+          controllerAs: 'modal',
+          size: 'lg',
+          resolve: {
+            model: function() { return model },
+            dialog: function() { return {
+              eventRoute: '@ViewBag.EventRoute',
+              isCreate: isCreate
+            }}
+          }
+        });
+        modalInstance.result
+        .then(function (data) {
+          EventsService.logs($scope.logs, '@ViewBag.EventRoute', '@Model.Id');
+        }, function (reason) {
+          // don't have to do anything.
+        });
+      },
+      startCreate: function() {
+        var model = {
+          time: moment(),
+          eventId: '@Model.Id'
+        };
+        $scope.openLog(model, true);
+      },
+      can: {
+        create: @(canEdit ? "true" : "false")
+        }
+    });
+    EventsService.logs($scope.logs, '@ViewBag.EventRoute', '@Model.Id');
+  }]);
+</script>
