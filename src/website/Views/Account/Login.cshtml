@@ -1,4 +1,5 @@
-﻿@{
+﻿@model website.ViewModels.Account.LoginViewModel
+@{
   Layout = User.Identity.IsAuthenticated ? "~/Views/Shared/_FrameLayout.cshtml" : "~/Views/Shared/_NoSidebarLayout.cshtml";
   ViewBag.Title = "Login";
   ViewBag.UseContainer = true;
@@ -6,10 +7,10 @@
 }
 <div class="row">
   <div class="col-xs-12 col-sm-8 col-lg-6 col-sm-offset-2 col-lg-offset-3">
-    <form asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal" role="form">
+    <form id="loginForm" asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal" role="form">
       <div class="box" style="margin-top:3em">
         <div class="box-header with-border login-header hidden-xs">
-
+          @Model.ClientPath
         </div>
         <div class="box-body">
           <div class="form-horizontal">
@@ -40,6 +41,7 @@
         </div>
         <div class="box-footer box-action-footer">
           <div class="col-xs-12">
+            <input id="clientPathField" type="hidden" name="clientPath" value="@Model.ClientPath" />
             <input id="login" class="btn text-bold" name="login" type="submit" value="Login" />
           </div>
         </div>
@@ -53,3 +55,14 @@
     <div style="font-size:90%;"><a href="/Account/Register">Register New Account</a></div>
   </div>
 </div>
+
+@section scripts {
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (location.hash) {
+        $('#clientPathField').val(location.hash.replace('#', ''));
+        $('#loginForm').attr('action', $('#loginForm').attr('action') + encodeURIComponent(location.hash));
+      }
+    });
+  </script>
+}
