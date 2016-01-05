@@ -1,4 +1,4 @@
-﻿{
+{
   "userSecretsId": "aspnet5-website-a414dcec-55b1-448f-9bea-8e4ed9dc496b",
   "version": "1.0.0-*",
   "compilationOptions": {
@@ -38,6 +38,9 @@
         "Kcsar.Database.Model": "1.0.0-*",
         "Kcsara.Database.Services": "1.0.0-*",
         "Kcsara.Database.Web.Strings": "1.0.0-*"
+      },
+      "frameworkAssemblies": {
+        "System.Drawing": "4.0.0.0"
       }
     }
   },

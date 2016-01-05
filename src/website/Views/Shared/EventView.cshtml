@@ -9,11 +9,10 @@
   <div>@Model.Location</div>
   <div>@Model.Start.ToString("MMM dd yyyy")</div>
 }
-
 <md-tabs md-dynamic-height md-border-bottom class="md-whiteframe-4dp">
-  <md-tab label="Mission" md-active="isActive('info')">
+  <md-tab label="@ViewBag.EventTypeText" md-active="activeTab == 'info'" md-on-select="setTab('info')">
     <md-content class="md-padding">
-      <h1 class="md-display-2">Mission</h1>
+      <h1 class="md-display-2">@ViewBag.EventTypeText</h1>
       <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis ante augue. Phasellus volutpat neque ac dui mattis vulputate. Etiam consequat aliquam cursus. In sodales pretium ultrices. Maecenas lectus est, sollicitudin consectetur felis nec, feugiat ultricies mi.</p>
     </md-content>
   </md-tab>
@@ -25,8 +24,8 @@
         <p>Integer turpis erat, porttitor vitae mi faucibus, laoreet interdum tellus. Curabitur posuere molestie dictum. Morbi eget congue risus, quis rhoncus quam. Suspendisse vitae hendrerit erat, at posuere mi. Cras eu fermentum nunc. Sed id ante eu orci commodo volutpat non ac est. Praesent ligula diam, congue eu enim scelerisque, finibus commodo lectus.</p>
       </md-content>
     </md-tab>*@
-  <md-tab label="Log" md-active="isActive('log')">
-    <md-content class="md-padding" ng-controller="EventLogCtrl" ng-if="isActive('log')">
+  <md-tab label="Log" md-active="activeTab == 'log'" md-on-select="setTab('log')">
+    <md-content class="md-padding" ng-controller="EventLogCtrl" ng-if="activeTab == 'log'">
       @if (canEdit)
       {
         <div ng-cloak ng-if="can.create" ng-click="startCreate()" class="shadow-3" style="position:fixed; bottom:1.5em; right: 1.5em; cursor:pointer; border-radius:50%; background-color: #f39c12; z-index:1000"><i class="fa fa-2x fa-plus" style="color:white; padding:.4em .4em .3em .4em"></i></div>
@@ -44,24 +43,42 @@
     </md-content>
   </md-tab>
   @*<md-tab label="Map"></md-tab>
-    <md-tab label="Subjects"></md-tab>
-    <md-tab label="Documents">
-      <md-content class="md-padding">
-        <h1 class="md-display-2">Documents</h1>
-        <p>Integer turpis erat, porttitor vitae mi faucibus, laoreet interdum tellus. Curabitur posuere molestie dictum. Morbi eget congue risus, quis rhoncus quam. Suspendisse vitae hendrerit erat, at posuere mi. Cras eu fermentum nunc. Sed id ante eu orci commodo volutpat non ac est. Praesent ligula diam, congue eu enim scelerisque, finibus commodo lectus.</p>
-      </md-content>
-    </md-tab>*@
+    <md-tab label="Subjects"></md-tab>*@
+  <md-tab label="Documents" md-active="activeTab == 'documents'" md-on-select="setTab('documents')">
+    <md-content class="md-padding" ng-controller="EventDocsCtrl" ng-if="activeTab == 'documents'">
+      @{ var docEdit = Html.Raw(""); }
+      @if (canEdit)
+      {
+        docEdit = Html.Raw("ng-click=\"editDoc(item)\"");
+        <div ng-cloak ng-if="can.create" ng-click="startCreate()" class="shadow-3" style="position:fixed; bottom:1.5em; right: 1.5em; cursor:pointer; border-radius:50%; background-color: #f39c12; z-index:1000"><i class="fa fa-2x fa-plus" style="color:white; padding:.4em .4em .3em .4em"></i></div>
+      }
+      <md-list>
+        <md-list-item ng-if="documents.length == 0">No documents.</md-list-item>
+        <md-list-item ng-repeat="item in documents" ng-click="gotoDoc(item.url)" @*ng-click="openDoc(item, false)"*@ class="list-item-tight">
+          <img ng-src="{{item.thumbUrl}}" alt="{{item.mime}} file icon" style="width:4em"/>
+          <div class="md-list-item-text">
+            <h3>{{item.filename}}</h3>
+            <p>{{item.size}}</p>
+          </div>
+        </md-list-item>
+      </md-list>
+    </md-content>
+  </md-tab>
 </md-tabs>
 
 <script type="text/javascript">
-  angular.module('sarDatabase').controller('EventViewCtrl', ['$scope', '$rootScope', '$location', '$uibModal', 'EventsService',
-    function ($scope, $rootScope, $location, $uibModal, EventsService) {
+  angular.module('sarDatabase').controller('EventViewCtrl', ['$scope', '$location', '$uibModal', 'EventsService',
+    function ($scope, $location, $uibModal, EventsService) {
+      function parseTabFromhash(value) {
+        return (value.match(/^#\/?([^\/]+)/) || ['#/info', 'info'])[1];
+      };
       $.extend($scope, {
-        isActive: function (tab) {
-          if ($location.path() == "" && tab == "info") return true;
-          return $location.path().toLowerCase().indexOf('/' + tab) == 0;
+        activeTab: parseTabFromhash($location.path()),
+        setTab: function(newTab) {
+          $location.path(newTab);
         }
       });
+      $scope.$watch(function () { return location.hash }, function(value) { $scope.activeTab = parseTabFromhash(value); });
     }]);
   angular.module('sarDatabase').controller('CreateLogCtrl', ['$uibModalInstance', 'dialog', 'model', 'EventsService', function($uibModalInstance, dialog, model, EventsService) {
     var modal = this;
@@ -86,8 +103,70 @@
     modal.dialog = dialog;
     modal.model = model;
   }]);
-  angular.module('sarDatabase').controller('EventLogCtrl', ['$scope', '$rootScope', '$uibModal', 'EventsService',
-  function ($scope, $rootScope, $uibModal, EventsService) {
+  angular.module('sarDatabase').controller('EventDocsCtrl', ['$scope', '$uibModal', 'EventsService',
+    function ($scope, $uibModal, EventsService) {
+      $.extend($scope, {
+        documents: [],
+        gotoDoc: function(url) {
+          window.open(url, '_blank', '');
+        },
+        startCreate: function() {
+          var model = {
+            eventId: '@Model.Id'
+          };
+          $scope.openDoc(model, true);
+        },
+        openDoc: function(model, isCreate) {
+          var modalInstance = $uibModal.open({
+            templateUrl: window.appRoot + 'partials/events/edit-document.html',
+            controller: 'CreateDocCtrl',
+            controllerAs: 'modal',
+            size: 'lg',
+            resolve: {
+              model: function() { return model },
+              dialog: function() { return {
+                eventRoute: '@ViewBag.EventRoute',
+                isCreate: isCreate
+              }}
+            }
+          });
+          modalInstance.result
+          .then(function (data) {
+            EventsService.documents($scope.documents, '@ViewBag.EventRoute', '@Model.Id');
+          }, function (reason) {
+            // don't have to do anything.
+          });
+        },
+        can: { create: @(canEdit ? "true" : "false") }
+      });
+      EventsService.documents($scope.documents, '@ViewBag.EventRoute', '@Model.Id')
+      .then(null, function(reason) { console.log(reason); alert('error'); });
+    }]);
+  angular.module('sarDatabase').controller('CreateDocCtrl', ['$uibModalInstance', 'dialog', 'model', 'EventsService', function($uibModalInstance, dialog, model, EventsService) {
+    var modal = this;
+    modal.dismiss = function(reason) {
+      $uibModalInstance.dismiss(reason);
+    }
+    modal.submit = function () {
+      if (!modal.createForm.$valid) return;
+
+      modal.errors = {}; //clean up previous server errors
+
+      EventsService.saveDocument(modal.model, dialog.eventRoute)
+      .then(function () {
+        $uibModalInstance.close(modal.model);
+      }, function (response) {
+        angular.forEach(response.errors, function (errors, field) {
+          if (modal.createForm[field] !== undefined) { modal.createForm[field].$setValidity('server', false); }
+          modal.errors[field] = errors;
+        });
+      });
+    }
+    modal.dialog = dialog;
+    modal.model = model;
+  }]);
+  angular.module('sarDatabase').controller('EventLogCtrl', ['$scope', '$uibModal', 'EventsService',
+  function ($scope, $uibModal, EventsService) {
     $.extend($scope, {
       logs: [],
       dateText: function (date) {
@@ -140,10 +219,9 @@
         };
         $scope.openLog(model, true);
       },
-      can: {
-        create: @(canEdit ? "true" : "false")
-        }
+      can: { create: @(canEdit ? "true" : "false") }
     });
-    EventsService.logs($scope.logs, '@ViewBag.EventRoute', '@Model.Id');
+    EventsService.logs($scope.logs, '@ViewBag.EventRoute', '@Model.Id')
+      .then(null, function(reason) { console.log(reason); alert('error'); });
   }]);
 </script>

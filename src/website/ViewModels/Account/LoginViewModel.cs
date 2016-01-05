@@ -6,16 +6,18 @@ using System.Threading.Tasks;
 
 namespace website.ViewModels.Account
 {
-    public class LoginViewModel
-    {
-        [Required]
-        public string Username { get; set; }
+  public class LoginViewModel
+  {
+    [Required]
+    public string Username { get; set; }
 
-        [Required]
-        [DataType(DataType.Password)]
-        public string Password { get; set; }
+    [Required]
+    [DataType(DataType.Password)]
+    public string Password { get; set; }
 
-        [Display(Name = "Remember me?")]
-        public bool RememberMe { get; set; }
-    }
+    [Display(Name = "Remember me?")]
+    public bool RememberMe { get; set; }
+
+    public string ClientPath { get; set; }
+  }
 }

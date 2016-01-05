@@ -59,6 +59,28 @@ angular.module('sarDatabase').service('EventsService', ['$http', '$q', function 
       .error(function (response) { deferred.reject(response); })
       return deferred.promise;
     },
+    documents: function(fillList, eventType, eventId) {
+      var deferred = $q.defer();
+      fillList.length = 0;
+      fillList.loading = true;
+
+      $http({
+        method: 'GET',
+        url: window.appRoot + 'api/documents/' + eventId
+      }).success(function (data) {
+        $.each(data, function (idx, doc) {
+          doc.thumbUrl = window.appRoot + ((doc.mime.substring(0, 5) == "image") ? ('documents/' + doc.id + '/thumbnail') : ('images/mime/' + doc.mime.replace('/', '_') + '.png'));
+          doc.url = window.appRoot + 'documents/' + doc.id;
+          doc.size = Math.round((doc.size / 1024) * 10) / 10 + 'KB';
+          fillList.push(doc);
+        })
+        delete fillList.loading;
+        fillList.loaded = true;
+        deferred.resolve(data);
+      })
+      .error(function (response) { deferred.reject(response); });
+      return deferred.promise;
+    },
     logs: function (fillList, eventType, eventId) {
       var deferred = $q.defer();
 
@@ -83,7 +105,8 @@ angular.module('sarDatabase').service('EventsService', ['$http', '$q', function 
         fillList.loaded = true;
         deferred.resolve(data);
       })
-      .error(function (response) { deferred.reject(response); });
+      .error(function (response, statusCode) { deferred.reject(statusCode == 403 ? 'login' : response); });
+      return deferred.promise;
     },
     saveLog: function (model, type) {
       var deferred = $q.defer();
@@ -97,7 +120,7 @@ angular.module('sarDatabase').service('EventsService', ['$http', '$q', function 
         data.time = moment(data.time);
         deferred.resolve(data);
       })
-      .error(function (response) { deferred.reject(response); })
+      .error(function (response, statusCode) { deferred.reject(statusCode == 403 ? 'login' : response); });
       return deferred.promise;
     },
   });

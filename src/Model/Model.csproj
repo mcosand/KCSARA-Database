@@ -161,7 +161,7 @@
     <Compile Include="UnitContact.cs" />
     <Compile Include="UnitDocument.cs" />
     <Compile Include="CurrentMemberIds.cs" />
-    <Compile Include="Document.cs" />
+    <Compile Include="DocumentRow.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="IDocument.cs" />
     <Compile Include="KcsarContext.cs" />

@@ -1,10 +1,12 @@
 ﻿using System;
 using Kcsar.Database.Model;
+using Kcsara.Database.Web;
 using Kcsara.Database.Web.Services;
 using log4net;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Mvc.ApplicationModels;
 using Microsoft.AspNet.Mvc.Formatters;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.Configuration;
@@ -45,14 +47,6 @@ namespace website
           .AddDbContext<ApplicationDbContext>(options =>
               options.UseSqlServer(Configuration["Data:AuthStore:ConnectionString"]));
 
-      //services.AddTransient<IKcsarContext, KcsarContext>(svc => new KcsarContext(Configuration["Data:DataStore:ConnectionString"]));
-      services.AddTransient<Lazy<IKcsarContext>, Lazy<IKcsarContext>>(svc => new Lazy<IKcsarContext>(() => new KcsarContext(Configuration["Data:DataStore:ConnectionString"])));
-      services.AddSingleton<Func<IKcsarContext>, Func<IKcsarContext>>(svc => () => new KcsarContext(Configuration["Data:DataStore:ConnectionString"]));
-      services.AddSingleton(svc => LogManager.GetLogger("log"));
-
-      services.AddSingleton(svc => new Lazy<IEventsService<Kcsara.Database.Web.Models.Mission>>(() => new MissionsService(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
-      services.AddSingleton(svc => new Lazy<IEventsService<Kcsara.Database.Web.Models.EventSummary>>(() => new EventsService<TrainingRow, Kcsara.Database.Web.Models.EventSummary>(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
-
       services.AddIdentity<ApplicationUser, IdentityRole>()
           .AddUserManager<ApplicationUserManager>()
           .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -71,6 +65,15 @@ namespace website
       // Add application services.
       services.AddTransient<IEmailSender, AuthMessageSender>();
       services.AddTransient<ISmsSender, AuthMessageSender>();
+
+      services.AddTransient<Lazy<IKcsarContext>, Lazy<IKcsarContext>>(svc => new Lazy<IKcsarContext>(() => new KcsarContext(Configuration["Data:DataStore:ConnectionString"])));
+      services.AddSingleton<Func<IKcsarContext>, Func<IKcsarContext>>(svc => () => new KcsarContext(Configuration["Data:DataStore:ConnectionString"]));
+      services.AddSingleton(svc => LogManager.GetLogger("log"));
+
+      services.AddSingleton(svc => new Lazy<IEventsService<Kcsara.Database.Web.Models.Mission>>(() => new MissionsService(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
+      services.AddSingleton(svc => new Lazy<IEventsService<Kcsara.Database.Web.Models.EventSummary>>(() => new EventsService<TrainingRow, Kcsara.Database.Web.Models.EventSummary>(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
+
+      services.AddSingleton(svc => new Lazy<IDocumentsService>(() => new DocumentsService(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -101,6 +104,8 @@ namespace website
         }
         catch { }
       }
+
+      ((DocumentsService)app.ApplicationServices.GetRequiredService<Lazy<IDocumentsService>>().Value).StoreRoot = env.MapPath("auth/documents");
 
       app.UseIISPlatformHandler(options => options.AuthenticationDescriptions.Clear());
 

@@ -9,7 +9,8 @@ namespace Kcsar.Database.Model
   using System.ComponentModel.DataAnnotations.Schema;
   using System.Linq;
 
-  public class Document : ModelObject, IDocument
+  [Table("Documents")]
+  public class DocumentRow : ModelObject, IDocument
   {
     public static string StorageRoot { get; set; }
     public const int StorageTreeDepth = 2;
@@ -35,7 +36,7 @@ namespace Kcsar.Database.Model
       {
         if (this._contents == null && !string.IsNullOrWhiteSpace(this.StorePath))
         {
-          this._contents = System.IO.File.ReadAllBytes(Document.StorageRoot + this.StorePath);
+          this._contents = System.IO.File.ReadAllBytes(DocumentRow.StorageRoot + this.StorePath);
         }
         return this._contents;
       }

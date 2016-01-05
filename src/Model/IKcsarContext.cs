@@ -30,7 +30,7 @@ namespace Kcsar.Database.Model
     IDbSet<Training_Old> Trainings { get; set; }
     IDbSet<TrainingAward> TrainingAward { get; set; }
     IDbSet<TrainingCourse> TrainingCourses { get; set; }
-    IDbSet<Document> Documents { get; set; }
+    IDbSet<DocumentRow> Documents { get; set; }
     IDbSet<TrainingRoster_Old> TrainingRosters { get; set; }
     IDbSet<TrainingRule> TrainingRules { get; set; }
     IDbSet<SarUnit> Units { get; set; }

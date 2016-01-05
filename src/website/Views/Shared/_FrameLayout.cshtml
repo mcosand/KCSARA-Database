@@ -30,7 +30,7 @@
                 </form>
               </li>
               <li class="dropdown notifications-menu">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" onclick="event.preventDefault();">
                   HI @(ViewBag.LoginUserName) @*?? string.Format("{0} {1}", ((Kcsar.Membership.KcsarUserProfile)Profile).FirstName, ((Kcsar.Membership.KcsarUserProfile)Profile).LastName))*@
                 </a>
                 <ul class="dropdown-menu">
@@ -50,7 +50,7 @@
               {
           <!-- Control Sidebar Toggle Button -->
                 <li>
-                  <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+                  <a href="#" data-toggle="control-sidebar" onclick="event.preventDefault();"><i class="fa fa-gears"></i></a>
                 </li>
               }
             }

@@ -39,7 +39,7 @@ namespace Kcsar.Database.Model
     public IDbSet<Training_Old> Trainings { get; set; }
     public IDbSet<TrainingAward> TrainingAward { get; set; }
     public IDbSet<TrainingCourse> TrainingCourses { get; set; }
-    public IDbSet<Document> Documents { get; set; }
+    public IDbSet<DocumentRow> Documents { get; set; }
     public IDbSet<TrainingRoster_Old> TrainingRosters { get; set; }
     public IDbSet<TrainingRule> TrainingRules { get; set; }
     public IDbSet<SarUnit> Units { get; set; }
@@ -275,7 +275,7 @@ namespace Kcsar.Database.Model
           obj.ChangedBy = Thread.CurrentPrincipal.Identity.Name;
 
           AuditChange(entry);
-          Document doc = obj as Document;
+          DocumentRow doc = obj as DocumentRow;
           if (doc != null)
           {
             SaveDocumentFile(doc);
@@ -290,23 +290,23 @@ namespace Kcsar.Database.Model
     /// 
     /// </summary>
     /// <param name="d"></param>
-    private void SaveDocumentFile(Document d)
+    private void SaveDocumentFile(DocumentRow d)
     {
       if (string.IsNullOrWhiteSpace(d.StorePath))
       {
         string path = string.Empty;
-        for (int i = 0; i < Document.StorageTreeDepth; i++)
+        for (int i = 0; i < DocumentRow.StorageTreeDepth; i++)
         {
-          path += ((i > 0) ? "\\" : "") + rand.Next(Document.StorageTreeSpan).ToString();
+          path += ((i > 0) ? "\\" : "") + rand.Next(DocumentRow.StorageTreeSpan).ToString();
         }
-        if (!System.IO.Directory.Exists(Document.StorageRoot + path))
+        if (!System.IO.Directory.Exists(DocumentRow.StorageRoot + path))
         {
-          System.IO.Directory.CreateDirectory(Document.StorageRoot + path);
+          System.IO.Directory.CreateDirectory(DocumentRow.StorageRoot + path);
         }
         path += "\\" + d.Id.ToString();
         d.StorePath = path;
       }
-      System.IO.File.WriteAllBytes(Document.StorageRoot + d.StorePath, d.Contents);
+      System.IO.File.WriteAllBytes(DocumentRow.StorageRoot + d.StorePath, d.Contents);
     }
 
     public void RemoveStaleDocumentFiles()
@@ -316,15 +316,15 @@ namespace Kcsar.Database.Model
         .Select(f => f.StorePath).Distinct()
         .AsNoTracking().AsEnumerable());
 
-      int rootLength = Document.StorageRoot.Length;
-      foreach (var file in Directory.GetFiles(Document.StorageRoot, "*.*", SearchOption.AllDirectories))
+      int rootLength = DocumentRow.StorageRoot.Length;
+      foreach (var file in Directory.GetFiles(DocumentRow.StorageRoot, "*.*", SearchOption.AllDirectories))
       {
         if (dbFiles.Contains(file.Substring(rootLength)))
           continue;
 
         File.Delete(file);
         string path = file;
-        for (int i = 0; i < Document.StorageTreeDepth; i++)
+        for (int i = 0; i < DocumentRow.StorageTreeDepth; i++)
         {
           path = Path.GetDirectoryName(path);
           if (Directory.GetDirectories(path).Length + Directory.GetFiles(path).Length == 0)
