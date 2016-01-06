@@ -1,9 +1,11 @@
-﻿@{
-  ViewBag.NgModules = ViewBag.NgModules ?? new List<string>();
-  ViewBag.NgModules.AddRange(new[] { "ng-pros.directive.autocomplete", "ui.bootstrap", "ngMaterial" });
+﻿@using System.Linq;
+@{
+  ViewBag.NgModules = Enumerable.ToArray(Enumerable.Distinct(Enumerable.Concat((ViewBag.NgModules ?? new string[0]), new[] { "ng-pros.directive.autocomplete", "ui.bootstrap", "ngMaterial" } )));
+  ViewBag.Requires = Enumerable.ToArray(Enumerable.Distinct(Enumerable.Concat((ViewBag.Requires ?? new string[0]), new[] { "ngMaterial", "np-autocomplete", "ui-bootstrap-modal" })));
+  var requires = Html.Raw(ViewBag.Requires.Length == 0 ? "" : (", '" + string.Join("','", ViewBag.Requires) + "'"));
 }
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" @(ViewBag.NgApp != null ? new HtmlString("ng-app=\"" + ViewBag.NgApp + "\"") : new HtmlString(string.Empty))>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <!-- Force latest IE rendering engine or ChromeFrame if installed -->
   <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><![endif]-->
@@ -12,7 +14,25 @@
   <meta content="width=device-width, initial-scale=1, minimum-scale=1, user-scalable=yes" name="viewport">
   <link rel="apple-touch-icon" href="~/apple-touch-icon.png" />
   <title>@ViewData["Title"] - KCSARA Database</title>
-  <script type="text/javascript">window.appRoot = '@Url.Content("~/")'; var errorUrl = '@Url.RouteUrl("DefaultApi", new { httproute="", Controller = "telemetry", Action="error" })';</script>
+  <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
+  <script type="text/javascript" src="~/lib/angular/angular.min.js"></script>
+  <script type="text/javascript">
+    window.appRoot = '@Url.Content("~/")';
+    var errorUrl = '@Url.RouteUrl("DefaultApi", new { httproute="", Controller = "telemetry", Action="error" })';
+    $(document).on('require-ready', function() {
+      define('sarDatabase', ['angular'], function(ng) {
+        ng.module("ui.bootstrap", ["ui.bootstrap.modal"/*, "ui.bootstrap.accordion"*/]);
+        ng.module('@ViewBag.NgApp', @Html.ToJson((object)(ViewBag.NgModules ?? new object[0])));
+      })
+      $(document).ready(function () {
+        require(['angular', 'adminLTE', 'sarDatabase' @requires], function (ng) {
+          ng.bootstrap(document, ['@ViewBag.NgApp']);
+          $.AdminLTE.layout.activate()
+        })
+      });
+    })
+  </script>
+  <script type="text/javascript" data-main="@Url.Content("~/js/config")" src="~/lib/requirejs/require.js"></script>
   <environment names="Development">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="~/css/site.css" />
@@ -23,7 +43,7 @@
     <link rel="stylesheet" href="~/lib/angular-material/angular-material.min.css"/>
     <link rel="stylesheet" href="~/css/site.css" />
   </environment>
-
+  @*
   <script src="~/lib/jquery/dist/jquery.js"></script>
   <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
   <script src="~/lib/moment/moment.js"></script>
@@ -38,7 +58,7 @@
   <script src="~/lib/ui.bootstrap/src/stackedMap/stackedMap.js"></script>
   <script src="~/lib/ui.bootstrap/src/modal/modal.js"></script>
   <script src="~/lib/ui.bootstrap/src/collapse/collapse.js"></script>
-  <script src="~/lib/ui.bootstrap/src/accordion/accordion.js"></script>
+  <script src="~/lib/ui.bootstrap/src/accordion/accordion.js"></script>*@
     <script type="text/ng-template" id="template/modal/backdrop.html">
     <div uib-modal-animation-class="fade"
          modal-in-class="in"
@@ -67,11 +87,12 @@
       </div>
     </div>
   </script>
+  @*
   <script type="text/javascript">angular.module("ui.bootstrap", ["ui.bootstrap.modal", "ui.bootstrap.accordion"]); angular.module('sarDatabase', @Html.ToJson((object)(ViewBag.NgModules ?? new object[0])));</script>
   <script src="~/js/models/database-account.js"></script>
   <script src="~/js/directives/server-error.js"></script>
   <script src="~/js/services/accounts-service.js"></script>
-  <script src="~/js/services/events-service.js"></script>
+  <script src="~/js/services/events-service.js"></script>*@
 
   @RenderSection("head", false)
 </head>

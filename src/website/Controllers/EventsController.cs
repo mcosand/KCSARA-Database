@@ -51,6 +51,7 @@ namespace Kcsara.Database.Web.Controllers
     [Route("[controller]/{id}")]
     public ActionResult View(Guid id)
     {
+      ViewBag.EventTypeText = EventTypeText;
       ViewBag.EventRoute = MenuGroup;
       return View("EventView", service.Get(id));
     }
@@ -120,13 +121,6 @@ namespace Kcsara.Database.Web.Controllers
     public LogEntry ApiLogSave(Guid eventId, [FromBody] LogEntry entry)
     {
       return service.SaveLog(eventId, entry);
-    }
-
-    [HttpGet]
-    [Route("api/[controller]/{eventId}/documents")]
-    public IEnumerable<DocumentInfo> ApiDocuments(Guid eventId)
-    {
-      return service.Documents(eventId);
     }
   }
 

@@ -2,6 +2,7 @@
 @{
   ViewBag.Title = "Event Details";
   ViewBag.NgController = "EventViewCtrl";
+  ViewBag.Requires = new[] { "controllers/events/event-view" };
   bool canEdit = true;
 }
 @section header {
@@ -25,7 +26,7 @@
       </md-content>
     </md-tab>*@
   <md-tab label="Log" md-active="activeTab == 'log'" md-on-select="setTab('log')">
-    <md-content class="md-padding" ng-controller="EventLogCtrl" ng-if="activeTab == 'log'">
+    <md-content class="md-padding" ng-controller="EventLogCtrl" ng-init="init('@ViewBag.EventRoute', '@Model.Id')" ng-if="activeTab == 'log'">
       @if (canEdit)
       {
         <div ng-cloak ng-if="can.create" ng-click="startCreate()" class="shadow-3" style="position:fixed; bottom:1.5em; right: 1.5em; cursor:pointer; border-radius:50%; background-color: #f39c12; z-index:1000"><i class="fa fa-2x fa-plus" style="color:white; padding:.4em .4em .3em .4em"></i></div>
@@ -45,7 +46,7 @@
   @*<md-tab label="Map"></md-tab>
     <md-tab label="Subjects"></md-tab>*@
   <md-tab label="Documents" md-active="activeTab == 'documents'" md-on-select="setTab('documents')">
-    <md-content class="md-padding" ng-controller="EventDocsCtrl" ng-if="activeTab == 'documents'">
+    <md-content class="md-padding" ng-controller="EventDocsCtrl" ng-init="init('@ViewBag.EventRoute', '@Model.Id')" ng-if="activeTab == 'documents'">
       @{ var docEdit = Html.Raw(""); }
       @if (canEdit)
       {
@@ -65,163 +66,3 @@
     </md-content>
   </md-tab>
 </md-tabs>
-
-<script type="text/javascript">
-  angular.module('sarDatabase').controller('EventViewCtrl', ['$scope', '$location', '$uibModal', 'EventsService',
-    function ($scope, $location, $uibModal, EventsService) {
-      function parseTabFromhash(value) {
-        return (value.match(/^#\/?([^\/]+)/) || ['#/info', 'info'])[1];
-      };
-      $.extend($scope, {
-        activeTab: parseTabFromhash($location.path()),
-        setTab: function(newTab) {
-          $location.path(newTab);
-        }
-      });
-      $scope.$watch(function () { return location.hash }, function(value) { $scope.activeTab = parseTabFromhash(value); });
-    }]);
-  angular.module('sarDatabase').controller('CreateLogCtrl', ['$uibModalInstance', 'dialog', 'model', 'EventsService', function($uibModalInstance, dialog, model, EventsService) {
-    var modal = this;
-    modal.dismiss = function(reason) {
-      $uibModalInstance.dismiss(reason);
-    }
-    modal.submit = function () {
-      if (!modal.createForm.$valid) return;
-
-      modal.errors = {}; //clean up previous server errors
-
-      EventsService.saveLog(modal.model, dialog.eventRoute)
-      .then(function () {
-        $uibModalInstance.close(modal.model);
-      }, function (response) {
-        angular.forEach(response.errors, function (errors, field) {
-          if (modal.createForm[field] !== undefined) { modal.createForm[field].$setValidity('server', false); }
-          modal.errors[field] = errors;
-        });
-      });
-    }
-    modal.dialog = dialog;
-    modal.model = model;
-  }]);
-  angular.module('sarDatabase').controller('EventDocsCtrl', ['$scope', '$uibModal', 'EventsService',
-    function ($scope, $uibModal, EventsService) {
-      $.extend($scope, {
-        documents: [],
-        gotoDoc: function(url) {
-          window.open(url, '_blank', '');
-        },
-        startCreate: function() {
-          var model = {
-            eventId: '@Model.Id'
-          };
-          $scope.openDoc(model, true);
-        },
-        openDoc: function(model, isCreate) {
-          var modalInstance = $uibModal.open({
-            templateUrl: window.appRoot + 'partials/events/edit-document.html',
-            controller: 'CreateDocCtrl',
-            controllerAs: 'modal',
-            size: 'lg',
-            resolve: {
-              model: function() { return model },
-              dialog: function() { return {
-                eventRoute: '@ViewBag.EventRoute',
-                isCreate: isCreate
-              }}
-            }
-          });
-          modalInstance.result
-          .then(function (data) {
-            EventsService.documents($scope.documents, '@ViewBag.EventRoute', '@Model.Id');
-          }, function (reason) {
-            // don't have to do anything.
-          });
-        },
-        can: { create: @(canEdit ? "true" : "false") }
-      });
-      EventsService.documents($scope.documents, '@ViewBag.EventRoute', '@Model.Id')
-      .then(null, function(reason) { console.log(reason); alert('error'); });
-    }]);
-  angular.module('sarDatabase').controller('CreateDocCtrl', ['$uibModalInstance', 'dialog', 'model', 'EventsService', function($uibModalInstance, dialog, model, EventsService) {
-    var modal = this;
-    modal.dismiss = function(reason) {
-      $uibModalInstance.dismiss(reason);
-    }
-    modal.submit = function () {
-      if (!modal.createForm.$valid) return;
-
-      modal.errors = {}; //clean up previous server errors
-
-      EventsService.saveDocument(modal.model, dialog.eventRoute)
-      .then(function () {
-        $uibModalInstance.close(modal.model);
-      }, function (response) {
-        angular.forEach(response.errors, function (errors, field) {
-          if (modal.createForm[field] !== undefined) { modal.createForm[field].$setValidity('server', false); }
-          modal.errors[field] = errors;
-        });
-      });
-    }
-    modal.dialog = dialog;
-    modal.model = model;
-  }]);
-  angular.module('sarDatabase').controller('EventLogCtrl', ['$scope', '$uibModal', 'EventsService',
-  function ($scope, $uibModal, EventsService) {
-    $.extend($scope, {
-      logs: [],
-      dateText: function (date) {
-        return date.calendar(null, {
-          sameDay: '[Today] dddd MM/DD/YYYY',
-          nextDay: '[Tomorrow]',
-          nextWeek: 'dddd',
-          lastDay: '[Yesterday] dddd MM/DD/YYYY',
-          lastWeek: '[Last] dddd MM/DD/YYYY',
-          sameElse: 'MM/DD/YYYY dddd'
-        });
-      },
-      openLog: function(model, isCreate) {
-        model.time.toJSON = function () { return model.time.format("YYYY-MM-DDTHH:mm") };
-        model.timeText = function (val) {
-          if (arguments.length && val) {
-            model.time = moment(val, ["YYYY-MM-DD HH:mm", "YYYY-MM-DD HHmm", "MM/DD/YYYY HH:mm", "MM/DD/YYYY HHmm"]);
-            model.time.toJSON = function () { return model.time.format("YYYY-MM-DDTHH:mm") };
-            return model.time;
-          } else if (arguments.length) {
-            model.time = null;
-          } else {
-            return model.time.format('YYYY-MM-DD HH:mm');
-          }
-        };
-        var modalInstance = $uibModal.open({
-          templateUrl: window.appRoot + 'partials/events/edit-log.html',
-          controller: 'CreateLogCtrl',
-          controllerAs: 'modal',
-          size: 'lg',
-          resolve: {
-            model: function() { return model },
-            dialog: function() { return {
-              eventRoute: '@ViewBag.EventRoute',
-              isCreate: isCreate
-            }}
-          }
-        });
-        modalInstance.result
-        .then(function (data) {
-          EventsService.logs($scope.logs, '@ViewBag.EventRoute', '@Model.Id');
-        }, function (reason) {
-          // don't have to do anything.
-        });
-      },
-      startCreate: function() {
-        var model = {
-          time: moment(),
-          eventId: '@Model.Id'
-        };
-        $scope.openLog(model, true);
-      },
-      can: { create: @(canEdit ? "true" : "false") }
-    });
-    EventsService.logs($scope.logs, '@ViewBag.EventRoute', '@Model.Id')
-      .then(null, function(reason) { console.log(reason); alert('error'); });
-  }]);
-</script>

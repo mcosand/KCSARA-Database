@@ -12,7 +12,9 @@
     "AdminLTE": "adminlte#~2.3.2",
     "moment": "~2.10.6",
     "mapbox.js": "~2.2.3",
-    "angular-material": "~1.0.1"
+    "angular-material": "~1.0.1",
+    "ng-file-upload-shim": "~11.0.1",
+    "requirejs": "~2.1.22"
   },
   "resolutions": {
     "angular": "~1.4.8"

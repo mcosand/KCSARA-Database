@@ -1,8 +1,12 @@
-﻿@{
+﻿@using System.Linq;
+@{
   Layout = "~/Views/Shared/_Layout.cshtml";
   ViewBag.NgApp = "sarDatabase";
+  ViewBag.Requires = Enumerable.ToArray(Enumerable.Distinct(Enumerable.Concat((ViewBag.Requires ?? new string[0]), new[] { "controllers/main-search" })));
 }
-<body class="skin-yellow sidebar-mini" @(ViewBag.NgController != null ? new HtmlString("ng-controller=\"" + ViewBag.NgController + "\"") : new HtmlString(string.Empty))>
+<body class="skin-yellow sidebar-mini"
+       @(ViewBag.NgController != null ? new HtmlString("ng-controller=\"" + ViewBag.NgController + "\"") : new HtmlString(string.Empty))
+       @(ViewBag.NgInit != null ? new HtmlString("ng-init=\"" + ViewBag.NgInit + "\"") : new HtmlString(string.Empty))>
   <div class="wrapper">
     <header class="main-header">
       <a href="~/" class="logo">
@@ -119,11 +123,6 @@
     <div class="control-sidebar-bg"></div>
   </div>
   @RenderSection("scripts", false)
-  <script type="text/javascript">
-    $(document).ready(function () {
-      $.AdminLTE.layout.activate()
-    })
-  </script>
   <script type="text/ng-template" id="searchMission.html">
     <div>
       <div class="search-img" ng-style="{'background-color': 'pink' }"></div>
@@ -147,33 +146,6 @@
     <button type="button" ng-click="select(item)" ng-class="getItemClasses($index)" ng-repeat="item in searchResults" ng-mouseenter="onItemMouseenter($index)">
       <ng-include src="'search' + item.type + '.html'"></ng-include>
     </button>
-  </script>
-  <script type="text/javascript">
-    angular.module('sarDatabase').controller('MainSearchCtrl', ['$scope',
-      function ($scope) {
-        $.extend($scope, {
-          searchOptions: {
-            url: '@Url.Content("~/api/search/")',
-            searchParam: 'q',
-            itemTemplateUrl: 'searchResult.html',
-            listClass: 'list-group search-results',
-            limit: 8,
-            noFixWidth: true,
-            onSelect: function (item) {
-              if (item.type == 'Member') {
-                window.location.href = '@Url.Content("~/Members/Detail/")' + item.summary.id;
-              }
-              else if (item.type == "Mission") {
-                window.location.href = '@Url.Content("~/Missions/Roster/")' + item.summary.id;
-              }
-              else {
-                console.log(item);
-              }
-            }
-            // np-autocomplete.min.js modified to remove assignment of width
-          }
-        });
-      }]);
   </script>
 </body>
 
