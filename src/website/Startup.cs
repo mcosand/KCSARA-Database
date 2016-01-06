@@ -74,6 +74,9 @@ namespace website
       services.AddSingleton(svc => new Lazy<IEventsService<Kcsara.Database.Web.Models.EventSummary>>(() => new EventsService<TrainingRow, Kcsara.Database.Web.Models.EventSummary>(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
 
       services.AddSingleton(svc => new Lazy<IDocumentsService>(() => new DocumentsService(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
+
+
+      services.AddTransient<IApplicationModelProvider>(svc => new CustomFilterApplicationModelProvider());
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
