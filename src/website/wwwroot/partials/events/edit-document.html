@@ -5,22 +5,38 @@
   </div>
   <div class="modal-body">
     <div class="form-group">
-      <label class="col-sm-2 col-xs-12 control-label">Time</label>
-      <div class="col-sm-4 col-xs-6">
-        <input type="text" name="time" class="form-control" placeholder="Time" ng-model="modal.model.timeText" ng-model-options="{getterSetter:true, updateOn:'blur'}" server-error required />
-        <div class="text-danger" ng-show="modal.createForm.time.$touched || modal.createForm.$submitted">
-          <span ng-show="modal.createForm.time.$error.required">Required</span>
-          <span ng-show="modal.createForm.time.$error.server">{{modal.errors.time}}</span>
+      <label class="col-sm-2 col-xs-12 control-label">File</label>
+      <div class="col-sm-5 col-xs-6">
+        <div name="file" ngf-select ngf-drop ng-model="modal.model.file" class="drop-box" required server-error>
+          <div>Click or drag/drop file here</div>
+          <div ng-if="modal.model.file">Selected: {{modal.model.file.name}} ({{modal.model.file.size}} bytes)</div>
+        </div>
+        <div class="text-danger" ng-show="modal.createForm.file.$touched || modal.createForm.$submitted">
+          <span ng-show="modal.createForm.file.$error.required">Required</span>
+          <span ng-show="modal.createForm.file.$error.server">{{modal.errors.file}}</span>
         </div>
       </div>
     </div>
     <div class="form-group">
-      <label class="col-sm-2 control-label">Message</label>
+      <label class="col-sm-2 col-xs-12 control-label">Message</label>
+      <div class="col-sm-5 col-xs-6">
+        <select class="form-control" ng-model="modal.model.type" server-error>
+          <option value="unknown">Other</option>
+          <option value="roster">Roster</option>
+          <option value="log">Log</option>
+          <option value="map">Map Info</option>
+        </select>
+        <span class="text-danger" ng-show="modal.createForm.type.$touched || modal.createForm.$submitted">
+          <span ng-show="modal.createForm.type.$error.server">{{modal.errors.type}}</span>
+        </span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Description</label>
       <div class="col-sm-10">
-        <textarea name="message" class="form-control" rows="6" ng-model="modal.model.message" required></textarea>
-        <span class="text-danger" ng-show="modal.createForm.message.$touched || modal.createForm.$submitted">
-          <span ng-show="modal.createForm.message.$error.required">Required</span>
-          <span ng-show="modal.createForm.message.$error.server">{{modal.errors.message}}</span>
+        <textarea name="description" class="form-control" ng-model="modal.model.description" rows="5" server-error></textarea>
+        <span class="text-danger" ng-show="modal.createForm.description.$touched || modal.createForm.$submitted">
+          <span ng-show="modal.createForm.description.$error.server">{{modal.errors.description}}</span>
         </span>
       </div>
     </div>

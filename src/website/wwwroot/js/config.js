@@ -12,6 +12,7 @@ require.config({
     'bootstrap': '../lib/bootstrap/dist/js/bootstrap',
     'moment': '../lib/moment/min/moment.min',
     'ngMaterial': '../lib/angular-material/angular-material.min',
+    'ng-file-upload': '../lib/ng-file-upload/ng-file-upload',
     'np-autocomplete': '../lib/np-autocomplete/dist/np-autocomplete.min',
     'ui-bootstrap-modal': '../lib/ui.bootstrap/src/modal/modal'
   },
@@ -21,6 +22,9 @@ require.config({
     },
     'ngMaterial': {
       deps: ['../lib/angular-animate/angular-animate.min', '../lib/angular-aria/angular-aria.min', '../lib/angular-messages/angular-messages.min']
+    },
+    'ng-file-upload': {
+      deps: ['../lib/ng-file-upload/ng-file-upload-shim']
     },
     'ui-bootstrap-modal': {
       deps: ['../lib/ui.bootstrap/src/stackedMap/stackedMap']

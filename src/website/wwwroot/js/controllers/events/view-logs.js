@@ -1,4 +1,4 @@
-﻿define(['angular'], function(angular) {
+﻿define(['angular', 'moment', 'controllers/events/create-log'], function(angular, moment) {
   angular.module('sarDatabase').controller('EventLogCtrl', ['$scope', '$uibModal', 'EventsService',
   function ($scope, $uibModal, EventsService) {
     $.extend($scope, {
@@ -42,14 +42,14 @@
           resolve: {
             model: function() { return model },
             dialog: function() { return {
-              eventRoute: '@ViewBag.EventRoute',
+              eventRoute: $scope.eventRoute,
               isCreate: isCreate
             }}
           }
         });
         modalInstance.result
         .then(function (data) {
-          EventsService.logs($scope.logs, '@ViewBag.EventRoute', '@Model.Id');
+          EventsService.logs($scope.logs, $scope.eventRoute, $scope.eventId);
         }, function (reason) {
           // don't have to do anything.
         });
@@ -57,7 +57,7 @@
       startCreate: function() {
         var model = {
           time: moment(),
-          eventId: '@Model.Id'
+          eventId: $scope.eventId
         };
         $scope.openLog(model, true);
       },

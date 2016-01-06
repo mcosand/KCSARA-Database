@@ -15,5 +15,7 @@ namespace Kcsara.Database.Web.Models
     public string Filename { get; set; }
     public string Mime { get; set; }
     public int Size { get; set; }
+
+    public string Description { get; set; }
   }
 }

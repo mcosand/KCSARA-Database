@@ -1,4 +1,4 @@
-﻿define(['angular'], function(angular) {
+﻿define(['angular', 'ng-file-upload'], function(angular) {
   angular.module('sarDatabase').controller('CreateDocCtrl', ['$uibModalInstance', 'dialog', 'model', 'EventsService', function($uibModalInstance, dialog, model, EventsService) {
     var modal = this;
     modal.dismiss = function(reason) {

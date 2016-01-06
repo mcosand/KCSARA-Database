@@ -5,9 +5,11 @@ namespace Kcsara.Database.Web.Controllers
 {
   using System;
   using System.Collections.Generic;
+  using System.Threading.Tasks;
   using Kcsar.Database.Model;
   using log4net;
   using Microsoft.AspNet.Authorization;
+  using Microsoft.AspNet.Hosting;
   using Microsoft.AspNet.Mvc;
   using Models;
   using Services;
@@ -46,6 +48,14 @@ namespace Kcsara.Database.Web.Controllers
     public IEnumerable<DocumentInfo> ApiDocuments(Guid referenceId)
     {
       return service.List(referenceId);
+    }
+
+    [HttpPost]
+    [HandleException]
+    [Route("api/documents/{referenceId}")]
+    public async Task<DocumentInfo> ApiCreateDocument([FromForm] DocumentUpload document, Guid referenceId)
+    {
+      return await service.Save(referenceId, document);
     }
   }
 }

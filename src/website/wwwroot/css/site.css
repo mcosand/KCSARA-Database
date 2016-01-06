@@ -412,3 +412,27 @@ form.ng-submitted input.ng-invalid {
 .list-item-tight {
   min-height: 36px;
 }
+
+.drop-box {
+  min-height: 3em;
+  background-color: #eee;
+  border-radius:5px;
+  text-align: center;
+  padding:1em;
+  border: solid 2px transparent;
+  cursor: pointer;
+}
+.drop-box.dragover {
+  border-color:#008d4c;
+}
+
+.md-list-item-text {
+  padding-left: 1em;
+  padding-bottom: 1em;
+}
+.md-list-item-text * {
+  line-height: initial;
+}
+.md-list-item-text h4 {
+  margin: 0px;
+}

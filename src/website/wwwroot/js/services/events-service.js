@@ -1,8 +1,8 @@
 ﻿/*
  * Copyright 2015 Matthew Cosand
  */
-define(['moment', 'sarDatabase'], function (moment) {
-  angular.module('sarDatabase').service('EventsService', ['$http', '$q', function ($http, $q) {
+define(['moment', 'sarDatabase', 'ng-file-upload'], function (moment) {
+  angular.module('sarDatabase').service('EventsService', ['$http', '$q', 'Upload', function ($http, $q, Upload) {
     self = this;
     var outstandingRequests = [];
 
@@ -90,7 +90,7 @@ define(['moment', 'sarDatabase'], function (moment) {
           window.appRoot + 'api/documents/' + eventId,
           function (data) {
             $.each(data, function (idx, doc) {
-              doc.thumbUrl = window.appRoot + ((doc.mime.substring(0, 5) == "image") ? ('documents/' + doc.id + '/thumbnail') : ('images/mime/' + doc.mime.replace('/', '_') + '.png'));
+              doc.thumbUrl = window.appRoot + ((doc.mime.substring(0, 5) == "image") ? ('documents/' + doc.id + '/thumbnail') : ('images/mime/' + doc.mime.replace('/', '_').replace('+', '-') + '.png'));
               doc.url = window.appRoot + 'documents/' + doc.id;
               doc.size = Math.round((doc.size / 1024) * 10) / 10 + 'KB';
               fillList.push(doc);
@@ -129,6 +129,34 @@ define(['moment', 'sarDatabase'], function (moment) {
         .error(function (response, statusCode) { deferred.reject(statusCode == 403 ? 'login' : response); });
         return deferred.promise;
       },
+      saveDocument: function (model) {
+        var deferred = $q.defer();
+        
+        Upload.upload({
+          url: window.appRoot + 'api/documents/' + model.eventId,
+          data: model
+        }).then(function (resp) {
+          console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
+          deferred.resolve(resp.data);
+        }, function (resp) {
+          console.log('Error status: ' + resp.status);
+          deferred.reject(resp);
+        }, function (evt) {
+          var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+          console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
+        });
+
+        //$http({
+        //  method: model['id'] ? 'PUT' : 'POST',
+        //  url: ,
+        //  data: model
+        //})
+        //.success(function (data) {
+        //  deferred.resolve(data);
+        //})
+        //.error(function (response, statusCode) { deferred.reject(statusCode == 403 ? 'login' : response); });
+        return deferred.promise;
+      }
     });
   }]);
 });

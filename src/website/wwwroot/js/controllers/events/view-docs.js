@@ -1,4 +1,4 @@
-﻿define(['angular'], function(angular) {
+﻿define(['angular', 'controllers/events/create-document'], function (angular) {
   angular.module('sarDatabase').controller('EventDocsCtrl', ['$scope', '$uibModal', 'EventsService',
     function ($scope, $uibModal, EventsService) {
       $.extend($scope, {
@@ -16,7 +16,8 @@
         },
         startCreate: function() {
           var model = {
-            eventId: '@Model.Id'
+            eventId: $scope.eventId,
+            type: 'unknown'
           };
           $scope.openDoc(model, true);
         },
@@ -25,11 +26,11 @@
             templateUrl: window.appRoot + 'partials/events/edit-document.html',
             controller: 'CreateDocCtrl',
             controllerAs: 'modal',
-            size: 'lg',
+            size: 'md',
             resolve: {
               model: function() { return model },
               dialog: function() { return {
-                eventRoute: '@ViewBag.EventRoute',
+                eventRoute: $scope.eventRoute,
                 isCreate: isCreate
               }}
             }

@@ -73,7 +73,10 @@ namespace website
       services.AddSingleton(svc => new Lazy<IEventsService<Kcsara.Database.Web.Models.Mission>>(() => new MissionsService(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
       services.AddSingleton(svc => new Lazy<IEventsService<Kcsara.Database.Web.Models.EventSummary>>(() => new EventsService<TrainingRow, Kcsara.Database.Web.Models.EventSummary>(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
 
-      services.AddSingleton(svc => new Lazy<IDocumentsService>(() => new DocumentsService(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
+      services.AddSingleton(svc => new Lazy<IDocumentsService>(() => new DocumentsService(
+        svc.GetRequiredService<Func<IKcsarContext>>(),
+        svc.GetRequiredService<IHostingEnvironment>(),
+        svc.GetRequiredService<ILog>())));
 
 
       services.AddTransient<IApplicationModelProvider>(svc => new CustomFilterApplicationModelProvider());
@@ -107,8 +110,6 @@ namespace website
         }
         catch { }
       }
-
-      ((DocumentsService)app.ApplicationServices.GetRequiredService<Lazy<IDocumentsService>>().Value).StoreRoot = env.MapPath("auth/documents");
 
       app.UseIISPlatformHandler(options => options.AuthenticationDescriptions.Clear());
 

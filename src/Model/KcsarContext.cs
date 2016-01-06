@@ -11,7 +11,6 @@ namespace Kcsar.Database.Model
   using System.Data.Entity.Core;
   using System.Data.Entity.Core.Objects;
   using System.Data.Entity.Infrastructure;
-  using System.IO;
   using System.Linq;
   using System.Reflection;
   using System.Text.RegularExpressions;
@@ -275,64 +274,10 @@ namespace Kcsar.Database.Model
           obj.ChangedBy = Thread.CurrentPrincipal.Identity.Name;
 
           AuditChange(entry);
-          DocumentRow doc = obj as DocumentRow;
-          if (doc != null)
-          {
-            SaveDocumentFile(doc);
-          }
         }
       }
 
       return base.SaveChanges();
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="d"></param>
-    private void SaveDocumentFile(DocumentRow d)
-    {
-      if (string.IsNullOrWhiteSpace(d.StorePath))
-      {
-        string path = string.Empty;
-        for (int i = 0; i < DocumentRow.StorageTreeDepth; i++)
-        {
-          path += ((i > 0) ? "\\" : "") + rand.Next(DocumentRow.StorageTreeSpan).ToString();
-        }
-        if (!System.IO.Directory.Exists(DocumentRow.StorageRoot + path))
-        {
-          System.IO.Directory.CreateDirectory(DocumentRow.StorageRoot + path);
-        }
-        path += "\\" + d.Id.ToString();
-        d.StorePath = path;
-      }
-      System.IO.File.WriteAllBytes(DocumentRow.StorageRoot + d.StorePath, d.Contents);
-    }
-
-    public void RemoveStaleDocumentFiles()
-    {
-      HashSet<string> dbFiles = new HashSet<string>(
-        this.Documents
-        .Select(f => f.StorePath).Distinct()
-        .AsNoTracking().AsEnumerable());
-
-      int rootLength = DocumentRow.StorageRoot.Length;
-      foreach (var file in Directory.GetFiles(DocumentRow.StorageRoot, "*.*", SearchOption.AllDirectories))
-      {
-        if (dbFiles.Contains(file.Substring(rootLength)))
-          continue;
-
-        File.Delete(file);
-        string path = file;
-        for (int i = 0; i < DocumentRow.StorageTreeDepth; i++)
-        {
-          path = Path.GetDirectoryName(path);
-          if (Directory.GetDirectories(path).Length + Directory.GetFiles(path).Length == 0)
-          {
-            Directory.Delete(path);
-          }
-        }
-      }
     }
 
     #region Computed Training

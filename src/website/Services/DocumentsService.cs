@@ -5,12 +5,17 @@ namespace Kcsara.Database.Web.Services
 {
   using System;
   using System.Collections.Generic;
-  using System.Data.Entity.SqlServer;
   using System.Drawing;
   using System.IO;
   using System.Linq;
+  using System.Net;
+  using System.Security.Cryptography;
+  using System.Text.RegularExpressions;
+  using System.Threading.Tasks;
   using Kcsar.Database.Model;
   using log4net;
+  using Microsoft.AspNet.Hosting;
+  using Microsoft.Net.Http.Headers;
   using Models;
 
   /// <summary>
@@ -22,6 +27,7 @@ namespace Kcsara.Database.Web.Services
     IEnumerable<DocumentInfo> List(Guid referenceId);
     DocumentContent Get(Guid id);
     DocumentContent GetThumbnail(Guid id);
+    Task<DocumentInfo> Save(Guid referenceId, DocumentUpload document);
   }
 
   /// <summary>
@@ -31,16 +37,15 @@ namespace Kcsara.Database.Web.Services
   /// <typeparam name="ModelType"></typeparam>
   public class DocumentsService : IDocumentsService
   {
-    public string StoreRoot { get; set; }
-
     private readonly Func<IKcsarContext> dbFactory;
     private readonly ILog log;
+    private readonly IHostingEnvironment hostingEnvironment;
 
-    public DocumentsService(Func<IKcsarContext> dbFactory, ILog log)
+    public DocumentsService(Func<IKcsarContext> dbFactory, IHostingEnvironment hosting, ILog log)
     {
       this.dbFactory = dbFactory;
       this.log = log;
-      StoreRoot = string.Empty;
+      hostingEnvironment = hosting;
     }
 
     public DocumentContent Get(Guid id)
@@ -48,17 +53,17 @@ namespace Kcsara.Database.Web.Services
       using (var db = dbFactory())
       {
         var info = (from d in db.Documents
-                     where d.Id == id
-                     select new { store = d.StorePath, type = d.MimeType, name = d.FileName })
+                    where d.Id == id
+                    select new { store = d.StorePath, type = d.MimeType, name = d.FileName })
                      .First();
 
         byte[] result = new byte[0];
-        if (!File.Exists(StoreRoot + info.store))
+        if (!File.Exists(GetFilePath(info.store)))
         {
           throw new NotFoundException();
         }
 
-        return new DocumentContent { Data = File.ReadAllBytes(StoreRoot + info.store), Mime = info.type, Filename = info.name };
+        return new DocumentContent { Data = File.ReadAllBytes(GetFilePath(info.store)), Mime = info.type, Filename = info.name };
       }
     }
 
@@ -72,12 +77,12 @@ namespace Kcsara.Database.Web.Services
                      .First();
 
         byte[] result = new byte[0];
-        if (!File.Exists(StoreRoot + thumb.store))
+        if (!File.Exists(GetFilePath(thumb.store)))
         {
           throw new NotFoundException();
         }
 
-        using (Image img = Image.FromFile(StoreRoot + thumb.store))
+        using (Image img = Image.FromFile(GetFilePath(thumb.store)))
         {
           int h = 100;
           int w = (int)((double)img.Width / (double)img.Height * 100);
@@ -102,17 +107,102 @@ namespace Kcsara.Database.Web.Services
       using (var db = dbFactory())
       {
         var a = db.Documents.Where(f => f.ReferenceId == referenceId).OrderBy(f => f.FileName)
-          .Select(f => new DocumentInfo
-          {
-            Id = f.Id,
-            Filename = f.FileName,
-            Size = f.Size,
-            Type = f.Type,
-            Mime = f.MimeType
-          })
+          .Select(ToDocumentInfo<DocumentInfo>)
           .ToList();
         return a;
       }
+    }
+
+    public async Task<DocumentInfo> Save(Guid referenceId, DocumentUpload document)
+    {
+      if (referenceId == Guid.Empty) throw new StatusCodeException(HttpStatusCode.BadRequest, "referenceId is required");
+
+      var file = document.File;
+      if (file.Length > int.MaxValue)
+      {
+        throw new StatusCodeException(HttpStatusCode.BadRequest, "File too big");
+      }
+
+      var disposition = ContentDispositionHeaderValue.Parse(file.ContentDisposition);
+
+      var row = new DocumentRow
+      {
+        ReferenceId = referenceId,
+        MimeType = document.File.ContentType,
+        Size = (int)document.File.Length,
+        Type = document.Type,
+        Description = document.Description,
+        FileName = disposition.FileName.Trim('"')
+      };
+
+      var extension = Path.GetExtension(row.FileName);
+
+      if (string.Equals(row.MimeType, "application/octet-stream", StringComparison.OrdinalIgnoreCase))
+      {
+        switch (extension.ToUpperInvariant())
+        {
+          case ".GPX":
+            row.MimeType = "application/gpx+xml";
+            break;
+        }
+      }
+
+      using (var ms = new MemoryStream((int)file.Length))
+      {
+        await file.OpenReadStream().CopyToAsync(ms);
+        ms.Position = 0;
+        var md5 = MD5.Create();
+        var hash = Regex.Replace(Convert.ToBase64String(md5.ComputeHash(ms)).Replace('/', '@'), "([a-z])", "$1-");
+        row.StorePath = string.Format("{0}/{1}/{2}{3}", hash[0], (hash[1] == '-') ? hash[2] : hash[1], hash, extension);
+        var discFile = GetFilePath(row.StorePath);
+        var folder = Path.GetDirectoryName(discFile);
+
+        if (!Directory.Exists(folder))
+        {
+          Directory.CreateDirectory(folder);
+        }
+
+        if (!File.Exists(discFile))
+        {
+          using (var filestream = new FileStream(discFile, FileMode.CreateNew, FileAccess.Write))
+          {
+            ms.Position = 0;
+            await ms.CopyToAsync(filestream);
+          }
+        }
+      }
+
+      using (var db = dbFactory())
+      {
+        if (db.Documents.Any(f => f.ReferenceId == row.ReferenceId && f.StorePath == row.StorePath))
+        {
+          throw new StatusCodeException(HttpStatusCode.BadRequest, "File already exists");
+        }
+
+        db.Documents.Add(row);
+        db.SaveChanges();
+      }
+
+      return ToDocumentInfo<DocumentInfo>(row);
+    }
+
+    private string GetFilePath(string relative)
+    {
+      return Path.Combine(hostingEnvironment.MapPath("documents/"), relative);
+    }
+
+    private T ToDocumentInfo<T>(DocumentRow row) where T : DocumentInfo, new()
+    {
+      var info = new T
+      {
+        Id = row.Id,
+        Filename = row.FileName,
+        Size = row.Size,
+        Description = row.Description,
+        Type = row.Type,
+        Mime = row.MimeType
+      };
+      return info;
     }
   }
 }
