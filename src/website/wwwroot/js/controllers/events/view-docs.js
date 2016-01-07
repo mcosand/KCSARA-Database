@@ -3,6 +3,7 @@
     function ($scope, $uibModal, EventsService) {
       $.extend($scope, {
         documents: [],
+        current: null,
         eventRoute: 'unknown',
         eventId: '',
         init: function(eventRoute, eventId) {
@@ -11,8 +12,14 @@
           EventsService.documents($scope.documents, eventRoute, eventId)
           .then(null, function (reason) { console.log(reason); alert('error'); });
         },
-        gotoDoc: function(url) {
+        downloadDoc: function(url) {
           window.open(url, '_blank', '');
+        },
+        editDoc: function(item) {
+          $scope.openDoc(item, false);
+        },
+        setCurrent: function(newId) {
+          $scope.current = (newId == $scope.current) ? null : newId;
         },
         startCreate: function() {
           var model = {
@@ -36,7 +43,7 @@
             }
           });
           modalInstance.result
-          .then(function (data) {
+          .then(function () {
             EventsService.documents($scope.documents, $scope.eventRoute, $scope.eventId);
           }, function (reason) {
             // don't have to do anything.

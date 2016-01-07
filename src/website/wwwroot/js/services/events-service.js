@@ -129,6 +129,18 @@ define(['moment', 'sarDatabase', 'ng-file-upload'], function (moment) {
         .error(function (response, statusCode) { deferred.reject(statusCode == 403 ? 'login' : response); });
         return deferred.promise;
       },
+      deleteLog: function (eventId, id, type) {
+        var deferred = $q.defer();
+        $http({
+          method: 'DELETE',
+          url: window.appRoot + 'api/' + type + '/' + eventId + '/log/' + id,
+        })
+        .success(function (data) {
+          deferred.resolve(data);
+        })
+        .error(function (response, statusCode) { deferred.reject(statusCode == 403 ? 'login' : response); });
+        return deferred.promise;
+      },
       saveDocument: function (model) {
         var deferred = $q.defer();
         
@@ -155,6 +167,18 @@ define(['moment', 'sarDatabase', 'ng-file-upload'], function (moment) {
         //  deferred.resolve(data);
         //})
         //.error(function (response, statusCode) { deferred.reject(statusCode == 403 ? 'login' : response); });
+        return deferred.promise;
+      },
+      deleteDocument: function (id) {
+        var deferred = $q.defer();
+        $http({
+          method: 'DELETE',
+          url: window.appRoot + 'api/documents/' + id,
+        })
+        .success(function (data) {
+          deferred.resolve(data);
+        })
+        .error(function (response, statusCode) { deferred.reject(statusCode == 403 ? 'login' : response); });
         return deferred.promise;
       }
     });

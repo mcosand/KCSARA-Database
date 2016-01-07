@@ -436,3 +436,15 @@ form.ng-submitted input.ng-invalid {
 .md-list-item-text h4 {
   margin: 0px;
 }
+
+md-list-item.md-whiteframe-2dp {
+  margin:4px;
+}
+
+.md-button .md-primary {
+  color:#008d4c;
+}
+
+.text-danger {
+  color: #a94442 !important;
+}

@@ -1,6 +1,6 @@
 ﻿<form name="modal.createForm" ng-submit="modal.submit()" novalidate="novalidate" class="form-horizontal">
   <div class="modal-header">
-    <button type="button" class="close" ng-click="modal.dismiss('close')" aria-hidden="true"><i class="fa fa-times"></i></button>
+    <button type="button" class="close" ng-disabled="modal.isWorking" ng-click="modal.dismiss('close')" aria-hidden="true"><i class="fa fa-times"></i></button>
     <h3 class="modal-title">{{modal.dialog.isCreate ? 'Add' : 'Edit'}} Log</h3>
   </div>
   <div class="modal-body">
@@ -26,7 +26,8 @@
     </div>
   </div>
   <div class="modal-footer">
-    <!-- <a class="btn" ng-class="{'btn-primary': !modal.lastStep, 'btn-default': modal.lastStep}">Next</a> -->
-    <button type="submit" class="btn btn-primary" ng-class="{'btn-primary': modal.lastStep, 'btn-default': !modal.lastStep}">Save</button>
+    <button class="btn pull-left text-danger" ng-click="modal.checkDelete(''); $event.preventDefault()" ng-disabled="modal.isWorking" ng-if="!modal.dialog.isCreate"><i class="fa fa-spinner fa-spin" ng-if="modal.isDeleting"></i> Delete</button>
+    <button class="btn" ng-disabled="modal.isWorking" ng-click="modal.dismiss('close'); $event.preventDefault();">Close</button>
+    <button type="submit" class="btn btn-primary" ng-disabled="modal.isWorking"><i class="fa fa-spinner fa-spin" ng-if="modal.isSaving"></i> Save</button>
   </div>
 </form>

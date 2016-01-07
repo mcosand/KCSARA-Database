@@ -28,6 +28,7 @@ namespace Kcsara.Database.Web.Services
     DocumentContent Get(Guid id);
     DocumentContent GetThumbnail(Guid id);
     Task<DocumentInfo> Save(Guid referenceId, DocumentUpload document);
+    void Delete(Guid id);
   }
 
   /// <summary>
@@ -200,9 +201,37 @@ namespace Kcsara.Database.Web.Services
         Size = row.Size,
         Description = row.Description,
         Type = row.Type,
-        Mime = row.MimeType
+        Mime = row.MimeType,
+        Changed = row.LastChanged,
+        ChangedBy = row.ChangedBy
       };
       return info;
+    }
+
+    public void Delete(Guid id)
+    {
+      using (var db = dbFactory())
+      {
+        var document = db.Documents.SingleOrDefault(f => f.Id == id);
+        if (document == null)
+        {
+          throw new NotFoundException();
+        }
+
+        db.Documents.Remove(document);
+
+        var storeFile = document.StorePath;
+        if (!db.Documents.Any(f => f.Id != id && f.StorePath == storeFile))
+        {
+          if (!Directory.Exists(GetFilePath("deleted")))
+          {
+            Directory.CreateDirectory(GetFilePath("deleted"));
+          }
+          File.Move(GetFilePath(storeFile), GetFilePath("deleted/" + storeFile.Substring(4)));
+        }
+
+        db.SaveChanges();
+      }
     }
   }
 }

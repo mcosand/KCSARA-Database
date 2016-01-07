@@ -106,6 +106,7 @@ namespace Kcsar.Database.Model
         .Map<SarEventRow>(m => m.Requires("Discriminator").HasValue(string.Empty).IsRequired())
         .Map<MissionRow>(m => m.Requires("Discriminator").HasValue("Mission").IsRequired())
         .Map<TrainingRow>(m => m.Requires("Discriminator").HasValue("Training").IsRequired());
+      modelBuilder.Entity<EventLogRow>().HasKey(f => new { f.EventId, f.Id });
     }
 
     public Func<UnitMembership, bool> GetActiveMembershipFilter(Guid? unit, DateTime time)

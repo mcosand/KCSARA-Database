@@ -57,5 +57,14 @@ namespace Kcsara.Database.Web.Controllers
     {
       return await service.Save(referenceId, document);
     }
+
+    [HttpDelete]
+    [HandleException]
+    [Route("api/documents/{id}")]
+    public bool ApiDeleteDocument(Guid id)
+    {
+      service.Delete(id);
+      return true;
+    }
   }
 }

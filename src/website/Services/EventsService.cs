@@ -26,6 +26,7 @@ namespace Kcsara.Database.Web.Services
     IEnumerable<LogEntry> Logs(Guid eventId);
 
     LogEntry SaveLog(Guid eventId, LogEntry entry);
+    void DeleteLog(Guid eventId, Guid id);
   }
 
   /// <summary>
@@ -224,6 +225,22 @@ namespace Kcsara.Database.Web.Services
         db.SaveChanges();
         entry.Id = row.Id;
         return entry;
+      }
+    }
+
+    public void DeleteLog(Guid eventId, Guid id)
+    {
+      using (var db = dbFactory())
+      {
+        var eventRow = db.Events.OfType<RowType>().SingleOrDefault(f => f.Id == eventId);
+        if (eventRow == null) throw new NotFoundException();
+
+        var row = eventRow.Log.SingleOrDefault(f => f.Id == id);
+        if (row == null) throw new NotFoundException();
+
+        eventRow.Log.Remove(row);
+
+        db.SaveChanges();
       }
     }
   }

@@ -17,5 +17,8 @@ namespace Kcsara.Database.Web.Models
     public int Size { get; set; }
 
     public string Description { get; set; }
+
+    public string ChangedBy { get; set; }
+    public DateTime Changed { get; set; }
   }
 }

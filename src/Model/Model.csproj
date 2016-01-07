@@ -144,6 +144,10 @@
     <Compile Include="Migrations\201601030008454_EventLogs.Designer.cs">
       <DependentUpon>201601030008454_EventLogs.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201601070838299_EventLogsKeys.cs" />
+    <Compile Include="Migrations\201601070838299_EventLogsKeys.Designer.cs">
+      <DependentUpon>201601070838299_EventLogsKeys.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Migrator.cs" />
     <Compile Include="MemberUnitDocument.cs" />
     <Compile Include="MemberMedical.cs" />
@@ -286,6 +290,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201601030008454_EventLogs.resx">
       <DependentUpon>201601030008454_EventLogs.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601070838299_EventLogsKeys.resx">
+      <DependentUpon>201601070838299_EventLogsKeys.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

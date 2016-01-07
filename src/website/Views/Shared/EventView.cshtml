@@ -56,12 +56,16 @@
       }
       <md-list>
         <md-list-item ng-if="documents.length == 0">No documents.</md-list-item>
-        <md-list-item ng-repeat="item in documents" ng-click="gotoDoc(item.url)" class="list-item-tight">
-          <img ng-src="{{item.thumbUrl}}" alt="{{item.mime}} file icon" style="width:4em"/>
+        <md-list-item ng-repeat="item in documents" ng-click="editDoc(item)" class="list-item-tight" ng-class="{'md-whiteframe-2dp': item.id == current}">
+          <img ng-src="{{item.thumbUrl}}" alt="{{item.mime}} file icon" class="md-avatar" style="border-radius:0"/>
           <div class="md-list-item-text">
             <h4>{{item.filename}}</h4>
             <div>{{item.description}}</div>
             <div>{{item.size}}</div>
+            <div ng-if="item.id == current"><md-button>Download</md-button></div>
+          </div>
+          <div ng-click="downloadDoc(item.id)" aria-label="Download" class="md-secondary md-primary">
+            <i class="fa fa-download fa-2x"></i>
           </div>
         </md-list-item>
       </md-list>

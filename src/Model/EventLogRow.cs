@@ -27,7 +27,7 @@ namespace Kcsar.Database.Model
 
     public override string GetReportHtml()
     {
-      return string.Format("<b>{0}</b> @{1}: {2} [{3}]", this.Event.Title, this.Time, this.Data, (this.Person == null) ? "unknown" : this.Person.FullName);
+      return string.Format("<b>{0}</b> @{1}: {2} [{3}]", this.Event?.Title, this.Time, this.Data, (this.Person == null) ? "unknown" : this.Person.FullName);
     }
 
     public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

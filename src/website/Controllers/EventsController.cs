@@ -122,6 +122,14 @@ namespace Kcsara.Database.Web.Controllers
     {
       return service.SaveLog(eventId, entry);
     }
+
+    [HttpDelete]
+    [Route("api/[controller]/{eventId}/log/{id}")]
+    public bool ApiLogDelete(Guid eventId, Guid id)
+    {
+      service.DeleteLog(eventId, id);
+      return true;
+    }
   }
 
 
