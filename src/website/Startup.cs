@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Kcsar.Database.Model;
 using Kcsara.Database.Web;
 using Kcsara.Database.Web.Services;
@@ -26,7 +27,8 @@ namespace website
       // Set up configuration sources.
       var builder = new ConfigurationBuilder()
           .AddJsonFile("appsettings.json")
-          .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+          .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+          .AddJsonFile($"appsettings.local.json", optional: true);
 
       if (env.IsDevelopment())
       {
@@ -84,6 +86,16 @@ namespace website
       services.AddSingleton<ICurrentPrincipalProvider, CurrentPrincipalProvider>();
 
       services.AddTransient<IApplicationModelProvider>(svc => new CustomFilterApplicationModelProvider());
+
+      var keystore = Configuration["KeyStorePath"];
+      if (!string.IsNullOrWhiteSpace(keystore))
+      {
+        services.AddDataProtection();
+        services.ConfigureDataProtection(configure =>
+        {
+          configure.PersistKeysToFileSystem(new DirectoryInfo(keystore));
+        });
+      }
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -119,7 +131,15 @@ namespace website
 
       app.UseStaticFiles();
 
-      app.UseIdentity();
+      app.UseCookieAuthentication(options =>
+      {
+        options.LoginPath = new PathString("/account/login");
+        options.AutomaticAuthenticate = true;
+        options.AutomaticChallenge = true;
+        options.AuthenticationScheme = "Microsoft.AspNet.Identity.Application";
+      });
+
+     // app.UseIdentity();
 
       // To configure external authentication please see http://go.microsoft.com/fwlink/?LinkID=532715
 
