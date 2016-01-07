@@ -56,21 +56,24 @@ namespace Kcsar.Database.Model
 
     public IDbSet<ExternalLogin> ExternalLogins { get; set; }
 
-    public KcsarContext() : this("DataStore") { }
+    public KcsarContext() : this("DataStore", null) { }
 
-    public KcsarContext(string connName)
+    public KcsarContext(string connName, Func<string> usernameGetter)
       : base(connName)
     {
       this.AuditLog = this.Set<AuditLog>();
+      this.usernameGetter = usernameGetter ?? (() => Thread.CurrentPrincipal.Identity.Name);
     }
 
     public KcsarContext(string connName, Action<string> logMethod)
-      : this(connName)
+      : this(connName, null)
     {
       this.Database.Log = logMethod;
     }
 
     public static readonly DateTime MinEntryDate = new DateTime(1945, 1, 1);
+
+    private readonly Func<string> usernameGetter;
 
     private Dictionary<Type, List<PropertyInfo>> reportingProperties = new Dictionary<Type, List<PropertyInfo>>();
     private Dictionary<string, string> reportingFormats = new Dictionary<string, string>();
@@ -272,7 +275,7 @@ namespace Kcsar.Database.Model
 
           // Keep track of the change for reporting.
           obj.LastChanged = DateTime.Now;
-          obj.ChangedBy = Thread.CurrentPrincipal.Identity.Name;
+          obj.ChangedBy = usernameGetter();
 
           AuditChange(entry);
         }

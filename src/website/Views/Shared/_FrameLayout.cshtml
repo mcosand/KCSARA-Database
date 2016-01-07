@@ -4,6 +4,8 @@
   ViewBag.NgApp = "sarDatabase";
   ViewBag.Requires = Enumerable.ToArray(Enumerable.Distinct(Enumerable.Concat((ViewBag.Requires ?? new string[0]), new[] { "controllers/main-search" })));
 }
+@inject ICurrentPrincipalProvider _principal
+
 <body class="skin-yellow sidebar-mini"
        @(ViewBag.NgController != null ? new HtmlString("ng-controller=\"" + ViewBag.NgController + "\"") : new HtmlString(string.Empty))
        @(ViewBag.NgInit != null ? new HtmlString("ng-init=\"" + ViewBag.NgInit + "\"") : new HtmlString(string.Empty))>
@@ -35,7 +37,7 @@
               </li>
               <li class="dropdown notifications-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" onclick="event.preventDefault();">
-                  HI @(ViewBag.LoginUserName) @*?? string.Format("{0} {1}", ((Kcsar.Membership.KcsarUserProfile)Profile).FirstName, ((Kcsar.Membership.KcsarUserProfile)Profile).LastName))*@
+                  HI @(_principal.CurrentPrincipal.Identity.Name) @*?? string.Format("{0} {1}", ((Kcsar.Membership.KcsarUserProfile)Profile).FirstName, ((Kcsar.Membership.KcsarUserProfile)Profile).LastName))*@
                 </a>
                 <ul class="dropdown-menu">
                   <li>

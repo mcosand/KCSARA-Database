@@ -5,6 +5,8 @@ using Kcsara.Database.Web.Services;
 using log4net;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
+using Microsoft.AspNet.Http;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Mvc.ApplicationModels;
 using Microsoft.AspNet.Mvc.Formatters;
@@ -65,9 +67,10 @@ namespace website
       // Add application services.
       services.AddTransient<IEmailSender, AuthMessageSender>();
       services.AddTransient<ISmsSender, AuthMessageSender>();
+      services.AddTransient<ICurrentPrincipalProvider, CurrentPrincipalProvider>();
 
-      services.AddTransient<Lazy<IKcsarContext>, Lazy<IKcsarContext>>(svc => new Lazy<IKcsarContext>(() => new KcsarContext(Configuration["Data:DataStore:ConnectionString"])));
-      services.AddSingleton<Func<IKcsarContext>, Func<IKcsarContext>>(svc => () => new KcsarContext(Configuration["Data:DataStore:ConnectionString"]));
+      services.AddTransient<Lazy<IKcsarContext>, Lazy<IKcsarContext>>(svc => new Lazy<IKcsarContext>(() => new KcsarContext(Configuration["Data:DataStore:ConnectionString"], () => svc.GetService<ICurrentPrincipalProvider>().CurrentPrincipal.Identity.Name)));
+      services.AddSingleton<Func<IKcsarContext>, Func<IKcsarContext>>(svc => () => new KcsarContext(Configuration["Data:DataStore:ConnectionString"], () => svc.GetService<ICurrentPrincipalProvider>().CurrentPrincipal.Identity.Name));
       services.AddSingleton(svc => LogManager.GetLogger("log"));
 
       services.AddSingleton(svc => new Lazy<IEventsService<Kcsara.Database.Web.Models.Mission>>(() => new MissionsService(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
@@ -78,6 +81,7 @@ namespace website
         svc.GetRequiredService<IHostingEnvironment>(),
         svc.GetRequiredService<ILog>())));
 
+      services.AddSingleton<ICurrentPrincipalProvider, CurrentPrincipalProvider>();
 
       services.AddTransient<IApplicationModelProvider>(svc => new CustomFilterApplicationModelProvider());
     }
