@@ -441,6 +441,9 @@ md-list-item.md-whiteframe-2dp {
   margin:4px;
 }
 
+md-list-item .md-button {
+  line-height:inherit;
+}
 .md-button .md-primary {
   color:#008d4c;
 }
