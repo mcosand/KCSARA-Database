@@ -93,6 +93,14 @@ namespace Kcsara.Database.Web.Controllers
       return View(model);
     }
 
+    [HttpPost]
+    [Route("/api/account/login")]
+    [AllowAnonymous]
+    public async Task<bool> ApiLogin([FromBody] LoginViewModel model)
+    {
+      return await _signInManager.PasswordSignInAsync(model.Username, model.Password, false, false) == SignInResult.Success;
+    }
+
     //
     // GET: /Account/Register
     [HttpGet]

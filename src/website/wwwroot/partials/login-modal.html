@@ -1,0 +1,30 @@
+﻿<form name="modal.loginForm" ng-submit="modal.submit()" novalidate="novalidate" class="form-horizontal">
+  <div class="modal-header">
+    <h3 class="modal-title">Login</h3>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <label class="col-sm-3 col-xs-12 control-label">Username</label>
+      <div class="col-sm-9 col-xs-12">
+        <input type="text" name="username" class="form-control" placeholder="Username" ng-model="modal.username" server-error required autofocus />
+        <div class="text-danger" ng-show="modal.loginForm.username.$touched || modal.loginForm.$submitted">
+          <span ng-show="modal.loginForm.username.$error.required">Required</span>
+          <span ng-show="modal.loginForm.username.$error.server">{{modal.errors.username}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-3 control-label">Password</label>
+      <div class="col-sm-9">
+        <input type="password" name="password" class="form-control" ng-model="modal.password" required />
+        <span class="text-danger" ng-show="modal.loginForm.password.$touched || modal.loginForm.$submitted">
+          <span ng-show="modal.loginForm.password.$error.required">Required</span>
+          <span ng-show="modal.loginForm.password.$error.server">{{modal.errors.password}}</span>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-primary" ng-disabled="modal.isWorking"><i class="fa fa-spinner fa-spin" ng-if="modal.isSaving"></i> Login</button>
+  </div>
+</form>

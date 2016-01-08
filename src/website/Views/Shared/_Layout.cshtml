@@ -1,7 +1,7 @@
 ﻿@using System.Linq;
 @{
-  ViewBag.NgModules = Enumerable.ToArray(Enumerable.Distinct(Enumerable.Concat((ViewBag.NgModules ?? new string[0]), new[] { "ng-pros.directive.autocomplete", "ui.bootstrap", "ngMaterial" } )));
-  ViewBag.Requires = Enumerable.ToArray(Enumerable.Distinct(Enumerable.Concat((ViewBag.Requires ?? new string[0]), new[] { "ngMaterial", "np-autocomplete", "ui-bootstrap-modal" })));
+  ViewBag.NgModules = Enumerable.ToArray(Enumerable.Distinct(Enumerable.Concat((ViewBag.NgModules ?? new string[0]), new[] { "ng-pros.directive.autocomplete", "ui.bootstrap", "ngMaterial" })));
+  ViewBag.Requires = Enumerable.ToArray(Enumerable.Distinct(Enumerable.Concat((ViewBag.Requires ?? new string[0]), new[] { "ngMaterial", "np-autocomplete", "ui-bootstrap-modal", "controllers/login-modal" })));
   var requires = Html.Raw(ViewBag.Requires.Length == 0 ? "" : (", '" + string.Join("','", ViewBag.Requires) + "'"));
 }
 <!DOCTYPE html>
@@ -21,8 +21,49 @@
     var errorUrl = '@Url.RouteUrl("DefaultApi", new { httproute="", Controller = "telemetry", Action="error" })';
     $(document).on('require-ready', function() {
       define('sarDatabase', ['angular'], function(ng) {
-        ng.module("ui.bootstrap", ["ui.bootstrap.modal"/*, "ui.bootstrap.accordion"*/]);
-        ng.module('@ViewBag.NgApp', @Html.ToJson((object)(ViewBag.NgModules ?? new object[0])));
+        ng.module("ui.bootstrap", ["ui.bootstrap.modal"]);
+        var module = ng.module('@ViewBag.NgApp', @Html.ToJson((object)(ViewBag.NgModules ?? new object[0])));
+        module.factory('loginRecover', ['$q', '$injector', function($q, $injector) {
+          var loginRecover = {
+            responseError: function(response) {
+              // Session has expired
+              if (response.status == 403){
+                var $uibModal = $injector.get('$uibModal');
+                var $http = $injector.get('$http');
+                var deferred = $q.defer();
+
+                var modalInstance = $uibModal.open({
+                  templateUrl: window.appRoot + 'partials/login-modal.html',
+                  controller: 'LoginModalCtrl',
+                  controllerAs: 'modal',
+                  size: 'md',
+                  keyboard: false,
+                  backdrop: 'static'
+                });
+                modalInstance.result
+                .then(function (data) {
+                  deferred.resolve(data);
+                }, function (reason) {
+                  deferred.reject(reason);
+                });
+
+                // When the session recovered, make the same backend call again and chain the request
+                var promise = deferred.promise;
+                if (!response.config.dontRetryAfterLogin) {
+                  promise = promise.then(function() {
+                    return $http(response.config);
+                  });
+                }
+                return promise;
+              }
+              return $q.reject(response);
+            }
+          };
+          return loginRecover;
+        }]);
+        module.config(['$httpProvider', function($httpProvider) {
+          $httpProvider.interceptors.push('loginRecover');
+        }]);
       })
       $(document).ready(function () {
         require(['angular', 'adminLTE', 'sarDatabase' @requires], function (ng) {
@@ -40,26 +81,10 @@
     <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.css" />
     <link rel="stylesheet" href="~/lib/AdminLTE/dist/css/AdminLTE.css" />
     <link rel="stylesheet" href="~/lib/AdminLTE/dist/css/skins/skin-yellow.css" />
-    <link rel="stylesheet" href="~/lib/angular-material/angular-material.min.css"/>
+    <link rel="stylesheet" href="~/lib/angular-material/angular-material.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
   </environment>
-  @*
-  <script src="~/lib/jquery/dist/jquery.js"></script>
-  <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
-  <script src="~/lib/moment/moment.js"></script>
-  <script src="~/lib/angular/angular.js"></script>
-  <script src="~/lib/angular-animate/angular-animate.min.js"></script>
-  <script src="~/lib/angular-aria/angular-aria.min.js"></script>
-  <script src="~/lib/angular-messages/angular-messages.min.js"></script>
-  <script src="~/lib/angular-material/angular-material.min.js"></script>
-  <script src="~/lib/np-autocomplete/dist/np-autocomplete.min.js"></script>
-  <script src="~/lib/AdminLTE/dist/js/app.js"></script>
-  <script src="~/js/modules/tree-view.js"></script>
-  <script src="~/lib/ui.bootstrap/src/stackedMap/stackedMap.js"></script>
-  <script src="~/lib/ui.bootstrap/src/modal/modal.js"></script>
-  <script src="~/lib/ui.bootstrap/src/collapse/collapse.js"></script>
-  <script src="~/lib/ui.bootstrap/src/accordion/accordion.js"></script>*@
-    <script type="text/ng-template" id="template/modal/backdrop.html">
+  <script type="text/ng-template" id="template/modal/backdrop.html">
     <div uib-modal-animation-class="fade"
          modal-in-class="in"
          ng-style="{'z-index': 1040 + (index && 1 || 0) + index*10}"></div>
@@ -87,13 +112,6 @@
       </div>
     </div>
   </script>
-  @*
-  <script type="text/javascript">angular.module("ui.bootstrap", ["ui.bootstrap.modal", "ui.bootstrap.accordion"]); angular.module('sarDatabase', @Html.ToJson((object)(ViewBag.NgModules ?? new object[0])));</script>
-  <script src="~/js/models/database-account.js"></script>
-  <script src="~/js/directives/server-error.js"></script>
-  <script src="~/js/services/accounts-service.js"></script>
-  <script src="~/js/services/events-service.js"></script>*@
-
   @RenderSection("head", false)
 </head>
 @RenderBody()
