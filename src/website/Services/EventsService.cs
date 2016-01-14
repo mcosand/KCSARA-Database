@@ -9,6 +9,7 @@ namespace Kcsara.Database.Web.Services
   using System.Linq;
   using Kcsar.Database.Model;
   using log4net;
+  using System.Data.Entity;
   using Models;
 
   /// <summary>
@@ -67,7 +68,7 @@ namespace Kcsara.Database.Web.Services
     {
       using (var db = dbFactory())
       {
-        IQueryable<SarEventRow> query = db.Events.OfType<RowType>();
+        IQueryable<SarEventRow> query = db.Events.OfType<RowType>().AsNoTracking();
 
         if (year != null)
         {
@@ -76,28 +77,31 @@ namespace Kcsara.Database.Web.Services
           query = query.Where(f => f.StartTime >= dateStart && f.StartTime < dateEnd);
         }
 
-        var result = (from e in query.SelectMany(f => f.Roster).DefaultIfEmpty()
+        var result = (from e in query.SelectMany(f => f.Participants).DefaultIfEmpty()
                       group e by 1 into g
                       select new EventList
                       {
-                        People = g.DefaultIfEmpty().Select(f => (Guid?)f.Person.Id).Where(f => f != null).Distinct().Count(),
-                        Hours = Math.Round(g.Sum(f => SqlFunctions.DateDiff("minute", f.TimeIn, f.TimeOut) / 15.0) ?? 0.0) / 4.0,
+                        People = g.Distinct().Count(),
+                        Hours = g.Sum(f => f.Hours),
                         Miles = g.Sum(f => f.Miles)
                       }).SingleOrDefault();
 
-        result.Events = query
+        var list = query
           .OrderBy(f => f.StartTime)
-          .Select(f => new
+          .Select(f => new EventListItem
           {
             Id = f.Id,
             Number = f.StateNumber,
             Date = f.StartTime,
             Title = f.Title,
-            People = f.Roster.DefaultIfEmpty().Select(g => (Guid?)g.Person.Id).Where(g => g != null).Distinct().Count(),
-            Hours = Math.Round(f.Roster.DefaultIfEmpty().Sum(g => SqlFunctions.DateDiff("minute", g.TimeIn, g.TimeOut) / 15.0) ?? 0.0) / 4.0,
-            Miles = f.Roster.DefaultIfEmpty().Sum(g => g.Miles)
+            People = f.Participants.Distinct().Count(),
+            Hours = f.Participants.Sum(g => g.Hours),
+            Miles = f.Participants.Sum(g => g.Miles)
           })
           .ToList();
+
+        list.ForEach(f => f.Hours = (f.Hours == null) ? (double?)null : (Math.Round(f.Hours.Value * 4.0) / 4.0));
+        result.Events = list;
 
         return result;
       }

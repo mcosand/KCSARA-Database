@@ -15,26 +15,22 @@
 
   angular.module('sarDatabase').controller('EventListCtrl', ['$scope', '$rootScope', '$location', '$uibModal', 'EventsService',
       function ($scope, $rootScope, $location, $uibModal, EventsService) {
+        console.log('page loads with location: ' + ($location.path() || 'null'));
+
         var loadList = function (year, eventRoute) {
           EventsService.list($scope.list, eventRoute, year);
           $location.path(year);
         }
 
-        function parseHash($scope, $location) {
-          var parts = $location.path().split('/');
-          if (parts.length < 2) return; // The route will get '/' prepended and we'll come back around
-          var hashYear = parts[1];
-          hashYear = parseInt(hashYear);
-          if (!isNaN(hashYear)) { $scope.year = hashYear; if ($scope.years.length == 0) { $scope.years = [hashYear]; }}
-          if ((parts[parts.length-1] || '').toLowerCase() == "create") {
-            $scope.showCreateDialog();
-          }
+        function yearFromHash() {
+          var match = ($location.path() || "").match(/\d{4}/)
+          return match ? (match[0] * 1) : null;
         }
 
       $.extend($scope, {
         list: [],
         years: [],
-        year: new Date().getFullYear(),
+        year: yearFromHash(),
         detailedEvent: null,
         eventMap: null,
         eventTypeText: '',
@@ -42,10 +38,11 @@
         init: function (eventRoute, eventTypeText) {
           $scope.eventRoute = eventRoute;
           $scope.eventTypeText = eventTypeText;
-          parseHash($scope, $location);
-          EventsService.list($scope.list, $scope.eventRoute, $scope.year);
+          if ($scope.year) {
+            loadList($scope.year, $scope.eventRoute)
+          }
           EventsService.years($scope.years, $scope.eventRoute).then(function (list) {
-            $scope.year = list.length > 0 ? list[0] : null;
+            if (!$scope.year && list.length > 0) { $scope.year = list[0]; console.log('setting year in years callback: ' + ($scope.year || 'null')) }
           });
         },
         showInfo: function(e) {
@@ -74,44 +71,48 @@
           $location.path(parts.join('/'));
         },
         showCreateDialog: function() {
-          scrollToTop(function() {
-            var model = {
-              start: moment(),
-              startText: function (val) {
-                if (arguments.length && val) {
-                  model.start = moment(val, ["YYYY-MM-DD HH:mm", "YYYY-MM-DD HHmm", "MM/DD/YYYY HH:mm", "MM/DD/YYYY HHmm"]);
-                  model.start.toJSON = function () { return model.start.format("YYYY-MM-DDTHH:mm") };
-                  return model.start;
-                } else if (arguments.length) {
-                  model.start = null;
-                } else {
-                  return model.start.format('YYYY-MM-DD HH:mm');
-                }
-              },
-              county: 'king'
-            };
-            model.start.toJSON = function () { return model.start.format("YYYY-MM-DDTHH:mm") };
+          require(['moment', 'controllers/events/edit'], function (moment, CreateEventCtrl) {
+            scrollToTop(function () {
+              var model = {
+                start: moment(),
+                startText: function (val) {
+                  if (arguments.length && val) {
+                    model.start = moment(val, ["YYYY-MM-DD HH:mm", "YYYY-MM-DD HHmm", "MM/DD/YYYY HH:mm", "MM/DD/YYYY HHmm"]);
+                    model.start.toJSON = function () { return model.start.format("YYYY-MM-DDTHH:mm") };
+                    return model.start;
+                  } else if (arguments.length) {
+                    model.start = null;
+                  } else {
+                    return model.start.format('YYYY-MM-DD HH:mm');
+                  }
+                },
+                county: 'king'
+              };
+              model.start.toJSON = function () { return model.start.format("YYYY-MM-DDTHH:mm") };
 
-            var modalInstance = $uibModal.open({
-              templateUrl: window.appRoot + 'partials/events/create.html',
-              controller: 'CreateEventCtrl',
-              controllerAs: 'modal',
-              size: 'lg',
-              resolve: {
-                model: function() { return model },
-                dialog: function() { return {
-                  eventType: $scope.eventTypeText,
-                  eventRoute: $scope.eventRoute
-                }}
-              }
-            });
-            modalInstance.result
-            .then(function (data) {
-              loadList(data.start.year(), $scope.eventRoute);
-              $location.path($location.path().toUpperCase().replace('/CREATE', ''));
-            }, function (reason) {
-              $location.path($location.path().toUpperCase().replace('/CREATE', ''));
-              //  alert('dismissed');
+              var modalInstance = $uibModal.open({
+                templateUrl: window.appRoot + 'partials/events/create.html',
+                controller: 'CreateEventCtrl',
+                controllerAs: 'modal',
+                size: 'lg',
+                resolve: {
+                  model: function () { return model },
+                  dialog: function () {
+                    return {
+                      eventType: $scope.eventTypeText,
+                      eventRoute: $scope.eventRoute
+                    }
+                  }
+                }
+              });
+              modalInstance.result
+              .then(function (data) {
+                loadList(data.start.year(), $scope.eventRoute);
+                $location.path($location.path().toUpperCase().replace('/CREATE', ''));
+              }, function (reason) {
+                $location.path($location.path().toUpperCase().replace('/CREATE', ''));
+                //  alert('dismissed');
+              });
             });
           });
         },
@@ -121,10 +122,16 @@
       });
       $scope.$watch("year", function(newValue, oldValue) {
         if (newValue == oldValue) return;
+        console.log('updating list from year watcher. Newvalue:' + newValue);
         loadList(newValue, $scope.eventRoute);
        });
-      $rootScope.$on('$locationChangeStart', function(event, newUrl, oldUrl) {
-        parseHash($scope, $location);
+      $rootScope.$on('$locationChangeStart', function (event, newUrl, oldUrl) {
+        console.log('handle hash change:' + $location.path());
+        $scope.year = yearFromHash();
+        console.log($location.path().toLowerCase().indexOf('/create'));
+        if ($location.path().toLowerCase().indexOf('/create') > -1) {
+          $scope.showCreateDialog();        }
       });
+      //parseHash($scope, $location);
     }]);
 })
