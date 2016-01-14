@@ -451,3 +451,11 @@ md-list-item .md-button {
 .text-danger {
   color: #a94442 !important;
 }
+
+.event-view-status { margin-right:3px;}
+.event-view-status.Cleared {
+  background-color: #eee;
+}
+.event-view-status.SignedIn {
+  background-color: #008d4c;
+}

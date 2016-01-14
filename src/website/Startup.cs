@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Kcsar.Database.Model;
+using Kcsar.Database.Model.Events;
 using Kcsara.Database.Web;
 using Kcsara.Database.Web.Services;
 using log4net;

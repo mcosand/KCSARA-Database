@@ -10,4 +10,9 @@ namespace Kcsara.Database.Web.Models
     public Guid Id { get; set; }
     public string Name { get; set; }
   }
+
+  public class ParticipatingNameIdPair : NameIdPair
+  {
+    public Guid? PermanentId { get; set; }
+  }
 }

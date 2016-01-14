@@ -22,7 +22,7 @@ namespace Kcsar.Database.Model
     public DateTime? OfferedUntil { get; set; }
     public string Metadata { get; set; }
     public virtual ICollection<TrainingAward> TrainingAward { get; set; }
-    public virtual SarUnit Unit { get; set; }
+    public virtual SarUnitRow Unit { get; set; }
     public virtual ICollection<ComputedTrainingAward> ComputedAwards { get; set; }
     public virtual ICollection<Training_Old> Trainings { get; set; }
     public string PrerequisiteText { get; set; }

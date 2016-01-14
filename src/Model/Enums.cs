@@ -159,4 +159,25 @@ namespace Kcsar.Database.Model
     Yes,
     External
   }
+
+  [Flags]
+  public enum ParticipantStatus
+  {
+    // bits:
+    // 0x01 - we know something about them
+    // 0x02 - we want to keep track of them
+    // 0x04 - they are active on the event (driving to, on scene, driving home)
+    // 0x08 - they are inbound or on scene - expect to see them
+    // 0x10 - they have arrived at base
+    // 0x20 - they are available for assignment
+    // 0x40 - they are assigned
+    // 0x100 - they are on their way home or are at home
+    Unknown = 0x00,
+    NotResponding = 0x01,
+    Activated = 0x01 | 0x02,
+    Responding = Activated | 0x04 | 0x08,
+    SignedIn = Responding | 0x10,
+    SignedOut = 0x100 | 0x04 | Activated,
+    Cleared = SignedOut ^ 0x04
+  }
 }

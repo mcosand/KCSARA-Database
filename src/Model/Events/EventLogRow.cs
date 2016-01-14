@@ -2,7 +2,7 @@
  * Copyright 2009-2014 Matthew Cosand
  */
 
-namespace Kcsar.Database.Model
+namespace Kcsar.Database.Model.Events
 {
   using System;
   using System.Collections.Generic;

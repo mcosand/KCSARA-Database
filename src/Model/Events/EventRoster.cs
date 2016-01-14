@@ -8,7 +8,7 @@ namespace Kcsar.Database.Model
   using System.Collections.Generic;
   using System.ComponentModel.DataAnnotations;
   using System.ComponentModel.DataAnnotations.Schema;
-
+  using Events;
   public class EventRoster : ModelObject
   {
     public DateTime? TimeIn { get; set; }

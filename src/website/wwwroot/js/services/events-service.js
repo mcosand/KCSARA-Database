@@ -2,6 +2,7 @@
  * Copyright 2015 Matthew Cosand
  */
 define(['moment', 'sarDatabase', 'ng-file-upload'], function (moment) {
+  var statusText = {SignedOut: 'Signed Out'};
   angular.module('sarDatabase').service('EventsService', ['$http', '$q', 'Upload', function ($http, $q, Upload) {
     self = this;
     var outstandingRequests = [];
@@ -101,7 +102,7 @@ define(['moment', 'sarDatabase', 'ng-file-upload'], function (moment) {
         return getIntoList(
           fillList,
           window.appRoot + 'api/' + eventType + '/' + eventId + '/logs',
-          function(data) {
+          function (data) {
             $.each(data, function (idx, evt) {
               evt.eventId = eventId;
               evt.time = moment(evt.time);
@@ -116,7 +117,6 @@ define(['moment', 'sarDatabase', 'ng-file-upload'], function (moment) {
       },
       saveLog: function (model, type) {
         var deferred = $q.defer();
-        //if (model.linkedMember.loaded) delete model.linkedMember.loaded;
         $http({
           method: model['id'] ? 'PUT' : 'POST',
           url: window.appRoot + 'api/' + type + '/' + model.eventId + '/log',
@@ -143,7 +143,7 @@ define(['moment', 'sarDatabase', 'ng-file-upload'], function (moment) {
       },
       saveDocument: function (model) {
         var deferred = $q.defer();
-        
+
         Upload.upload({
           url: window.appRoot + 'api/documents/' + model.eventId,
           data: model
@@ -157,16 +157,6 @@ define(['moment', 'sarDatabase', 'ng-file-upload'], function (moment) {
           var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
           console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
         });
-
-        //$http({
-        //  method: model['id'] ? 'PUT' : 'POST',
-        //  url: ,
-        //  data: model
-        //})
-        //.success(function (data) {
-        //  deferred.resolve(data);
-        //})
-        //.error(function (response, statusCode) { deferred.reject(statusCode == 403 ? 'login' : response); });
         return deferred.promise;
       },
       deleteDocument: function (id) {
@@ -180,7 +170,59 @@ define(['moment', 'sarDatabase', 'ng-file-upload'], function (moment) {
         })
         .error(function (response, statusCode) { deferred.reject(statusCode == 403 ? 'login' : response); });
         return deferred.promise;
+      },
+
+
+      roster: function (fillList, eventType, eventId) {
+        return getIntoList(
+          fillList,
+          window.appRoot + 'api/' + eventType + '/' + eventId + '/roster',
+          function (roster) {
+            $.each(roster.responders, function (idx, responder) {
+              responder.statusText = statusText[responder.status] || responder.status;
+              fillList.push(responder);
+            });
+            fillList.responderCount = roster.responderCount;
+          });
+      },
+
+      participantTimeline: function(fillList, eventType, eventId, participantId) {
+        return getIntoList(
+          fillList,
+          window.appRoot + 'api/' + eventType + '/' + eventId + '/participant/' + participantId + '/timeline',
+          function (timeline) {
+            $.each(timeline, function (idx, item) {
+              item.time = item.time ? moment(item.time) : null;
+              fillList.push(item);
+            });
+          });
       }
+      //saveLog: function (model, type) {
+      //  var deferred = $q.defer();
+      //  $http({
+      //    method: model['id'] ? 'PUT' : 'POST',
+      //    url: window.appRoot + 'api/' + type + '/' + model.eventId + '/log',
+      //    data: model,
+      //  })
+      //  .success(function (data) {
+      //    data.time = moment(data.time);
+      //    deferred.resolve(data);
+      //  })
+      //  .error(function (response, statusCode) { deferred.reject(statusCode == 403 ? 'login' : response); });
+      //  return deferred.promise;
+      //},
+      //deleteLog: function (eventId, id, type) {
+      //  var deferred = $q.defer();
+      //  $http({
+      //    method: 'DELETE',
+      //    url: window.appRoot + 'api/' + type + '/' + eventId + '/log/' + id,
+      //  })
+      //  .success(function (data) {
+      //    deferred.resolve(data);
+      //  })
+      //  .error(function (response, statusCode) { deferred.reject(statusCode == 403 ? 'login' : response); });
+      //  return deferred.promise;
+      //},
     });
   }]);
 });

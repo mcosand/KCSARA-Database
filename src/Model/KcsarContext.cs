@@ -15,7 +15,7 @@ namespace Kcsar.Database.Model
   using System.Reflection;
   using System.Text.RegularExpressions;
   using System.Threading;
-
+  using Events;
   public class KcsarContext : DbContext, IKcsarContext
   {
     public IDbSet<Animal> Animals { get; set; }
@@ -41,7 +41,7 @@ namespace Kcsar.Database.Model
     public IDbSet<DocumentRow> Documents { get; set; }
     public IDbSet<TrainingRoster_Old> TrainingRosters { get; set; }
     public IDbSet<TrainingRule> TrainingRules { get; set; }
-    public IDbSet<SarUnit> Units { get; set; }
+    public IDbSet<SarUnitRow> Units { get; set; }
     public IDbSet<UnitApplicant> UnitApplicants { get; set; }
     public IDbSet<UnitMembership> UnitMemberships { get; set; }
     public IDbSet<UnitStatus> UnitStatusTypes { get; set; }
@@ -98,7 +98,7 @@ namespace Kcsar.Database.Model
         cs.ToTable("TrainingTrainingCourses");
       });
 
-      modelBuilder.Entity<SarUnit>().HasMany(f => f.HostedTrainings).WithMany(f => f.HostUnits).Map(cs =>
+      modelBuilder.Entity<SarUnitRow>().HasMany(f => f.HostedTrainings).WithMany(f => f.HostUnits).Map(cs =>
       {
         cs.MapLeftKey("SarUnit_Id");
         cs.MapRightKey("Training_Id");

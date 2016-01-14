@@ -9,6 +9,7 @@
 /// <reference path="js/controllers/events/list.js" />
 /// <reference path="js/controllers/events/view-docs.js" />
 /// <reference path="js/controllers/events/view-logs.js" />
+/// <reference path="js/controllers/events/view-roster.js" />
 /// <reference path="js/controllers/main-search.js" />
 /// <reference path="js/directives/password-validator.js" />
 /// <reference path="js/directives/server-error.js" />

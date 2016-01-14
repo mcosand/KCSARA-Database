@@ -8,6 +8,7 @@ namespace Kcsara.Database.Web.Services
   using System.Data.Entity.SqlServer;
   using System.Linq;
   using Kcsar.Database.Model;
+  using Kcsar.Database.Model.Events;
   using log4net;
   using System.Data.Entity;
   using Models;
@@ -28,6 +29,9 @@ namespace Kcsara.Database.Web.Services
 
     LogEntry SaveLog(Guid eventId, LogEntry entry);
     void DeleteLog(Guid eventId, Guid id);
+    Roster Roster(Guid eventId);
+
+    IEnumerable<ParticipantTimelineItem> ParticipantTimeline(Guid participantId);
   }
 
   /// <summary>
@@ -245,6 +249,62 @@ namespace Kcsara.Database.Web.Services
         eventRow.Log.Remove(row);
 
         db.SaveChanges();
+      }
+    }
+
+    public Roster Roster(Guid eventId)
+    {
+      var roster = new Roster();
+      using (var db = dbFactory())
+      {
+        var list = db.Events.Where(f => f.Id == eventId)
+          .SelectMany(f => f.Participants)
+          .Select(f => new RosterEntry
+          {
+            Id = f.Id,
+            MemberId = f.MemberId,
+            FirstName = f.FirstName,
+            LastName = f.LastName,
+            Photo = f.MemberId == null ? null : f.Member.PhotoFile,
+            Unit = f.EventUnitId == null ? null : new ParticipatingNameIdPair
+            {
+              Id = f.EventUnit.Id,
+              PermanentId = f.EventUnit.MemberUnitId,
+              Name = f.EventUnit.Name
+            },
+            Status = f.LastStatus,
+            Hours = f.Hours,
+            Miles = f.Miles
+          })
+          .OrderBy(f => f.LastName).ThenBy(f => f.FirstName).ThenBy(f => f.Id)
+          .ToList();
+        list.ForEach(f => f.Hours = f.Hours.HasValue ? Math.Round(f.Hours.Value * 4.0) / 4.0 : (double?)null);
+
+        roster.Responders = list;
+
+        roster.ResponderCount = roster.Responders.Distinct().Count();
+      }
+      return roster;
+    }
+
+    public IEnumerable<ParticipantTimelineItem> ParticipantTimeline(Guid participantId)
+    {
+      using (var db = dbFactory())
+      {
+
+        return db.Events.SelectMany(f => f.Participants).Where(f => f.Id == participantId)
+          .SelectMany(f => f.Timeline)
+          .Select(f => new ParticipantTimelineItem
+          {
+            Id = f.Id,
+            Unit = f.EventUnitId == null ? null : new ParticipatingNameIdPair {  Id = f.EventUnit.Id, Name = f.EventUnit.Name, PermanentId = f.EventUnit.MemberUnitId },
+            Time = f.Time,
+            Status = f.Status,
+            Miles = f.Miles,
+            Role = f.Role
+          })
+          .OrderByDescending(f => f.Time)
+          .ToList();
       }
     }
   }

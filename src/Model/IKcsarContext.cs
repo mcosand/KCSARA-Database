@@ -8,7 +8,7 @@ namespace Kcsar.Database.Model
   using System.Data.Entity;
   using System.Data.Entity.Infrastructure;
   using System.Linq;
-
+  using Events;
   public interface IKcsarContext : IDisposable
   {
     IDbSet<Animal> Animals { get; set; }
@@ -33,7 +33,7 @@ namespace Kcsar.Database.Model
     IDbSet<DocumentRow> Documents { get; set; }
     IDbSet<TrainingRoster_Old> TrainingRosters { get; set; }
     IDbSet<TrainingRule> TrainingRules { get; set; }
-    IDbSet<SarUnit> Units { get; set; }
+    IDbSet<SarUnitRow> Units { get; set; }
     IDbSet<UnitApplicant> UnitApplicants { get; set; }
     IDbSet<UnitMembership> UnitMemberships { get; set; }
     IDbSet<UnitStatus> UnitStatusTypes { get; set; }

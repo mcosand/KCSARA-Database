@@ -13,7 +13,7 @@ namespace Kcsar.Database.Model
   {
     public string Type { get; set; }
     public string Value { get; set; }
-    public virtual SarUnit Unit { get; set; }
+    public virtual SarUnitRow Unit { get; set; }
     public string Purpose { get; set; }
 
     public static readonly string[] AllowedTypes = new string[] { "email", "phone" };

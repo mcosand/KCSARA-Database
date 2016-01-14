@@ -16,7 +16,7 @@ namespace Kcsar.Database.Model
     public int InternalWacLevel { get; set; }
     public bool IsActive { get; set; }
     public bool GetsAccount { get; set; }
-    public virtual SarUnit Unit { get; set; }
+    public virtual SarUnitRow Unit { get; set; }
     public virtual ICollection<UnitMembership> Memberships { get; set; }
 
     [DataMember]

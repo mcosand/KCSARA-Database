@@ -26,7 +26,7 @@ namespace Kcsar.Database.Model
     [Required]
     public string Location { get; set; }
 
-    public virtual ICollection<SarUnit> HostUnits { get; set; }
+    public virtual ICollection<SarUnitRow> HostUnits { get; set; }
 
     public Training_Old()
       : base()
@@ -35,7 +35,7 @@ namespace Kcsar.Database.Model
       this.StartTime = DateTime.Now.Date;
       this.Roster = new List<TrainingRoster_Old>();
       this.OfferedCourses = new List<TrainingCourse>();
-      this.HostUnits = new List<SarUnit>();
+      this.HostUnits = new List<SarUnitRow>();
     }
 
     public override string ToString()

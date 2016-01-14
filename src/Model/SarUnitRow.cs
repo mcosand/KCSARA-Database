@@ -5,8 +5,11 @@ namespace Kcsar.Database.Model
 {
   using System.Collections.Generic;
   using System.ComponentModel.DataAnnotations;
+  using System.ComponentModel.DataAnnotations.Schema;
+  using Events;
 
-  public class SarUnit : ModelObject
+  [Table("SarUnits")]
+  public class SarUnitRow : ModelObject
   {
     [Required]
     public string DisplayName { get; set; }
@@ -14,6 +17,9 @@ namespace Kcsar.Database.Model
     public string LongName { get; set; }
     public string County { get; set; }
     public string Comments { get; set; }
+
+    public virtual ICollection<EventUnitRow> ParticipatingEvents { get; set; }
+
     public virtual ICollection<MissionRoster_Old> MissionRosters { get; set; }
     public virtual ICollection<TrainingCourse> TrainingCourses { get; set; }
     public virtual ICollection<Training_Old> HostedTrainings { get; set; }

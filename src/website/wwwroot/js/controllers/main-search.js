@@ -3,7 +3,7 @@
     function ($scope) {
       $.extend($scope, {
         searchOptions: {
-          url: '@Url.Content("~/api/search/")',
+          url: window.appRoot + 'api/search/',
           searchParam: 'q',
           itemTemplateUrl: 'searchResult.html',
           listClass: 'list-group search-results',
@@ -11,10 +11,10 @@
           noFixWidth: true,
           onSelect: function (item) {
             if (item.type == 'Member') {
-              window.location.href = '@Url.Content("~/Members/Detail/")' + item.summary.id;
+              window.location.href = window.appRoot + 'Members/Detail/' + item.summary.id;
             }
             else if (item.type == "Mission") {
-              window.location.href = '@Url.Content("~/Missions/Roster/")' + item.summary.id;
+              window.location.href = window.appRoot + 'Missions/Roster/' + item.summary.id;
             }
             else {
               console.log(item);

@@ -37,7 +37,7 @@
               </li>
               <li class="dropdown notifications-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" onclick="event.preventDefault();">
-                  HI @(_principal.CurrentPrincipal.Identity.Name) @*?? string.Format("{0} {1}", ((Kcsar.Membership.KcsarUserProfile)Profile).FirstName, ((Kcsar.Membership.KcsarUserProfile)Profile).LastName))*@
+                  Hi @(_principal.CurrentPrincipal.Identity.Name) @*?? string.Format("{0} {1}", ((Kcsar.Membership.KcsarUserProfile)Profile).FirstName, ((Kcsar.Membership.KcsarUserProfile)Profile).LastName))*@
                 </a>
                 <ul class="dropdown-menu">
                   <li>
@@ -137,7 +137,7 @@
   </script>
   <script type="text/ng-template" id="searchMember.html">
     <div>
-      <div class="search-img" ng-style="{'background-image': 'url(&quot;{{window.appRoot + '/content/auth/members/' + (item.summary.photo ? item.summary.photo : 'none.jpg')}}&quot;)', opacity: item.summary.units.length ? 1.0 : 0.7 }"></div>
+      <div class="search-img" ng-style="{'background-image': 'url(&quot;{{window.appRoot + '/photos/' + (item.summary.photo ? item.summary.photo : 'none.jpg')}}&quot;)', opacity: item.summary.units.length ? 1.0 : 0.7 }"></div>
       <div style="display:inline-block">
         <strong>{{item.summary.name}}</strong><br />
         DEM# {{item.summary.dem}}

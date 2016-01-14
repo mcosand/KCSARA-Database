@@ -14,6 +14,6 @@ namespace Kcsara.Database.Extensions
   public interface IExtensionProvider
   {
     void Initialize();
-    T For<T>(SarUnit unit);
+    T For<T>(SarUnitRow unit);
   }
 }

@@ -9,6 +9,7 @@ namespace Kcsara.Database.Web.Controllers
   using System.Data.Entity.SqlServer;
   using System.Linq;
   using Kcsar.Database.Model;
+  using Kcsar.Database.Model.Events;
   using log4net;
   using Microsoft.AspNet.Authorization;
   using Microsoft.AspNet.Mvc;
@@ -129,6 +130,20 @@ namespace Kcsara.Database.Web.Controllers
     {
       service.DeleteLog(eventId, id);
       return true;
+    }
+
+    [HttpGet]
+    [Route("api/[controller]/{eventId}/roster")]
+    public Roster ApiRoster(Guid eventId)
+    {
+      return service.Roster(eventId);
+    }
+
+    [HttpGet]
+    [Route("api/[controller]/{eventId}/participant/{participantId}/timeline")]
+    public IEnumerable<ParticipantTimelineItem> ApiParticipantTimeline(Guid eventId, Guid participantId)
+    {
+      return service.ParticipantTimeline(participantId);
     }
   }
 

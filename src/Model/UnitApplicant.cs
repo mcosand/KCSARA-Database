@@ -13,7 +13,7 @@ namespace Kcsar.Database.Model
     [ReportedReference]
     public virtual Member Applicant { get; set; }
     [ReportedReference]
-    public virtual SarUnit Unit { get; set; }
+    public virtual SarUnitRow Unit { get; set; }
     public DateTime Started { get; set; }
     public string Data { get; set; }
     public bool IsActive { get; set; }

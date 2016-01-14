@@ -12,7 +12,7 @@ namespace Kcsar.Database.Model
     public DateTime Activated { get; set; }
     public string Comments { get; set; }
     public virtual Member Person { get; set; }
-    public virtual SarUnit Unit { get; set; }
+    public virtual SarUnitRow Unit { get; set; }
     public virtual UnitStatus Status { get; set; }
     public DateTime? EndTime { get; set; }
 

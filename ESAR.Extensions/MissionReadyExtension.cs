@@ -11,9 +11,9 @@ namespace ESAR.Extensions
 
   public class MissionReadyExtension : IMissionReadyPlugin
   {
-    private readonly SarUnit unit;
+    private readonly SarUnitRow unit;
 
-    public MissionReadyExtension(SarUnit unit)
+    public MissionReadyExtension(SarUnitRow unit)
     {
       this.unit = unit;
     }

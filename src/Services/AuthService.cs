@@ -116,15 +116,15 @@ namespace Kcsara.Database.Services
       return IsRoleForUnit("membership", id);
     }
 
-    public SarUnit[] GetUnitsIManage()
+    public SarUnitRow[] GetUnitsIManage()
     {
       return GetUnitsIManage_Internal().Values.ToArray();
     }
 
-    private Dictionary<string,SarUnit> GetUnitsIManage_Internal()
+    private Dictionary<string,SarUnitRow> GetUnitsIManage_Internal()
     {
-      var bag = new Dictionary<string, SarUnit>();
-      foreach (SarUnit u in (from unit in context.Units select unit))
+      var bag = new Dictionary<string, SarUnitRow>();
+      foreach (SarUnitRow u in (from unit in context.Units select unit))
       {
         var group = u.DisplayName.Replace(" ", "").ToLowerInvariant() + ".membership";
         if (IsInRole(group))

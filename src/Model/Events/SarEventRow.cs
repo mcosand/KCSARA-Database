@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright 2015 Matthew Cosand
  */
-namespace Kcsar.Database.Model
+namespace Kcsar.Database.Model.Events
 {
   using System;
   using System.Collections.Generic;
@@ -34,7 +34,8 @@ namespace Kcsar.Database.Model
     public virtual SarEventRow Previous { get; set; }
 
     //   public virtual ICollection<MissionLog> Log { get; set; }
-    public virtual ICollection<EventRoster> Roster { get; set; }
+    public virtual ICollection<EventParticipantRow> Participants { get; set; }
+    public virtual ICollection<EventUnitRow> Units { get; set; }
 
     //  public virtual MissionDetails Details { get; set; }
     //  public virtual ICollection<SubjectGroup> SubjectGroups { get; set; }

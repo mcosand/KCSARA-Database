@@ -31,7 +31,7 @@ namespace Kcsar.Database.Model
     [Required]
     public virtual Member Person { get; set; }
     [Required]
-    public virtual SarUnit Unit { get; set; }
+    public virtual SarUnitRow Unit { get; set; }
     public virtual ICollection<AnimalMission> Animals { get; set; }
     public double? OvertimeHours { get; set; }
 

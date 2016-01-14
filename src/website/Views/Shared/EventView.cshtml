@@ -18,14 +18,39 @@
       <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis ante augue. Phasellus volutpat neque ac dui mattis vulputate. Etiam consequat aliquam cursus. In sodales pretium ultrices. Maecenas lectus est, sollicitudin consectetur felis nec, feugiat ultricies mi.</p>
     </md-content>
   </md-tab>
-  @*<md-tab label="Roster">
-      <md-content class="md-padding">
-        <h1 class="md-display-2">Roster</h1>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis ante augue. Phasellus volutpat neque ac dui mattis vulputate. Etiam consequat aliquam cursus. In sodales pretium ultrices. Maecenas lectus est, sollicitudin consectetur felis nec, feugiat ultricies mi. Aliquam erat volutpat. Nam placerat, tortor in ultrices porttitor, orci enim rutrum enim, vel tempor sapien arcu a tellus. Vivamus convallis sodales ante varius gravida. Curabitur a purus vel augue ultrices ultricies id a nisl. Nullam malesuada consequat diam, a facilisis tortor volutpat et. Sed urna dolor, aliquet vitae posuere vulputate, euismod ac lorem. Sed felis risus, pulvinar at interdum quis, vehicula sed odio. Phasellus in enim venenatis, iaculis tortor eu, bibendum ante. Donec ac tellus dictum neque volutpat blandit. Praesent efficitur faucibus risus, ac auctor purus porttitor vitae. Phasellus ornare dui nec orci posuere, nec luctus mauris semper.</p>
-        <p>Morbi viverra, ante vel aliquet tincidunt, leo dolor pharetra quam, at semper massa orci nec magna. Donec posuere nec sapien sed laoreet. Etiam cursus nunc in condimentum facilisis. Etiam in tempor tortor. Vivamus faucibus egestas enim, at convallis diam pulvinar vel. Cras ac orci eget nisi maximus cursus. Nunc urna libero, viverra sit amet nisl at, hendrerit tempor turpis. Maecenas facilisis convallis mi vel tempor. Nullam vitae nunc leo. Cras sed nisl consectetur, rhoncus sapien sit amet, tempus sapien.</p>
-        <p>Integer turpis erat, porttitor vitae mi faucibus, laoreet interdum tellus. Curabitur posuere molestie dictum. Morbi eget congue risus, quis rhoncus quam. Suspendisse vitae hendrerit erat, at posuere mi. Cras eu fermentum nunc. Sed id ante eu orci commodo volutpat non ac est. Praesent ligula diam, congue eu enim scelerisque, finibus commodo lectus.</p>
-      </md-content>
-    </md-tab>*@
+  <md-tab label="Roster" md-active="activeTab == 'roster'" md-on-select="setTab('roster')">
+    <md-content class="md-padding" ng-controller="EventRosterCtrl" ng-init="init('@ViewBag.EventRoute', '@Model.Id')" ng-if="activeTab == 'roster'">
+      @*<div ng-cloak ng-if="can.create" ng-click="startCreate()" class="shadow-3" style="position:fixed; bottom:1.5em; right: 1.5em; cursor:pointer; border-radius:50%; background-color: #f39c12; z-index:1000"><i class="fa fa-2x fa-plus" style="color:white; padding:.4em .4em .3em .4em"></i></div>*@
+      <md-list>
+        <md-list-item ng-if="roster.length == 0">No responders.</md-list-item>
+        <md-list-item ng-repeat="item in roster" ng-click="setCurrent(item)" class="list-item-tight" ng-class="{'md-whiteframe-2dp': item.id == current.id}">
+          <div>
+            <img ng-if="item.photo" ng-src="{{window.ajaxRoot + '/photos/' + item.photo}}" alt="{{item.name}} file icon" class="md-avatar" />
+            <div ng-if="!item.photo" class="md-avatar" style="background-color:#7c4297; color:white; text-align:center; font-size:20px;"><div style="position: relative; top: 50%; transform: translateY(-50%);">{{item.firstName[0] + item.lastName[0]}}</div></div>
+          </div>
+          <div ng-if="item.id != current.id" ng-class="item.status" class="event-view-status" style="height:56px; width:6px">
+          </div>
+          <div style="width:100%">
+            <h4>{{item.firstName}} {{item.lastName}}</h4>
+            <div ng-if="item.id == current.id">
+              <div>Unit: {{item.unit.name}}</div>
+              <div>Status: {{item.statusText}}</div>
+              <ul>
+                <li ng-repeat="t in current.timeline">{{t.time.format('HHmm YYYY-MM-DD')}} {{t.status}}<span ng-if="t.role"> as {{t.role}}</span><span ng-if="t.unit"> with {{t.unit.name}}</span></li>
+              </ul>
+              @*<md-card-actions layout="row" layout-align="end center">
+                <md-button ng-click="startUpdateStatus(current); $event.stopPropagation()">Update Status</md-button>
+              </md-card-actions>*@
+            </div>
+          </div>
+          <div ng-if="item.id != current.id" class="md-secondary hidden-xs text-right">Hours: {{item.hours | number:2}}<br /><span ng-if="item.miles">Miles: {{item.miles | number}}</span></div>
+        </md-list-item>
+      </md-list>
+    </md-content>
+    <div ng-if="roster.loading" class="overlay">
+      <i class="fa fa-refresh fa-spin"></i>
+    </div>
+  </md-tab>
   <md-tab label="Log" md-active="activeTab == 'log'" md-on-select="setTab('log')">
     <md-content class="md-padding" ng-controller="EventLogCtrl" ng-init="init('@ViewBag.EventRoute', '@Model.Id')" ng-if="activeTab == 'log'">
       @if (canEdit)
@@ -57,12 +82,11 @@
       <md-list>
         <md-list-item ng-if="documents.length == 0">No documents.</md-list-item>
         <md-list-item ng-repeat="item in documents" ng-click="editDoc(item)" class="list-item-tight" ng-class="{'md-whiteframe-2dp': item.id == current}">
-          <img ng-src="{{item.thumbUrl}}" alt="{{item.mime}} file icon" class="md-avatar" style="border-radius:0"/>
+          <img ng-src="{{item.thumbUrl}}" alt="{{item.mime}} file icon" class="md-avatar" style="border-radius:0" />
           <div class="md-list-item-text">
             <h4>{{item.filename}}</h4>
             <div>{{item.description}}</div>
             <div>{{item.size}}</div>
-            <div ng-if="item.id == current"><md-button>Download</md-button></div>
           </div>
           <div ng-click="downloadDoc(item.id)" aria-label="Download" class="md-secondary md-primary">
             <i class="fa fa-download fa-2x"></i>

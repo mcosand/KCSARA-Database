@@ -11,7 +11,7 @@ namespace Kcsar.Database.Model
   using System.Linq;
   using System.Runtime.Serialization;
   using System.Threading;
-
+  using Events;
   public class Member : ModelObject
   {
     [MaxLength(50)]
