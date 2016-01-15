@@ -111,7 +111,7 @@ namespace Kcsara.Database.Web.api
 
       if (!string.IsNullOrWhiteSpace(id.Password))
       {
-        ((Kcsar.Membership.ISetPassword)Membership.Provider).SetPassword(id.Name, id.Password, true);
+        ((Kcsar.Membership.ISetPassword)Membership.Provider).SetPassword(id.Name, id.Password, false);
       }
 
       return Get(id.Name);
