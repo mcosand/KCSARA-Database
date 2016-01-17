@@ -1,0 +1,21 @@
+﻿@{
+  ViewBag.Title = "Units";
+}
+@using Kcsara.Database.Web.Models;
+@section header {
+  <h1>@Strings.GroupName Units</h1>
+}
+<div class="row">
+  <div class="col-sm-6 col-xs-12">
+    <div class="box box-primary">
+      <div class="box-body">
+        <ul>
+          @foreach (var unit in (IEnumerable<NameIdPair>)Model)
+          {
+            <li><a href="~/Units/Detail/@unit.Id">@unit.Name</a></li>
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
