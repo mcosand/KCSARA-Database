@@ -1,40 +1,36 @@
 @{
   Layout = "~/Views/Shared/_Layout.cshtml";
   ViewBag.NgApp = (ViewBag.NgController == null) ? null : "sarDatabase";
+  ViewBag.BodyClasses = "hold-transition layout-top-nav";
 }
-
-<body class="hold-transition skin-yellow layout-top-nav" @(ViewBag.NgController != null ? new HtmlString("ng-controller=\"" + ViewBag.NgController + "\"") : new HtmlString(string.Empty))>
-  <div class="wrapper">
-
-    <header class="main-header">
-      <nav class="navbar navbar-static-top" role="navigation">
-        <div class="container-fluid">
-          <div class="navbar-header">
-            <a href="~/" class="navbar-brand" style="font-size:20px"><b>KCSARA Database</b></a>
-          </div>
+<div class="wrapper">
+  <header class="main-header">
+    <nav class="navbar navbar-static-top" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a href="~/" class="navbar-brand" style="font-size:20px"><b>KCSARA Database</b></a>
         </div>
-      </nav>
-    </header>
-    <!-- Full Width Column -->
-    <div class="content-wrapper">
-      <div class="@((ViewBag.UseContainer ?? false) ? "container" : "container-fluid")">
-        <section class="content-header">
-          @RenderSection("header", false)
-        </section>
-        <!-- Main content -->
-        <section class="content">
-          @RenderBody()
-        </section>
-        <!-- /.content -->
       </div>
-      <!-- /.content-wrapper -->
+    </nav>
+  </header>
+  <!-- Full Width Column -->
+  <div class="content-wrapper">
+    <div class="@((ViewBag.UseContainer ?? false) ? "container" : "container-fluid")">
+      <section class="content-header">
+        @RenderSection("header", false)
+      </section>
+      <!-- Main content -->
+      <section class="content">
+        @RenderBody()
+      </section>
+      <!-- /.content -->
     </div>
-    <!-- /.container -->
-    <footer class="main-footer">
-      <strong>King County Search and Rescue Association</strong>
-    </footer>
+    <!-- /.content-wrapper -->
   </div>
-
-  @RenderSection("scripts", false)
-</body>
+  <!-- /.container -->
+  <footer class="main-footer">
+    <strong>King County Search and Rescue Association</strong>
+  </footer>
+</div>
+@section scripts {@RenderSection("scripts", false)}
 @section head {@RenderSection("head", false)}

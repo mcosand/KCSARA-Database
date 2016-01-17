@@ -1,5 +1,4 @@
-﻿define(['angular', 'moment', 'controllers/events/create-log'], function(angular, moment) {
-  angular.module('sarDatabase').controller('EventLogCtrl', ['$scope', '$uibModal', 'EventsService',
+﻿  angular.module('sarDatabase').controller('EventLogCtrl', ['$scope', '$uibModal', 'EventsService',
   function ($scope, $uibModal, EventsService) {
     $.extend($scope, {
       logs: [],
@@ -64,4 +63,3 @@
       can: { create: true }
     });
   }]);
-});

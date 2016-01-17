@@ -1,11 +1,10 @@
 ﻿@using System.Linq;
 @{
+  ViewBag.NgApp = "sarDatabase";
   ViewBag.NgModules = Enumerable.ToArray(Enumerable.Distinct(Enumerable.Concat((ViewBag.NgModules ?? new string[0]), new[] { "ng-pros.directive.autocomplete", "ui.bootstrap", "ngMaterial" })));
-  ViewBag.Requires = Enumerable.ToArray(Enumerable.Distinct(Enumerable.Concat((ViewBag.Requires ?? new string[0]), new[] { "ngMaterial", "np-autocomplete", "ui-bootstrap-modal", "controllers/login-modal" })));
-  var requires = Html.Raw(ViewBag.Requires.Length == 0 ? "" : (", '" + string.Join("','", ViewBag.Requires) + "'"));
 }
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" ng-app="sarDatabase">
 <head>
   <!-- Force latest IE rendering engine or ChromeFrame if installed -->
   <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><![endif]-->
@@ -14,68 +13,7 @@
   <meta content="width=device-width, initial-scale=1, minimum-scale=1, user-scalable=yes" name="viewport">
   <link rel="apple-touch-icon" href="~/apple-touch-icon.png" />
   <title>@ViewData["Title"] - KCSARA Database</title>
-  <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
-  <script type="text/javascript" src="~/lib/angular/angular.min.js"></script>
-  <script type="text/javascript">
-    window.appRoot = '@Url.Content("~/")';
-    var errorUrl = '@Url.RouteUrl("DefaultApi", new { httproute="", Controller = "telemetry", Action="error" })';
-    $(document).on('require-ready', function() {
-      define('sarDatabase', ['angular'], function(ng) {
-        ng.module("ui.bootstrap", ["ui.bootstrap.modal"]);
-        var module = ng.module('@ViewBag.NgApp', @Html.ToJson((object)(ViewBag.NgModules ?? new object[0])));
-        module.factory('loginRecover', ['$q', '$injector', function($q, $injector) {
-          var loginRecover = {
-            responseError: function(response) {
-              // Session has expired
-              if (response.status == 403){
-                var $uibModal = $injector.get('$uibModal');
-                var $http = $injector.get('$http');
-                var deferred = $q.defer();
-
-                var modalInstance = $uibModal.open({
-                  templateUrl: window.appRoot + 'partials/login-modal.html',
-                  controller: 'LoginModalCtrl',
-                  controllerAs: 'modal',
-                  size: 'md',
-                  keyboard: false,
-                  backdrop: 'static'
-                });
-                modalInstance.result
-                .then(function (data) {
-                  deferred.resolve(data);
-                }, function (reason) {
-                  deferred.reject(reason);
-                });
-
-                // When the session recovered, make the same backend call again and chain the request
-                var promise = deferred.promise;
-                if (!response.config.dontRetryAfterLogin) {
-                  promise = promise.then(function() {
-                    return $http(response.config);
-                  });
-                }
-                return promise;
-              }
-              return $q.reject(response);
-            }
-          };
-          return loginRecover;
-        }]);
-        module.config(['$httpProvider', '$controllerProvider', function($httpProvider, $controllerProvider) {
-          $httpProvider.interceptors.push('loginRecover');
-          module.controller = $controllerProvider.register; // Allow lazy loading of controllers
-        }]);
-      })
-      $(document).ready(function () {
-        require(['angular', 'adminLTE', 'sarDatabase' @requires], function (ng) {
-          ng.bootstrap(document, ['@ViewBag.NgApp']);
-          $.AdminLTE.layout.activate()
-        })
-      });
-    })
-  </script>
-  <script type="text/javascript" data-main="@Url.Content("~/js/config")" src="~/lib/requirejs/require.js"></script>
-  <environment names="Development">
+  <environment names="Development,Staging,Production">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="~/lib/np-autocomplete/dist/np-autocomplete.min.css" />
@@ -85,35 +23,90 @@
     <link rel="stylesheet" href="~/lib/angular-material/angular-material.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
   </environment>
-  <script type="text/ng-template" id="template/modal/backdrop.html">
-    <div uib-modal-animation-class="fade"
-         modal-in-class="in"
-         ng-style="{'z-index': 1040 + (index && 1 || 0) + index*10}"></div>
-  </script>
-  <script type="text/ng-template" id="template/modal/window.html">
-    <div modal-render="{{$isRendered}}" tabindex="-1" role="dialog" class="modal"
-         uib-modal-animation-class="fade"
-         modal-in-class="in"
-         ng-style="{'z-index': 1050 + index*10, display: 'block'}">
-      <div class="modal-dialog" ng-class="size ? 'modal-' + size : ''"><div class="modal-content" uib-modal-transclude></div></div>
-    </div>
-  </script>
-  <script type="text/ng-template" id="template/accordion/accordion.html">
-    <div class="panel-group" ng-transclude></div>
-  </script>
-  <script type="text/ng-template" id="template/accordion/accordion-group.html">
-    <div class="panel {{panelClass || 'panel-default'}}">
-      <div class="panel-heading" ng-keypress="toggleOpen($event)">
-        <h4 class="panel-title">
-          <a href="" tabindex="0" class="accordion-toggle" ng-click="toggleOpen()" uib-accordion-transclude="heading"><span ng-class="{'text-muted': isDisabled}">{{heading}}</span></a>
-        </h4>
-      </div>
-      <div class="panel-collapse collapse" uib-collapse="!isOpen">
-        <div class="panel-body" ng-transclude></div>
-      </div>
-    </div>
-  </script>
   @RenderSection("head", false)
 </head>
-@RenderBody()
+<body class="skin-yellow @ViewBag.BodyClasses"
+      @(ViewBag.NgController != null ? new HtmlString("ng-controller=\"" + ViewBag.NgController + "\"") : new HtmlString(string.Empty))
+      @(ViewBag.NgInit != null ? new HtmlString("ng-init=\"" + ViewBag.NgInit + "\"") : new HtmlString(string.Empty))>
+    @RenderBody()
+
+    <script type="text/ng-template" id="template/modal/backdrop.html">
+      <div uib-modal-animation-class="fade"
+           modal-in-class="in"
+           ng-style="{'z-index': 1040 + (index && 1 || 0) + index*10}"></div>
+    </script>
+    <script type="text/ng-template" id="template/modal/window.html">
+      <div modal-render="{{$isRendered}}" tabindex="-1" role="dialog" class="modal"
+           uib-modal-animation-class="fade"
+           modal-in-class="in"
+           ng-style="{'z-index': 1050 + index*10, display: 'block'}">
+        <div class="modal-dialog" ng-class="size ? 'modal-' + size : ''"><div class="modal-content" uib-modal-transclude></div></div>
+      </div>
+    </script>
+    <script type="text/ng-template" id="template/accordion/accordion.html">
+      <div class="panel-group" ng-transclude></div>
+    </script>
+    <script type="text/ng-template" id="template/accordion/accordion-group.html">
+      <div class="panel {{panelClass || 'panel-default'}}">
+        <div class="panel-heading" ng-keypress="toggleOpen($event)">
+          <h4 class="panel-title">
+            <a href="" tabindex="0" class="accordion-toggle" ng-click="toggleOpen()" uib-accordion-transclude="heading"><span ng-class="{'text-muted': isDisabled}">{{heading}}</span></a>
+          </h4>
+        </div>
+        <div class="panel-collapse collapse" uib-collapse="!isOpen">
+          <div class="panel-body" ng-transclude></div>
+        </div>
+      </div>
+    </script>
+    <environment names="Development">
+      <script src="~/lib/jquery/dist/jquery.js"></script>
+      <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+      <script src="~/lib/angular/angular.js"></script>
+      <script src="~/lib/angular-animate/angular-animate.js"></script>
+      <script src="~/lib/angular-aria/angular-aria.js"></script>
+      <script src="~/lib/angular-material/angular-material.js"></script>
+      <script src="~/lib/np-autocomplete/dist/np-autocomplete.min.js"></script>
+      <script src="~/lib/ui.bootstrap/src/stackedMap/stackedMap.js"></script>
+      <script src="~/lib/ui.bootstrap/src/modal/modal.js"></script>
+      <script src="~/lib/ng-file-upload/ng-file-upload-shim.js"></script>
+      <script src="~/lib/ng-file-upload/ng-file-upload.js"></script>
+      <script src="~/lib/AdminLTE/dist/js/app.js"></script>
+      <script src="~/lib/moment/moment.js"></script>
+    </environment>
+    <environment names="Staging,Production">
+      <script src="~/lib/packed.js" asp-append-version="true"></script>
+    </environment>
+    <script type="text/javascript">
+    window.appRoot = '@Url.Content("~/")';
+    var errorUrl = '@Url.RouteUrl("DefaultApi", new { httproute="", Controller = "telemetry", Action="error" })';
+    angular.module("ui.bootstrap", ["ui.bootstrap.modal"]);
+    angular.module('@ViewBag.NgApp', @Html.ToJson((object)(ViewBag.NgModules ?? new object[0])))
+      .config(['$httpProvider', function($httpProvider) {
+        $httpProvider.interceptors.push('loginRecover');
+      }]);
+      $(document).ready(function() {
+        $.AdminLTE.layout.activate();
+      })
+    </script>
+    <environment names="Development">
+      <script src="~/js/services/events-service.js"></script>
+      <script src="~/js/factories/login-recover.js"></script>
+      <script src="~/js/controllers/dashboard.js"></script>
+      <script src="~/js/controllers/login-modal.js"></script>
+      <script src="~/js/controllers/main-search.js"></script>
+      <script src="~/js/controllers/events/list.js"></script>
+      <script src="~/js/controllers/events/edit.js"></script>
+      <script src="~/js/controllers/events/event-view.js"></script>
+      <script src="~/js/controllers/events/view-roster.js"></script>
+      <script src="~/js/controllers/events/view-logs.js"></script>
+      <script src="~/js/controllers/events/view-docs.js"></script>
+      <script src="~/js/controllers/events/base-editor.js"></script>
+      <script src="~/js/controllers/events/create-log.js"></script>
+      <script src="~/js/controllers/events/create-document.js"></script>
+    </environment>
+    <environment names="Staging,Production">
+      <script src="~/js/sar-database.min.js" asp-append-version="true"></script>
+    </environment>
+    @RenderSection("scripts", false)
+  </body>
 </html>

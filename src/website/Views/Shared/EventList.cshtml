@@ -3,7 +3,6 @@
   ViewBag.NgController = "EventListCtrl";
   ViewBag.NgInit = Html.Raw("init('" + ViewBag.EventRoute + "', '" + ViewBag.EventTypeText +"')");
   ViewBag.NgModules = new[] { "ngFileUpload" };
-  ViewBag.Requires = new[] { "controllers/events/list", "ng-file-upload" };
   bool canEdit = true;
 }
 @section header {

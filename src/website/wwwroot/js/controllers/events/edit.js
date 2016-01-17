@@ -1,27 +1,25 @@
-﻿define(['angular', 'sarDatabase', 'services/events-service'], function (angular) {
-  angular.module('sarDatabase').controller('CreateEventCtrl', ['$uibModalInstance', 'dialog', 'model', 'EventsService', function ($uibModalInstance, dialog, model, EventsService) {
-    var modal = this;
-    modal.dismiss = function (reason) {
-      $uibModalInstance.dismiss(reason);
-    }
-    modal.submit = function () {
-      if (!modal.createForm.$valid) return;
+﻿angular.module('sarDatabase').controller('CreateEventCtrl', ['$uibModalInstance', 'dialog', 'model', 'EventsService', function ($uibModalInstance, dialog, model, EventsService) {
+  var modal = this;
+  modal.dismiss = function (reason) {
+    $uibModalInstance.dismiss(reason);
+  }
+  modal.submit = function () {
+    if (!modal.createForm.$valid) return;
 
-      modal.errors = {}; //clean up previous server errors
+    modal.errors = {}; //clean up previous server errors
 
-      EventsService.save(modal.model, dialog.eventRoute)
-      .then(function () {
-        $uibModalInstance.close(modal.model);
-      }, function (response) {
-        angular.forEach(response.errors, function (errors, field) {
-          if (modal.createForm[field] !== undefined) { modal.createForm[field].$setValidity('server', false); }
-          modal.errors[field] = errors;
-        });
+    EventsService.save(modal.model, dialog.eventRoute)
+    .then(function () {
+      $uibModalInstance.close(modal.model);
+    }, function (response) {
+      angular.forEach(response.errors, function (errors, field) {
+        if (modal.createForm[field] !== undefined) { modal.createForm[field].$setValidity('server', false); }
+        modal.errors[field] = errors;
       });
-    }
-    modal.dialog = dialog;
-    modal.model = model;
-    modal.isBasicOpen = true;
-    modal.lastStep = false;
-  }]);
-});
+    });
+  }
+  modal.dialog = dialog;
+  modal.model = model;
+  modal.isBasicOpen = true;
+  modal.lastStep = false;
+}]);

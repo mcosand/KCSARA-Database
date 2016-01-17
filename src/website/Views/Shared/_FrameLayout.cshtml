@@ -1,130 +1,129 @@
 ﻿@using System.Linq;
 @{
   Layout = "~/Views/Shared/_Layout.cshtml";
-  ViewBag.NgApp = "sarDatabase";
-  ViewBag.Requires = Enumerable.ToArray(Enumerable.Distinct(Enumerable.Concat((ViewBag.Requires ?? new string[0]), new[] { "controllers/main-search" })));
+  ViewBag.BodyClasses = "sidebar-mini";
 }
 @inject ICurrentPrincipalProvider _principal
 
-<body class="skin-yellow sidebar-mini"
-       @(ViewBag.NgController != null ? new HtmlString("ng-controller=\"" + ViewBag.NgController + "\"") : new HtmlString(string.Empty))
-       @(ViewBag.NgInit != null ? new HtmlString("ng-init=\"" + ViewBag.NgInit + "\"") : new HtmlString(string.Empty))>
-  <div class="wrapper">
-    <header class="main-header">
-      <a href="~/" class="logo">
-        <span class="logo-mini"><span class="fa-stack fa-lg"><i class="fa fa-plus fa-stack-1x"></i><i class="fa fa-circle-thin fa-stack-2x"></i></span></span>
-        <span class="logo-lg"><b>KCSARA Database</b></span>
+<div class="wrapper">
+  <header class="main-header">
+    <a href="~/" class="logo">
+      <span class="logo-mini"><span class="fa-stack fa-lg"><i class="fa fa-plus fa-stack-1x"></i><i class="fa fa-circle-thin fa-stack-2x"></i></span></span>
+      <span class="logo-lg"><b>KCSARA Database</b></span>
+    </a>
+    <nav class="navbar navbar-static-top" role="navigation">
+      <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+        <span class="sr-only">Toggle navigation</span>
       </a>
-      <nav class="navbar navbar-static-top" role="navigation">
-        <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
-          <span class="sr-only">Toggle navigation</span>
-        </a>
-        <div class="navbar-custom-menu">
-          <ul class="nav navbar-nav">
-            @if (User.Identity.IsAuthenticated)
-            {
-              <li>
-                <form class="navbar-form hidden-xs" role="search" ng-controller="MainSearchCtrl">
-                  <div class="form-group">
-                    <div np-autocomplete="searchOptions" class="input-group">
-                      <input type="text" name="q" class="form-control" placeholder="Search ..." autocomplete="off" />
-                      <span class="input-group-btn">
-                        <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
-                      </span>
-                    </div>
+      <div class="navbar-custom-menu">
+        <ul class="nav navbar-nav">
+          @if (User.Identity.IsAuthenticated)
+          {
+            <li>
+              <form class="navbar-form hidden-xs" role="search" ng-controller="MainSearchCtrl">
+                <div class="form-group">
+                  <div np-autocomplete="searchOptions" class="input-group">
+                    <input type="text" name="q" class="form-control" placeholder="Search ..." autocomplete="off" />
+                    <span class="input-group-btn">
+                      <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
+                    </span>
                   </div>
-                </form>
-              </li>
-              <li class="dropdown notifications-menu">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" onclick="event.preventDefault();">
-                  Hi @(_principal.CurrentPrincipal.Identity.Name) @*?? string.Format("{0} {1}", ((Kcsar.Membership.KcsarUserProfile)Profile).FirstName, ((Kcsar.Membership.KcsarUserProfile)Profile).LastName))*@
-                </a>
-                <ul class="dropdown-menu">
-                  <li>
-                    <ul class="menu">
-                      @if (ViewData["MemberId"] != null)
-                      {
-                        <li><a href="~/Members/Detail/@ViewData["MemberId"]"><i class="fa fa-fw fa-home text-primary"></i>My Page</a></li>
-                      }
-                      <li><a href="~/Account/Detail/@User.Identity.Name"><i class="fa fa-fw fa-keyboard-o text-primary"></i>My Account</a></li>
-                      <li><form asp-controller="Account" asp-action="LogOff" method="post"><button type="submit" class="btn btn-link"><i class="fa fa-fw fa-sign-out text-primary"></i>Logout</button></form></li>
-                    </ul>
-                  </li>
-                </ul>
-              </li>
-              if (IsSectionDefined("pageSettings"))
-              {
-          <!-- Control Sidebar Toggle Button -->
+                </div>
+              </form>
+            </li>
+            <li class="dropdown notifications-menu">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" onclick="event.preventDefault();">
+                Hi @(_principal.CurrentPrincipal.Identity.Name) @*?? string.Format("{0} {1}", ((Kcsar.Membership.KcsarUserProfile)Profile).FirstName, ((Kcsar.Membership.KcsarUserProfile)Profile).LastName))*@
+              </a>
+              <ul class="dropdown-menu">
                 <li>
-                  <a href="#" data-toggle="control-sidebar" onclick="event.preventDefault();"><i class="fa fa-gears"></i></a>
+                  <ul class="menu">
+                    @if (ViewData["MemberId"] != null)
+                    {
+                      <li><a href="~/Members/Detail/@ViewData["MemberId"]"><i class="fa fa-fw fa-home text-primary"></i>My Page</a></li>
+                    }
+                    <li><a href="~/Account/Detail/@User.Identity.Name"><i class="fa fa-fw fa-keyboard-o text-primary"></i>My Account</a></li>
+                    <li><form asp-controller="Account" asp-action="LogOff" method="post"><button type="submit" class="btn btn-link"><i class="fa fa-fw fa-sign-out text-primary"></i>Logout</button></form></li>
+                  </ul>
                 </li>
-              }
-            }
-            else
+              </ul>
+            </li>
+            if (IsSectionDefined("pageSettings"))
             {
-              <li><a href="~/Account/Login"><i class="fa fa-sign-in"></i> Login</a></li>
+          <!-- Control Sidebar Toggle Button -->
+              <li>
+                <a href="#" data-toggle="control-sidebar" onclick="event.preventDefault();"><i class="fa fa-gears"></i></a>
+              </li>
             }
-          </ul>
-        </div>
-      </nav>
-    </header>
-    <aside class="main-sidebar">
-      <section class="sidebar">
-        @*@if (User.IsInRole("cdb.users"))
-          {*@
-        <form class="visible-xs" style="margin:5px; border-radius:4px;" role="search" ng-controller="MainSearchCtrl">
-          <div class="form-group">
-            <div np-autocomplete="searchOptions" class="input-group">
-              <input type="text" name="q" class="form-control" placeholder="Search ..." autocomplete="off" />
-              <span class="input-group-btn">
-                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
-              </span>
-            </div>
-          </div>
-        </form>
-        <ul class="sidebar-menu">
-          <li class="header">Main Navigation</li>
-          <li><a href="~/Members"><i class="fa fa-user"></i><span>Member List</span></a></li>
-          <li sar-menu-name="Training" class="treeview">
-            <a href="#"><i class="fa fa-book"></i><span>Training</span><i class="fa fa-angle-down pull-right"></i></a>
-            <ul class="treeview-menu">
-              <li sar-menu-name="Training/Index"><a href="~/Training/"><i class="fa fa-circle-o"></i>Overview</a></li>
-              <li sar-menu-name="Training/List"><a href="~/Training/List/"><i class="fa fa-circle-o"></i>Rosters</a></li>
-            </ul>
-          </li>
-          <li sar-menu-name="Missions" class="treeview">
-            <a href="#"><i class="fa fa-binoculars"></i><span>Missions</span><i class="fa fa-angle-down pull-right"></i></a>
-            <ul class="treeview-menu">
-              <li sar-menu-name="Missions/Index"><a href="~/Missions/"><i class="fa fa-circle-o"></i>Overview</a></li>
-              <li sar-menu-name="Missions/List"><a href="~/Missions/List/"><i class="fa fa-circle-o"></i>Rosters</a></li>
-            </ul>
-          </li>
-          <li><a href="~/Units/"><i class="fa fa-users"></i><span>Units</span></a></li>
-          <li><a href="~/Animals/"><i class="fa fa-paw"></i><span>Animals</span></a></li>
+          }
+          else
+          {
+            <li><a href="~/Account/Login"><i class="fa fa-sign-in"></i> Login</a></li>
+          }
         </ul>
-        @*}*@
-        @RenderSection("sidebar", false)
-      </section>
-    </aside>
-    <div class="content-wrapper">
-      <section class="content-header">
-        @RenderSection("header", false)
-      </section>
-      <section class="content">
-        @RenderBody()
-      </section>
-    </div>
-    <footer class="main-footer">
-      <strong>King County Search and Rescue Association</strong>
-    </footer>
-    <aside class="control-sidebar control-sidebar-dark">
-      <div class="tab-content">
-        @RenderSection("pageSettings", false)
       </div>
-    </aside>
-    <div class="control-sidebar-bg"></div>
+    </nav>
+  </header>
+  <aside class="main-sidebar">
+    <section class="sidebar">
+      @*@if (User.IsInRole("cdb.users"))
+        {*@
+      <form class="visible-xs" style="margin:5px; border-radius:4px;" role="search" ng-controller="MainSearchCtrl">
+        <div class="form-group">
+          <div np-autocomplete="searchOptions" class="input-group">
+            <input type="text" name="q" class="form-control" placeholder="Search ..." autocomplete="off" />
+            <span class="input-group-btn">
+              <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+        </div>
+      </form>
+      <ul class="sidebar-menu">
+        <li class="header">Main Navigation</li>
+        <li><a href="~/Members"><i class="fa fa-user"></i><span>Member List</span></a></li>
+        <li sar-menu-name="Training" class="treeview">
+          <a href="#"><i class="fa fa-book"></i><span>Training</span><i class="fa fa-angle-down pull-right"></i></a>
+          <ul class="treeview-menu">
+            <li sar-menu-name="Training/Index"><a href="~/Training/"><i class="fa fa-circle-o"></i>Overview</a></li>
+            <li sar-menu-name="Training/List"><a href="~/Training/List/"><i class="fa fa-circle-o"></i>Rosters</a></li>
+          </ul>
+        </li>
+        <li sar-menu-name="Missions" class="treeview">
+          <a href="#"><i class="fa fa-binoculars"></i><span>Missions</span><i class="fa fa-angle-down pull-right"></i></a>
+          <ul class="treeview-menu">
+            <li sar-menu-name="Missions/Index"><a href="~/Missions/"><i class="fa fa-circle-o"></i>Overview</a></li>
+            <li sar-menu-name="Missions/List"><a href="~/Missions/List/"><i class="fa fa-circle-o"></i>Rosters</a></li>
+          </ul>
+        </li>
+        <li><a href="~/Units/"><i class="fa fa-users"></i><span>Units</span></a></li>
+        <li><a href="~/Animals/"><i class="fa fa-paw"></i><span>Animals</span></a></li>
+      </ul>
+      @*}*@
+      @RenderSection("sidebar", false)
+    </section>
+  </aside>
+  <div class="content-wrapper">
+    <section class="content-header">
+      @RenderSection("header", false)
+    </section>
+    <section class="content">
+      @RenderBody()
+    </section>
   </div>
-  @RenderSection("scripts", false)
+  <footer class="main-footer">
+    <strong>King County Search and Rescue Association</strong>
+  </footer>
+  <aside class="control-sidebar control-sidebar-dark">
+    <div class="tab-content">
+      @RenderSection("pageSettings", false)
+    </div>
+  </aside>
+  <div class="control-sidebar-bg"></div>
+</div>
+
+
+@section head {@RenderSection("head", false)}
+@section scripts {
   <script type="text/ng-template" id="searchMission.html">
     <div>
       <div class="search-img" ng-style="{'background-color': 'pink' }"></div>
@@ -149,6 +148,5 @@
       <ng-include src="'search' + item.type + '.html'"></ng-include>
     </button>
   </script>
-</body>
-
-@section head {@RenderSection("head", false)}
+  @RenderSection("scripts", false)
+}

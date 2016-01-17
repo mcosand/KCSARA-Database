@@ -1,5 +1,4 @@
-﻿define(['angular', 'controllers/events/create-document'], function (angular) {
-  angular.module('sarDatabase').controller('EventDocsCtrl', ['$scope', '$uibModal', 'EventsService',
+﻿  angular.module('sarDatabase').controller('EventDocsCtrl', ['$scope', '$uibModal', 'EventsService',
     function ($scope, $uibModal, EventsService) {
       $.extend($scope, {
         documents: [],
@@ -52,4 +51,3 @@
         can: { create: true }
       });
     }]);
-});
