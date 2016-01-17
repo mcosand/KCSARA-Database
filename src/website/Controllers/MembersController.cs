@@ -9,38 +9,45 @@ namespace Kcsara.Database.Web.Controllers
   using System.Data.Entity.SqlServer;
   using System.Linq;
   using System.Text.RegularExpressions;
-  using Database.Services;
   using log4net;
   using Microsoft.AspNet.Mvc;
   using Models;
-  using ObjectModel.Accounts;
+  using Services;
   using Model = Kcsar.Database.Model;
 
   public class MembersController : BaseController
   {
-    readonly Lazy<AccountsService> accounts;
+    readonly IMembersService service;
 
-    public MembersController(Lazy<AccountsService> accounts, Lazy<Model.IKcsarContext> db, ILog log)
+    public MembersController(Lazy<IMembersService> service, Lazy<Model.IKcsarContext> db, ILog log)
       : base(db, log)
     {
-      this.accounts = accounts;
+      this.service = service.Value;
     }
 
-    /// <summary>Gets account information for a given member.</summary>
-    /// <remarks>used by /account/detail/{username}</remarks>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    [HttpGet]
-    public AccountInfo AccountFor(Guid id)
+
+    [Route("/Members")]
+    public ActionResult Index()
     {
-      var username = dbFactory.Value.Members.Where(f => f.Id == id).Select(f => f.Username).FirstOrDefault();
-      if (string.IsNullOrWhiteSpace(username))
-      {
-        return null;
-      }
-
-      return accounts.Value.Get(username);
+      ViewBag.ActiveMenu = "Members";
+      return View();
     }
+
+    ///// <summary>Gets account information for a given member.</summary>
+    ///// <remarks>used by /account/detail/{username}</remarks>
+    ///// <param name="id"></param>
+    ///// <returns></returns>
+    //[HttpGet]
+    //public AccountInfo AccountFor(Guid id)
+    //{
+    //  var username = dbFactory.Value.Members.Where(f => f.Id == id).Select(f => f.Username).FirstOrDefault();
+    //  if (string.IsNullOrWhiteSpace(username))
+    //  {
+    //    return null;
+    //  }
+
+    //  return accounts.Value.Get(username);
+    //}
 
     /// <summary>
     /// 

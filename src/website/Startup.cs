@@ -1,26 +1,28 @@
-﻿using System;
-using System.IO;
-using Kcsar.Database.Model;
-using Kcsar.Database.Model.Events;
-using Kcsara.Database.Web;
-using Kcsara.Database.Web.Services;
-using log4net;
-using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.AspNet.Mvc.ApplicationModels;
-using Microsoft.AspNet.Mvc.Formatters;
-using Microsoft.Data.Entity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using website.Models;
-using website.Services;
-
+﻿/*
+ * Copyright 2015-2016 Matthew Cosand
+ */
 namespace website
 {
+  using System;
+  using System.IO;
+  using Kcsar.Database.Model;
+  using Kcsar.Database.Model.Events;
+  using Kcsara.Database.Web;
+  using Kcsara.Database.Web.Services;
+  using log4net;
+  using Microsoft.AspNet.Builder;
+  using Microsoft.AspNet.Hosting;
+  using Microsoft.AspNet.Http;
+  using Microsoft.AspNet.Identity.EntityFramework;
+  using Microsoft.AspNet.Mvc.ApplicationModels;
+  using Microsoft.AspNet.Mvc.Formatters;
+  using Microsoft.Data.Entity;
+  using Microsoft.Extensions.Configuration;
+  using Microsoft.Extensions.DependencyInjection;
+  using Microsoft.Extensions.Logging;
+  using website.Models;
+  using website.Services;
+
   public class Startup
   {
     public Startup(IHostingEnvironment env)
@@ -70,23 +72,23 @@ namespace website
       // Add application services.
       services.AddTransient<IEmailSender, AuthMessageSender>();
       services.AddTransient<ISmsSender, AuthMessageSender>();
-      services.AddTransient<ICurrentPrincipalProvider, CurrentPrincipalProvider>();
+      services.AddSingleton<ICurrentPrincipalProvider, CurrentPrincipalProvider>();
 
       services.AddTransient<Lazy<IKcsarContext>, Lazy<IKcsarContext>>(svc => new Lazy<IKcsarContext>(() => new KcsarContext(Configuration["Data:DataStore:ConnectionString"], () => svc.GetService<ICurrentPrincipalProvider>().CurrentPrincipal.Identity.Name)));
       services.AddSingleton<Func<IKcsarContext>, Func<IKcsarContext>>(svc => () => new KcsarContext(Configuration["Data:DataStore:ConnectionString"], () => svc.GetService<ICurrentPrincipalProvider>().CurrentPrincipal.Identity.Name));
       services.AddSingleton(svc => LogManager.GetLogger("log"));
 
+      services.AddSingleton(svc => new Lazy<IMembersService>(() => new MembersService(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
       services.AddSingleton(svc => new Lazy<IEventsService<Kcsara.Database.Web.Models.Mission>>(() => new MissionsService(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
       services.AddSingleton(svc => new Lazy<IEventsService<Kcsara.Database.Web.Models.EventSummary>>(() => new EventsService<TrainingRow, Kcsara.Database.Web.Models.EventSummary>(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
-
       services.AddSingleton(svc => new Lazy<IUnitsService>(() => new UnitsService(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
+      services.AddSingleton(svc => new Lazy<IAnimalsService>(() => new AnimalsService(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
 
       services.AddSingleton(svc => new Lazy<IDocumentsService>(() => new DocumentsService(
         svc.GetRequiredService<Func<IKcsarContext>>(),
         svc.GetRequiredService<IHostingEnvironment>(),
         svc.GetRequiredService<ILog>())));
 
-      services.AddSingleton<ICurrentPrincipalProvider, CurrentPrincipalProvider>();
 
       services.AddTransient<IApplicationModelProvider>(svc => new CustomFilterApplicationModelProvider());
 
@@ -142,7 +144,7 @@ namespace website
         options.AuthenticationScheme = "Microsoft.AspNet.Identity.Application";
       });
 
-     // app.UseIdentity();
+      // app.UseIdentity();
 
       // To configure external authentication please see http://go.microsoft.com/fwlink/?LinkID=532715
 

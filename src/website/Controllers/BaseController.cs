@@ -20,7 +20,7 @@ namespace Kcsara.Database.Web.Controllers
     public Func<string, bool> UserInRole;
  //   public Func<string, object> GetSessionValue;
  //   public Action<string, object> SetSessionValue;
-    public IAuthService Permissions = null;
+ //   public IAuthService Permissions = null;
 //    protected readonly IAppSettings settings;
     protected readonly Lazy<IKcsarContext> dbFactory;
     protected readonly ILog log;

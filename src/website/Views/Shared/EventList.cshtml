@@ -37,7 +37,7 @@
               <th class="text-right hidden-xs hidden-sm">Miles</th>
             </tr>
           </thead>
-          <tbody ng-cloak>
+          <tbody class="ng-cloak">
             <tr ng-repeat="e in list" ng-click="showInfo(e)">
               <td ng-if="detailedEvent != e" class="hidden-xs">{{e.number}}</td>
               <td ng-if="detailedEvent != e">{{e.date.toDate() | date:'M/d/yyyy'}}</td>
@@ -72,7 +72,7 @@
               </td>
             </tr>
           </tbody>
-          <tfoot ng-cloak>
+          <tfoot class="ng-cloak">
             <tr>
               <th class="hidden-xs"></th>
               <th></th>

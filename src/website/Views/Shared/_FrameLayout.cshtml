@@ -78,25 +78,26 @@
           </div>
         </div>
       </form>
+      @{ var am = ViewBag.ActiveMenu; }
       <ul class="sidebar-menu">
         <li class="header">Main Navigation</li>
-        <li><a href="~/Members"><i class="fa fa-user"></i><span>Member List</span></a></li>
-        <li sar-menu-name="Training" sar-active-menu="@ViewBag.ActiveMenu" sar-add-classes="treeview">
+        <li sar-menu-name="Members" sar-active-menu="@am"><a href="~/Members"><i class="fa fa-user"></i><span>Members</span></a></li>
+        <li sar-menu-name="Training" sar-active-menu="@am" sar-add-classes="treeview">
           <a href="#"><i class="fa fa-book"></i><span>Training</span><i class="fa fa-angle-down pull-right"></i></a>
           <ul class="treeview-menu">
-            <li sar-menu-name="Training/Index" sar-active-menu="@ViewBag.ActiveMenu"><a href="~/Training/"><i class="fa fa-circle-o"></i>Overview</a></li>
-            <li sar-menu-name="Training/List" sar-active-menu="@ViewBag.ActiveMenu"><a href="~/Training/List/"><i class="fa fa-circle-o"></i>Rosters</a></li>
+            <li sar-menu-name="Training/Index" sar-active-menu="@am"><a href="~/Training/"><i class="fa fa-circle-o"></i>Overview</a></li>
+            <li sar-menu-name="Training/List" sar-active-menu="@am"><a href="~/Training/List/"><i class="fa fa-circle-o"></i>Rosters</a></li>
           </ul>
         </li>
-        <li sar-menu-name="Missions" sar-active-menu="@ViewBag.ActiveMenu" sar-add-classes="treeview">
+        <li sar-menu-name="Missions" sar-active-menu="@am" sar-add-classes="treeview">
           <a href="#"><i class="fa fa-binoculars"></i><span>Missions</span><i class="fa fa-angle-down pull-right"></i></a>
           <ul class="treeview-menu">
-            <li sar-menu-name="Missions/Index" sar-active-menu="@ViewBag.ActiveMenu"><a href="~/Missions/"><i class="fa fa-circle-o"></i>Overview</a></li>
-            <li sar-menu-name="Missions/List" sar-active-menu="@ViewBag.ActiveMenu"><a href="~/Missions/List/"><i class="fa fa-circle-o"></i>Rosters</a></li>
+            <li sar-menu-name="Missions/Index" sar-active-menu="@am"><a href="~/Missions/"><i class="fa fa-circle-o"></i>Overview</a></li>
+            <li sar-menu-name="Missions/List" sar-active-menu="@am"><a href="~/Missions/List/"><i class="fa fa-circle-o"></i>Rosters</a></li>
           </ul>
         </li>
-        <li sar-menu-name="Units" sar-active-menu="@ViewBag.ActiveMenu"><a href="~/Units/"><i class="fa fa-users"></i><span>Units</span></a></li>
-        <li><a href="~/Animals/"><i class="fa fa-paw"></i><span>Animals</span></a></li>
+        <li sar-menu-name="Units" sar-active-menu="@am"><a href="~/Units/"><i class="fa fa-users"></i><span>Units</span></a></li>
+        <li sar-menu-name="Animals" sar-active-menu="@am"><a href="~/Animals/"><i class="fa fa-paw"></i><span>Animals</span></a></li>
       </ul>
       @*}*@
       @RenderSection("sidebar", false)

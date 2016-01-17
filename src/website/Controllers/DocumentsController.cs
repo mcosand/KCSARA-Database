@@ -9,7 +9,6 @@ namespace Kcsara.Database.Web.Controllers
   using Kcsar.Database.Model;
   using log4net;
   using Microsoft.AspNet.Authorization;
-  using Microsoft.AspNet.Hosting;
   using Microsoft.AspNet.Mvc;
   using Models;
   using Services;

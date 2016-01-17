@@ -37,7 +37,6 @@
       "dependencies": {
         "Kcsar.Database.Model": "1.0.0-*",
         "Kcsara.Database.Extensions": "1.0.0-*",
-        "Kcsara.Database.Services": "1.0.0-*",
         "Kcsara.Database.Web.Strings": "1.0.0-*"
       },
       "frameworkAssemblies": {
