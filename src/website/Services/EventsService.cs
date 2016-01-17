@@ -213,7 +213,7 @@ namespace Kcsara.Database.Web.Services
         }
         if (row.Time < theEvent.StartTime.AddMonths(-1) || row.Time > theEvent.StartTime.AddMonths(1))
         {
-          errors.Add("Time", "Out of range.");
+          errors.Add("Time", "Out of range. Must be within a month of the event.");
         }
 
         if (row.Data != entry.Message)
@@ -297,7 +297,7 @@ namespace Kcsara.Database.Web.Services
           .Select(f => new ParticipantTimelineItem
           {
             Id = f.Id,
-            Unit = f.EventUnitId == null ? null : new ParticipatingNameIdPair {  Id = f.EventUnit.Id, Name = f.EventUnit.Name, PermanentId = f.EventUnit.MemberUnitId },
+            Unit = f.EventUnitId == null ? null : new ParticipatingNameIdPair { Id = f.EventUnit.Id, Name = f.EventUnit.Name, PermanentId = f.EventUnit.MemberUnitId },
             Time = f.Time,
             Status = f.Status,
             Miles = f.Miles,

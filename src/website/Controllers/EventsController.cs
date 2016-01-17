@@ -118,6 +118,7 @@ namespace Kcsara.Database.Web.Controllers
 
     [HttpPost]
     [HttpPut]
+    [HandleException]
     [Route("api/[controller]/{eventId}/log")]
     public LogEntry ApiLogSave(Guid eventId, [FromBody] LogEntry entry)
     {
