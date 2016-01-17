@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNet.Razor.TagHelpers;
-
+﻿/*
+ * Copyright 2016 Matthew Cosand
+ */
 namespace Kcsara.Database.Web.TagHelpers
 {
+  using Microsoft.AspNet.Razor.TagHelpers;
+
   [HtmlTargetElement("li", Attributes = MenuActiveAttribute)]
   public class MenuActive : TagHelper
   {
@@ -19,13 +22,22 @@ namespace Kcsara.Database.Web.TagHelpers
     [HtmlAttributeName("sar-add-classes")]
     public string AddClasses { get; set; }
 
+    public MenuActive()
+    {
+      AddClasses = string.Empty;
+    }
+
     public override void Process(TagHelperContext context, TagHelperOutput output)
     {
       var activePath = ((string)(ActiveName) ?? string.Empty);
 
-      output.Attributes["class"] = AddClasses
-                                      + (AddClasses.Length > 0 ? " " : string.Empty)
-                                      + ((activePath + '/').ToUpperInvariant().StartsWith(MenuName.ToUpperInvariant() + '/') ? " active" : string.Empty);
+      var value = AddClasses + (AddClasses.Length > 0 ? " " : string.Empty)
+                             + ((activePath + '/').ToUpperInvariant().StartsWith(MenuName.ToUpperInvariant() + '/') ? " active" : string.Empty);
+
+      if (value.Length > 0)
+      {
+        output.Attributes["class"] = value;
+      }
     }
   }
 }
