@@ -1,4 +1,5 @@
-﻿/*
+﻿//https://github.com/shramov/leaflet-plugins/blob/master/layer/tile/Google.js
+/*
  * Google layer using Google Maps API
  */
 
