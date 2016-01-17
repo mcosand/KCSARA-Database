@@ -1,6 +1,6 @@
 ﻿
 /*
- * Copyright 2009-2014 Matthew Cosand
+ * Copyright 2009-2016 Matthew Cosand
  */
 namespace Kcsar.Database.Model
 {
@@ -11,6 +11,7 @@ namespace Kcsar.Database.Model
   using System.Data.Entity.Core;
   using System.Data.Entity.Core.Objects;
   using System.Data.Entity.Infrastructure;
+  using System.Data.SqlClient;
   using System.Linq;
   using System.Reflection;
   using System.Text.RegularExpressions;
@@ -22,6 +23,8 @@ namespace Kcsar.Database.Model
     public IDbSet<AnimalMission> AnimalMissions { get; set; }
     public IDbSet<AnimalOwner> AnimalOwners { get; set; }
     public IDbSet<SarEventRow> Events { get; set; }
+
+
     public IDbSet<Mission_Old> Missions { get; set; }
     public IDbSet<MissionDetails> MissionDetails { get; set; }
     public IDbSet<EventLogRow> EventLogs { get; set; }
@@ -55,6 +58,11 @@ namespace Kcsar.Database.Model
     public IDbSet<Track> Tracks { get; set; }
 
     public IDbSet<ExternalLogin> ExternalLogins { get; set; }
+
+    public IEnumerable<T> EventDashboardStatistics<T>(string eventType)
+    {
+      return Database.SqlQuery<T>("EventDashboardStatistics @discriminator", new SqlParameter("discriminator", eventType));
+    }
 
     public KcsarContext() : this("DataStore", null) { }
 

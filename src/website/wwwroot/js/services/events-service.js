@@ -195,6 +195,16 @@ angular.module('sarDatabase').service('EventsService', ['$http', '$q', 'Upload',
             fillList.push(item);
           });
         });
+    },
+
+    stats: function (target, eventType) {
+      return getIntoList(
+        target,
+        window.appRoot + 'api/' + eventType + '/stats',
+        function (stats) {
+          $.extend(target, stats);
+          delete target.length;
+        })
     }
   });
 }]);

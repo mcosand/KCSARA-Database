@@ -62,6 +62,7 @@ gulp.task("sar-database:js", function () {
   return gulp.src([
     paths.webroot + "js/services/events-service.js",
     paths.webroot + "js/factories/login-recover.js",
+    paths.controllers + "dashboard.js",
     paths.controllers + "login-modal.js",
     paths.controllers + "main-search.js",
     paths.controllers + "events/list.js",

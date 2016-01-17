@@ -1,16 +1,15 @@
 ﻿/*
- * Copyright 2015 Matthew Cosand
+ * Copyright 2015-2016 Matthew Cosand
  */
 namespace Kcsara.Database.Web.Services
 {
   using System;
   using System.Collections.Generic;
-  using System.Data.Entity.SqlServer;
+  using System.Data.Entity;
   using System.Linq;
   using Kcsar.Database.Model;
   using Kcsar.Database.Model.Events;
   using log4net;
-  using System.Data.Entity;
   using Models;
 
   /// <summary>
@@ -32,6 +31,7 @@ namespace Kcsara.Database.Web.Services
     Roster Roster(Guid eventId);
 
     IEnumerable<ParticipantTimelineItem> ParticipantTimeline(Guid participantId);
+    EventStatistics Stats();
   }
 
   /// <summary>
@@ -305,6 +305,21 @@ namespace Kcsara.Database.Web.Services
           })
           .OrderByDescending(f => f.Time)
           .ToList();
+      }
+    }
+
+    public EventStatistics Stats()
+    {
+      using (var db = dbFactory())
+      {
+        var parts = db.EventDashboardStatistics<EventStatisticsItem>(typeof(RowType).Name.Replace("Row", "")).ToArray();
+
+        return new EventStatistics
+        {
+          YearToDate = parts[0],
+          Recent = parts[1],
+          Average = parts[2]
+        };
       }
     }
   }

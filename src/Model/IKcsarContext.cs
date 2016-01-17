@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2013-2014 Matthew Cosand
+ * Copyright 2013-2016 Matthew Cosand
  */
 namespace Kcsar.Database.Model
 {
@@ -45,6 +45,8 @@ namespace Kcsar.Database.Model
     IDbSet<SensitiveInfoAccess> SensitiveInfoLog { get; set; }
 
     IDbSet<Track> Tracks { get; set; }
+
+    IEnumerable<T> EventDashboardStatistics<T>(string eventType);
 
     void RecalculateTrainingAwards();
     void RecalculateTrainingAwards(Guid memberId);

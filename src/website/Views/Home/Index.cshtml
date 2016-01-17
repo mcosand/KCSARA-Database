@@ -6,6 +6,7 @@
   ViewBag.Title = "Home";
   ViewBag.UseContainer = true;
   ViewBag.NgController = "DashboardCtrl";
+  ViewBag.NgModules = new[] { "ngFileUpload" };
 }
 @section header {
   <h1>King County Search and Rescue Association</h1>
@@ -23,7 +24,6 @@
     </div>
   }
 </div>
-
 <div class="row">
   <div class="col-xs-12 col-md-6">
     <div class="box box-info box-solid">
@@ -31,13 +31,13 @@
         <h3 class="box-title">Mission Activity</h3>
       </div>
       <div class="box-body">
-        <table class="table" ng-cloak>
-          <thead><tr><td></td><th class="text-center">Year To Date</th><th class="text-center">Last 12 Months</th><th>10 Year Avg.</th></tr></thead>
+        <table class="table ng-cloak">
+          <thead><tr><td></td><th class="text-center">Year To Date</th><th class="text-center">Last Year</th><th>10 Year Avg.</th></tr></thead>
           <tbody>
-            <tr><th>Missions</th><td class="text-center">{{missionStats.ytd.number}}</td><td class="text-center">{{missionStats.lastYear.number}}</td><td class="text-center">{{missionStats.average.number}}</td></tr>
-            <tr><th>Responders</th><td class="text-center">{{missionStats.ytd.people}}</td><td class="text-center">{{missionStats.lastYear.people}}</td><td class="text-center">{{missionStats.average.people}}</td></tr>
-            <tr><th>Hours</th><td class="text-center">{{missionStats.ytd.hours | number:0}}</td><td class="text-center">{{missionStats.lastYear.hours | number:0}}</td><td class="text-center">{{missionStats.average.hours | number:0}}</td></tr>
-            <tr><th>Miles</th><td class="text-center">{{missionStats.ytd.miles | number:0}}</td><td class="text-center">{{missionStats.lastYear.miles | number:0}}</td><td class="text-center">{{missionStats.average.miles | number:0}}</td></tr>
+            <tr><th>Missions</th><td class="text-center">{{missionStats.yearToDate.count}}</td><td class="text-center">{{missionStats.recent.count}}</td><td class="text-center">{{missionStats.average.count}}</td></tr>
+            <tr><th>Responders</th><td class="text-center">{{missionStats.yearToDate.people}}</td><td class="text-center">{{missionStats.recent.people}}</td><td class="text-center">{{missionStats.average.people}}</td></tr>
+            <tr><th>Hours</th><td class="text-center">{{missionStats.yearToDate.hours | number:0}}</td><td class="text-center">{{missionStats.recent.hours | number:0}}</td><td class="text-center">{{missionStats.average.hours | number:0}}</td></tr>
+            <tr><th>Miles</th><td class="text-center">{{missionStats.yearToDate.miles | number:0}}</td><td class="text-center">{{missionStats.recent.miles | number:0}}</td><td class="text-center">{{missionStats.average.miles | number:0}}</td></tr>
           </tbody>
         </table>
       </div>
@@ -48,13 +48,13 @@
         <h3 class="box-title">Training Activity</h3>
       </div>
       <div class="box-body">
-        <table class="table" ng-cloak>
-          <thead><tr><td></td><th class="text-center">Year To Date</th><th class="text-center">Last 12 Months</th></tr></thead>
+        <table class="table ng-cloak">
+          <thead><tr><td></td><th class="text-center">Year To Date</th><th class="text-center">Last Year</th></tr></thead>
           <tbody>
-            <tr><th>Trainings</th><td class="text-center">{{trainingStats.ytd.number}}</td><td class="text-center">{{trainingStats.lastYear.number}}</td></tr>
-            <tr><th>Participants</th><td class="text-center">{{trainingStats.ytd.people}}</td><td class="text-center">{{trainingStats.lastYear.people}}</td></tr>
-            <tr><th>Hours</th><td class="text-center">{{trainingStats.ytd.hours | number:0}}</td><td class="text-center">{{trainingStats.lastYear.hours | number:0}}</td></tr>
-            <tr><th>Miles</th><td class="text-center">{{trainingStats.ytd.miles | number:0}}</td><td class="text-center">{{trainingStats.lastYear.miles | number:0}}</td></tr>
+            <tr><th>Trainings</th><td class="text-center">{{trainingStats.yearToDate.count}}</td><td class="text-center">{{trainingStats.recent.count}}</td></tr>
+            <tr><th>Participants</th><td class="text-center">{{trainingStats.yearToDate.people}}</td><td class="text-center">{{trainingStats.recent.people}}</td></tr>
+            <tr><th>Hours</th><td class="text-center">{{trainingStats.yearToDate.hours | number:0}}</td><td class="text-center">{{trainingStats.recent.hours | number:0}}</td></tr>
+            <tr><th>Miles</th><td class="text-center">{{trainingStats.yearToDate.miles | number:0}}</td><td class="text-center">{{trainingStats.recent.miles | number:0}}</td></tr>
           </tbody>
         </table>
       </div>
@@ -75,29 +75,11 @@
 @section head {
   <link rel="stylesheet" type="text/css" href="~/lib/mapbox.js/mapbox.css" />
   <link rel="stylesheet" type="text/css" href="~/css/sar-map.min.css" />
-  }
+}
 @section scripts {
-  <script src="//maps.google.com/maps/api/js?v=3.2&sensor=false"></script>
+  <script src="//maps.google.com/maps/api/js"></script>
   <script type="text/javascript" src="~/lib/mapbox.js/mapbox.uncompressed.js"></script>
   <script type="text/javascript" src="~/lib/leaflet.google.js"></script>
   <script type="text/javascript" src="~/lib/TileLayer.GeoJSON.js"></script>
   <script type="text/javascript" src="~/js/maps/map.js"></script>
-  <script type="text/javascript">
-    var map = L.map('eventMap').fitBounds([[47.16, -122.53], [47.77, -121.22]]);
-    L.kcsarSetupMap(map, { showLayers: true, defaultBase: 'Google Streets' });
-  </script>
-  <script type="text/javascript">
-    angular.module('sarDatabase').controller('DashboardCtrl', ['$scope', function ($scope) {
-      $.extend($scope, {
-        trainingStats: {
-          ytd: { number: 14, people: 35, hours: 53.4, miles: 52 },
-          lastYear: { number: 62, people: 45, hours: 10492.5, miles: 10000 }
-        },
-        missionStats: {
-          ytd: { number: 14, people: 35, hours: 53.4, miles: 52 },
-          lastYear: { number: 62, people: 45, hours: 10492.5, miles: 10000 }
-        }
-      });
-    }]);
-  </script>
 }

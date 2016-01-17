@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015 Matthew Cosand
+ * Copyright 2015-2016 Matthew Cosand
  */
 namespace Kcsara.Database.Web.Controllers
 {
@@ -145,6 +145,14 @@ namespace Kcsara.Database.Web.Controllers
     public IEnumerable<ParticipantTimelineItem> ApiParticipantTimeline(Guid eventId, Guid participantId)
     {
       return service.ParticipantTimeline(participantId);
+    }
+
+    [HttpGet]
+    [AllowAnonymous]
+    [Route("api/[controller]/stats")]
+    public EventStatistics ApiStats()
+    {
+      return service.Stats();
     }
   }
 

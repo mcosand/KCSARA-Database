@@ -459,3 +459,7 @@ md-list-item .md-button {
 .event-view-status.SignedIn {
   background-color: #008d4c;
 }
+
+.ng-cloak {
+  display: none;
+}
