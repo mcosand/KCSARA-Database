@@ -108,4 +108,4 @@ gulp.task("js", ["lib:js", "sar-database:js", "sar-map:js"]);
 
 //gulp.task("min", ["min:js", "sar-database", "min:css"]);
 
-gulp.task("default", ["js", "sar-map"]);
+gulp.task("default", ["js", "sar-map", "min:css"]);

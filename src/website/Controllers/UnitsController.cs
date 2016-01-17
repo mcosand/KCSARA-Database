@@ -23,5 +23,12 @@ namespace Kcsara.Database.Web.Controllers
       ViewBag.ActiveMenu = "Units";
       return View(service.List());
     }
+
+    [Route("/Units/{unitId}")]
+    public ActionResult Detail(Guid unitId)
+    {
+      ViewBag.ActiveMenu = "Units";
+      return View(service.GetUnit(unitId));
+    }
   }
 }

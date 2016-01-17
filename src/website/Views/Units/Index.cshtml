@@ -12,7 +12,7 @@
         <ul>
           @foreach (var unit in (IEnumerable<NameIdPair>)Model)
           {
-            <li><a href="~/Units/Detail/@unit.Id">@unit.Name</a></li>
+            <li><a href="~/Units/@unit.Id">@unit.Name</a></li>
           }
         </ul>
       </div>

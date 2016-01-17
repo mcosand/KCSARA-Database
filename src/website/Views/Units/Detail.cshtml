@@ -1,0 +1,225 @@
+﻿@{
+  Kcsara.Database.Web.Models.SarUnit u = (Kcsara.Database.Web.Models.SarUnit)ViewData.Model;
+  ViewBag.Title = u.Name;
+}
+@section header {
+  <h1>Details for unit: @u.Name</h1>
+}
+<div class="row">
+  <div class="col-sm-8 col-xs-12">
+    <div class="box box-primary">
+      <div class="box-header with-border">
+        <h3 class="box-title">Unit Reports</h3>
+      </div>
+      <div class="box-body">
+        <a href="~/Units/@u.Id/Roster">View Roster</a><br/>
+        <a href="~/Units/@u.Id/DownloadRoster">Download Roster</a> (Contact information for active members)<br/>
+        <a href="~/Units/@u.Id/MissionReadyList">Download Mission Ready List</a></br>
+        <a href="~/Units/@u.Id/CoreCompReport">Download Core Competency Report</a><br/>
+        <br/>
+        @*@foreach (var report in (Kcsara.Database.Extensions.Reports.UnitReportInfo[])ViewBag.UnitReports)
+        {
+          var args = string.Join("", report.Parameters.Select(f => "&" + f.Key + "=" + f.Value));
+          <a href="~/Units/DownloadReport/@(u.Id)?reportName=@report.Key@args">@report.Name</a><br/>
+        }*@
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-4 col-xs-12">
+    <div class="box box-primary">
+      <div class="box-header with-border">
+        <h3 class="box-title">Applications</h3>
+      </div>
+      <div class="box-body">
+        @*@if ((Kcsar.Database.Model.ApplicationStatus)ViewBag.AppStatus != Kcsar.Database.Model.ApplicationStatus.No)
+        {
+          <p>@u.Name is currently taking applications.</p>
+          if ((Kcsar.Database.Model.ApplicationStatus)ViewBag.AppStatus == Kcsar.Database.Model.ApplicationStatus.Yes)
+          {
+            if ((bool)ViewBag.CanApply)
+            {
+          <button data-bind="jqButtonEnable: applyEnabled, click: doApply">Apply Now</button>
+            } else
+            {
+              <p>You are already a member or an applicant.</p>
+            }
+          }
+          else if (!string.IsNullOrWhiteSpace(ViewBag.AppText))
+          {
+            <p>@ViewBag.AppText</p>
+          }
+        }
+        else*@
+        @{
+          <p>@u.Name is not currently taking applications.</p>
+          if (!string.IsNullOrWhiteSpace(ViewBag.AppText))
+          { <p>@ViewBag.AppText</p>}
+        }
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-12 col-sm-8">
+    <div class="box box-primary">
+      <div class="box-header with-border">
+        <h3 class="box-title">Unit Status Types</h3>
+      </div>
+      <div class="box-body no-padding">
+        <table class="table table-striped table-condensed">
+          <thead>
+            <tr>
+              <th>Status Name</th>
+              <th>Is Active?</th>
+              <th>WAC Level</th>
+              @*@if (User.IsInRole("cdb.admins"))
+      {
+                <th></th> }*@
+            </tr>
+          </thead>
+          @*<tbody>
+            @foreach (UnitStatus s in u.StatusTypes.OrderBy(x => x.StatusName))
+      {
+              <tr>
+                <td>@s.StatusName</td>
+                <td>@s.IsActive</td>
+                <td>@s.WacLevel</td>
+                @if (User.IsInRole("cdb.admins"))
+        {
+                  <td>
+                    @(Html.PopupActionLink<UnitsController>(x => x.EditStatus(s.Id), "Edit", 260))
+                    @(Html.PopupActionLink<UnitsController>(x => x.DeleteStatus(s.Id), "Delete", 200))
+                  </td>
+                }
+              </tr>
+            }
+          </tbody>*@
+        </table>
+      </div>
+      @*@if (User.IsInRole("cdb.admins"))
+      {
+        <div class="box-footer box-action-footer">
+          <div class="col-xs-12"><a href="~/Unit/@u.Id/CreateStatus">Add Unit Status Type</div>
+        </div>
+      }*@
+    </div>
+  </div>
+</div>
+@*@if (ViewBag.CanEditDocuments)
+      {
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Unit Documents</h3>
+        </div>
+        <div class="box-body no-padding" style="overflow-x:auto">
+          <table class="table table-striped table-bordered table-responsive">
+            <thead>
+              <tr><th>Title</th><th>Required</th><th>Download URL</th><th>Submit To</th><th>Display<br />Order</th><th>For Members<br />Older Than</th><th>For Members<br />Younger Than</th><th></th></tr>
+            </thead>
+            <tbody data-bind="foreach: documents">
+              <tr>
+                <td><input type="text" data-bind="value: Title" /></td>
+                <td><input type="checkbox" data-bind="checked: Required" /></td>
+                <td><input type="text" data-bind="value: Url" /></td>
+                <td><input type="text" data-bind="value: SubmitTo" /></td>
+                <td><input type="text" data-bind="value: Order" style="width:2em" /></td>
+                <td><input type="text" data-bind="value: ForMembersOlder" style="width:2em; display:inline" /> yrs</td>
+                <td><input type="text" data-bind="value: ForMembersYounger" style="width:2em; display:inline" />&nbsp;yrs</td>
+                <td style="white-space:nowrap"><button class="btn btn-link text-danger" data-bind="click: $parent.documents.doDelete">@Strings.ActionDelete</button></td>
+              </tr>
+            </tbody>
+            <tfoot data-bind="visible: documents.isLoading">
+              <tr><th colspan="8">Loading ...</th></tr>
+            </tfoot>
+          </table>
+        </div>
+        <div class="box-footer box-action-footer">
+          <div class="col-xs-6"><button class="btn" data-bind="jqButtonEnable: !documents.isLoading(), click: documents.doAdd">Add Document</button></div>
+          <div class="col-xs-6"><button class="btn" data-bind="jqButtonEnable: !documents.isLoading(), click: documents.doSave">Save Changes</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+}*@
+@*<script type="text/javascript">
+  var UnitDocument = function (model) {
+    this.Id = ko.observable(model.Id);
+    this.Title = ko.observable(model.Title);
+    this.Required = ko.observable(model ? model.Required : true);
+    this.Url = ko.observable(model.Url);
+    this.SubmitTo = ko.observable(model.SubmitTo);
+    this.Order = ko.observable(model.Order);
+    this.ForMembersYounger = ko.observable(model.ForMembersYounger);
+    this.ForMembersOlder = ko.observable(model.ForMembersOlder);
+  }
+
+  var PageModel = function () {
+    var self = this;
+    this.applyEnabled = ko.observable(true);
+
+    this.doApply = function () {
+      var doit = confirm("Apply to @u.Name?");
+      if (doit) {
+        self.applyEnabled(false);
+
+        $.ajax({ type: 'POST', url: '@Url.RouteUrl("defaultApi", new { httproute="", controller = "Units", action = "SubmitApplication", id=u.Id })?memberId=@((Guid)ViewBag.ActorId)', dataType: 'json', contentType: 'application/json; charset=utf-8' })
+        .done(function (result) {
+          window.location.href = '@Url.Action("Detail", "Members", new { id=ViewBag.ActorId })';
+        })
+        .fail(function (err) {
+          alert(err.responseJSON.Message);
+          self.applyEnabled(true);
+        })
+      }
+    }
+
+    this.documents = ko.observableArray();
+    this.documents.isLoading = ko.observable(true);
+    this.documents.getData = function () {
+      self.documents.isLoading(true);
+      $.ajax({ type: 'GET', url: '@Url.RouteUrl("defaultApi", new { httproute="", controller = "Units", action = "GetDocuments", id=Model.Id })', dataType: 'json', contentType: 'application/json; charset=utf-8' })
+              .done(function (result) {
+                self.documents($.map(result, function (val) { return new UnitDocument(val); }));
+              })
+              .always(function () {
+                self.documents.isLoading(false);
+              });
+    };
+
+    this.documents.doAdd = function () {
+      self.documents.push(new UnitDocument({ Order: self.documents().length + 1 }));
+    }
+
+    this.documents.doDelete = function (row) {
+      self.documents.remove(row);
+    }
+
+    this.documents.doSave = function () {
+      self.documents.isLoading(true);
+      $.ajax({ type: 'POST', url: '@Url.RouteUrl("defaultApi", new { httproute="", controller = "Units", action = "SaveDocuments", id=Model.Id })', data: ko.toJSON(self.documents), dataType: 'json', contentType: 'application/json; charset=utf-8' })
+          .done(function (result) {
+            if (result == 'OK') { alert('Saved successfully'); }
+            else { alert(result); }
+          })
+          .always(function () {
+            self.documents.isLoading(false);
+          });
+    }
+
+    this.load = function () {
+      self.documents.getData();
+    }
+  }
+
+  var model = new PageModel();
+  model.load();
+  $(document).ready(function () {
+    $('#content').find('button').not("[class='link']").button();
+    $('#content').find('input[type="text"]').addClass("input-box");
+    $('#content').find('textarea').addClass("input-box");
+    ko.applyBindings(model);
+  });
+</script>*@

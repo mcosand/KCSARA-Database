@@ -16,6 +16,7 @@ namespace Kcsara.Database.Web.Services
   public interface IUnitsService
   {
     IEnumerable<NameIdPair> List();
+    SarUnit GetUnit(Guid id);
   }
 
   /// <summary>
@@ -32,6 +33,14 @@ namespace Kcsara.Database.Web.Services
     {
       this.dbFactory = dbFactory;
       this.log = log;
+    }
+
+    public SarUnit GetUnit(Guid id)
+    {
+      using (var db = dbFactory())
+      {
+        return db.Units.Select(f => new SarUnit { Id = f.Id, Name = f.DisplayName }).SingleOrDefault(f => f.Id == id);
+      }
     }
 
     public IEnumerable<NameIdPair> List()
