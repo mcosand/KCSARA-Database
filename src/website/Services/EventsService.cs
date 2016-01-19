@@ -22,6 +22,9 @@ namespace Kcsara.Database.Web.Services
 
     EventList List(int? year);
 
+    IEnumerable<EventSummary> Search(string query);
+
+
     ModelType Save(ModelType model);
 
     IEnumerable<LogEntry> Logs(Guid eventId);
@@ -108,6 +111,26 @@ namespace Kcsara.Database.Web.Services
         result.Events = list;
 
         return result;
+      }
+    }
+
+    public IEnumerable<EventSummary> Search(string query)
+    {
+      using (var db = dbFactory())
+      {
+        return db.Missions.Where(f => f.StateNumber.StartsWith(query) || f.Title.Contains(query) || f.Location.Contains(query))
+                .OrderByDescending(f => f.StartTime)
+                .AsEnumerable()
+                .Select(f => new EventSummary
+                {
+                  Id = f.Id,
+                  StateNumber = f.StateNumber,
+                  Name = f.Title,
+                  Location = f.Location,
+                  Start = f.StartTime,
+                  Stop = f.StopTime
+                })
+                .ToArray();
       }
     }
 

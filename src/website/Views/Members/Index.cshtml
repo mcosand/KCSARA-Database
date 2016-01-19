@@ -1,5 +1,6 @@
 ﻿@{
   ViewBag.Title = "Members";
+  ViewBag.NgController = "MembersDashboardCtrl";
 }
 @using Kcsara.Database.Web.Models;
 @section header {
@@ -8,10 +9,21 @@
 <div class="row">
   <div class="col-sm-6 col-xs-12">
     <div class="box box-primary">
+      <div class="box-header with-border">
+        <h3 class="box-title">Search Members</h3>
+      </div>
       <div class="box-body">
-        <p>
-We have lots of volunteers!
-        </p>
+        <p>Use the search box below to find a member by first and/or last name:</p>
+        <form role="search">
+          <div class="form-group">
+            <div np-autocomplete="searchOptions" class="input-group">
+              <input type="text" name="q" class="form-control" placeholder="Search ..." autocomplete="off" />
+              <span class="input-group-btn">
+                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
+              </span>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   </div>

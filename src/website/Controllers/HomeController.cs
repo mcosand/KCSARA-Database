@@ -9,14 +9,18 @@ namespace Kcsara.Database.Web.Controllers
   using Kcsar.Database.Model;
   using Kcsara.Database.Web.Models;
   using Microsoft.AspNet.Mvc;
-
+  using Services;
   public class HomeController : Controller
   {
-    private readonly Lazy<IKcsarContext> db;
-    public HomeController(Lazy<IKcsarContext> db)
+    private readonly Lazy<IMembersService> members;
+    private readonly Lazy<IEventsService<Mission>> missions;
+
+    public HomeController(Lazy<IMembersService> members, Lazy<IEventsService<Mission>> missions)
     {
-      this.db = db;
+      this.members = members;
+      this.missions = missions;
     }
+
     private static string allSearchTypes = string.Join(",", Enum.GetNames(typeof(SearchResultType)));
 
     public IActionResult Index()
@@ -63,16 +67,9 @@ namespace Kcsara.Database.Web.Controllers
       if (searchTypes.Any(f => f == SearchResultType.Member))
       {
         list.AddRange(
-          MembersController.SummariesWithUnits(
-          db.Value.Members.Where(f => (f.FirstName + " " + f.LastName).StartsWith(q)
-                             || (f.LastName + ", " + f.FirstName).StartsWith(q)
-                             || (f.DEM.StartsWith(q) || f.DEM.StartsWith("SR" + q)))
-          .OrderByDescending(f => f.Memberships.Any(g => g.Status.IsActive && (g.EndTime == null || g.EndTime > now)))
-          .ThenByDescending(f => f.MissionRosters.Count(g => g.TimeIn > last12Months))
-          .ThenByDescending(f => f.MissionRosters.Count())
-          .ThenBy(f => f.LastName)
-          .ThenBy(f => f.FirstName)
-          .ThenBy(f => f.Id)).Select((m, i) => new MemberSearchResult
+          members.Value
+          .Search(q)
+          .Select((m, i) => new MemberSearchResult
           {
             Score = (m.Units.Length == 0 ? 300 : 1000) - i,
             Summary = m
@@ -82,24 +79,13 @@ namespace Kcsara.Database.Web.Controllers
       if (searchTypes.Any(f => f == SearchResultType.Mission))
       {
         list.AddRange(
-          db.Value.Missions.Where(f => f.StateNumber.StartsWith(q) || f.Title.Contains(q) || f.Location.Contains(q))
-          .OrderByDescending(f => f.StartTime)
-          .AsEnumerable()
-          .Select((f, i) =>
-          new MissionSearchResult
+          missions.Value
+          .Search(q)
+          .Select((m, i) => new MissionSearchResult
           {
-            Score = ((f.StartTime > last12Months) ? 500 : 200) - i,
-            Summary = new EventSummary
-            {
-              Id = f.Id,
-              StateNumber = f.StateNumber,
-              Name = f.Title,
-              Location = f.Location,
-              Start = f.StartTime,
-              Stop = f.StopTime
-            }
-          })
-          );
+            Score = ((m.Start > last12Months) ? 500 : 200) - i,
+            Summary = m
+          }));
       }
 
       return list.OrderByDescending(f => f.Score).Take(limit).ToArray();

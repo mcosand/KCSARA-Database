@@ -61,6 +61,7 @@ gulp.task("lib:pack", function () {
 gulp.task("sar-database:js", function () {
   return gulp.src([
     paths.webroot + "js/services/events-service.js",
+    paths.webroot + "js/services/members-service.js",
     paths.webroot + "js/factories/login-recover.js",
     paths.controllers + "dashboard.js",
     paths.controllers + "login-modal.js",
@@ -73,7 +74,10 @@ gulp.task("sar-database:js", function () {
     paths.controllers + "events/view-docs.js",
     paths.controllers + "events/base-editor.js",
     paths.controllers + "events/create-log",
-    paths.controllers + "events/create-document.js"
+    paths.controllers + "events/create-document.js",
+    paths.controllers + "members/members-dashboard.js",
+    paths.controllers + "members/members-detail.js",
+    paths.controllers + "members/view-contacts.js"
   ])
     .pipe(concat(paths.webroot + "js/sar-database.min.js"))
     .pipe(uglify())

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2013-2015 Matthew Cosand
+ * Copyright 2013-2016 Matthew Cosand
  */
 
 namespace Kcsara.Database.Web.Controllers
@@ -10,11 +10,13 @@ namespace Kcsara.Database.Web.Controllers
   using System.Linq;
   using System.Text.RegularExpressions;
   using log4net;
+  using Microsoft.AspNet.Authorization;
   using Microsoft.AspNet.Mvc;
   using Models;
   using Services;
   using Model = Kcsar.Database.Model;
 
+  [Authorize]
   public class MembersController : BaseController
   {
     readonly IMembersService service;
@@ -31,6 +33,27 @@ namespace Kcsara.Database.Web.Controllers
     {
       ViewBag.ActiveMenu = "Members";
       return View();
+    }
+
+    [Route("/Members/{memberId}")]
+    public ActionResult Detail(Guid memberId)
+    {
+      ViewBag.ActiveMenu = "Members";
+      return View(service.GetMember(memberId));
+    }
+
+    [HttpGet]
+    [Route("api/members/{memberId}/contacts")]
+    public object ApiContacts(Guid memberId)
+    {
+      return service.Contacts(memberId);
+    }
+
+    [HttpGet]
+    [Route("api/members/{memberId}/addresses")]
+    public object ApiAddresses(Guid memberId)
+    {
+      return service.Addresses(memberId);
     }
 
     ///// <summary>Gets account information for a given member.</summary>
@@ -429,19 +452,6 @@ namespace Kcsara.Database.Web.Controllers
       return result;
     }
     */
-    internal static IEnumerable<MemberSummary> SummariesWithUnits(IQueryable<Model.Member> query)
-    {
-      DateTime cutoff = DateTime.Now;
-      return query.Select(f => new { Member = f, Units = f.Memberships.Where(g => (g.EndTime == null || g.EndTime > cutoff) && g.Status.IsActive).Select(g => g.Unit).Select(g => new NameIdPair { Id = g.Id, Name = g.DisplayName }).Distinct() })
-        .AsEnumerable()
-        .Select(f => new MemberSummary
-        {
-          Name = f.Member.FullName,
-          WorkerNumber = f.Member.DEM,
-          Id = f.Member.Id,
-          Units = f.Units.ToArray(),
-          Photo = f.Member.PhotoFile
-        });
-    }
+
   }
 }

@@ -1,0 +1,91 @@
+﻿@model MemberSummary
+@{
+  ViewBag.Title = Model.Name;
+  ViewBag.NgController = "MembersDetailCtrl";
+  ViewBag.NgInit = Html.Raw("init('" + Model.Id + "')");
+}
+@using Kcsara.Database.Web.Models;
+<div class="row">
+  <div class="col-lg-5 col-sm-6 col-xs-12">
+    <div class="box box-primary">
+      <div class="box-body">
+        <img class="member-photo" src="~/photos/@Model.Photo" />
+        <h3>@Model.Name</h3>
+      </div>
+    </div>
+  </div>
+</div>
+<md-tabs md-dynamic-height md-border-bottom class="md-whiteframe-4dp">
+  <md-tab label="Basics" md-active="activeTab == 'info'" md-on-select="setTab('info')">
+    <md-content class="md-padding">
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis ante augue. Phasellus volutpat neque ac dui mattis vulputate. Etiam consequat aliquam cursus. In sodales pretium ultrices. Maecenas lectus est, sollicitudin consectetur felis nec, feugiat ultricies mi.</p>
+    </md-content>
+  </md-tab>
+  <md-tab label="Contact" md-active="activeTab == 'contact'" md-on-select="setTab('contact')">
+    <md-content class="md-padding" ng-controller="MemberContactsCtrl" ng-init="init('@Model.Id')" ng-if="activeTab == 'contact'">
+      <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6">
+        <div class="box box-primary shadow-1">
+          <div class="box-header with-border">
+            <h3 class="box-title">Contact Info</h3>
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" ng-click="startAddContact()">
+                <i class="fa fa-plus"></i>
+              </button>
+            </div>
+          </div>
+          <div class="box-body">
+            <table id="contacts_table" class="table table-bordered table-condensed table-striped table-responsive">
+              <thead style="display:none;"><tr><th>Type</th><th>SubType</th><th>Value</th></tr></thead>
+              <tbody>
+                <tr ng-repeat="c in contacts">
+                  <td class="hidden-xs">{{c.type}}</td>
+                  <td>{{c.subType}}</td>
+                  <td ng-switch="c.type">
+                    <a ng-switch-when="email" ng-href="{{'mailto:' + c.value}}">{{c.value}}</a>
+                    <a ng-switch-when="phone" ng-href="{{'tel:' + c.value}}">{{c.value}}</a>
+                    <span ng-switch-default>{{c.value}}</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6">
+        <div class="box box-primary shadow-1">
+          <div class="box-header with-border">
+            <h3 class="box-title">Address</h3>
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" ng-click="startAddAddress()">
+                <i class="fa fa-plus"></i>
+              </button>
+            </div>
+          </div>
+          <div class="box-body">
+            <div class="info-box" style="min-height:50px" ng-repeat="a in addresses">
+              <span class="info-box-icon" style="width:50px; height:50px; line-height:50px;font-size:22px; background-color:white;"><i ng-class="{'fa-envelope-o': a.type == 'mailing', 'fa-home': a.type == 'residence'}" class="fa"></i></span>
+              <div class="info-box-content" style="margin-left:50px">
+                <address>
+                  <a ng-if="a.type != 'mailing'" ng-href="{{'http://maps.google.com/?daddr=' + a.street + '+' + a.city + ',+' + a.state + '+' + a.zip}}" href="#" target="_blank">
+                    {{a.street}}<br />
+                    {{a.city}}, {{a.state}} {{a.zip}}<br />
+                  </a>
+                  <div ng-if="a.type == 'mailing'">
+                    {{a.street}}<br />
+                    {{a.city}}, {{a.state}} {{a.zip}}<br/>
+                  </div>
+                </address>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </md-content>
+  </md-tab>
+  <md-tab label="Training" md-active="activeTab == 'training'" md-on-select="setTab('training')">
+  </md-tab>
+  <md-tab label="Missions" md-active="activeTab == 'missions'" md-on-select="setTab('missions')">
+    content
+  </md-tab>
+</md-tabs>

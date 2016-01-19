@@ -136,15 +136,15 @@ namespace website
 
       app.UseStaticFiles();
 
-      app.UseCookieAuthentication(options =>
-      {
-        options.LoginPath = new PathString("/account/login");
-        options.AutomaticAuthenticate = true;
-        options.AutomaticChallenge = true;
-        options.AuthenticationScheme = "Microsoft.AspNet.Identity.Application";
-      });
+      //app.UseCookieAuthentication(options =>
+      //{
+      //  options.LoginPath = new PathString("/account/login");
+      //  options.AutomaticAuthenticate = true;
+      //  options.AutomaticChallenge = true;
+      //  options.AuthenticationScheme = "Microsoft.AspNet.Identity.Application";
+      //});
 
-      // app.UseIdentity();
+      app.UseIdentity();
 
       // To configure external authentication please see http://go.microsoft.com/fwlink/?LinkID=532715
 

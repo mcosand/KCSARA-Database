@@ -7,7 +7,7 @@
         itemTemplateUrl: 'searchResult.html',
         listClass: 'list-group search-results',
         limit: 8,
-        noFixWidth: true,
+        noFixWidth: false,
         onSelect: function (item) {
           if (item.type == 'Member') {
             window.location.href = window.appRoot + 'Members/' + item.summary.id;

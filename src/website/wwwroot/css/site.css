@@ -57,7 +57,7 @@ ul {
   border-top-color: #f39c12;
 }
 
-.box-header h3 {
+h3 {
   margin: 0px;
 }
 
@@ -94,48 +94,48 @@ a {
     color: #008d4c;
   }
 
-  .modal-footer .btn-primary {
-    color: white;
-    background-color: #008d4c;
-  }
+.modal-footer .btn-primary {
+  color: white;
+  background-color: #008d4c;
+}
 
-  .box-action-footer .btn {
-    width: 100%;
-  }
+.box-action-footer .btn {
+  width: 100%;
+}
 
-  .box-action-footer > *:not(:first-child),
-  .modal-footer-buttons .btn {
-    border-left: 1px solid #f4f4f4;
-  }
+.box-action-footer > *:not(:first-child),
+.modal-footer-buttons .btn {
+  border-left: 1px solid #f4f4f4;
+}
 
 
-  .box-action-footer .btn:hover,
-  .modal-footer .btn:visited,
-  .modal-footer .btn:hover,
-  .modal-footer .btn:visited {
-    text-decoration: none;
-  }
+.box-action-footer .btn:hover,
+.modal-footer .btn:visited,
+.modal-footer .btn:hover,
+.modal-footer .btn:visited {
+  text-decoration: none;
+}
 
-  .shadow-1,
-  .search-img,
-  header,
-  aside.main-sidebar,
-  .box-action-footer .btn:hover,
-  .modal-footer .btn:hover,
-  .search-results .list-group-item:hover {
-    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-    z-index: 10;
-  }
+.shadow-2,
+.sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > a > span:not(.pull-right),
+.sidebar-menu > li:not(.header):hover > a,
+.box-action-footer .btn:active,
+.modal-footer .btn:active,
+.box {
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  z-index: 20;
+}
 
-  .shadow-2,
-  .sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > a > span:not(.pull-right),
-  .sidebar-menu > li:not(.header):hover > a,
-  .box-action-footer .btn:active,
-  .modal-footer .btn:active,
-  .box {
-    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-    z-index: 20;
-  }
+.shadow-1,
+.search-img,
+header,
+aside.main-sidebar,
+.box-action-footer .btn:hover,
+.modal-footer .btn:hover,
+.search-results .list-group-item:hover {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  z-index: 10;
+}
 
 .shadow-3,
 .control-sidebar-bg,
@@ -187,14 +187,16 @@ a {
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
 }
-.modal-header .close {
-  color:white;
-  opacity:.5
-}
-.modal-header .close:hover
-{
-  opacity: .9
-}
+
+  .modal-header .close {
+    color: white;
+    opacity: .5;
+  }
+
+    .modal-header .close:hover {
+      opacity: .9;
+    }
+
 .form-control:focus {
   border-color: #f39c12;
 }
@@ -298,7 +300,7 @@ a {
   text‐shadow: none;
 }
 
-.np-autocomplete-wrapper .list-group {
+.np-autocomplete-wrapper.auto-size .list-group {
   width: auto !important;
 }
 
@@ -416,50 +418,73 @@ form.ng-submitted input.ng-invalid {
 .drop-box {
   min-height: 3em;
   background-color: #eee;
-  border-radius:5px;
+  border-radius: 5px;
   text-align: center;
-  padding:1em;
+  padding: 1em;
   border: solid 2px transparent;
   cursor: pointer;
 }
-.drop-box.dragover {
-  border-color:#008d4c;
-}
+
+  .drop-box.dragover {
+    border-color: #008d4c;
+  }
 
 .md-list-item-text {
   padding-left: 1em;
   padding-bottom: 1em;
 }
-.md-list-item-text * {
-  line-height: initial;
-}
-.md-list-item-text h4 {
-  margin: 0px;
-}
+
+  .md-list-item-text * {
+    line-height: initial;
+  }
+
+  .md-list-item-text h4 {
+    margin: 0px;
+  }
 
 md-list-item.md-whiteframe-2dp {
-  margin:4px;
+  margin: 4px;
 }
 
 md-list-item .md-button {
-  line-height:inherit;
+  line-height: inherit;
 }
+
 .md-button .md-primary {
-  color:#008d4c;
+  color: #008d4c;
 }
 
 .text-danger {
   color: #a94442 !important;
 }
 
-.event-view-status { margin-right:3px;}
-.event-view-status.Cleared {
-  background-color: #eee;
+.event-view-status {
+  margin-right: 3px;
 }
-.event-view-status.SignedIn {
-  background-color: #008d4c;
-}
+
+  .event-view-status.Cleared {
+    background-color: #eee;
+  }
+
+  .event-view-status.SignedIn {
+    background-color: #008d4c;
+  }
 
 .ng-cloak {
   display: none;
 }
+
+
+.member-photo {
+  width: 100px;
+  height: 133px;
+  border: solid 1px #888;
+  border-radius: 4px;
+  float: left;
+  margin-right: 10px;
+}
+
+/* https://github.com/angular/material/issues/5439 */
+/*md-pagination-wrapper {
+    width:auto !important;
+}*/
