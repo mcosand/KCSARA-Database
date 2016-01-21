@@ -10,6 +10,12 @@
   [Table("EventParticipants")]
   public class EventParticipantRow : ModelObject
   {
+    public EventParticipantRow()
+    {
+      Timeline = new List<EventParticipantStatusRow>();
+      AwardedTraining = new List<TrainingAwardRow>();
+    }
+
     public Guid EventId { get; set; }
 
     [ForeignKey("EventId")]
@@ -38,6 +44,8 @@
     public int? Miles { get; set; }
 
     public virtual ICollection<EventParticipantStatusRow> Timeline { get; set; }
+
+    public virtual ICollection<TrainingAwardRow> AwardedTraining { get; set; }
 
     public override string GetReportHtml()
     {

@@ -10,8 +10,10 @@ namespace Kcsar.Database.Model
   using System.ComponentModel.DataAnnotations.Schema;
   using System.Linq;
   using System.Threading;
+  using Events;
 
-  public class TrainingAward : ModelObject, ITrainingAward
+  [Table("TrainingAwards")]
+  public class TrainingAwardRow : ModelObject, ITrainingAward
   {
     [Required]
     public DateTime Completed { get; set; }
@@ -22,13 +24,15 @@ namespace Kcsar.Database.Model
     public virtual MemberRow Member { get; set; }
     [Required]
     public virtual TrainingCourse Course { get; set; }
-    public virtual TrainingRoster_Old Roster { get; set; }
+    public Guid? RosterId { get; set; }
+    [ForeignKey("RosterId")]
+    public virtual EventParticipantRow RosterEntry { get; set; }
 
 
     [NotMapped]
     public bool UploadsPending { get; set; }
 
-    public TrainingAward()
+    public TrainingAwardRow()
       : base()
     {
       this.LastChanged = DateTime.Now;
@@ -39,7 +43,7 @@ namespace Kcsar.Database.Model
 
     public override string GetReportHtml()
     {
-      return string.Format("<b>{0}</b> awarded <b>{1}</b>, {2:d}. Expires:{3:d}, Have Roster={4}", this.Member.FullName, this.Course.DisplayName, this.Completed, this.Expiry, this.Roster != null);
+      return string.Format("<b>{0}</b> awarded <b>{1}</b>, {2:d}. Expires:{3:d}, Have Roster={4}", this.Member.FullName, this.Course.DisplayName, this.Completed, this.Expiry, this.RosterEntry != null);
     }
 
     public override string ToString()

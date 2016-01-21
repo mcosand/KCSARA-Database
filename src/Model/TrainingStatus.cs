@@ -59,7 +59,7 @@ namespace Kcsar.Database.Model
             return CompositeTrainingStatus.Compute(m, m.ComputedAwards, courses, when);
         }
 
-        public static CompositeTrainingStatus Compute(MemberRow m, IEnumerable<ComputedTrainingAward> awards, IEnumerable<TrainingCourse> courses, DateTime when)
+        public static CompositeTrainingStatus Compute(MemberRow m, IEnumerable<ComputedTrainingAwardRow> awards, IEnumerable<TrainingCourse> courses, DateTime when)
         {
             CompositeTrainingStatus result = new CompositeTrainingStatus();
 
@@ -69,7 +69,7 @@ namespace Kcsar.Database.Model
 
                 bool mustHave = m.IsTrainingRequired(course);
                 bool keepCurrent = m.ShouldKeepCourseCurrent(course);
-                ComputedTrainingAward award = awards.Where(f => f.Course.Id == course.Id).FirstOrDefault();
+                ComputedTrainingAwardRow award = awards.Where(f => f.Course.Id == course.Id).FirstOrDefault();
                 if (award == null)
                 {
                     // No record - member has not completed the training

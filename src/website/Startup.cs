@@ -83,6 +83,7 @@ namespace website
       services.AddSingleton(svc => new Lazy<IEventsService<Kcsara.Database.Web.Models.EventSummary>>(() => new EventsService<TrainingRow, Kcsara.Database.Web.Models.EventSummary>(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
       services.AddSingleton(svc => new Lazy<IUnitsService>(() => new UnitsService(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
       services.AddSingleton(svc => new Lazy<IAnimalsService>(() => new AnimalsService(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
+      services.AddSingleton(svc => new Lazy<ITrainingService>(() => new TrainingService(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
 
       services.AddSingleton(svc => new Lazy<IDocumentsService>(() => new DocumentsService(
         svc.GetRequiredService<Func<IKcsarContext>>(),

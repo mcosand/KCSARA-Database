@@ -39,7 +39,7 @@ namespace Kcsar.Database.Model
     public IDbSet<SubjectGroup> SubjectGroups { get; set; }
     public IDbSet<SubjectGroupLink> SubjectGroupLinks { get; set; }
     public IDbSet<Training_Old> Trainings { get; set; }
-    public IDbSet<TrainingAward> TrainingAward { get; set; }
+    public IDbSet<TrainingAwardRow> TrainingAward { get; set; }
     public IDbSet<TrainingCourse> TrainingCourses { get; set; }
     public IDbSet<DocumentRow> Documents { get; set; }
     public IDbSet<TrainingRoster_Old> TrainingRosters { get; set; }
@@ -49,7 +49,7 @@ namespace Kcsar.Database.Model
     public IDbSet<UnitMembership> UnitMemberships { get; set; }
     public IDbSet<UnitStatus> UnitStatusTypes { get; set; }
     public IDbSet<UnitDocument> UnitDocuments { get; set; }
-    public IDbSet<ComputedTrainingAward> ComputedTrainingAwards { get; set; }
+    public IDbSet<ComputedTrainingAwardRow> ComputedTrainingAwards { get; set; }
     public IDbSet<TrainingExpirationSummary> TrainingExpirationSummaries { get; set; }
     public IDbSet<CurrentMemberIds> CurrentMemberIds { get; set; }
     public IDbSet<xref_county_id> xref_county_id { get; set; }
@@ -112,6 +112,8 @@ namespace Kcsar.Database.Model
         cs.MapRightKey("Training_Id");
         cs.ToTable("TrainingSarUnits");
       });
+
+      modelBuilder.Entity<ComputedTrainingAwardRow>().HasOptional(f => f.RosterEntry).WithMany();
 
       modelBuilder.Entity<SarEventRow>()
         .Map<SarEventRow>(m => m.Requires("Discriminator").HasValue(string.Empty).IsRequired())
@@ -320,9 +322,9 @@ namespace Kcsar.Database.Model
       RecalculateTrainingAwards(members, DateTime.Now);
     }
 
-    public List<ComputedTrainingAward[]> RecalculateTrainingAwards(IEnumerable<MemberRow> members, DateTime time)
+    public List<ComputedTrainingAwardRow[]> RecalculateTrainingAwards(IEnumerable<MemberRow> members, DateTime time)
     {
-      List<ComputedTrainingAward[]> retVal = new List<ComputedTrainingAward[]>();
+      List<ComputedTrainingAwardRow[]> retVal = new List<ComputedTrainingAwardRow[]>();
 
       // TODO: only use the rules in effect at time 'time'
       List<TrainingRule> rules = (from r in this.TrainingRules select r).ToList();
@@ -331,7 +333,7 @@ namespace Kcsar.Database.Model
 
       foreach (MemberRow m in members)
       {
-        foreach (ComputedTrainingAward award in (from a in this.ComputedTrainingAwards where a.Member.Id == m.Id select a))
+        foreach (ComputedTrainingAwardRow award in (from a in this.ComputedTrainingAwards where a.Member.Id == m.Id select a))
         {
           this.ComputedTrainingAwards.Remove(award);
         }
@@ -340,10 +342,10 @@ namespace Kcsar.Database.Model
         var direct = (from a in this.TrainingAward.Include("Course") where a.Member.Id == m.Id && a.Completed <= time select a)
             .OrderBy(f => f.Course.Id).ThenByDescending(f => f.Expiry).ThenByDescending(f => f.Completed);
 
-        Dictionary<Guid, ComputedTrainingAward> awards = new Dictionary<Guid, ComputedTrainingAward>();
+        Dictionary<Guid, ComputedTrainingAwardRow> awards = new Dictionary<Guid, ComputedTrainingAwardRow>();
 
         Guid lastCourse = Guid.Empty;
-        foreach (TrainingAward a in direct)
+        foreach (TrainingAwardRow a in direct)
         {
           if (this.Entry(a).State == EntityState.Deleted)
           {
@@ -352,7 +354,7 @@ namespace Kcsar.Database.Model
 
           if (a.Course.Id != lastCourse)
           {
-            var ca = new ComputedTrainingAward(a);
+            var ca = new ComputedTrainingAwardRow(a);
             awards.Add(a.Course.Id, ca);
             this.ComputedTrainingAwards.Add(ca);
             lastCourse = a.Course.Id;
@@ -455,7 +457,7 @@ namespace Kcsar.Database.Model
       return retVal;
     }
 
-    private bool RewardTraining(MemberRow m, Dictionary<Guid, TrainingCourse> courses, Dictionary<Guid, ComputedTrainingAward> awards, TrainingRule rule, DateTime? completed, DateTime? expiry, string newAwardsString)
+    private bool RewardTraining(MemberRow m, Dictionary<Guid, TrainingCourse> courses, Dictionary<Guid, ComputedTrainingAwardRow> awards, TrainingRule rule, DateTime? completed, DateTime? expiry, string newAwardsString)
     {
       IEnumerable<string> results = newAwardsString.Split('+');
       bool awarded = false;
@@ -505,7 +507,7 @@ namespace Kcsar.Database.Model
         }
         else if (!awards.ContainsKey(course))
         {
-          ComputedTrainingAward newAward = new ComputedTrainingAward { Course = courses[course], Member = m, Completed = completed, Expiry = expiry, Rule = rule };
+          ComputedTrainingAwardRow newAward = new ComputedTrainingAwardRow { Course = courses[course], Member = m, Completed = completed, Expiry = expiry, Rule = rule };
           awards.Add(course, newAward);
           this.ComputedTrainingAwards.Add(newAward);
           awarded = true;

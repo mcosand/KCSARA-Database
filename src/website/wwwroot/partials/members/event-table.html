@@ -29,6 +29,13 @@
               <ul>
                 <li ng-repeat="t in detailedEvent.timeline">{{t.time.format('HHmm YYYY-MM-DD')}} {{t.status}}<span ng-if="t.role"> as {{t.role}}</span><span ng-if="t.unit"> with {{t.unit.name}}</span></li>
               </ul>
+
+              <div ng-if="detailedEvent.awards.length">
+                <strong>Completed Training:</strong>
+                <ul>
+                  <li ng-repeat="a in detailedEvent.awards">{{a.course.name}}</li>
+                </ul>
+              </div>
             </div>
             <!--<div class="col-xs-6 col-sm-3">
               <div><a ng-href="{{tabLink('roster', e.id)}}" ng-click="$event.stopPropagation()"><i class="fa fa-fw fa-list-alt"></i> Roster</a></div>

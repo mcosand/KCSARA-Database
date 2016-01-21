@@ -101,7 +101,7 @@
   <ItemGroup>
     <Compile Include="Attributes.cs" />
     <Compile Include="AuditLog.cs" />
-    <Compile Include="ComputedTrainingAward.cs" />
+    <Compile Include="Training\ComputedTrainingAwardRow.cs" />
     <Compile Include="ContactInfoSubType.cs" />
     <Compile Include="Animal.cs" />
     <Compile Include="AnimalOwner.cs" />
@@ -159,9 +159,9 @@
     <Compile Include="Migrations\201601122136452_EventParticipantStatus.Designer.cs">
       <DependentUpon>201601122136452_EventParticipantStatus.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201601191708059_RosterCleanup.cs" />
-    <Compile Include="Migrations\201601191708059_RosterCleanup.Designer.cs">
-      <DependentUpon>201601191708059_RosterCleanup.cs</DependentUpon>
+    <Compile Include="Migrations\201601210117411_RosterCleanup.cs" />
+    <Compile Include="Migrations\201601210117411_RosterCleanup.Designer.cs">
+      <DependentUpon>201601210117411_RosterCleanup.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Migrator.cs" />
     <Compile Include="MemberUnitDocument.cs" />
@@ -217,7 +217,7 @@
     <Compile Include="ITrainingAward.cs" />
     <Compile Include="SarUnitRow.cs" />
     <Compile Include="Training_Old.cs" />
-    <Compile Include="TrainingAward.cs" />
+    <Compile Include="Training\TrainingAwardRow.cs" />
     <Compile Include="TrainingExpirationSummary.cs" />
     <Compile Include="TrainingRoster_Old.cs" />
     <Compile Include="Mission_Old.cs" />
@@ -314,8 +314,8 @@
     <EmbeddedResource Include="Migrations\201601122136452_EventParticipantStatus.resx">
       <DependentUpon>201601122136452_EventParticipantStatus.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201601191708059_RosterCleanup.resx">
-      <DependentUpon>201601191708059_RosterCleanup.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201601210117411_RosterCleanup.resx">
+      <DependentUpon>201601210117411_RosterCleanup.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

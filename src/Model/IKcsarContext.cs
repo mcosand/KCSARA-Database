@@ -28,7 +28,7 @@ namespace Kcsar.Database.Model
     IDbSet<SubjectGroup> SubjectGroups { get; set; }
     IDbSet<SubjectGroupLink> SubjectGroupLinks { get; set; }
     IDbSet<Training_Old> Trainings { get; set; }
-    IDbSet<TrainingAward> TrainingAward { get; set; }
+    IDbSet<TrainingAwardRow> TrainingAward { get; set; }
     IDbSet<TrainingCourse> TrainingCourses { get; set; }
     IDbSet<DocumentRow> Documents { get; set; }
     IDbSet<TrainingRoster_Old> TrainingRosters { get; set; }
@@ -38,7 +38,7 @@ namespace Kcsar.Database.Model
     IDbSet<UnitMembership> UnitMemberships { get; set; }
     IDbSet<UnitStatus> UnitStatusTypes { get; set; }
     IDbSet<UnitDocument> UnitDocuments { get; set; }
-    IDbSet<ComputedTrainingAward> ComputedTrainingAwards { get; set; }
+    IDbSet<ComputedTrainingAwardRow> ComputedTrainingAwards { get; set; }
     IDbSet<TrainingExpirationSummary> TrainingExpirationSummaries { get; set; }
     IDbSet<CurrentMemberIds> CurrentMemberIds { get; set; }
     IDbSet<xref_county_id> xref_county_id { get; set; }

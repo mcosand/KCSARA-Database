@@ -22,9 +22,11 @@
         }
 
         $scope.current = $.extend({}, newValue, {
-          timeline: []
+          timeline: [],
+          awards: []
         });
         EventsService.participantTimeline($scope.current.timeline, $scope.eventRoute, $scope.eventId, newValue.id);
+        if (newValue.memberId) { EventsService.participantAwards($scope.current.awards, $scope.eventId, newValue.memberId); }
       },
       startUpdateStatus: function (entry) {
         alert('ok');

@@ -197,6 +197,17 @@ angular.module('sarDatabase').service('EventsService', ['$http', '$q', 'Upload',
         });
     },
 
+    participantAwards: function (fillList, eventId, memberId) {
+      return getIntoList(
+        fillList,
+        window.appRoot + 'api/members/' + memberId + '/training/event/' + eventId,
+        function (data) {
+          $.each(data, function (idx, award) {
+            fillList.push(award);
+          });
+        });
+    },
+
     stats: function (target, eventType) {
       return getIntoList(
         target,

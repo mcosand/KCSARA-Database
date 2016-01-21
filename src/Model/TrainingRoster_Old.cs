@@ -18,14 +18,14 @@ namespace Kcsar.Database.Model
     public string Comments { get; set; }
     public virtual MemberRow Person { get; set; }
     public virtual Training_Old Training { get; set; }
-    public virtual ICollection<TrainingAward> TrainingAwards { get; set; }
-    public virtual ICollection<ComputedTrainingAward> ComputedAwards { get; set; }
+    //public virtual ICollection<TrainingAward> TrainingAwards { get; set; }
+    //public virtual ICollection<ComputedTrainingAward> ComputedAwards { get; set; }
     public int? OvertimeHours { get; set; }
 
     public TrainingRoster_Old()
     {
-      this.TrainingAwards = new List<TrainingAward>();
-      this.ComputedAwards = new List<ComputedTrainingAward>();
+      //this.TrainingAwards = new List<TrainingAward>();
+      //this.ComputedAwards = new List<ComputedTrainingAward>();
     }
 
     public double? Hours

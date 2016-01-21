@@ -10,7 +10,7 @@ namespace Kcsar.Database.Model.Migrations
       RenameColumn("dbo.SarUnits", "NoApplicationsText", "ApplicationsText");
       AddColumn("dbo.SarUnits", "ApplicationStatus", c => c.Int(nullable: false));
       Sql("UPDATE dbo.SarUnits SET ApplicationStatus=" + (int)ApplicationStatus.Yes);
-      Sql("UPDATE dbo.SarUnits SET ApplicationsText=NULL, ApplicationStatus=" + (int)ApplicationStatus.No + " WHERE ApplicationsText='never'");
+      Sql("UPDATE dbo.SarUnits SET ApplicationsText='', ApplicationStatus=" + (int)ApplicationStatus.No + " WHERE ApplicationsText='never'");
     }
 
     public override void Down()

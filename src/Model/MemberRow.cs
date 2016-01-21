@@ -45,10 +45,10 @@ namespace Kcsar.Database.Model
     public virtual ICollection<MissionRoster_Old> MissionRosters { get; set; }
     public virtual ICollection<PersonAddress> Addresses { get; set; }
     public virtual ICollection<PersonContact> ContactNumbers { get; set; }
-    public virtual ICollection<TrainingAward> TrainingAwards { get; set; }
+    public virtual ICollection<TrainingAwardRow> TrainingAwards { get; set; }
     public virtual ICollection<TrainingRoster_Old> TrainingRosters { get; set; }
     public virtual ICollection<UnitMembership> Memberships { get; set; }
-    public virtual ICollection<ComputedTrainingAward> ComputedAwards { get; set; }
+    public virtual ICollection<ComputedTrainingAwardRow> ComputedAwards { get; set; }
     public virtual ICollection<AnimalOwner> Animals { get; set; }
     public virtual ICollection<MissionDetails> MissionDetails { get; set; }
     public virtual ICollection<UnitApplicant> ApplyingTo { get; set; }

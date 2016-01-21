@@ -86,5 +86,15 @@ angular.module('sarDatabase').service('MembersService', ['$http', '$q', function
           });
         });
     },
+    eventAwards: function (fillList, memberId, eventId) {
+      return getIntoList(
+        fillList,
+        window.appRoot + 'api/members/' + memberId + '/training/event/' + eventId,
+        function (data) {
+          $.each(data, function (idx, award) {
+            fillList.push(award);
+          });
+        });
+    }
   });
 }]);

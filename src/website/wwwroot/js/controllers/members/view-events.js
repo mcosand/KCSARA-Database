@@ -19,7 +19,9 @@
 
         if ($scope.detailedEvent && !$scope.detailedEvent.timeline) {
           $scope.detailedEvent.timeline = [];
+          $scope.detailedEvent.awards = [];
           MembersService.eventTimeline($scope.detailedEvent.timeline, $scope.memberId, $scope.eventType, e.id);
+          MembersService.eventAwards($scope.detailedEvent.awards, $scope.memberId, e.id);
         }
       },
       tabLink: function (action, id) {

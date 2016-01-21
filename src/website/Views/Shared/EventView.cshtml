@@ -32,15 +32,28 @@
           </div>
           <div style="width:100%">
             <h4>{{item.firstName}} {{item.lastName}}</h4>
-            <div ng-if="item.id == current.id">
-              <div>Unit: {{item.unit.name}}</div>
-              <div>Status: {{item.statusText}}</div>
-              <ul>
-                <li ng-repeat="t in current.timeline">{{t.time.format('HHmm YYYY-MM-DD')}} {{t.status}}<span ng-if="t.role"> as {{t.role}}</span><span ng-if="t.unit"> with {{t.unit.name}}</span></li>
-              </ul>
+            <div ng-if="item.id == current.id" class="row">
+              <div class="col-xs-12 col-sm-6">
+                <div ng-if="item.unit">Unit: {{item.unit.name}}</div>
+                <div>Status: {{item.statusText}}</div>
+              </div>
+              <div class="col-xs-12 col-sm-6">
+                <strong>Timeline:</strong>
+                <div ng-if="current.timeline.loading"><i class="fa fa-refresh fa-spin"></i></div>
+                <ul>
+                  <li ng-repeat="t in current.timeline">{{t.time.format('HHmm YYYY-MM-DD')}} {{t.status}}<span ng-if="t.role"> as {{t.role}}</span><span ng-if="t.unit"> with {{t.unit.name}}</span></li>
+                </ul>
+                <div ng-if="current.awards.loading"><i class="fa fa-refresh fa-spin"></i></div>
+                <div ng-if="current.awards.length">
+                  <strong>Completed Training:</strong>
+                  <ul>
+                    <li ng-repeat="a in current.awards">{{a.course.name}}</li>
+                  </ul>
+                </div>
+              </div>
               @*<md-card-actions layout="row" layout-align="end center">
-                <md-button ng-click="startUpdateStatus(current); $event.stopPropagation()">Update Status</md-button>
-              </md-card-actions>*@
+                  <md-button ng-click="startUpdateStatus(current); $event.stopPropagation()">Update Status</md-button>
+                </md-card-actions>*@
             </div>
           </div>
           <div ng-if="item.id != current.id" class="md-secondary hidden-xs text-right">Hours: {{item.hours | number:2}}<br /><span ng-if="item.miles">Miles: {{item.miles | number}}</span></div>

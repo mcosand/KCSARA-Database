@@ -39,7 +39,7 @@ namespace HamFromFCC
           {
             // probably a match
             Console.WriteLine("Grant HAM to {0}, effective {1:yyyy-MM-dd}, expires {2:yyyy-MM-dd}", ham.Member.FullName, lic.Issued, lic.Expires);
-            TrainingAward ta = new TrainingAward { Completed = lic.Issued, Course = course, Expiry = lic.Expires, Member = ham.Member, metadata = "Via FCC: " + lic.Url, LastChanged = DateTime.Now, ChangedBy = "HamFromFCC" };
+            TrainingAwardRow ta = new TrainingAwardRow { Completed = lic.Issued, Course = course, Expiry = lic.Expires, Member = ham.Member, metadata = "Via FCC: " + lic.Url, LastChanged = DateTime.Now, ChangedBy = "HamFromFCC" };
             db.TrainingAward.Add(ta);
             db.SaveChanges();
             db.RecalculateTrainingAwards(ham.Member.Id);

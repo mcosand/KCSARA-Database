@@ -39,9 +39,8 @@
  join EventParticipants p ON mr.Person_Id=p.MemberId and mr.Mission_Id=p.EventId
  WHERE [TimeOut] IS NOT NULL");
       Sql(@"INSERT INTO [dbo].[EventParticipantStatus] ([Id],[ParticipantId],[Time],[Status],[Role],[EventUnitId],[Miles],[LastChanged],[ChangedBy])
- SELECT NEWID(),p.Id,TimeIn, 15, InternalRole, u.id, NULL, GETDATE(), 'dbupgrade' FROM TrainingRosters mr
- join EventParticipants p ON mr.Person_Id=p.MemberId and mr.Training_Id=p.EventId
- JOIN EventUnits u ON mr.Unit_Id=u.MemberUnitId AND mr.Training_Id=u.EventId");
+ SELECT NEWID(),p.Id,TimeIn, 15, NULL, NULL, NULL, GETDATE(), 'dbupgrade' FROM TrainingRosters mr
+ join EventParticipants p ON mr.Person_Id=p.MemberId and mr.Training_Id=p.EventId");
       Sql(@"INSERT INTO [dbo].[EventParticipantStatus] ([Id],[ParticipantId],[Time],[Status],[Role],[EventUnitId],[Miles],[LastChanged],[ChangedBy])
  SELECT NEWID(),p.Id,[TimeOut], 259, NULL, NULL, mr.miles, GETDATE(), 'dbupgrade' FROM TrainingRosters mr
  join EventParticipants p ON mr.Person_Id=p.MemberId and mr.Training_Id=p.EventId
