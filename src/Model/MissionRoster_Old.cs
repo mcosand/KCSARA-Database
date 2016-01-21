@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2009-2014 Matthew Cosand
+ * Copyright 2009-2016 Matthew Cosand
  */
 
 namespace Kcsar.Database.Model
@@ -29,7 +29,7 @@ namespace Kcsar.Database.Model
     [Required]
     public virtual Mission_Old Mission { get; set; }
     [Required]
-    public virtual Member Person { get; set; }
+    public virtual MemberRow Person { get; set; }
     [Required]
     public virtual SarUnitRow Unit { get; set; }
     public virtual ICollection<AnimalMission> Animals { get; set; }

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2009-2014 Matthew Cosand
+ * Copyright 2009-2016 Matthew Cosand
  */
 
 namespace Kcsar.Database.Model
@@ -19,7 +19,7 @@ namespace Kcsar.Database.Model
     public string DocPath { get; set; }
     public string metadata { get; set; }
     [Required]
-    public virtual Member Member { get; set; }
+    public virtual MemberRow Member { get; set; }
     [Required]
     public virtual TrainingCourse Course { get; set; }
     public virtual TrainingRoster_Old Roster { get; set; }

@@ -7,6 +7,7 @@ namespace Kcsara.Database.Web.Services
   using System.Collections.Generic;
   using System.Data.Entity;
   using System.Linq;
+  using System.Linq.Expressions;
   using Kcsar.Database.Model;
   using Kcsar.Database.Model.Events;
   using log4net;
@@ -34,7 +35,9 @@ namespace Kcsara.Database.Web.Services
     Roster Roster(Guid eventId);
 
     IEnumerable<ParticipantTimelineItem> ParticipantTimeline(Guid participantId);
+    IEnumerable<ParticipantTimelineItem> MemberTimeline(Guid eventId, Guid memberId);
     EventStatistics Stats();
+    object MemberEvents(Guid memberId, int? year = null);
   }
 
   /// <summary>
@@ -310,12 +313,52 @@ namespace Kcsara.Database.Web.Services
       return roster;
     }
 
+    public object MemberEvents(Guid memberId, int? year = null)
+    {
+      using (var db = dbFactory())
+      {
+        var query = db.Events.OfType<RowType>().SelectMany(f => f.Participants).Where(f => f.MemberId == memberId).AsNoTracking();
+        if (year != null)
+        {
+          var dateStart = new DateTime(year.Value, 1, 1);
+          var dateEnd = dateStart.AddYears(1);
+          query = query.Where(f => f.Event.StartTime >= dateStart && f.Event.StartTime < dateEnd);
+        }
+
+        var list = query.Select(f => new
+        {
+          Id = f.EventId,
+          Number = f.Event.StateNumber,
+          Date = f.Event.StartTime,
+          Title = f.Event.Title,
+          Unit = f.EventUnitId == null ? null : new ParticipatingNameIdPair { Id = f.EventUnitId.Value, Name = f.EventUnit.Name, PermanentId = f.EventUnit.MemberUnitId },          
+          Hours = f.Hours,
+          Miles = f.Miles
+        })
+        .OrderBy(f => f.Date)
+        .ToList();
+
+        //list.ForEach(f => f.Hours = (f.Hours == null) ? (double?)null : (Math.Round(f.Hours.Value * 4.0) / 4.0));
+        return list;
+      }
+    }
+
     public IEnumerable<ParticipantTimelineItem> ParticipantTimeline(Guid participantId)
+    {
+      return Timeline(f => f.Id == participantId);
+    }
+
+    public IEnumerable<ParticipantTimelineItem> MemberTimeline(Guid eventId, Guid memberId)
+    {
+      return Timeline(f => f.MemberId == memberId && f.EventId == eventId);
+    }
+
+    private IEnumerable<ParticipantTimelineItem> Timeline(Expression<Func<EventParticipantRow, bool>> where)
     {
       using (var db = dbFactory())
       {
 
-        return db.Events.SelectMany(f => f.Participants).Where(f => f.Id == participantId)
+        return db.Events.SelectMany(f => f.Participants).Where(where)
           .SelectMany(f => f.Timeline)
           .Select(f => new ParticipantTimelineItem
           {

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2013-2014 Matthew Cosand
+ * Copyright 2013-2016 Matthew Cosand
  */
 namespace Kcsar.Database.Model
 {
@@ -11,7 +11,7 @@ namespace Kcsar.Database.Model
   public class UnitApplicant : ModelObject
   {
     [ReportedReference]
-    public virtual Member Applicant { get; set; }
+    public virtual MemberRow Applicant { get; set; }
     [ReportedReference]
     public virtual SarUnitRow Unit { get; set; }
     public DateTime Started { get; set; }

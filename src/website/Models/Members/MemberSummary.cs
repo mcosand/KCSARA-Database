@@ -23,7 +23,7 @@ namespace Kcsara.Database.Web.Models
     {
     }
 
-    public MemberSummary(Member member)
+    public MemberSummary(MemberRow member)
     {
       this.Id = member.Id;
       this.Name = member.ReverseName;

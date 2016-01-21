@@ -104,7 +104,7 @@ namespace Kcsara.Database.Web.Services
       }
     }
 
-    private IEnumerable<MemberSummary> SummariesWithUnits(IQueryable<Member> query)
+    private IEnumerable<MemberSummary> SummariesWithUnits(IQueryable<MemberRow> query)
     {
       DateTime cutoff = DateTime.Now;
       return query

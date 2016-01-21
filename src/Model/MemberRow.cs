@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2008-2014 Matthew Cosand
+ * Copyright 2008-2016 Matthew Cosand
  */
 
 namespace Kcsar.Database.Model
@@ -12,7 +12,9 @@ namespace Kcsar.Database.Model
   using System.Runtime.Serialization;
   using System.Threading;
   using Events;
-  public class Member : ModelObject
+
+  [Table("Members")]
+  public class MemberRow : ModelObject
   {
     [MaxLength(50)]
     public string DEM { get; set; }
@@ -38,7 +40,7 @@ namespace Kcsar.Database.Model
     public MemberStatus Status { get; set; }
     public virtual MemberMedical MedicalInfo { get; set; }
 
-    public virtual ICollection<EventRoster> Rosters { get; set; }
+    public virtual ICollection<EventParticipantRow> Events { get; set; }
     public virtual ICollection<EventLogRow> MissionLogs { get; set; }
     public virtual ICollection<MissionRoster_Old> MissionRosters { get; set; }
     public virtual ICollection<PersonAddress> Addresses { get; set; }
@@ -53,19 +55,19 @@ namespace Kcsar.Database.Model
     public virtual ICollection<MemberEmergencyContact> EmergencyContacts { get; set; }
     public virtual ICollection<MemberUnitDocument> UnitDocuments { get; set; }
 
-    public Member()
+    public MemberRow()
       : base()
     {
-      this.WacLevelDate = DateTime.Today;
-      this.LastChanged = DateTime.Now;
-      this.ChangedBy = Thread.CurrentPrincipal.Identity.Name;
+      WacLevelDate = DateTime.Today;
+      LastChanged = DateTime.Now;
+      ChangedBy = Thread.CurrentPrincipal.Identity.Name;
 
-      this.MissionLogs = new List<EventLogRow>();
-      this.MissionRosters = new List<MissionRoster_Old>();
-      Rosters = new List<EventRoster>();
-      this.Addresses = new List<PersonAddress>();
-      this.ContactNumbers = new List<PersonContact>();
-      this.ExternalLogins = new List<ExternalLogin>();
+      MissionLogs = new List<EventLogRow>();
+      MissionRosters = new List<MissionRoster_Old>();
+      Events = new List<EventParticipantRow>();
+      Addresses = new List<PersonAddress>();
+      ContactNumbers = new List<PersonContact>();
+      ExternalLogins = new List<ExternalLogin>();
     }
 
     public override string ToString()
@@ -95,6 +97,7 @@ namespace Kcsar.Database.Model
             : ((this.Status & MemberStatus.WaitingBG) == MemberStatus.WaitingBG) ? "Requested"
             : (this.BackgroundDate == null) ? "Not Recorded"
             : this.BackgroundDate.Value.ToString("yyyy-MM-dd");
+
       }
     }
 

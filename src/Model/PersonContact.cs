@@ -1,6 +1,6 @@
 ﻿
 /*
- * Copyright 2009-2014 Matthew Cosand
+ * Copyright 2009-2016 Matthew Cosand
  */
 namespace Kcsar.Database.Model
 {
@@ -16,7 +16,7 @@ namespace Kcsar.Database.Model
     public string Subtype { get; set; }
     public string Value { get; set; }
     public int Priority { get; set; }
-    public virtual Member Person { get; set; }
+    public virtual MemberRow Person { get; set; }
 
     public static readonly string[] AllowedTypes = new string[] { "email", "phone", "hamcall", "im" };
 

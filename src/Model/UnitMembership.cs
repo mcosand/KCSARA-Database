@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2008-2014 Matthew Cosand
+ * Copyright 2008-2016 Matthew Cosand
  */
 
 namespace Kcsar.Database.Model
@@ -11,7 +11,7 @@ namespace Kcsar.Database.Model
   {
     public DateTime Activated { get; set; }
     public string Comments { get; set; }
-    public virtual Member Person { get; set; }
+    public virtual MemberRow Person { get; set; }
     public virtual SarUnitRow Unit { get; set; }
     public virtual UnitStatus Status { get; set; }
     public DateTime? EndTime { get; set; }

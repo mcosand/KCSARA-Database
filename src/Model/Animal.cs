@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2009-2014 Matthew Cosand
+ * Copyright 2009-2016 Matthew Cosand
  */
 namespace Kcsar.Database.Model
 {
@@ -30,7 +30,7 @@ namespace Kcsar.Database.Model
       this.MissionRosters = new List<AnimalMission>();
     }
 
-    public Member GetPrimaryOwner()
+    public MemberRow GetPrimaryOwner()
     {
       foreach (AnimalOwner link in this.Owners)
       {

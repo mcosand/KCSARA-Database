@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2009-2014 Matthew Cosand
+ * Copyright 2009-2016 Matthew Cosand
  */
  namespace Kcsar.Database.Model.Events
 {
@@ -24,7 +24,7 @@
     public Guid? MemberId { get; set; }
 
     [ForeignKey("MemberId")]
-    public Member Member { get; set; }
+    public MemberRow Member { get; set; }
     
     public Guid? EventUnitId { get; set; }
 

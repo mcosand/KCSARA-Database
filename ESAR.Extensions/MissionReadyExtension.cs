@@ -18,7 +18,7 @@ namespace ESAR.Extensions
       this.unit = unit;
     }
 
-    public IEnumerable<string> GetColumnsAfter(MissionReadyColumns column, Member member)
+    public IEnumerable<string> GetColumnsAfter(MissionReadyColumns column, MemberRow member)
     {
       if (column == MissionReadyColumns.WorkerType)
       {

@@ -20,7 +20,7 @@ namespace Kcsar.Database.Model
     IDbSet<EventLogRow> EventLogs { get; set; }
     IDbSet<MissionRoster_Old> MissionRosters { get; set; }
     IDbSet<MissionGeography> MissionGeography { get; set; }
-    IDbSet<Member> Members { get; set; }
+    IDbSet<MemberRow> Members { get; set; }
     IDbSet<PersonAddress> PersonAddress { get; set; }
     IDbSet<PersonContact> PersonContact { get; set; }
     IDbSet<MemberUnitDocument> MemberUnitDocuments { get; set; }
@@ -50,11 +50,11 @@ namespace Kcsar.Database.Model
 
     void RecalculateTrainingAwards();
     void RecalculateTrainingAwards(Guid memberId);
-    void RecalculateTrainingAwards(IEnumerable<Member> members);
+    void RecalculateTrainingAwards(IEnumerable<MemberRow> members);
 
     AuditLog[] GetLog(DateTime since);
     Func<UnitMembership, bool> GetActiveMembershipFilter(Guid? unit, DateTime time);
-    IQueryable<Member> GetActiveMembers(Guid? unit, DateTime time, params string[] includes);
+    IQueryable<MemberRow> GetActiveMembers(Guid? unit, DateTime time, params string[] includes);
     int SaveChanges();
 
     DbEntityEntry<TEntity> Entry<TEntity>(TEntity entity) where TEntity : class;

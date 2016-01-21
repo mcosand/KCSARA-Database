@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2009-2014 Matthew Cosand
+ * Copyright 2009-2016 Matthew Cosand
  */
 
 namespace Kcsar.Database.Model.Events
@@ -23,7 +23,7 @@ namespace Kcsar.Database.Model.Events
     public Guid? PersonId { get; set; }
 
     [ForeignKey("PersonId")]
-    public virtual Member Person { get; set; }
+    public virtual MemberRow Person { get; set; }
 
     public override string GetReportHtml()
     {

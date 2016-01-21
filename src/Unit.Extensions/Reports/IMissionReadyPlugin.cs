@@ -11,7 +11,7 @@ namespace Kcsara.Database.Services.Reports
   public interface IMissionReadyPlugin
   {
     IEnumerable<string> GetHeadersAfter(MissionReadyColumns column);
-    IEnumerable<string> GetColumnsAfter(MissionReadyColumns column, Member member);
+    IEnumerable<string> GetColumnsAfter(MissionReadyColumns column, MemberRow member);
   }
 
   public enum MissionReadyColumns

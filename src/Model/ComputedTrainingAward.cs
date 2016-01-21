@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2009-2014 Matthew Cosand
+ * Copyright 2009-2016 Matthew Cosand
  */
 
 namespace Kcsar.Database.Model
@@ -19,7 +19,7 @@ namespace Kcsar.Database.Model
         public DateTime? Expiry { get; set; }
         public virtual TrainingCourse Course { get; set; }
         public virtual TrainingRule Rule { get; set; }
-        public virtual Member Member { get; set; }
+        public virtual MemberRow Member { get; set; }
         public DateTime? Completed { get; set; }
         public virtual TrainingRoster_Old Roster { get; set; }
 

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2013-2014 Matthew Cosand
+ * Copyright 2013-2016 Matthew Cosand
  */
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ namespace Kcsar.Database.Model
 {
     public class MemberMedical : ModelObject
     {
-        public virtual Member Member { get; set; }
+        public virtual MemberRow Member { get; set; }
         public string EncryptedAllergies { get; set; }
         public string EncryptedMedications { get; set; }
         public string EncryptedDisclosures { get; set; }

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2009-2014 Matthew Cosand
+ * Copyright 2009-2016 Matthew Cosand
  */
 
 namespace Kcsar.Database.Model
@@ -35,16 +35,16 @@ namespace Kcsar.Database.Model
       return string.Format("<b>{0}</b> [Card={1}] [WAC={2}] [Months={3}] From {4} to {5}", this.DisplayName, this.ShowOnCard, this.WacRequired, this.ValidMonths, this.OfferedFrom, this.OfferedUntil);
     }
 
-    public IEnumerable<Member> GetEligibleMembers(IEnumerable<Member> availableMembers, bool asRefresher)
+    public IEnumerable<MemberRow> GetEligibleMembers(IEnumerable<MemberRow> availableMembers, bool asRefresher)
     {
       if (string.IsNullOrEmpty(this.PrerequisiteText))
       {
         return availableMembers;
       }
 
-      List<Member> members = new List<Member>();
+      List<MemberRow> members = new List<MemberRow>();
 
-      foreach (Member m in availableMembers)
+      foreach (MemberRow m in availableMembers)
       {
         //if (!m.ComputedAwards.IsLoaded)
         //{

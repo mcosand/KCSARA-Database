@@ -159,6 +159,10 @@
     <Compile Include="Migrations\201601122136452_EventParticipantStatus.Designer.cs">
       <DependentUpon>201601122136452_EventParticipantStatus.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201601191708059_RosterCleanup.cs" />
+    <Compile Include="Migrations\201601191708059_RosterCleanup.Designer.cs">
+      <DependentUpon>201601191708059_RosterCleanup.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Migrator.cs" />
     <Compile Include="MemberUnitDocument.cs" />
     <Compile Include="MemberMedical.cs" />
@@ -171,7 +175,6 @@
     <Compile Include="Events\SarEventRow.cs" />
     <Compile Include="SensitiveInfoAccess.cs" />
     <Compile Include="TrackPoint.cs" />
-    <Compile Include="Events\EventRoster.cs" />
     <Compile Include="UnitApplicant.cs" />
     <Compile Include="UnitContact.cs" />
     <Compile Include="UnitDocument.cs" />
@@ -223,7 +226,7 @@
     <Compile Include="PersonAddress.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="IModelObject.cs" />
-    <Compile Include="Member.cs" />
+    <Compile Include="MemberRow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TrainingRule.cs" />
     <Compile Include="TrainingStatus.cs" />
@@ -310,6 +313,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201601122136452_EventParticipantStatus.resx">
       <DependentUpon>201601122136452_EventParticipantStatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601191708059_RosterCleanup.resx">
+      <DependentUpon>201601191708059_RosterCleanup.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

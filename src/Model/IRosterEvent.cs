@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2009-2014 Matthew Cosand
+ * Copyright 2009-2016 Matthew Cosand
  */
 
 namespace Kcsar.Database.Model
@@ -33,7 +33,7 @@ namespace Kcsar.Database.Model
 
     public interface IRosterEntry : IModelObject
     {
-        Member Person { get; set; }
+        MemberRow Person { get; set; }
         DateTime? TimeIn { get; set; }
         DateTime? TimeOut { get; set;  }
         int? Miles { get; set; }

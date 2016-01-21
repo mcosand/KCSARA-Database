@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2013-2014 Matthew Cosand
+ * Copyright 2013-2016 Matthew Cosand
  */
 
 namespace Kcsar.Database.Model
@@ -13,7 +13,7 @@ namespace Kcsar.Database.Model
     {
         [Required]
         [ReportedReference]
-        public virtual Member Member { get; set; }
+        public virtual MemberRow Member { get; set; }
 
         [Required]
         [ReportedReference]

@@ -141,6 +141,20 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [HttpGet]
+    [Route("api/members/{memberId}/[controller]")]
+    public object ApiMemberEvents(Guid memberId)
+    {
+      return service.MemberEvents(memberId);
+    }
+
+    [HttpGet]
+    [Route("api/members/{memberId}/[controller]/{eventId}/timeline")]
+    public object ApiMemberTimeline(Guid eventId, Guid memberId)
+    {
+      return service.MemberTimeline(eventId, memberId);
+    }
+
+    [HttpGet]
     [Route("api/[controller]/{eventId}/participant/{participantId}/timeline")]
     public IEnumerable<ParticipantTimelineItem> ApiParticipantTimeline(Guid eventId, Guid participantId)
     {

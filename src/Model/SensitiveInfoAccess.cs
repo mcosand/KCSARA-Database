@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2013-2014 Matthew Cosand
+ * Copyright 2013-2016 Matthew Cosand
  */
 using System;
 using System.Collections.Generic;
@@ -21,7 +21,7 @@ namespace Kcsar.Database.Model
         public Guid Id { get; set; }
         public string Actor { get; set; }
         public DateTime Timestamp { get; set; }
-        public virtual Member Owner { get; set; }
+        public virtual MemberRow Owner { get; set; }
         public string Action { get; set; }
         public string Reason { get; set; }
     }

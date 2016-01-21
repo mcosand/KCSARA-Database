@@ -30,7 +30,7 @@ namespace Kcsar.Database.Model
     public IDbSet<EventLogRow> EventLogs { get; set; }
     public IDbSet<MissionRoster_Old> MissionRosters { get; set; }
     public IDbSet<MissionGeography> MissionGeography { get; set; }
-    public IDbSet<Member> Members { get; set; }
+    public IDbSet<MemberRow> Members { get; set; }
     public IDbSet<PersonAddress> PersonAddress { get; set; }
     public IDbSet<PersonContact> PersonContact { get; set; }
     public IDbSet<MemberUnitDocument> MemberUnitDocuments { get; set; }
@@ -92,13 +92,13 @@ namespace Kcsar.Database.Model
       base.OnModelCreating(modelBuilder);
       modelBuilder.Entity<Mission_Old>().HasOptional(f => f.Details).WithRequired(f => f.Mission).WillCascadeOnDelete();
       modelBuilder.Entity<SarEventRow>().HasMany(f => f.Log).WithRequired(f => f.Event).WillCascadeOnDelete();
-      modelBuilder.Entity<Member>().HasOptional(f => f.MedicalInfo).WithRequired(f => f.Member);
-      modelBuilder.Entity<Member>().HasMany(f => f.Memberships).WithRequired(f => f.Person).WillCascadeOnDelete();
-      modelBuilder.Entity<Member>().HasMany(f => f.Addresses).WithRequired(f => f.Person).WillCascadeOnDelete();
-      modelBuilder.Entity<Member>().HasMany(f => f.ContactNumbers).WithRequired(f => f.Person).WillCascadeOnDelete();
+      modelBuilder.Entity<MemberRow>().HasOptional(f => f.MedicalInfo).WithRequired(f => f.Member);
+      modelBuilder.Entity<MemberRow>().HasMany(f => f.Memberships).WithRequired(f => f.Person).WillCascadeOnDelete();
+      modelBuilder.Entity<MemberRow>().HasMany(f => f.Addresses).WithRequired(f => f.Person).WillCascadeOnDelete();
+      modelBuilder.Entity<MemberRow>().HasMany(f => f.ContactNumbers).WithRequired(f => f.Person).WillCascadeOnDelete();
       modelBuilder.Entity<Animal>().HasMany(f => f.Owners).WithRequired(f => f.Animal).WillCascadeOnDelete();
-      modelBuilder.Entity<Member>().HasMany(f => f.Animals).WithRequired(f => f.Owner).WillCascadeOnDelete();
-      modelBuilder.Entity<Member>().HasMany(f => f.ExternalLogins).WithRequired(f => f.Member).WillCascadeOnDelete();
+      modelBuilder.Entity<MemberRow>().HasMany(f => f.Animals).WithRequired(f => f.Owner).WillCascadeOnDelete();
+      modelBuilder.Entity<MemberRow>().HasMany(f => f.ExternalLogins).WithRequired(f => f.Member).WillCascadeOnDelete();
       modelBuilder.Entity<Training_Old>().HasMany(f => f.OfferedCourses).WithMany(f => f.Trainings).Map(cs =>
       {
         cs.MapLeftKey("Training_Id");
@@ -128,9 +128,9 @@ namespace Kcsar.Database.Model
     }
 
     // Gets members that are active with at least one unit at a specific time, sorted by lastname,firstname
-    public IQueryable<Member> GetActiveMembers(Guid? unit, DateTime time, params string[] includes)
+    public IQueryable<MemberRow> GetActiveMembers(Guid? unit, DateTime time, params string[] includes)
     {
-      IQueryable<Member> source = this.Members.Include(includes);
+      IQueryable<MemberRow> source = this.Members.Include(includes);
 
       var active = source.OrderBy(f => f.LastName).ThenBy(f => f.FirstName).Where(
           f => f.Memberships.Any(
@@ -315,12 +315,12 @@ namespace Kcsar.Database.Model
       RecalculateTrainingAwards(from m in this.Members where m.Id == memberId select m, time);
     }
 
-    public void RecalculateTrainingAwards(IEnumerable<Member> members)
+    public void RecalculateTrainingAwards(IEnumerable<MemberRow> members)
     {
       RecalculateTrainingAwards(members, DateTime.Now);
     }
 
-    public List<ComputedTrainingAward[]> RecalculateTrainingAwards(IEnumerable<Member> members, DateTime time)
+    public List<ComputedTrainingAward[]> RecalculateTrainingAwards(IEnumerable<MemberRow> members, DateTime time)
     {
       List<ComputedTrainingAward[]> retVal = new List<ComputedTrainingAward[]>();
 
@@ -329,7 +329,7 @@ namespace Kcsar.Database.Model
 
       Dictionary<Guid, TrainingCourse> courses = (from c in this.TrainingCourses select c).ToDictionary(x => x.Id);
 
-      foreach (Member m in members)
+      foreach (MemberRow m in members)
       {
         foreach (ComputedTrainingAward award in (from a in this.ComputedTrainingAwards where a.Member.Id == m.Id select a))
         {
@@ -455,7 +455,7 @@ namespace Kcsar.Database.Model
       return retVal;
     }
 
-    private bool RewardTraining(Member m, Dictionary<Guid, TrainingCourse> courses, Dictionary<Guid, ComputedTrainingAward> awards, TrainingRule rule, DateTime? completed, DateTime? expiry, string newAwardsString)
+    private bool RewardTraining(MemberRow m, Dictionary<Guid, TrainingCourse> courses, Dictionary<Guid, ComputedTrainingAward> awards, TrainingRule rule, DateTime? completed, DateTime? expiry, string newAwardsString)
     {
       IEnumerable<string> results = newAwardsString.Split('+');
       bool awarded = false;

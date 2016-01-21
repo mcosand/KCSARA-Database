@@ -32,7 +32,7 @@ namespace Internal.Database.Model
       Guid memberId;
       using (var db = new KcsarContext(this.databaseLocation))
       {
-        Member m = new Member {
+        MemberRow m = new MemberRow {
           FirstName = "Log property",
           Gender = Gender.Female,
           BirthDate = new DateTime(2000, 12, 19)
@@ -45,7 +45,7 @@ namespace Internal.Database.Model
       DateTime checkpoint = GetCheckpoint();
       using (var db = new KcsarContext(this.databaseLocation))
       {
-        Member m = db.Members.Single(f => f.Id == memberId);
+        MemberRow m = db.Members.Single(f => f.Id == memberId);
         m.FirstName = "Fixed";
         m.BirthDate = new DateTime(1990, 3, 5);
         m.Gender = Gender.Male;
@@ -68,7 +68,7 @@ namespace Internal.Database.Model
       string reportHtml;
       using (var db = new KcsarContext(this.databaseLocation))
       {
-        Member m = new Member { FirstName = "RemoveMe" };
+        MemberRow m = new MemberRow { FirstName = "RemoveMe" };
         db.Members.Add(m);
         db.SaveChanges();
         memberId = m.Id;
@@ -79,7 +79,7 @@ namespace Internal.Database.Model
 
       using (var db = new KcsarContext(this.databaseLocation))
       {
-        Member m = db.Members.Single(f => f.Id == memberId);
+        MemberRow m = db.Members.Single(f => f.Id == memberId);
         db.Members.Remove(m);
         db.SaveChanges();
         var log = db.GetLog(checkpoint);
@@ -100,7 +100,7 @@ namespace Internal.Database.Model
 
       using (var db = new KcsarContext(this.databaseLocation))
       {
-        Member m = new Member { FirstName = "NewUser" };
+        MemberRow m = new MemberRow { FirstName = "NewUser" };
         db.Members.Add(m);
         db.SaveChanges();
         memberId = m.Id;
@@ -119,14 +119,14 @@ namespace Internal.Database.Model
     [Test]
     public void LogPrincipalChanged()
     {
-      Member first;
-      Member second;
+      MemberRow first;
+      MemberRow second;
       PersonAddress address;
       using (var db = new KcsarContext(this.databaseLocation))
       {
-        first = new Member { FirstName = "First" };
+        first = new MemberRow { FirstName = "First" };
         db.Members.Add(first);
-        second = new Member { FirstName = "Second" };
+        second = new MemberRow { FirstName = "Second" };
         db.Members.Add(second);
         address = new PersonAddress { Person = first, Street = "123", City = "Any", State = "WA", Zip = "98765" };
         first.Addresses.Add(address);

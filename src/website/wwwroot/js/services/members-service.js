@@ -59,6 +59,32 @@ angular.module('sarDatabase').service('MembersService', ['$http', '$q', function
         fillList,
         window.appRoot + 'api/members/' + memberId + '/contacts',
         null)
-    }
+    },
+    events: function (fillList, memberId, eventType) {
+      return getIntoList(
+        fillList,
+        window.appRoot + 'api/members/' + memberId + '/' + eventType,
+        function (data) {
+          fillList.count = fillList.hours = fillList.miles = 0;
+          $.each(data, function (idx, evt) {
+            evt.date = moment(evt.date);
+            fillList.unshift(evt);
+            fillList.count++;
+            fillList.hours += evt.hours || 0;
+            fillList.miles += evt.miles || 0;
+          })
+        })
+    },
+    eventTimeline: function (fillList, memberId, eventType, eventId) {
+      return getIntoList(
+        fillList,
+        window.appRoot + 'api/members/' + memberId + '/' + eventType + '/' + eventId + '/timeline',
+        function (timeline) {
+          $.each(timeline, function (idx, item) {
+            item.time = item.time ? moment(item.time) : null;
+            fillList.unshift(item);
+          });
+        });
+    },
   });
 }]);

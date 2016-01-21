@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015 Matthew Cosand
+ * Copyright 2015-2016 Matthew Cosand
  */
  namespace Kcsar.Database.Model
 {
@@ -14,7 +14,7 @@
     public Guid Id { get; set; }
 
     [Required]
-    public virtual Member Member { get; set; }
+    public virtual MemberRow Member { get; set; }
 
     [Key]
     [Column(Order = 1)]

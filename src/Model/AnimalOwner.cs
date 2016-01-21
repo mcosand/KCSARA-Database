@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2009-2014 Matthew Cosand
+ * Copyright 2009-2016 Matthew Cosand
  */
 namespace Kcsar.Database.Model
 {
@@ -15,7 +15,7 @@ namespace Kcsar.Database.Model
     public DateTime Starting { get; set; }
     public DateTime? Ending { get; set; }
     public virtual Animal Animal { get; set; }
-    public virtual Member Owner { get; set; }
+    public virtual MemberRow Owner { get; set; }
 
     public override string GetReportHtml()
     {

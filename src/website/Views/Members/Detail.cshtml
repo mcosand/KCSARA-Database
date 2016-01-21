@@ -72,7 +72,7 @@
                   </a>
                   <div ng-if="a.type == 'mailing'">
                     {{a.street}}<br />
-                    {{a.city}}, {{a.state}} {{a.zip}}<br/>
+                    {{a.city}}, {{a.state}} {{a.zip}}<br />
                   </div>
                 </address>
               </div>
@@ -84,8 +84,20 @@
     </md-content>
   </md-tab>
   <md-tab label="Training" md-active="activeTab == 'training'" md-on-select="setTab('training')">
+    <md-content class="md-padding">
+      <div class="col-xs-12">
+        <div class="box box-primary shadow-1" ng-controller="MemberEventsCtrl" ng-init="init('@Model.Id', 'training', false, 'Training');">
+          <div class="box-header with-border">
+            <h3 class="box-title">Training Rosters</h3>
+          </div>
+          <div class="box-body" ng-include="window.appRoot + '/partials/members/event-table.html'">
+          </div>
+        </div>
+      </div>
+    </md-content>
   </md-tab>
   <md-tab label="Missions" md-active="activeTab == 'missions'" md-on-select="setTab('missions')">
-    content
+    <md-content class="md-padding" ng-controller="MemberEventsCtrl" ng-init="init('@Model.Id', 'missions', true, 'Mission');" ng-include="window.appRoot + '/partials/members/event-table.html'">
+    </md-content>
   </md-tab>
 </md-tabs>

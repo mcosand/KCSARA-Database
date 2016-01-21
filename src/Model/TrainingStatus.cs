@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2010-2014 Matthew Cosand
+ * Copyright 2010-2016 Matthew Cosand
  */
 
 namespace Kcsar.Database.Model
@@ -49,7 +49,7 @@ namespace Kcsar.Database.Model
             this.Expirations = new Dictionary<Guid, TrainingStatus>();
         }
 
-        public static CompositeTrainingStatus Compute(Member m, IEnumerable<TrainingCourse> courses, DateTime when)
+        public static CompositeTrainingStatus Compute(MemberRow m, IEnumerable<TrainingCourse> courses, DateTime when)
         {
             //if (!m.ComputedAwards.IsLoaded)
             //{
@@ -59,7 +59,7 @@ namespace Kcsar.Database.Model
             return CompositeTrainingStatus.Compute(m, m.ComputedAwards, courses, when);
         }
 
-        public static CompositeTrainingStatus Compute(Member m, IEnumerable<ComputedTrainingAward> awards, IEnumerable<TrainingCourse> courses, DateTime when)
+        public static CompositeTrainingStatus Compute(MemberRow m, IEnumerable<ComputedTrainingAward> awards, IEnumerable<TrainingCourse> courses, DateTime when)
         {
             CompositeTrainingStatus result = new CompositeTrainingStatus();
 

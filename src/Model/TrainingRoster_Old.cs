@@ -16,7 +16,7 @@ namespace Kcsar.Database.Model
     public DateTime? TimeOut { get; set; }
     public int? Miles { get; set; }
     public string Comments { get; set; }
-    public virtual Member Person { get; set; }
+    public virtual MemberRow Person { get; set; }
     public virtual Training_Old Training { get; set; }
     public virtual ICollection<TrainingAward> TrainingAwards { get; set; }
     public virtual ICollection<ComputedTrainingAward> ComputedAwards { get; set; }

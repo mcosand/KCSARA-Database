@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2009-2014 Matthew Cosand
+ * Copyright 2009-2016 Matthew Cosand
  */
 
 namespace Kcsar.Database.Model
@@ -9,7 +9,7 @@ namespace Kcsar.Database.Model
     public interface ITrainingAward
     {
         Guid Id { get; }
-        Member Member { get; }
+        MemberRow Member { get; }
         DateTime? NullableCompleted { get; }
         DateTime? Expiry { get; }
         TrainingCourse Course { get; }

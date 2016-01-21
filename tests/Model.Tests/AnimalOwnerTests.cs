@@ -17,7 +17,7 @@ namespace Internal.Database.Model
       string animalName = "Animal Bob";
       DateTime starting = DateTime.Now;
       DateTime? ending = null;
-      var owner = new Member { FirstName = "Fred", LastName = "Rider" };
+      var owner = new MemberRow { FirstName = "Fred", LastName = "Rider" };
       var ao = new AnimalOwner {
         Owner = owner,
         Animal = new Animal { Name = animalName },

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2009-2014 Matthew Cosand
+ * Copyright 2009-2016 Matthew Cosand
  */
 namespace Kcsar.Database.Model
 {
@@ -25,7 +25,7 @@ namespace Kcsar.Database.Model
     public string Geo { get; set; }
     public int Quality { get; set; }
     public int RosterVisibility { get; set; }
-    public virtual Member Person { get; set; }
+    public virtual MemberRow Person { get; set; }
 
     public string SimpleText { get { return string.Format("{0}, {1}, {2} {3}", this.Street, this.City, this.State, this.Zip); } }
 

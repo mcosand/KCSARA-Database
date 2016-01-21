@@ -22,10 +22,10 @@ namespace Internal.Database.Model
     [Test]
     public void GetPrimaryOwner()
     {
-      var owner = new Member { FirstName = "Mary", LastName = "Smith" };
+      var owner = new MemberRow { FirstName = "Mary", LastName = "Smith" };
       var animal = new Animal();
 
-      animal.Owners.Add(new AnimalOwner { Animal = animal, Owner = new Member { FirstName = "Joe", LastName = "Smith" } });
+      animal.Owners.Add(new AnimalOwner { Animal = animal, Owner = new MemberRow { FirstName = "Joe", LastName = "Smith" } });
       animal.Owners.Add(new AnimalOwner { Animal = animal, Owner = owner, IsPrimary = true });
 
       var primary = animal.GetPrimaryOwner();
