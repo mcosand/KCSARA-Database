@@ -176,7 +176,7 @@ namespace Kcsara.Database.Web.Controllers
   {
     public override string EventTypeText { get { return "Mission"; } }
     public override string MenuGroup { get { return "Missions"; } }
-    public MissionsController(Lazy<IEventsService<Mission>> service, Lazy<IKcsarContext> db, ILog log/*, IAppSettings settings*/) : base(service, db, log/*, settings*/)
+    public MissionsController(Lazy<IEventsService<Mission>> service, Lazy<IKcsarContext> db, ILog log) : base(service, db, log)
     {
 
     }
@@ -187,7 +187,7 @@ namespace Kcsara.Database.Web.Controllers
     public override string EventTypeText { get { return "Training"; } }
     public override string MenuGroup { get { return "Training"; } }
 
-    public TrainingController(Lazy<IEventsService<EventSummary>> service, Lazy<IKcsarContext> db, ILog log/*, IAppSettings settings*/) : base(service, db, log/*, settings*/)
+    public TrainingController(Lazy<IEventsService<EventSummary>> service, Lazy<IKcsarContext> db, ILog log) : base(service, db, log)
     {
 
     }

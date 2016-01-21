@@ -24,7 +24,7 @@
       <md-list>
         <md-list-item ng-if="roster.length == 0">No responders.</md-list-item>
         <md-list-item ng-repeat="item in roster" ng-click="setCurrent(item)" class="list-item-tight" ng-class="{'md-whiteframe-2dp': item.id == current.id}">
-          <div>
+          <div style="margin-bottom:auto;">
             <img ng-if="item.photo" ng-src="{{window.ajaxRoot + '/photos/' + item.photo}}" alt="{{item.name}} file icon" class="md-avatar" />
             <div ng-if="!item.photo" class="md-avatar" style="background-color:#7c4297; color:white; text-align:center; font-size:20px;"><div style="position: relative; top: 50%; transform: translateY(-50%);">{{item.firstName[0] + item.lastName[0]}}</div></div>
           </div>
