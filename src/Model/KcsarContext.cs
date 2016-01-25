@@ -64,6 +64,8 @@ namespace Kcsar.Database.Model
       return Database.SqlQuery<T>("EventDashboardStatistics @discriminator", new SqlParameter("discriminator", eventType));
     }
 
+    public bool SystemUpdates { get; set; }
+
     public KcsarContext() : this("DataStore", null) { }
 
     public KcsarContext(string connName, Func<string> usernameGetter)
@@ -71,6 +73,7 @@ namespace Kcsar.Database.Model
     {
       this.AuditLog = this.Set<AuditLog>();
       this.usernameGetter = usernameGetter ?? (() => Thread.CurrentPrincipal.Identity.Name);
+      this.SystemUpdates = false;
     }
 
     public KcsarContext(string connName, Action<string> logMethod)
@@ -96,6 +99,8 @@ namespace Kcsar.Database.Model
       modelBuilder.Entity<MemberRow>().HasMany(f => f.Memberships).WithRequired(f => f.Person).WillCascadeOnDelete();
       modelBuilder.Entity<MemberRow>().HasMany(f => f.Addresses).WithRequired(f => f.Person).WillCascadeOnDelete();
       modelBuilder.Entity<MemberRow>().HasMany(f => f.ContactNumbers).WithRequired(f => f.Person).WillCascadeOnDelete();
+      modelBuilder.Entity<MemberRow>().HasMany(f => f.EmergencyContacts).WithRequired(f => f.Member).WillCascadeOnDelete();
+
       modelBuilder.Entity<Animal>().HasMany(f => f.Owners).WithRequired(f => f.Animal).WillCascadeOnDelete();
       modelBuilder.Entity<MemberRow>().HasMany(f => f.Animals).WithRequired(f => f.Owner).WillCascadeOnDelete();
       modelBuilder.Entity<MemberRow>().HasMany(f => f.ExternalLogins).WithRequired(f => f.Member).WillCascadeOnDelete();
@@ -206,7 +211,7 @@ namespace Kcsar.Database.Model
         default:
           throw new NotImplementedException("Unhandled state" + entry.State.ToString());
       }
-      this.AuditLog.Add(audit);
+      if (!SystemUpdates) AuditLog.Add(audit);
     }
 
     public override int SaveChanges()
@@ -276,18 +281,21 @@ namespace Kcsar.Database.Model
           {
             audit.Collection = key2.EntitySetName;
             audit.Comment = string.Format("{0}<br/>{1} => {2}", obj2, original, obj1);
-            this.AuditLog.Add(audit);
+            if (!SystemUpdates) this.AuditLog.Add(audit);
           }
         }
         else if (entry.Entity is IModelObject)
         {
           IModelObject obj = (IModelObject)entry.Entity;
 
-          // Keep track of the change for reporting.
-          obj.LastChanged = DateTime.Now;
-          obj.ChangedBy = usernameGetter();
+          if (!SystemUpdates)
+          {
+            // Keep track of the change for reporting.
+            obj.LastChanged = DateTime.Now;
+            obj.ChangedBy = usernameGetter();
 
-          AuditChange(entry);
+            AuditChange(entry);
+          }
         }
       }
 

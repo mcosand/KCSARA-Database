@@ -38,7 +38,7 @@ namespace Kcsar.Database.Model
     public DateTime? SheriffApp { get; set; }
     public int? ExternalKey1 { get; set; }
     public MemberStatus Status { get; set; }
-    public virtual MemberMedical MedicalInfo { get; set; }
+    public virtual MemberMedicalRow MedicalInfo { get; set; }
 
     public virtual ICollection<EventParticipantRow> Events { get; set; }
     public virtual ICollection<EventLogRow> MissionLogs { get; set; }
@@ -52,7 +52,7 @@ namespace Kcsar.Database.Model
     public virtual ICollection<AnimalOwner> Animals { get; set; }
     public virtual ICollection<MissionDetails> MissionDetails { get; set; }
     public virtual ICollection<UnitApplicant> ApplyingTo { get; set; }
-    public virtual ICollection<MemberEmergencyContact> EmergencyContacts { get; set; }
+    public virtual ICollection<MemberEmergencyContactRow> EmergencyContacts { get; set; }
     public virtual ICollection<MemberUnitDocument> UnitDocuments { get; set; }
 
     public MemberRow()

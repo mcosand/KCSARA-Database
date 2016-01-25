@@ -101,6 +101,10 @@
   <ItemGroup>
     <Compile Include="Attributes.cs" />
     <Compile Include="AuditLog.cs" />
+    <Compile Include="Migrations\201601240547193_EncryptMethod.cs" />
+    <Compile Include="Migrations\201601240547193_EncryptMethod.Designer.cs">
+      <DependentUpon>201601240547193_EncryptMethod.cs</DependentUpon>
+    </Compile>
     <Compile Include="Training\ComputedTrainingAwardRow.cs" />
     <Compile Include="ContactInfoSubType.cs" />
     <Compile Include="Animal.cs" />
@@ -165,9 +169,9 @@
     </Compile>
     <Compile Include="Migrations\Migrator.cs" />
     <Compile Include="MemberUnitDocument.cs" />
-    <Compile Include="MemberMedical.cs" />
+    <Compile Include="MemberMedicalRow.cs" />
     <Compile Include="EmergencyContact.cs" />
-    <Compile Include="MemberEmergencyContact.cs" />
+    <Compile Include="MemberEmergencyContactRow.cs" />
     <Compile Include="Migrations\201309050314287_UnitDocuments.cs" />
     <Compile Include="Migrations\201309050314287_UnitDocuments.Designer.cs">
       <DependentUpon>201309050314287_UnitDocuments.cs</DependentUpon>
@@ -316,6 +320,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201601210117411_RosterCleanup.resx">
       <DependentUpon>201601210117411_RosterCleanup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601240547193_EncryptMethod.resx">
+      <DependentUpon>201601240547193_EncryptMethod.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
