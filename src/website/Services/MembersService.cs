@@ -9,7 +9,7 @@ namespace Kcsara.Database.Web.Services
   using Kcsar.Database.Model;
   using log4net;
   using Models;
-
+  using Newtonsoft.Json;
   /// <summary>
   /// 
   /// </summary>
@@ -18,6 +18,10 @@ namespace Kcsara.Database.Web.Services
     MemberSummary GetMember(Guid id);
     object Contacts(Guid id);
     object Addresses(Guid id);
+
+    object Memberships(Guid id);
+
+    MemberMedical GetMedical(Guid id, bool showSensitive = false, string reason = "");
 
     IEnumerable<MemberSummary> Search(string query);
   }
@@ -30,11 +34,15 @@ namespace Kcsara.Database.Web.Services
   public class MembersService : IMembersService
   {
     private readonly Func<IKcsarContext> dbFactory;
+    private readonly Lazy<IEncryptionService> encryption;
+    private readonly ICurrentPrincipalProvider principalProvider;
     private readonly ILog log;
 
-    public MembersService(Func<IKcsarContext> dbFactory, ILog log)
+    public MembersService(Func<IKcsarContext> dbFactory, Lazy<IEncryptionService> encryption, ICurrentPrincipalProvider principalProvider, ILog log)
     {
       this.dbFactory = dbFactory;
+      this.encryption = encryption;
+      this.principalProvider = principalProvider;
       this.log = log;
     }
 
@@ -126,5 +134,111 @@ namespace Kcsara.Database.Web.Services
         });
     }
 
+    public object Memberships(Guid id)
+    {
+      using (var db = dbFactory())
+      {
+        DateTime now = DateTime.Now;
+        return db.Members.Where(f => f.Id == id)
+          .SelectMany(f => f.Memberships)
+          .Select(f => new
+          {
+            Id = f.Id,
+            Unit = new NameIdPair { Id = f.Unit.Id, Name = f.Unit.DisplayName },
+            Start = f.Activated,
+            End = f.EndTime,
+            Status = f.Status.StatusName,
+            Current = f.Activated < now && (f.EndTime == null || f.EndTime > now),
+            Active = f.Status.IsActive
+          })
+          .OrderBy(f => f.Unit.Name)
+          .ThenByDescending(f => f.Start)
+          .ToList();
+      }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="id">memberId</param>
+    /// <param name="showSensitive"></param>
+    /// <param name="description"></param>
+    /// <param name="purpose"></param>
+    /// <returns></returns>
+    public MemberMedical GetMedical(Guid id, bool showSensitive = false, string reason = "")
+    {
+      bool isSelf = string.Equals(
+        principalProvider.CurrentPrincipal.Claims.Where(f => f.Type == MemberIdClaimsTransformer.Type).Select(f => f.Value).FirstOrDefault(),
+        id.ToString(),
+        StringComparison.OrdinalIgnoreCase);
+      ////if (!(Permissions.IsUser || Permissions.IsSelf(id))) ThrowAuthError();
+
+      if (!isSelf) throw new AccessDeniedException();
+
+      using (var db = dbFactory())
+      {
+        var data = db.Members.Where(f => f.Id == id).Select(f => f.MedicalInfo).SingleOrDefault();
+        var contacts = db.Members.Where(f => f.Id == id).SelectMany(f => f.EmergencyContacts).ToArray();
+
+        //if (showSensitive)
+        //{
+        //  if (!Permissions.IsSelf(id))
+        //  {
+        //    if (string.IsNullOrWhiteSpace(reason)) ThrowSubmitErrors(new[] { new Web.Model.SubmitError { Error = "Reason not specified", Property = "reason" } });
+
+        //    Model.SensitiveInfoAccess infoAccess = new Model.SensitiveInfoAccess
+        //    {
+        //      Owner = db.Members.Single(f => f.Id == id),
+        //      Action = "Read Medical Information",
+        //      Actor = (Permissions.UserId == Guid.Empty) ? User.Identity.Name : db.Members.Single(f => f.Id == Permissions.UserId).FullName,
+        //      Reason = reason,
+        //      Timestamp = DateTime.Now,
+        //    };
+        //    db.SensitiveInfoLog.Add(infoAccess);
+        //    db.SaveChanges();
+        //  }
+        //}
+
+        return new MemberMedical
+        {
+          IsSensitive = showSensitive,
+          Allergies = data == null ? null : HiddenOrDecrypted(showSensitive, data.EncryptedAllergies),
+          Medications = data == null ? null : HiddenOrDecrypted(showSensitive, data.EncryptedMedications),
+          Disclosure = data == null ? null : HiddenOrDecrypted(showSensitive, data.EncryptedDisclosures),
+          Contacts = contacts.Select(f =>
+          {
+            if (showSensitive)
+            {
+              var contact = JsonConvert.DeserializeObject<EmergencyContactData>(encryption.Value.Decrypt(f.EncryptedData));
+              return new EmergencyContact
+              {
+                IsSensitive = true,
+                Name = contact.Name,
+                Relation = contact.Relation,
+                Type = contact.Type,
+                Number = contact.Number,
+                Id = f.Id
+              };
+            }
+            else
+            {
+              return new EmergencyContact
+              {
+                IsSensitive = false,
+                Name = Strings.SensitiveText,
+                Type = null,
+              };
+            }
+          })
+        };
+      }
+    }
+
+    private string HiddenOrDecrypted(bool decrypt, string value)
+    {
+      return decrypt
+          ? ((value == null) ? null : encryption.Value.Decrypt(value))
+          : Strings.SensitiveText;
+    }
   }
 }

@@ -79,6 +79,7 @@ gulp.task("sar-database:js", function () {
     paths.controllers + "members/members-detail.js",
     paths.controllers + "members/view-contacts.js",
     paths.controllers + "members/view-events.js",
+    paths.controllers + "members/view-info.js"
   ])
     .pipe(concat(paths.webroot + "js/sar-database.min.js"))
     .pipe(uglify())

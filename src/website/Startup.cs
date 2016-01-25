@@ -8,6 +8,7 @@ namespace website
   using Kcsar.Database.Model;
   using Kcsar.Database.Model.Events;
   using Kcsara.Database.Web;
+  using Kcsara.Database.Web.Models;
   using Kcsara.Database.Web.Services;
   using log4net;
   using Microsoft.AspNet.Builder;
@@ -77,10 +78,15 @@ namespace website
       services.AddTransient<Lazy<IKcsarContext>, Lazy<IKcsarContext>>(svc => new Lazy<IKcsarContext>(() => new KcsarContext(Configuration["Data:DataStore:ConnectionString"], () => svc.GetService<ICurrentPrincipalProvider>().CurrentPrincipal.Identity.Name)));
       services.AddSingleton<Func<IKcsarContext>, Func<IKcsarContext>>(svc => () => new KcsarContext(Configuration["Data:DataStore:ConnectionString"], () => svc.GetService<ICurrentPrincipalProvider>().CurrentPrincipal.Identity.Name));
       services.AddSingleton(svc => LogManager.GetLogger("log"));
+      services.AddSingleton(svc => new Lazy<IEncryptionService>(() => new EncryptionService(Configuration["encryptKey"])));
 
-      services.AddSingleton(svc => new Lazy<IMembersService>(() => new MembersService(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
-      services.AddSingleton(svc => new Lazy<IEventsService<Kcsara.Database.Web.Models.Mission>>(() => new MissionsService(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
-      services.AddSingleton(svc => new Lazy<IEventsService<Kcsara.Database.Web.Models.EventSummary>>(() => new EventsService<TrainingRow, Kcsara.Database.Web.Models.EventSummary>(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
+      services.AddSingleton(svc => new Lazy<IMembersService>(() => new MembersService(
+        svc.GetRequiredService<Func<IKcsarContext>>(),
+        svc.GetRequiredService<Lazy<IEncryptionService>>(),
+        svc.GetRequiredService<ICurrentPrincipalProvider>(),
+        svc.GetRequiredService<ILog>())));
+      services.AddSingleton(svc => new Lazy<IEventsService<Mission>>(() => new MissionsService(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
+      services.AddSingleton(svc => new Lazy<IEventsService<EventSummary>>(() => new EventsService<TrainingRow, EventSummary>(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
       services.AddSingleton(svc => new Lazy<IUnitsService>(() => new UnitsService(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
       services.AddSingleton(svc => new Lazy<IAnimalsService>(() => new AnimalsService(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
       services.AddSingleton(svc => new Lazy<ITrainingService>(() => new TrainingService(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
@@ -89,7 +95,6 @@ namespace website
         svc.GetRequiredService<Func<IKcsarContext>>(),
         svc.GetRequiredService<IHostingEnvironment>(),
         svc.GetRequiredService<ILog>())));
-
 
       services.AddTransient<IApplicationModelProvider>(svc => new CustomFilterApplicationModelProvider());
 
@@ -146,6 +151,7 @@ namespace website
       //});
 
       app.UseIdentity();
+      app.UseClaimsTransformation(o => o.Transformer = new MemberIdClaimsTransformer(app.ApplicationServices.GetRequiredService<Func<IKcsarContext>>()));
 
       // To configure external authentication please see http://go.microsoft.com/fwlink/?LinkID=532715
 

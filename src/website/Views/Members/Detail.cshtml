@@ -17,8 +17,58 @@
 </div>
 <md-tabs md-dynamic-height md-border-bottom class="md-whiteframe-4dp">
   <md-tab label="Basics" md-active="activeTab == 'info'" md-on-select="setTab('info')">
-    <md-content class="md-padding">
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis ante augue. Phasellus volutpat neque ac dui mattis vulputate. Etiam consequat aliquam cursus. In sodales pretium ultrices. Maecenas lectus est, sollicitudin consectetur felis nec, feugiat ultricies mi.</p>
+    <md-content class="md-padding" ng-controller="MemberInfoCtrl" ng-init="init('@Model.Id', @(ViewBag.IsSelf ? "true" : "false"))" ng-if="activeTab == 'info'">
+      <div class="col-xs-12 col-sm-8 col-md-6 col-lg-3">
+        <div class="box box-primary shadow-1">
+          <div class="box-header with-border">
+            <h3 class="box-title">Unit Membership</h3>
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool btn-box-primary" title="Add Membership Change" ng-click="startAddMembership()">
+                <i class="fa fa-2x fa-plus-circle"></i>
+              </button>
+            </div>
+          </div>
+          <div class="box-body">
+            <table class="table table-striped table-responsive">
+              <thead><tr><th>Unit</th><th>Status</th><th>Since</th></tr></thead>
+              <tbody>
+                <tr ng-repeat="m in memberships"><td>{{m.unit.name}}</td><td>{{m.status}}</td><td>{{m.start.format('YYYY-MM-DD')}}</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-12 col-sm-10 col-md-8 col-lg-3">
+        <div class="box box-primary collapsed-box shadow-1">
+          <div class="box-header with-border">
+            <h3 class="box-title">Medical Info</h3>
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" data-widget="collapse" title="View/Hide Medical Information" ng-click="toggleMedical($event)">
+                <i ng-class="{'fa-chevron-down': !viewMedical, 'fa-chevron-up': viewMedical}" class="fa"></i>
+              </button>
+            </div>
+          </div>
+          <div class="box-body" style="display:none;">
+            <div ng-if="medical.loading"><i class="fa fa-refresh fa-spin"></i> Loading ...</div>
+            <div ng-if="!medical.loading">
+              <label>Allergies:</label>
+              <p>{{medical.allergies || 'none'}}</p>
+              <label>Medications:</label>
+              <p>{{medical.medication || 'none'}}</p>
+              <label>Medical/Physical Conditions:</label>
+              <p>{{medical.conditions || 'none'}}</p>
+              <label>Emergency Contacts:</label>
+              <table class="table table-striped table-responsive">
+                <thead><tr><th>Name</th><th>Relationship</th><th>Type</th><th>Number</th></tr></thead>
+                <tbody>
+                  <tr><td ng-if="!medical.contacts.length" colspan="4">No contacts listed</td></tr>
+                  <tr ng-repeat="m in medical.contacts"><td>{{m.name}}</td><td>{{m.relationship}}</td><td>{{m.type}}</td><td>{{m.number}}</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
     </md-content>
   </md-tab>
   <md-tab label="Contact" md-active="activeTab == 'contact'" md-on-select="setTab('contact')">
@@ -28,8 +78,8 @@
           <div class="box-header with-border">
             <h3 class="box-title">Contact Info</h3>
             <div class="box-tools pull-right">
-              <button type="button" class="btn btn-box-tool" ng-click="startAddContact()">
-                <i class="fa fa-plus"></i>
+              <button type="button" class="btn btn-box-tool btn-box-primary" ng-click="startAddContact()">
+                <i class="fa fa-2x fa-plus-circle"></i>
               </button>
             </div>
           </div>
@@ -56,8 +106,8 @@
           <div class="box-header with-border">
             <h3 class="box-title">Address</h3>
             <div class="box-tools pull-right">
-              <button type="button" class="btn btn-box-tool" ng-click="startAddAddress()">
-                <i class="fa fa-plus"></i>
+              <button type="button" class="btn btn-box-tool btn-box-primary" ng-click="startAddAddress()">
+                <i class="fa fa-2x fa-plus-circle"></i>
               </button>
             </div>
           </div>
@@ -84,7 +134,7 @@
     </md-content>
   </md-tab>
   <md-tab label="Training" md-active="activeTab == 'training'" md-on-select="setTab('training')">
-    <md-content class="md-padding">
+    <md-content class="md-padding" ng-if="activeTab == 'training'">
       <div class="col-xs-12">
         <div class="box box-primary shadow-1" ng-controller="MemberEventsCtrl" ng-init="init('@Model.Id', 'training', false, 'Training');">
           <div class="box-header with-border">
@@ -97,7 +147,11 @@
     </md-content>
   </md-tab>
   <md-tab label="Missions" md-active="activeTab == 'missions'" md-on-select="setTab('missions')">
-    <md-content class="md-padding" ng-controller="MemberEventsCtrl" ng-init="init('@Model.Id', 'missions', true, 'Mission');" ng-include="window.appRoot + '/partials/members/event-table.html'">
+    <md-content class="md-padding"
+                ng-controller="MemberEventsCtrl"
+                ng-init="init('@Model.Id', 'missions', true, 'Mission');"
+                ng-include="window.appRoot + '/partials/members/event-table.html'"
+                ng-if="activeTab == 'missions'">
     </md-content>
   </md-tab>
 </md-tabs>

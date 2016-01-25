@@ -57,6 +57,16 @@ ul {
   border-top-color: #f39c12;
 }
 
+.btn-box-primary {
+  color: #f39c12;
+  opacity: 0.6;
+  padding-top: 1px;
+}
+.btn-box-primary:hover, .btn-box-primary:focus {
+  opacity: 1.0;
+  color: #f39c12;
+}
+
 h3 {
   margin: 0px;
 }

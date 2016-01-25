@@ -11,20 +11,24 @@ namespace Kcsara.Database.Web.Controllers
   using System.Text.RegularExpressions;
   using log4net;
   using Microsoft.AspNet.Authorization;
+  using Microsoft.AspNet.Identity;
   using Microsoft.AspNet.Mvc;
   using Models;
   using Services;
+  using website.Models;
   using Model = Kcsar.Database.Model;
 
   [Authorize]
   public class MembersController : BaseController
   {
     readonly IMembersService service;
+    readonly ICurrentPrincipalProvider principalInfo;
 
-    public MembersController(Lazy<IMembersService> service, Lazy<Model.IKcsarContext> db, ILog log)
+    public MembersController(Lazy<IMembersService> service, ICurrentPrincipalProvider principalInfo, Lazy<Model.IKcsarContext> db, ILog log)
       : base(db, log)
     {
       this.service = service.Value;
+      this.principalInfo = principalInfo;
     }
 
 
@@ -39,6 +43,11 @@ namespace Kcsara.Database.Web.Controllers
     public ActionResult Detail(Guid memberId)
     {
       ViewBag.ActiveMenu = "Members";
+      ViewBag.IsSelf = string.Equals(
+        User.Claims.Where(f => f.Type == MemberIdClaimsTransformer.Type).Select(f => f.Value).FirstOrDefault(),
+        memberId.ToString(),
+        StringComparison.OrdinalIgnoreCase);
+
       return View(service.GetMember(memberId));
     }
 
@@ -56,6 +65,19 @@ namespace Kcsara.Database.Web.Controllers
       return service.Addresses(memberId);
     }
 
+    [HttpGet]
+    [Route("api/members/{memberId}/memberships")]
+    public object ApiMemberships(Guid memberId)
+    {
+      return service.Memberships(memberId);
+    }
+
+    [HttpGet]
+    [Route("api/members/{memberId}/medical")]
+    public object ApiMedical(Guid memberId)
+    {
+      return service.GetMedical(memberId, true);
+    }
     ///// <summary>Gets account information for a given member.</summary>
     ///// <remarks>used by /account/detail/{username}</remarks>
     ///// <param name="id"></param>

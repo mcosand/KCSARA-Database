@@ -5,12 +5,12 @@ angular.module('sarDatabase').service('MembersService', ['$http', '$q', function
   var self = this;
   var outstandingRequests = [];
 
-  function getIntoList(list, url, success) {
+  function getInto(target, url, success, options) {
     var deferred = $q.defer();
 
     var previous = null;
     for (var i = 0; i < outstandingRequests.length; i++) {
-      if (outstandingRequests[i].list === list) {
+      if (outstandingRequests[i].target === target) {
         console.log('cancelling previous request to ' + outstandingRequests[i].url);
         outstandingRequests[i].cancel.reject('replaced');
         outstandingRequests.splice(i, 1);
@@ -19,23 +19,23 @@ angular.module('sarDatabase').service('MembersService', ['$http', '$q', function
 
     var canceller = $q.defer();
 
-    list.length = 0;
-    list.loading = true;
-    var cancelInfo = { list: list, url: url, cancel: canceller };
+    target.loading = true;
+    var cancelInfo = { target: target, url: url, cancel: canceller };
     outstandingRequests.push(cancelInfo);
 
     $http({
-      method: 'GET',
+      method: (options && options.method) ? options.method : 'GET',
       url: url,
-      timeout: canceller.promise
+      timeout: canceller.promise,
+      data: (options && options.data) ? options.data : null
     }).success(function (data) {
       if (success) { success(data); }
       else {
-        list.push.apply(list, data);
+        $.extend(target, data);
       }
 
-      delete list.loading;
-      list.loaded = true;
+      delete target.loading;
+      target.loaded = true;
       outstandingRequests.splice(outstandingRequests.indexOf(cancelInfo), 1);
       deferred.resolve(data);
     })
@@ -46,8 +46,29 @@ angular.module('sarDatabase').service('MembersService', ['$http', '$q', function
 
     return deferred.promise;
   }
+  function getIntoList(list, url, success) {
+    list.length = 0;
+    return getInto(list, url, success || function (data) { list.push.apply(list, data); });
+  }
 
   $.extend(this, {
+    memberships: function(fillList, memberId) {
+      return getIntoList(
+        fillList,
+        window.appRoot + 'api/members/' + memberId + '/memberships',
+        function(data) {
+          $.each(data, function(idx, m) {
+            m.start = moment(m.start);
+            if (m.stop) m.stop = moment(m.stop);
+            fillList.push(m);
+          })
+        });
+    },
+    medical: function (target, memberId, justification) {
+      return getInto(target,
+        window.appRoot + 'api/members/' + memberId + '/medical',
+        null);
+    },
     addresses: function (fillList, memberId) {
       return getIntoList(
         fillList,
