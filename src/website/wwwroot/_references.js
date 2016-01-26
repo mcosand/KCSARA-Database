@@ -16,6 +16,7 @@
 /// <reference path="js/controllers/members/members-detail.js" />
 /// <reference path="js/controllers/members/view-events.js" />
 /// <reference path="js/controllers/members/view-logs.js" />
+/// <reference path="js/controllers/members/view-training.js" />
 /// <reference path="js/directives/password-validator.js" />
 /// <reference path="js/directives/server-error.js" />
 /// <reference path="js/directives/status-glyph.js" />

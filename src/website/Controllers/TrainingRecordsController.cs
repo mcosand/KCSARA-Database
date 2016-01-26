@@ -32,5 +32,12 @@ namespace Kcsara.Database.Web.Controllers
     {
       return service.ListRecords(row => row.Event != null && row.Event.Id == eventId && row.Member.Id == memberId);
     }
+
+    [HttpGet]
+    [Route("api/members/{memberId}/training/latest")]
+    public object ApiRecordsForMember(Guid memberId)
+    {
+      return service.ListRecords(row => row.Member.Id == memberId, true);
+    }
   }
 }

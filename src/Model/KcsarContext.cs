@@ -507,7 +507,7 @@ namespace Kcsar.Database.Model
 
         if (awards.ContainsKey(course) && expiry > awards[course].Expiry)
         {
-          awards[course].Completed = completed;
+          awards[course].Completed = completed.Value;
           awards[course].Expiry = expiry;
           awards[course].Rule = rule;
           awarded = true;
@@ -515,7 +515,7 @@ namespace Kcsar.Database.Model
         }
         else if (!awards.ContainsKey(course))
         {
-          ComputedTrainingAwardRow newAward = new ComputedTrainingAwardRow { Course = courses[course], Member = m, Completed = completed, Expiry = expiry, Rule = rule };
+          ComputedTrainingAwardRow newAward = new ComputedTrainingAwardRow { Course = courses[course], Member = m, Completed = completed.Value, Expiry = expiry, Rule = rule };
           awards.Add(course, newAward);
           this.ComputedTrainingAwards.Add(newAward);
           awarded = true;

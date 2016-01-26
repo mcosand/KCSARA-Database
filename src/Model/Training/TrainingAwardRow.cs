@@ -52,8 +52,6 @@ namespace Kcsar.Database.Model
     }
 
 
-    public DateTime? NullableCompleted { get { return new DateTime?(this.Completed); } }
-
     public TrainingRule Rule { get { return null; } }
 
     public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

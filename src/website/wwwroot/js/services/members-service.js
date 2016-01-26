@@ -116,6 +116,18 @@ angular.module('sarDatabase').service('MembersService', ['$http', '$q', function
             fillList.push(award);
           });
         });
+    },
+    latestTraining: function (fillList, memberId) {
+      return getIntoList(
+      fillList,
+      window.appRoot + 'api/members/' + memberId + '/training/latest',
+      function (data) {
+        $.each(data, function (idx, item) {
+          if (item.completed) item.completed = moment(item.completed);
+          if (item.expires) item.expires = moment(item.expires);
+          fillList.unshift(item);
+        });
+      });
     }
   });
 }]);

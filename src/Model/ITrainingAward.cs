@@ -10,7 +10,7 @@ namespace Kcsar.Database.Model
   {
     Guid Id { get; }
     MemberRow Member { get; }
-    DateTime? NullableCompleted { get; }
+    DateTime Completed { get; }
     DateTime? Expiry { get; }
     TrainingCourse Course { get; }
     TrainingRule Rule { get; }

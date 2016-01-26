@@ -105,6 +105,10 @@
     <Compile Include="Migrations\201601240547193_EncryptMethod.Designer.cs">
       <DependentUpon>201601240547193_EncryptMethod.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201601250711432_CompletedAwardsNonNullable.cs" />
+    <Compile Include="Migrations\201601250711432_CompletedAwardsNonNullable.Designer.cs">
+      <DependentUpon>201601250711432_CompletedAwardsNonNullable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Training\ComputedTrainingAwardRow.cs" />
     <Compile Include="ContactInfoSubType.cs" />
     <Compile Include="Animal.cs" />
@@ -323,6 +327,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201601240547193_EncryptMethod.resx">
       <DependentUpon>201601240547193_EncryptMethod.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201601250711432_CompletedAwardsNonNullable.resx">
+      <DependentUpon>201601250711432_CompletedAwardsNonNullable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -134,7 +134,35 @@
     </md-content>
   </md-tab>
   <md-tab label="Training" md-active="activeTab == 'training'" md-on-select="setTab('training')">
-    <md-content class="md-padding" ng-if="activeTab == 'training'">
+    <md-content class="md-padding" ng-if="activeTab == 'training'" ng-controller="MemberTrainingCtrl" ng-init="init('@Model.Id');">
+      <div class="col-xs-12 col-lg-7">
+        <div class="box box-primary shadow-1">
+          <div class="box-header with-border">
+            <h3 class="box-title">Completed Training</h3>
+          </div>
+          <div class="box-body">
+            <table class="table table-bordered table-condensed table-striped table-responsive">
+              <thead><tr><th>Course</th><th>Via</th><th>Completed</th><th>Expires</th></tr></thead>
+              <tbody>
+                <tr ng-repeat="l in latest | limitTo:(moreTraining?undefined:10)">
+                  <td>{{l.course.name}}</td>
+                  <td>tbd</td>
+                  <td>{{l.completed.format('YYYY-MM-DD')}}</td>
+                  <td>{{l.expires ? l.expires.format('YYYY-MM-DD') : null}}</td>
+                </tr>
+              </tbody>
+            </table>
+            <button class="btn btn-link" ng-if="!moreTraining" ng-click="showMoreTraining()">Show more</button>
+            <div ng-if="latest.loading" class="overlay">
+              <i class="fa fa-refresh fa-spin"></i>
+            </div>
+          </div>
+          @*<div class="box-footer box-action-footer">
+            <div class="col-xs-12"><a href="~/Members/@Model.Id/training/list">Show All</a></div>
+          </div>*@
+        </div>
+      </div>
+
       <div class="col-xs-12">
         <div class="box box-primary shadow-1" ng-controller="MemberEventsCtrl" ng-init="init('@Model.Id', 'training', false, 'Training');">
           <div class="box-header with-border">

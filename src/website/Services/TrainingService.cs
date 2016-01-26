@@ -5,6 +5,7 @@ namespace Kcsara.Database.Web.Services
 {
   using System;
   using System.Collections.Generic;
+  using System.Data.Entity;
   using System.Linq;
   using Kcsar.Database.Model;
   using log4net;
@@ -16,7 +17,7 @@ namespace Kcsara.Database.Web.Services
   /// </summary>
   public interface ITrainingService
   {
-    IEnumerable<TrainingRecord> ListRecords(Func<TrainingRecord, bool> where);
+    IEnumerable<TrainingRecord> ListRecords(Func<TrainingRecord, bool> where, bool computed = false);
   }
 
   /// <summary>
@@ -35,11 +36,11 @@ namespace Kcsara.Database.Web.Services
       this.log = log;
     }
 
-    public IEnumerable<TrainingRecord> ListRecords(Func<TrainingRecord, bool> where)
+    public IEnumerable<TrainingRecord> ListRecords(Func<TrainingRecord, bool> where, bool computed = false)
     {
       using (var db = dbFactory())
       {
-        return db.TrainingAward
+        return (computed ? (IQueryable<ITrainingAward>)db.ComputedTrainingAwards : (IQueryable<ITrainingAward>)db.TrainingAward)
           .Select(f => new TrainingRecord
           {
             Id = f.Id,
