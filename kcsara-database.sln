@@ -55,7 +55,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HamFromFCC", "Tools\HamFrom
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A825EBF7-E7F6-4059-B151-BCE186E26073}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "src\Services\Services.csproj", "{2E5C85DA-32F0-43F1-83ED-026867AA2A6D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services-Old", "src\Services-Old\Services-old.csproj", "{2E5C85DA-32F0-43F1-83ED-026867AA2A6D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMR.Extensions", "SMR.Extensions\SMR.Extensions.csproj", "{8E1020A7-E2F4-4B62-8051-EF2935A90749}"
 EndProject

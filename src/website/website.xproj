@@ -21,7 +21,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Model\Model.csproj" />
-    <ProjectReference Include="..\Services\Services.csproj" />
     <ProjectReference Include="..\Unit.Extensions\Unit.Extensions.csproj" />
     <ProjectReference Include="..\Website.DefaultStrings\Website.DefaultStrings.csproj" />
   </ItemGroup>
