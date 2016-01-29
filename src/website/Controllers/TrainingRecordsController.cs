@@ -29,16 +29,16 @@ namespace Kcsara.Database.Web.Controllers
 
     [HttpGet]
     [Route("api/members/{memberId}/training/event/{eventId}")]
-    public object ApiRecordsForRoster(Guid memberId, Guid eventId)
+    public async Task<object> ApiRecordsForRoster(Guid memberId, Guid eventId)
     {
-      return service.ListRecords(row => row.Event != null && row.Event.Id == eventId && row.Member.Id == memberId);
+      return await service.ListRecords(row => row.Event != null && row.Event.Id == eventId && row.Member.Id == memberId);
     }
 
     [HttpGet]
     [Route("api/members/{memberId}/training/latest")]
-    public object ApiRecordsForMember(Guid memberId)
+    public async Task<object> ApiRecordsForMember(Guid memberId)
     {
-      return service.ListRecords(row => row.Member.Id == memberId, true);
+      return await service.ListRecords(row => row.Member.Id == memberId, true);
     }
 
     [HttpGet]

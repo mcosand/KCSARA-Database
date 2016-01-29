@@ -7,6 +7,7 @@ namespace Kcsara.Database.Web.Services
   using System.Collections.Generic;
   using System.Data.Entity;
   using System.Linq;
+  using System.Linq.Expressions;
   using System.Text.RegularExpressions;
   using System.Threading.Tasks;
   using Kcsar.Database.Model;
@@ -20,7 +21,7 @@ namespace Kcsara.Database.Web.Services
   /// </summary>
   public interface ITrainingService
   {
-    IEnumerable<TrainingRecord> ListRecords(Func<TrainingRecord, bool> where, bool computed = false);
+    Task<IEnumerable<TrainingRecord>> ListRecords(Expression<Func<TrainingRecord, bool>> where, bool computed = false);
     Task<object> ListRequired(Guid memberId);
 
     void RecalculateTrainingAwards();
@@ -51,11 +52,11 @@ namespace Kcsara.Database.Web.Services
       this.requiredScopes = requiredScopes;
     }
 
-    public IEnumerable<TrainingRecord> ListRecords(Func<TrainingRecord, bool> where, bool computed = false)
+    public async Task<IEnumerable<TrainingRecord>> ListRecords(Expression<Func<TrainingRecord, bool>> where, bool computed = false)
     {
       using (var db = dbFactory())
       {
-        return (computed ? (IQueryable<ITrainingAward>)db.ComputedTrainingAwards : (IQueryable<ITrainingAward>)db.TrainingAward)
+        return await (computed ? (IQueryable<ITrainingAward>)db.ComputedTrainingAwards : (IQueryable<ITrainingAward>)db.TrainingAward)
           .Select(f => new TrainingRecord
           {
             Id = f.Id,
@@ -68,7 +69,7 @@ namespace Kcsara.Database.Web.Services
          .Where(where)
          .OrderBy(f => f.Completed)
          .ThenBy(f => f.Course.Name)
-         .ToList();
+         .ToListAsync();
       }
     }
 
