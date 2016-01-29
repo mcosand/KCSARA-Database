@@ -20,10 +20,15 @@ namespace Kcsar.Database.Model
     public DateTime? Expiry { get; set; }
     public string DocPath { get; set; }
     public string metadata { get; set; }
-    [Required]
+
+    public Guid MemberId { get; set; }
+    [ForeignKey("MemberId")]
     public virtual MemberRow Member { get; set; }
-    [Required]
+
+    public Guid CourseId { get; set; }
+    [ForeignKey("CourseId")]
     public virtual TrainingCourse Course { get; set; }
+
     public Guid? RosterId { get; set; }
     [ForeignKey("RosterId")]
     public virtual EventParticipantRow RosterEntry { get; set; }
@@ -50,7 +55,6 @@ namespace Kcsar.Database.Model
     {
       return this.GetReportHtml();
     }
-
 
     public TrainingRule Rule { get { return null; } }
 

@@ -13,9 +13,10 @@ namespace Kcsar.Database.Model
     DateTime Completed { get; }
     DateTime? Expiry { get; }
     TrainingCourse Course { get; }
-    TrainingRule Rule { get; }
-    Guid? RosterId { get; set; }
 
+    TrainingRule Rule { get; }
+
+    Guid? RosterId { get; set; }
     EventParticipantRow RosterEntry { get; set; }
   }
 }

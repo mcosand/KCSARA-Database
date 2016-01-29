@@ -9,6 +9,7 @@ namespace Kcsara.Database.Web.Controllers
   using System.Data.Entity.SqlServer;
   using System.Linq;
   using System.Text.RegularExpressions;
+  using System.Threading.Tasks;
   using Kcsar.Database.Model;
   using Kcsar.Database.Model.Events;
   using log4net;
@@ -38,6 +39,13 @@ namespace Kcsara.Database.Web.Controllers
     public object ApiRecordsForMember(Guid memberId)
     {
       return service.ListRecords(row => row.Member.Id == memberId, true);
+    }
+
+    [HttpGet]
+    [Route("api/members/{memberId}/training/required")]
+    public async Task<object> ApiRequiredForMember(Guid memberId)
+    {
+      return await service.ListRequired(memberId);
     }
   }
 }

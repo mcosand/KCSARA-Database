@@ -38,6 +38,10 @@ ul.menu-open > li > form.sidebar-form {
   border: none;
 }
 
+.btn-tight {
+  padding: 0px 3px;
+}
+
 .btn-link {
   color: #008d4c;
 }

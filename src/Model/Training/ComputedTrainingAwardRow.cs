@@ -19,11 +19,20 @@ namespace Kcsar.Database.Model
 
     public Guid Id { get; protected set; }
 
-    public DateTime? Expiry { get; set; }
-    public virtual TrainingCourse Course { get; set; }
-    public virtual TrainingRule Rule { get; set; }
-    public virtual MemberRow Member { get; set; }
     public DateTime Completed { get; set; }
+    public DateTime? Expiry { get; set; }
+
+    public Guid CourseId { get; set; }
+    [ForeignKey("CourseId")]
+    public virtual TrainingCourse Course { get; set; }
+
+    public Guid? RuleId { get; set; }
+    [ForeignKey("RuleId")]
+    public virtual TrainingRule Rule { get; set; }
+
+    public Guid MemberId { get; set; }
+    [ForeignKey("MemberId")]
+    public virtual MemberRow Member { get; set; }
 
     public Guid? RosterId { get; set; }
     [ForeignKey("RosterId")]

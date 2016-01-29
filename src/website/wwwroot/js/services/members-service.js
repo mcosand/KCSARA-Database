@@ -128,6 +128,31 @@ angular.module('sarDatabase').service('MembersService', ['$http', '$q', function
           fillList.unshift(item);
         });
       });
+    },
+    requiredTraining: function (fillList, memberId) {
+      return getIntoList(
+      fillList,
+      window.appRoot + 'api/members/' + memberId + '/training/required',
+      function (data) {
+        var update = function (x) {
+          x.expires = x.expires ? moment(x.expires) : null;
+          x.text = x.expires ? x.expires.format('YYYY\u2011MM\u2011DD') : x.status;
+          x.completed = x.completed ? moment(x.completed) : null;
+        }
+        for (var s = 0; s < data.length; s++) {
+          var cs = data[s].courses;
+          for (var c = 0; c < cs.length; c++) {
+            var x = cs[c];
+            update(x);
+            if (x.parts && x.parts.length) {
+              for (var p = 0; p < x.parts.length; p++) {
+                update(x.parts[p]);
+              }
+            }
+          }
+          fillList.push(data[s]);
+        }
+      });
     }
   });
 }]);

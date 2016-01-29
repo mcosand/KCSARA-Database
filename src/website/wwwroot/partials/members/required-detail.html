@@ -1,0 +1,16 @@
+﻿  <div class="modal-header">
+    <button type="button" class="close" ng-disabled="modal.isWorking" ng-click="modal.dismiss('close')" aria-hidden="true"><i class="fa fa-times"></i></button>
+    <h3 class="modal-title">Required Training</h3>
+  </div>
+  <div class="modal-body">
+    <p>Your completion of the required training <strong>{{modal.model.course.name}}</strong> contains the following components:</p>
+    <table class="table table-striped">
+      <thead><tr><th>Component</th><th>Completed</th><th>Expires</th></tr></thead>
+      <tbody>
+        <tr ng-repeat="p in modal.model.parts"><td>{{p.course.name}}</td><td>{{p.completed.format('YYYY-MM-DD')}}</td><td>{{p.text}}</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" ng-disabled="modal.isWorking" ng-click="modal.dismiss('close'); $event.preventDefault();">Close</button>
+  </div>

@@ -138,6 +138,30 @@
       <div class="col-xs-12 col-lg-7">
         <div class="box box-primary shadow-1">
           <div class="box-header with-border">
+            <h3 class="box-title">Required Training</h3>
+          </div>
+          <div class="box-body">
+            <table class="table table-bordered table-condensed table-striped table-responsive">
+              <thead><tr><th>Course</th><th>Expires</th></tr></thead>
+              <tbody ng-repeat="jurisdiction in required">
+                <tr><th colspan="2">{{jurisdiction.name}}</th></tr>
+                <tr ng-repeat-start="c in jurisdiction.courses">
+                  <td>{{c.course.name}}</td>
+                  <td>{{c.text}}<button class="btn btn-link btn-tight" ng-click="requiredDetails(c)" ng-if="c.parts" title="Details"><i class="fa fa-search-plus"></i></button></td>
+                </tr>
+                <tr ng-repeat-end ng-if="false"></tr>
+              </tbody>
+            </table>
+            <div ng-if="required.loading" class="overlay">
+              <i class="fa fa-refresh fa-spin"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xs-12 col-lg-7">
+        <div class="box box-primary shadow-1">
+          <div class="box-header with-border">
             <h3 class="box-title">Completed Training</h3>
           </div>
           <div class="box-body">
@@ -158,8 +182,8 @@
             </div>
           </div>
           @*<div class="box-footer box-action-footer">
-            <div class="col-xs-12"><a href="~/Members/@Model.Id/training/list">Show All</a></div>
-          </div>*@
+          <div class="col-xs-12"><a href="~/Members/@Model.Id/training/list">Show All</a></div>
+        </div>*@
         </div>
       </div>
 

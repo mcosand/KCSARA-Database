@@ -7,6 +7,13 @@ namespace Kcsara.Database.Web.Models
 
   public class NameIdPair
   {
+    public NameIdPair() { }
+    public NameIdPair(Guid id, string name)
+    {
+      Id = id;
+      Name = name;
+    }
+
     public Guid Id { get; set; }
     public string Name { get; set; }
   }
