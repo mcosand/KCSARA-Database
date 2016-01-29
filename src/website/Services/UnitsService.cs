@@ -47,6 +47,7 @@ namespace Kcsara.Database.Web.Services
         {
           Member = new MemberSummary { Id = f.Person.Id, Name = f.Person.LastName + ", " + f.Person.FirstName, Photo = f.Person.PhotoFile, WorkerNumber = f.Person.DEM },
           Status = f.Status.StatusName,
+          IsActive = f.Status.IsActive,
           AsOf = f.Activated
         }).ToList();
       }

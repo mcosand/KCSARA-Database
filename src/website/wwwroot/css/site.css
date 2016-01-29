@@ -65,6 +65,10 @@ ul {
   border-top-color: #f39c12;
 }
 
+.box-tools md-select {
+  margin: 0px;
+}
+
 .btn-box-primary {
   color: #f39c12;
   opacity: 0.6;

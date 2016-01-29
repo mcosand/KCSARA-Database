@@ -3,6 +3,7 @@
     $.extend($scope, {
       roster: [],
       unitId: null,
+      options: { showAll: false },
       init: function (unitId) {
         $scope.unitId = unitId;
         $scope.sort('member.name');
@@ -16,6 +17,9 @@
           $scope.roster.sort = column;
           $scope.roster.sortDir = false;
         }
+      },
+      rosterFilter: function (item) {
+        return $scope.options.showAll === "true" || item.isActive;
       }
     });
   }]);
