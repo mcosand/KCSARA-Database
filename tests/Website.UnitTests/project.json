@@ -1,0 +1,21 @@
+﻿{
+  "version": "1.0.0-*",
+  "description": "website.unittests Class Library",
+  "authors": [ "Matt Cosand" ],
+  "tags": [ "" ],
+  "projectUrl": "",
+  "licenseUrl": "",
+
+  "frameworks": {
+    "dnx451": { }
+  },
+  "dependencies": {
+    "NSubstitute": "1.9.2",
+    "website": "1.0.0-*",
+    "xunit": "2.1.0",
+    "xunit.runner.dnx": "2.1.0-rc1-build204"
+  },
+  "commands": {
+    "test": "xunit.runner.dnx"
+  }
+}
