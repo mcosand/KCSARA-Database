@@ -48,10 +48,6 @@ namespace Kcsar.Database.Model
 
     IEnumerable<T> EventDashboardStatistics<T>(string eventType);
 
-    void RecalculateTrainingAwards();
-    void RecalculateTrainingAwards(Guid memberId);
-    void RecalculateTrainingAwards(IEnumerable<MemberRow> members);
-
     AuditLog[] GetLog(DateTime since);
     Func<UnitMembership, bool> GetActiveMembershipFilter(Guid? unit, DateTime time);
     IQueryable<MemberRow> GetActiveMembers(Guid? unit, DateTime time, params string[] includes);

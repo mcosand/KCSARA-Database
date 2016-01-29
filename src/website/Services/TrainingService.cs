@@ -7,8 +7,10 @@ namespace Kcsara.Database.Web.Services
   using System.Collections.Generic;
   using System.Data.Entity;
   using System.Linq;
+  using System.Text.RegularExpressions;
   using System.Threading.Tasks;
   using Kcsar.Database.Model;
+  using Kcsar.Database.Model.Events;
   using log4net;
   using Models;
   using Models.Training;
@@ -20,6 +22,11 @@ namespace Kcsara.Database.Web.Services
   {
     IEnumerable<TrainingRecord> ListRecords(Func<TrainingRecord, bool> where, bool computed = false);
     Task<object> ListRequired(Guid memberId);
+
+    void RecalculateTrainingAwards();
+    void RecalculateTrainingAwards(Guid memberId);
+    void RecalculateTrainingAwards(IEnumerable<MemberRow> members);
+
   }
 
   /// <summary>
@@ -224,6 +231,243 @@ namespace Kcsara.Database.Web.Services
       }
       return result;
     }
+
+
+    #region Computed Training
+    public void RecalculateTrainingAwards()
+    {
+      using (var db = dbFactory())
+      {
+        foreach (var member in db.Members)
+        {
+          RecalculateTrainingAwards(new[] { member }, DateTime.Now);
+        }
+        // Recalculate the effective training awards for all members.
+        //RecalculateTrainingAwards(from a in this.Members select a);
+      }
+    }
+
+    public void RecalculateTrainingAwards(Guid memberId)
+    {
+      using (var db = dbFactory())
+      {
+        // Recalculate the effective training awards for a specific member.
+        RecalculateTrainingAwards(from m in db.Members where m.Id == memberId select m);
+      }
+    }
+
+    public void RecalculateTrainingAwards(Guid memberId, DateTime time)
+    {
+      using (var db = dbFactory())
+      {
+        // Recalculate the effective training awards for a specific member.
+        RecalculateTrainingAwards(from m in db.Members where m.Id == memberId select m, time);
+      }
+    }
+
+    public void RecalculateTrainingAwards(IEnumerable<MemberRow> members)
+    {
+      RecalculateTrainingAwards(members, DateTime.Now);
+    }
+
+    public List<ComputedTrainingAwardRow[]> RecalculateTrainingAwards(IEnumerable<MemberRow> members, DateTime time)
+    {
+      List<ComputedTrainingAwardRow[]> retVal = new List<ComputedTrainingAwardRow[]>();
+
+      using (var db = dbFactory())
+      {
+        // TODO: only use the rules in effect at time 'time'
+        List<TrainingRule> rules = (from r in db.TrainingRules select r).ToList();
+
+        Dictionary<Guid, TrainingCourse> courses = (from c in db.TrainingCourses select c).ToDictionary(x => x.Id);
+
+        foreach (MemberRow m in members)
+        {
+          foreach (ComputedTrainingAwardRow award in (from a in db.ComputedTrainingAwards where a.Member.Id == m.Id select a))
+          {
+            db.ComputedTrainingAwards.Remove(award);
+          }
+
+          // Sort by expiry and completed dates to handle the case of re-taking a course that doesn't expire.
+          var direct = (from a in db.TrainingAward.Include("Course") where a.Member.Id == m.Id && a.Completed <= time select a)
+              .OrderBy(f => f.Course.Id).ThenByDescending(f => f.Expiry).ThenByDescending(f => f.Completed);
+
+          Dictionary<Guid, ComputedTrainingAwardRow> awards = new Dictionary<Guid, ComputedTrainingAwardRow>();
+
+          Guid lastCourse = Guid.Empty;
+          foreach (TrainingAwardRow a in direct)
+          {
+            if (db.Entry(a).State == EntityState.Deleted)
+            {
+              continue;
+            }
+
+            if (a.Course.Id != lastCourse)
+            {
+              var ca = new ComputedTrainingAwardRow(a);
+              awards.Add(a.Course.Id, ca);
+              db.ComputedTrainingAwards.Add(ca);
+              lastCourse = a.Course.Id;
+            }
+          }
+
+          bool awardInLoop = false;
+          do
+          {
+            awardInLoop = false;
+
+            foreach (TrainingRule rule in rules)
+            {
+              //  source>result>prerequisite
+              string[] fields = rule.RuleText.Split('>');
+
+              if (fields.Length > 2)
+              {
+                var prereqs = fields[2].Split('+');
+                // Keep going only if /all/ of the prereqs are met by /any/ of the existing awards, 
+                if (!prereqs.All(f => awards.Keys.Any(g => g.ToString().Equals(f, StringComparison.OrdinalIgnoreCase))))
+                {
+                  continue;
+                }
+              }
+
+              if (fields[0].StartsWith("Mission"))
+              {
+                //Mission(12:%:36)
+                Match match = Regex.Match(fields[0], @"Mission\((\d+):([^:]+):(\d+)\)", RegexOptions.IgnoreCase);
+                if (match.Success == false)
+                {
+                  throw new InvalidOperationException("Can't understand rule: " + fields[0]);
+                }
+
+                int requiredHours = int.Parse(match.Groups[1].Value);
+                string missionType = match.Groups[2].Value;
+                int monthSpan = int.Parse(match.Groups[3].Value);
+
+                var missions = (from r in db.Events.OfType<MissionRow>().SelectMany(f => f.Participants) where r.MemberId == m.Id && r.Event.StartTime < time select r);
+                if (missionType != "%")
+                {
+                  missions = missions.Where(x => x.Event.MissionType.Contains(missionType));
+                }
+                missions = missions.OrderByDescending(x => x.Event.StartTime);
+
+                double sum = 0;
+                DateTime startDate = DateTime.Now;
+                foreach (EventParticipantRow roster in missions)
+                {
+                  // TODO: keep track of role again?
+                  //if ((roster.Role != MissionRoster_Old.ROLE_IN_TOWN && roster.Role != MissionRoster_Old.ROLE_NO_ROLE))
+                  //{
+                    startDate = roster.Event.StartTime;
+                    sum += roster.Hours ?? 0.0;
+
+                    if (sum > requiredHours)
+                    {
+                      awardInLoop |= RewardTraining(m, courses, awards, rule, startDate, startDate.AddMonths(monthSpan), fields[1], db);
+                      break;
+                    }
+                  //}
+                }
+              }
+              else
+              {
+                //Guid? sourceCourse = fields[0].ToGuid();
+
+                //if (sourceCourse == null)
+                //{
+                //    throw new InvalidOperationException("Unknown rule type: " + rule.Id);
+                //}
+
+                //if (awards.ContainsKey(sourceCourse.Value))
+                //{
+                //    System.Diagnostics.Debug.WriteLineIf(m.LastName == "Kedan", string.Format("Applying rule using {0}, {1}", courses[sourceCourse.Value].DisplayName, awards[sourceCourse.Value].Completed));
+                //    RewardTraining(m, courses, awards, rule, awards[sourceCourse.Value].Completed, awards[sourceCourse.Value].Expiry, fields[1]);
+                //}
+                Guid?[] sources = fields[0].Split('+').Select(f => f.ToGuid()).ToArray();
+
+                if (sources.Any(f => f == null))
+                {
+                  throw new InvalidOperationException("Unknown rule type: " + rule.Id);
+                }
+
+                if (sources.All(f => awards.ContainsKey(f.Value)))
+                {
+                  DateTime? completed = sources.Max(f => awards[f.Value].Completed);
+                  DateTime? expiry = null;
+                  if (sources.Any(f => awards[f.Value].Expiry != null))
+                  {
+                    expiry = sources.Min(f => awards[f.Value].Expiry ?? DateTime.MaxValue);
+                  }
+                  awardInLoop |= RewardTraining(m, courses, awards, rule, completed, expiry, fields[1], db);
+                }
+              }
+            }
+          } while (awardInLoop);
+          retVal.Add(awards.Values.ToArray());
+        }
+      }
+      return retVal;
+    }
+
+    private bool RewardTraining(MemberRow m, Dictionary<Guid, TrainingCourse> courses, Dictionary<Guid, ComputedTrainingAwardRow> awards, TrainingRule rule, DateTime? completed, DateTime? expiry, string newAwardsString, IKcsarContext db)
+    {
+      IEnumerable<string> results = newAwardsString.Split('+');
+      bool awarded = false;
+
+      if (completed < (rule.OfferedFrom ?? DateTime.MinValue) || completed > (rule.OfferedUntil ?? DateTime.MaxValue))
+      {
+        return false;
+      }
+
+      foreach (string result in results)
+      {
+        string[] parts = result.Split(':');
+        Guid course = new Guid(parts[0]);
+
+        if (!courses.ContainsKey(course))
+        {
+          throw new InvalidOperationException("Found bad rule: Adds course with ID" + course.ToString());
+        }
+
+        if (parts.Length > 1)
+        {
+          if (parts[1] == "default")
+          {
+            if (courses[course].ValidMonths.HasValue)
+            {
+              expiry = completed.Value.AddMonths(courses[course].ValidMonths.Value);
+            }
+            else
+            {
+              expiry = null;
+            }
+          }
+          else
+          {
+            expiry = completed.Value.AddMonths(int.Parse(parts[1]));
+          }
+        }
+
+
+        if (awards.ContainsKey(course) && expiry > awards[course].Expiry)
+        {
+          awards[course].Completed = completed.Value;
+          awards[course].Expiry = expiry;
+          awards[course].Rule = rule;
+          awarded = true;
+        }
+        else if (!awards.ContainsKey(course))
+        {
+          ComputedTrainingAwardRow newAward = new ComputedTrainingAwardRow { Course = courses[course], Member = m, Completed = completed.Value, Expiry = expiry, Rule = rule };
+          awards.Add(course, newAward);
+          db.ComputedTrainingAwards.Add(newAward);
+          awarded = true;
+        }
+      }
+      return awarded;
+    }
+    #endregion
+
 
     private bool IsInTrainingScope(Guid memberId, string scopeName)
     {
