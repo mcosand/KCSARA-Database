@@ -6,14 +6,17 @@ namespace Kcsara.Database.Web.Controllers
   using System;
   using Kcsar.Database.Model;
   using log4net;
+  using Microsoft.AspNet.Authorization;
   using Microsoft.AspNet.Mvc;
   using Services;
 
+  [Authorize]
   public class UnitsController : BaseController
   {
     private readonly IUnitsService service;
     
-    public UnitsController(Lazy<IUnitsService> service, Lazy<IKcsarContext> db, ILog log) : base(db, log)
+    public UnitsController(Lazy<IUnitsService> service, Lazy<IKcsarContext> db, ILog log)
+      : base(db, log)
     {
       this.service = service.Value;
     }
@@ -30,6 +33,19 @@ namespace Kcsara.Database.Web.Controllers
     {
       ViewBag.ActiveMenu = "Units";
       return View(service.GetUnit(unitId));
+    }
+
+    [Route("/Units/{unitId}/Roster")]
+    public ActionResult Roster(Guid unitId)
+    {
+      ViewBag.ActiveMenu = "Units";
+      return View(service.GetUnit(unitId));
+    }
+
+    [Route("/api/units/{unitId}/roster")]
+    public object ApiRoster(Guid unitId)
+    {
+      return service.GetRoster(unitId);
     }
   }
 }

@@ -60,8 +60,10 @@ gulp.task("lib:pack", function () {
 
 gulp.task("sar-database:js", function () {
   return gulp.src([
+    paths.webroot + "js/services/api-loader.js",
     paths.webroot + "js/services/events-service.js",
     paths.webroot + "js/services/members-service.js",
+    paths.webroot + "js/services/units-service.js",
     paths.webroot + "js/factories/login-recover.js",
     paths.controllers + "dashboard.js",
     paths.controllers + "login-modal.js",
@@ -80,7 +82,8 @@ gulp.task("sar-database:js", function () {
     paths.controllers + "members/view-contacts.js",
     paths.controllers + "members/view-events.js",
     paths.controllers + "members/view-info.js",
-    paths.controllers + "members/view-training.js"
+    paths.controllers + "members/view-training.js",
+    paths.controllers + "units/unit-roster.js"
   ])
     .pipe(concat(paths.webroot + "js/sar-database.min.js"))
     .pipe(uglify())

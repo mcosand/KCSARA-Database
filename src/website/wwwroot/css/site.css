@@ -476,6 +476,10 @@ md-list-item .md-button {
   color: #a94442 !important;
 }
 
+.text-muted {
+  color: #bbb;
+}
+
 .event-view-status {
   margin-right: 3px;
 }

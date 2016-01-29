@@ -89,8 +89,10 @@
       })
     </script>
     <environment names="Development">
+      <script src="~/js/services/api-loader.js"></script>
       <script src="~/js/services/events-service.js"></script>
       <script src="~/js/services/members-service.js"></script>
+      <script src="~/js/services/units-service.js"></script>
       <script src="~/js/factories/login-recover.js"></script>
       <script src="~/js/controllers/dashboard.js"></script>
       <script src="~/js/controllers/login-modal.js"></script>
@@ -110,6 +112,7 @@
       <script src="~/js/controllers/members/view-events.js"></script>
       <script src="~/js/controllers/members/view-info.js"></script>
       <script src="~/js/controllers/members/view-training.js"></script>
+      <script src="~/js/controllers/units/unit-roster.js"></script>
     </environment>
     <environment names="Staging,Production">
       <script src="~/js/sar-database.min.js" asp-append-version="true"></script>

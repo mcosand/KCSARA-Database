@@ -10,6 +10,7 @@
         $scope.memberId = memberId;
       },
       setTab: function (newTab) {
+        if ($location.path() == '') { $location.replace(); }
         $location.path(newTab);
       }
     });
