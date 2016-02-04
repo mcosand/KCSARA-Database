@@ -40,6 +40,9 @@
             <tr><th>Miles</th><td class="text-center">{{missionStats.yearToDate.miles | number:0}}</td><td class="text-center">{{missionStats.recent.miles | number:0}}</td><td class="text-center">{{missionStats.average.miles | number:0}}</td></tr>
           </tbody>
         </table>
+        <div ng-if="missionStats.loading" class="overlay">
+          <i class="fa fa-refresh fa-spin"></i>
+        </div>
       </div>
     </div>
 
@@ -57,6 +60,9 @@
             <tr><th>Miles</th><td class="text-center">{{trainingStats.yearToDate.miles | number:0}}</td><td class="text-center">{{trainingStats.recent.miles | number:0}}</td></tr>
           </tbody>
         </table>
+        <div ng-if="trainingStats.loading" class="overlay">
+          <i class="fa fa-refresh fa-spin"></i>
+        </div>
       </div>
     </div>
   </div>

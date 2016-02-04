@@ -8,6 +8,7 @@ namespace Kcsara.Database.Web.Controllers
   using System.Configuration;
   using System.Data.Entity.SqlServer;
   using System.Linq;
+  using System.Threading.Tasks;
   using Kcsar.Database.Model;
   using Kcsar.Database.Model.Events;
   using log4net;
@@ -164,9 +165,9 @@ namespace Kcsara.Database.Web.Controllers
     [HttpGet]
     [AllowAnonymous]
     [Route("api/[controller]/stats")]
-    public EventStatistics ApiStats()
+    public async Task<EventStatistics> ApiStats()
     {
-      return service.Stats();
+      return await service.Stats();
     }
   }
 

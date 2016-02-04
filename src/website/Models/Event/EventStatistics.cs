@@ -14,7 +14,7 @@ namespace Kcsara.Database.Web.Models
   {
     public int Count { get; set; }
     public int People { get; set; }
-    public double Hours { get; set; }
-    public int Miles { get; set; }
+    public double? Hours { get; set; }
+    public int? Miles { get; set; }
   }
 }

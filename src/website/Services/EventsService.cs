@@ -8,6 +8,7 @@ namespace Kcsara.Database.Web.Services
   using System.Data.Entity;
   using System.Linq;
   using System.Linq.Expressions;
+  using System.Threading.Tasks;
   using Kcsar.Database.Model;
   using Kcsar.Database.Model.Events;
   using log4net;
@@ -36,7 +37,7 @@ namespace Kcsara.Database.Web.Services
 
     IEnumerable<ParticipantTimelineItem> ParticipantTimeline(Guid participantId);
     IEnumerable<ParticipantTimelineItem> MemberTimeline(Guid eventId, Guid memberId);
-    EventStatistics Stats();
+    Task<EventStatistics> Stats();
     object MemberEvents(Guid memberId, int? year = null);
   }
 
@@ -374,11 +375,11 @@ namespace Kcsara.Database.Web.Services
       }
     }
 
-    public EventStatistics Stats()
+    public async Task<EventStatistics> Stats()
     {
       using (var db = dbFactory())
       {
-        var parts = db.EventDashboardStatistics<EventStatisticsItem>(typeof(RowType).Name.Replace("Row", "")).ToArray();
+        var parts = await db.EventDashboardStatistics<EventStatisticsItem>(typeof(RowType).Name.Replace("Row", ""));
 
         return new EventStatistics
         {

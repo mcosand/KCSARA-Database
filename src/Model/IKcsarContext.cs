@@ -8,6 +8,7 @@ namespace Kcsar.Database.Model
   using System.Data.Entity;
   using System.Data.Entity.Infrastructure;
   using System.Linq;
+  using System.Threading.Tasks;
   using Events;
   public interface IKcsarContext : IDisposable
   {
@@ -46,7 +47,7 @@ namespace Kcsar.Database.Model
 
     IDbSet<Track> Tracks { get; set; }
 
-    IEnumerable<T> EventDashboardStatistics<T>(string eventType);
+    Task<List<T>> EventDashboardStatistics<T>(string eventType);
 
     AuditLog[] GetLog(DateTime since);
     Func<UnitMembership, bool> GetActiveMembershipFilter(Guid? unit, DateTime time);

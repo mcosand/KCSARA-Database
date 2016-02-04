@@ -16,6 +16,7 @@ namespace Kcsar.Database.Model
   using System.Reflection;
   using System.Text.RegularExpressions;
   using System.Threading;
+  using System.Threading.Tasks;
   using Events;
   public class KcsarContext : DbContext, IKcsarContext
   {
@@ -59,9 +60,9 @@ namespace Kcsar.Database.Model
 
     public IDbSet<ExternalLogin> ExternalLogins { get; set; }
 
-    public IEnumerable<T> EventDashboardStatistics<T>(string eventType)
+    public Task<List<T>> EventDashboardStatistics<T>(string eventType)
     {
-      return Database.SqlQuery<T>("EventDashboardStatistics @discriminator", new SqlParameter("discriminator", eventType));
+      return Database.SqlQuery<T>("EventDashboardStatistics @discriminator", new SqlParameter("discriminator", eventType)).ToListAsync();
     }
 
     public bool SystemUpdates { get; set; }
