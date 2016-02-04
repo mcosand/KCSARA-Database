@@ -5,9 +5,9 @@ namespace Kcsara.Database.Web.Controllers
 {
   using System;
   using Kcsar.Database.Model;
-  using log4net;
   using Microsoft.AspNet.Authorization;
   using Microsoft.AspNet.Mvc;
+  using Microsoft.Extensions.Logging;
   using Services;
 
   [Authorize]
@@ -15,7 +15,7 @@ namespace Kcsara.Database.Web.Controllers
   {
     private readonly IUnitsService service;
     
-    public UnitsController(Lazy<IUnitsService> service, Lazy<IKcsarContext> db, ILog log)
+    public UnitsController(Lazy<IUnitsService> service, Lazy<IKcsarContext> db, ILogger<UnitsController> log)
       : base(db, log)
     {
       this.service = service.Value;

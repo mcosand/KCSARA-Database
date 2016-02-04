@@ -7,9 +7,9 @@ namespace Kcsara.Database.Web.Controllers
   using System.Collections.Generic;
   using System.Threading.Tasks;
   using Kcsar.Database.Model;
-  using log4net;
   using Microsoft.AspNet.Authorization;
   using Microsoft.AspNet.Mvc;
+  using Microsoft.Extensions.Logging;
   using Models;
   using Services;
 
@@ -18,7 +18,7 @@ namespace Kcsara.Database.Web.Controllers
   {
     private readonly IDocumentsService service;
 
-    public DocumentsController(Lazy<IDocumentsService> service, Lazy<IKcsarContext> db, ILog log/*, IAppSettings settings*/) : base(db, log/*, settings*/)
+    public DocumentsController(Lazy<IDocumentsService> service, Lazy<IKcsarContext> db, ILogger<DocumentsController> log) : base(db, log)
     {
       this.service = service.Value;
     }

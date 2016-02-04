@@ -11,7 +11,7 @@ namespace Kcsara.Database.Web.Services
   using System.Threading.Tasks;
   using Kcsar.Database.Model;
   using Kcsar.Database.Model.Events;
-  using log4net;
+  using Microsoft.Extensions.Logging;
   using Models;
 
   /// <summary>
@@ -51,9 +51,9 @@ namespace Kcsara.Database.Web.Services
     where ModelType : EventSummary, new()
   {
     private readonly Func<IKcsarContext> dbFactory;
-    private readonly ILog log;
+    private readonly ILogger<EventsService<RowType, ModelType>> log;
 
-    public EventsService(Func<IKcsarContext> dbFactory, ILog log)
+    public EventsService(Func<IKcsarContext> dbFactory, ILogger<EventsService<RowType, ModelType>> log)
     {
       this.dbFactory = dbFactory;
       this.log = log;
@@ -397,7 +397,7 @@ namespace Kcsara.Database.Web.Services
   /// </summary>
   public class MissionsService : EventsService<MissionRow, Mission>
   {
-    public MissionsService(Func<IKcsarContext> dbFactory, ILog log) : base(dbFactory, log)
+    public MissionsService(Func<IKcsarContext> dbFactory, ILogger<MissionsService> log) : base(dbFactory, log)
     { }
 
     protected override void InternalApiSaveProcessModel(Mission evt, MissionRow row, Dictionary<string, string> errors)

@@ -5,13 +5,13 @@ namespace Kcsara.Database.Web.Controllers
 {
   using System;
   using Kcsar.Database.Model;
-  using log4net;
   using Microsoft.AspNet.Mvc;
+  using Microsoft.Extensions.Logging;
   using Models;
 
   public class MapController : BaseController
   {
-    public MapController(Lazy<IKcsarContext> dbFactory, ILog log)
+    public MapController(Lazy<IKcsarContext> dbFactory, ILogger<MapController> log)
       : base(dbFactory, log)
     {
     }

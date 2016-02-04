@@ -80,21 +80,13 @@ namespace website
       services.AddSingleton(svc => LogManager.GetLogger("log"));
       services.AddSingleton(svc => new Lazy<IEncryptionService>(() => new EncryptionService(Configuration["encryptKey"])));
 
-      services.AddSingleton(svc => new Lazy<IMembersService>(() => new MembersService(
-        svc.GetRequiredService<Func<IKcsarContext>>(),
-        svc.GetRequiredService<Lazy<IEncryptionService>>(),
-        svc.GetRequiredService<ICurrentPrincipalProvider>(),
-        svc.GetRequiredService<ILog>())));
-      services.AddSingleton(svc => new Lazy<IEventsService<Mission>>(() => new MissionsService(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
-      services.AddSingleton(svc => new Lazy<IEventsService<EventSummary>>(() => new EventsService<TrainingRow, EventSummary>(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
-      services.AddSingleton(svc => new Lazy<IUnitsService>(() => new UnitsService(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
-      services.AddSingleton(svc => new Lazy<IAnimalsService>(() => new AnimalsService(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
-      services.AddSingleton(svc => new Lazy<ITrainingService>(() => new TrainingService(svc.GetRequiredService<Func<IKcsarContext>>(), svc.GetRequiredService<ILog>())));
-
-      services.AddSingleton(svc => new Lazy<IDocumentsService>(() => new DocumentsService(
-        svc.GetRequiredService<Func<IKcsarContext>>(),
-        svc.GetRequiredService<IHostingEnvironment>(),
-        svc.GetRequiredService<ILog>())));
+      AddSingletonWithLazyFactory<IMembersService, MembersService>(services);
+      AddSingletonWithLazyFactory<IEventsService<Mission>, MissionsService>(services);
+      AddSingletonWithLazyFactory<IEventsService<EventSummary>, EventsService<TrainingRow, EventSummary>>(services);
+      AddSingletonWithLazyFactory<IUnitsService, UnitsService>(services);
+      AddSingletonWithLazyFactory<IAnimalsService, AnimalsService>(services);
+      AddSingletonWithLazyFactory<ITrainingService, TrainingService>(services);
+      AddSingletonWithLazyFactory<IDocumentsService, DocumentsService>(services);
 
       services.AddTransient<IApplicationModelProvider>(svc => new CustomFilterApplicationModelProvider());
 
@@ -107,6 +99,12 @@ namespace website
           configure.PersistKeysToFileSystem(new DirectoryInfo(keystore));
         });
       }
+    }
+
+    private static void AddSingletonWithLazyFactory<I, T>(IServiceCollection services) where I : class where T : class, I
+    {
+      services.AddSingleton<I, T>();
+      services.AddTransient(svc => new Lazy<I>(() => svc.GetRequiredService<I>()));
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

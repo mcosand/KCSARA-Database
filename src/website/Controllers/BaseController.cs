@@ -11,9 +11,9 @@ namespace Kcsara.Database.Web.Controllers
   using System.Threading;
   using Kcsar.Database.Model;
   using Kcsara.Database.Services;
-  using log4net;
   using Microsoft.AspNet.Mvc;
   using Microsoft.AspNet.Mvc.Filters;
+  using Microsoft.Extensions.Logging;
 
   public class BaseController : Controller
   {
@@ -23,9 +23,9 @@ namespace Kcsara.Database.Web.Controllers
  //   public IAuthService Permissions = null;
 //    protected readonly IAppSettings settings;
     protected readonly Lazy<IKcsarContext> dbFactory;
-    protected readonly ILog log;
+    protected readonly ILogger log;
 
-    public BaseController(Lazy<IKcsarContext> dbFactory, ILog log)
+    public BaseController(Lazy<IKcsarContext> dbFactory, ILogger log)
     //  : this(db, Ninject.ResolutionExtensions.Get<IAppSettings>(MvcApplication.myKernel))
     //{
     //}

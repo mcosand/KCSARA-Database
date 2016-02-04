@@ -9,13 +9,11 @@ namespace Kcsara.Database.Web.Controllers
   using System.Data.Entity.SqlServer;
   using System.Linq;
   using System.Text.RegularExpressions;
-  using log4net;
   using Microsoft.AspNet.Authorization;
-  using Microsoft.AspNet.Identity;
   using Microsoft.AspNet.Mvc;
+  using Microsoft.Extensions.Logging;
   using Models;
   using Services;
-  using website.Models;
   using Model = Kcsar.Database.Model;
 
   [Authorize]
@@ -24,7 +22,7 @@ namespace Kcsara.Database.Web.Controllers
     readonly IMembersService service;
     readonly ICurrentPrincipalProvider principalInfo;
 
-    public MembersController(Lazy<IMembersService> service, ICurrentPrincipalProvider principalInfo, Lazy<Model.IKcsarContext> db, ILog log)
+    public MembersController(Lazy<IMembersService> service, ICurrentPrincipalProvider principalInfo, Lazy<Model.IKcsarContext> db, ILogger<MembersController> log)
       : base(db, log)
     {
       this.service = service.Value;

@@ -14,6 +14,7 @@ namespace Kcsara.Database.Web.Controllers
   using log4net;
   using Microsoft.AspNet.Authorization;
   using Microsoft.AspNet.Mvc;
+  using Microsoft.Extensions.Logging;
   using Models;
   using Services;
 
@@ -27,7 +28,7 @@ namespace Kcsara.Database.Web.Controllers
     public abstract string MenuGroup { get; }
     public abstract string EventTypeText { get; }
 
-    public EventsController(Lazy<IEventsService<ViewModelType>> service, Lazy<IKcsarContext> db, ILog log/*, IAppSettings settings*/) : base(db, log/*, settings*/)
+    public EventsController(Lazy<IEventsService<ViewModelType>> service, Lazy<IKcsarContext> db, ILogger<EventsController<RowType, ViewModelType>> log) : base(db, log)
     {
       this.service = service.Value;
     }
@@ -177,7 +178,7 @@ namespace Kcsara.Database.Web.Controllers
   {
     public override string EventTypeText { get { return "Mission"; } }
     public override string MenuGroup { get { return "Missions"; } }
-    public MissionsController(Lazy<IEventsService<Mission>> service, Lazy<IKcsarContext> db, ILog log) : base(service, db, log)
+    public MissionsController(Lazy<IEventsService<Mission>> service, Lazy<IKcsarContext> db, ILogger<MissionsController> log) : base(service, db, log)
     {
 
     }
@@ -188,7 +189,7 @@ namespace Kcsara.Database.Web.Controllers
     public override string EventTypeText { get { return "Training"; } }
     public override string MenuGroup { get { return "Training"; } }
 
-    public TrainingController(Lazy<IEventsService<EventSummary>> service, Lazy<IKcsarContext> db, ILog log) : base(service, db, log)
+    public TrainingController(Lazy<IEventsService<EventSummary>> service, Lazy<IKcsarContext> db, ILogger<TrainingController> log) : base(service, db, log)
     {
 
     }

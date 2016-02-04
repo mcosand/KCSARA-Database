@@ -5,24 +5,16 @@
 namespace Kcsara.Database.Web.Controllers
 {
   using System;
-  using System.Collections.Generic;
-  using System.Data.Entity.SqlServer;
-  using System.Linq;
-  using System.Text.RegularExpressions;
   using System.Threading.Tasks;
   using Kcsar.Database.Model;
-  using Kcsar.Database.Model.Events;
-  using log4net;
-  using Microsoft.AspNet.Authorization;
   using Microsoft.AspNet.Mvc;
-  using Models;
+  using Microsoft.Extensions.Logging;
   using Services;
-  using Model = Kcsar.Database.Model;
   public class TrainingRecordsController : BaseController
   {
     private readonly ITrainingService service;
 
-    public TrainingRecordsController(Lazy<ITrainingService> service, Lazy<IKcsarContext> db, ILog log) : base(db, log)
+    public TrainingRecordsController(Lazy<ITrainingService> service, Lazy<IKcsarContext> db, ILogger<TrainingRecordsController> log) : base(db, log)
     {
       this.service = service.Value;
     }
