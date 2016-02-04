@@ -90,6 +90,26 @@ gulp.task("sar-database:js", function () {
     .pipe(gulp.dest("."));
 });
 
+gulp.task("fonts", function () {
+  return gulp.src(paths.webroot + "lib/font-awesome/fonts/**/*.{ttf,woff,woff2}")
+    .pipe(gulp.dest(paths.webroot + 'fonts'));
+})
+
+gulp.task("sar-database:css", function () {
+  return gulp.src([
+    paths.webroot + "lib/bootstrap/dist/css/bootstrap.css",
+    paths.webroot + "lib/np-autocomplete/dist/np-autocomplete.min.css",
+    paths.webroot + "lib/font-awesome/css/font-awesome.css",
+    paths.webroot + "lib/AdminLTE/dist/css/AdminLTE.css",
+    paths.webroot + "lib/AdminLTE/dist/css/skins/skin-yellow.css",
+    paths.webroot + "lib/angular-material/angular-material.min.css",
+    paths.webroot + "css/site.css"
+  ])
+    .pipe(concat(paths.webroot + "css/sar-database.min.css"))
+    .pipe(cssmin())
+    .pipe(gulp.dest("."));
+});
+
 gulp.task("sar-map:js", function () {
   return gulp.src([paths.webroot + "js/lib/mapbox.js/mapbox.js", paths.webroot + "js/lib/leaflet.google.js", paths.webroot + "js/lib/TileLayer.GeoJSON.js", paths.webroot + "js/maps/map.js"])
         .pipe(concat(paths.webroot + "js/sar-maps.min.js"))
@@ -115,7 +135,8 @@ gulp.task("min:css", function () {
 
 gulp.task("lib:js", ["lib:ui.bootstrap", "lib:pack"]);
 gulp.task("js", ["lib:js", "sar-database:js", "sar-map:js"]);
+gulp.task("css", ["sar-database:css"]);
 
 //gulp.task("min", ["min:js", "sar-database", "min:css"]);
 
-gulp.task("default", ["js", "sar-map", "min:css"]);
+gulp.task("default", ["js", "css", "fonts", "sar-map"]);

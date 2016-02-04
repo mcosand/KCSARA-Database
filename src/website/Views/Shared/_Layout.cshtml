@@ -13,7 +13,7 @@
   <meta content="width=device-width, initial-scale=1, minimum-scale=1, user-scalable=yes" name="viewport">
   <link rel="apple-touch-icon" href="~/apple-touch-icon.png" />
   <title>@ViewData["Title"] - KCSARA Database</title>
-  <environment names="Development,Staging,Production">
+  <environment names="Development">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="~/lib/np-autocomplete/dist/np-autocomplete.min.css" />
@@ -22,6 +22,9 @@
     <link rel="stylesheet" href="~/lib/AdminLTE/dist/css/skins/skin-yellow.css" />
     <link rel="stylesheet" href="~/lib/angular-material/angular-material.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+  </environment>
+  <environment names="Staging, Production">
+    <link rel="stylesheet" href="~/css/sar-database.min.css" />
   </environment>
   @RenderSection("head", false)
 </head>

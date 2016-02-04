@@ -5,6 +5,8 @@ src/website-old/Properties/PublishProfiles/
 src/website/node_modules/**/*
 src/website/wwwroot/lib/**/*
 src/website/wwwroot/photos/*
+src/website/wwwroot/fonts/*
+src/website/wwwroot/css/*.min.css
 src/website/appsettings.local.json
 
 # Build Folders (you can keep bin if you'd like, to store dlls and pdbs)
