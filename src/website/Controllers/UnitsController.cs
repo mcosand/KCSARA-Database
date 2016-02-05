@@ -42,6 +42,13 @@ namespace Kcsara.Database.Web.Controllers
       return View(service.GetUnit(unitId));
     }
 
+    [Route("/Units/{unitId}/DownloadRoster")]
+    public ActionResult DownloadRoster(Guid unitId)
+    {
+      var download = service.GetRosterReport(unitId);
+      return File(download.Stream, download.MimeType, download.Filename);
+    }
+
     [Route("/api/units/{unitId}/roster")]
     public object ApiRoster(Guid unitId)
     {
