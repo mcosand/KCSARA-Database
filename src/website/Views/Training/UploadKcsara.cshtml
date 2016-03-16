@@ -55,7 +55,7 @@
                 </div>
               </div>
               <div ng-show="parsed.length">
-                <button ng-disabled="!selected().length" ng-click="apply()" class="btn btn-primary">Accept Selected Entries</button>
+                <button ng-disabled="!selected().length || working" ng-click="apply()" class="btn btn-primary">Accept Selected Entries</button>
               </div>
             </div>
           </div>
@@ -119,19 +119,14 @@
                 .then(function (resp) {
                   delete me.Error;
                   me.Existing = resp.data.ReferenceId
+                  delete $scope.working;
                 }, function (err) {
                   me.Error = JSON.stringify(err.data);
+                  delete $scope.working;
                 })
               })
             }, $timeout())
           }
-          //$http({
-          //  method: 'POST',
-          //  url: window.appRoot + 'api/trainingrecords/KcsaraCsv',
-          //  data: $scope.selected()
-          //})
-          //.then(function (resp) {
-          //});
         }
         ])
 
