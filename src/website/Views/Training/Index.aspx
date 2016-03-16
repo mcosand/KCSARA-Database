@@ -13,6 +13,7 @@
     <li><%= Html.ActionLink<TrainingController>(x => x.CoreCompReport(null), "Core Competency Report (all members)")  %></li>
     <% if (User.IsInRole("cdb.trainingeditors")) { %>
       <li><%= Html.ActionLink<TrainingController>(x => x.Rules(), "View Training Equivalencies") %></li>
+      <li><%= Html.ActionLink<TrainingController>(x => x.UploadKcsara(), "Upload KCSARA Exam Results") %></li>
       <li><%= Html.ActionLink<TrainingController>(x => x.RecalculateAwards(null), "Recalculate Awarded Trainings") %> - Slow (Takes minutes).</li>
     <% } %>
     <% if ((bool)ViewData["showESAR"])
