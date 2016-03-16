@@ -10,7 +10,7 @@ namespace Kcsara.Database.Services
   using System.Web.Security;
   using Kcsar.Database.Model;
   using log4net;
-  using ObjectModel.Accounts;
+  using Kcsara.Database.Model.Accounts;
 
   public class AccountsService
   {

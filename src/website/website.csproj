@@ -309,6 +309,7 @@
     <Compile Include="Controllers\MissionsController_Documents.cs" />
     <Compile Include="Controllers\MissionsController_Geography.cs" />
     <Compile Include="Controllers\TrackController.cs" />
+    <Compile Include="CustomMultipartFormDataStreamProvider.cs" />
     <Compile Include="ExtensionProvider.cs" />
     <Compile Include="IAppSettings.cs" />
     <Compile Include="Controllers\SarEventController.cs" />
@@ -545,9 +546,12 @@
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\moment.js" />
     <Content Include="Scripts\moment.min.js" />
+    <Content Include="Scripts\ng-file-upload.js" />
+    <Content Include="Scripts\ng-file-upload.min.js" />
     <Content Include="Scripts\np-autocomplete.js" />
     <Content Include="Scripts\nprogress.js" />
     <Content Include="Scripts\site\directives\password-validator.js" />
+    <Content Include="Scripts\site\directives\scroll-if.js" />
     <Content Include="Scripts\site\directives\status-glyph.js" />
     <Content Include="Scripts\site\models\database-account.js" />
     <Content Include="Scripts\site\modules\edit-modals.js" />
@@ -713,6 +717,7 @@
     <Content Include="Views\Account\Detail.cshtml" />
     <Content Include="Views\Units\Index.cshtml" />
     <Content Include="Views\Home\Error.cshtml" />
+    <Content Include="Views\Training\UploadKcsara.cshtml" />
     <None Include="Web.Production.config" />
   </ItemGroup>
   <ItemGroup>

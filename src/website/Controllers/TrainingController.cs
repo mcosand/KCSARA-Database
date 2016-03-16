@@ -1233,6 +1233,12 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
     {
       return this.db.Trainings.Include("OfferedCourses").Include("HostUnits").Include("Roster.TrainingAwards");
     }
+
+    [Authorize(Roles = "cdb.trainingeditors")]
+    public ActionResult UploadKcsara()
+    {
+      return View();
+    }
   }
 
   public class TrainingCourseSummary

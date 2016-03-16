@@ -1,0 +1,139 @@
+﻿@{
+  ViewBag.NgController = "UploadKcsaraCtrl";
+  ViewBag.NgModules = new List<string> { "ngFileUpload" };
+  ViewBag.Title = "Upload KCSARA Exam Results";
+}
+@section head {
+  @Scripts.Render("~/scripts/ng-shim")
+}
+@section header {
+  <h1>Upload KCSARA exam records</h1>
+}
+
+<div class="row">
+  <div class="col-xs-12">
+    <div class="box box-primary">
+      <div class="box-body">
+        <p>Use this form to bulk update training records published by the KCSARA Exams site.</p>
+
+        <div class="step">
+          <div>
+            <div class="circle">1</div>
+            <div class="line"></div>
+          </div>
+          <div>
+            <div class="title">Upload File</div>
+            <div class="body">
+
+              <form name="form" style="margin:auto">
+                <div class="btn btn-default" ng-disabled="uploading" ngf-select="upload($file)">Click to select file</div>
+                <p>- or -</p>
+                <div ngf-drop="upload($file)" class="drop-box" style="width:200px; height:100px; border:dashed 2px #888; border-radius:5px"
+                     ngf-drag-over-class="'dragover'" ng-drop-disabled="uploading"
+                     ngf-pattern="'.csv'"><div style="margin:1em auto; padding:1em; text-align:center">Drop CSV report here</div></div>
+                <div class="ng-cloak" ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div>
+            <div class="circle">2</div>
+            <div class="line"></div>
+          </div>
+          <div>
+            <div class="title">Review Matches</div>
+            <div class="body ng-cloak">
+              <div ng-show="uploading"><i class="fa fa-2x fa-spin fa-spinner"></i></div>
+              <div class="list-group">
+                <div class="list-group-item" scroll-if="working == p" ng-class="{'list-group-item-danger': p.Error, 'list-group-item-success': p.Existing }" ng-repeat="p in parsed">
+                  <input type="checkbox" ng-hide="p.Existing || p.Error" ng-checked="p.Selected" class="pull-right" />
+                  <span ng-show="p.Existing" class="badge">Done</span>
+                  <div><strong>{{p.Name}}</strong> ({{p.Email}})</div>
+                  <div>Will give credit for {{p.Course.Name}} to {{p.Member.Name || '??'}} effective {{p.Completed.format('YYYY-MM-DD')}}</div>
+                  <div class="text-error" ng-show="p.Error">{{p.Error}}</div>
+                </div>
+              </div>
+              <div ng-show="parsed.length">
+                <button ng-disabled="!selected().length" ng-click="apply()" class="btn btn-primary">Accept Selected Entries</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    @section scripts {
+      <script type="text/javascript">
+        angular.module('sarDatabase').controller('UploadKcsaraCtrl', [
+        '$scope', '$http', '$timeout', 'Upload',
+        function ($scope, $http, $timeout, Upload) {
+          $scope.$watch('file', function () {
+            if ($scope.file != null) {
+              $scope.files = [$scope.file];
+            }
+          });
+          $scope.parsed = [];
+          $scope.selected = function () {
+            return $scope.parsed.filter(function (item) { return item.Selected });
+          };
+          $scope.upload = function (file) {
+            if (file && !file.$error) {
+              $scope.uploading = true;
+              Upload.upload({
+                url: window.appRoot + 'api/trainingrecords/ParseKcsaraCsv',
+                data: {
+                  file: file
+                }
+              }).then(function (resp) {
+                $timeout(function () {
+                  $scope.uploading = false;
+                  for (var i = 0; i < resp.data.length; i++) { resp.data[i].Selected = !resp.data[i].Error && !resp.data[i].Existing; resp.data[i].Completed = moment(resp.data[i].Completed) }
+                  $scope.parsed = resp.data;
+                  $scope.log = 'file: ' +
+                  resp.config.data.file.name +
+                  ', Response: ' + JSON.stringify(resp.data) +
+                  '\n' + $scope.log;
+                });
+              }, null, function (evt) {
+                var progressPercentage = parseInt(100.0 *
+                    evt.loaded / evt.total);
+                $scope.log = 'progress: ' + progressPercentage +
+                  '% ' + evt.config.data.file.name + '\n' +
+                  $scope.log;
+              });
+            }
+          };
+
+          $scope.apply = function () {
+            var list = $scope.selected();
+            list.reduce(function (promise, item) {
+              return promise['finally'](function (resp) {
+                var me = item;
+                $scope.working = item;
+                return $http({
+                  method: 'POST',
+                  url: window.appRoot + 'api/trainingrecords/post',
+                  data: { Member: me.Member, Course: { Id: me.Course.Id, Title: me.Course.Name }, Completed: me.Completed, Comments: me.Link }
+                })
+                .then(function (resp) {
+                  delete me.Error;
+                  me.Existing = resp.data.ReferenceId
+                }, function (err) {
+                  me.Error = JSON.stringify(err.data);
+                })
+              })
+            }, $timeout())
+          }
+          //$http({
+          //  method: 'POST',
+          //  url: window.appRoot + 'api/trainingrecords/KcsaraCsv',
+          //  data: $scope.selected()
+          //})
+          //.then(function (resp) {
+          //});
+        }
+        ])
+
+      </script>
+    }

@@ -20,7 +20,8 @@ namespace Kcsara.Database.Web
         "~/Scripts/angular-modal-service.js",
         "~/Scripts/np-autocomplete.js",
         "~/Scripts/app.js",
-        "~/scripts/site/modules/*.js"
+        "~/scripts/site/modules/*.js",
+        "~/scripts/ng-file-upload.js"
         ));
 
       bundles.Add(new ScriptBundle("~/scripts/ng-site").Include(

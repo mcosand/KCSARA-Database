@@ -1,26 +1,33 @@
 ﻿/*
- * Copyright 2012-2014 Matthew Cosand
+ * Copyright 2012-2016 Matthew Cosand
  */
 
 namespace Kcsara.Database.Web.api
 {
-  using Data = Kcsar.Database.Model;
-  using Kcsara.Database.Web.Model;
-  using Newtonsoft.Json;
   using System;
   using System.Collections.Generic;
   using System.Linq;
   using System.Linq.Expressions;
+  using System.Net.Http;
+  using System.Threading.Tasks;
   using System.Web.Http;
-  using log4net;
+  using Database.Model;
+  using Database.Services.Training;
   using Kcsara.Database.Web.api.Models;
-
+  using Kcsara.Database.Web.Model;
+  using log4net;
+  using Newtonsoft.Json;
+  using Data = Kcsar.Database.Model;
   [ModelValidationFilter]
   public class TrainingRecordsController : BaseApiController
   {
-    public TrainingRecordsController(Data.IKcsarContext db, ILog log)
+    private readonly TrainingRecordsService _trainingRecords;
+
+    public TrainingRecordsController(TrainingRecordsService trainingRecords, Data.IKcsarContext db, ILog log)
       : base(db, log)
-    { }
+    {
+      _trainingRecords = trainingRecords;
+    }
 
     [HttpGet]
     public TrainingRecord Get(Guid id)
@@ -70,15 +77,15 @@ namespace Kcsara.Database.Web.api
                                      Required = (levelForRequired == null) ? (bool?)null : (computed.Course.WacRequired & mask) > 0
                                    }).OrderByDescending(f => f.Completed).ThenBy(f => f.Source)
                                    .AsEnumerable().Select(f => new TrainingRecord
-                                       {
-                                         Course = f.Course,
-                                         Comments = f.Comments,
-                                         Completed = string.Format(dateFormat, f.Completed),
-                                         Expires = string.Format(dateFormat, f.Expires),
-                                         Source = f.Source,
-                                         ReferenceId = f.ReferenceId,
-                                         Required = f.Required
-                                       });
+                                   {
+                                     Course = f.Course,
+                                     Comments = f.Comments,
+                                     Completed = string.Format(dateFormat, f.Completed),
+                                     Expires = string.Format(dateFormat, f.Expires),
+                                     Source = f.Source,
+                                     ReferenceId = f.ReferenceId,
+                                     Required = f.Required
+                                   });
       return model;
     }
 
@@ -158,84 +165,88 @@ namespace Kcsara.Database.Web.api
         db.TrainingAward.Add(model);
       }
 
- //     try
- //     {
-        model.UploadsPending = (view.PendingUploads > 0);
+      //     try
+      //     {
+      model.UploadsPending = (view.PendingUploads > 0);
 
-        DateTime completed;
-        if (string.IsNullOrWhiteSpace(view.Completed))
-        {
-          errors.Add(new SubmitError { Property = "Completed", Error = Strings.API_Required });
-        }
-        else if (!DateTime.TryParse(view.Completed, out completed))
-        {
-          errors.Add(new SubmitError { Error = Strings.API_InvalidDate, Property = "Completed" });
-        }
-        else
-        {
-          model.Completed = completed;
-        }
+      DateTime completed;
+      if (string.IsNullOrWhiteSpace(view.Completed))
+      {
+        errors.Add(new SubmitError { Property = "Completed", Error = Strings.API_Required });
+      }
+      else if (!DateTime.TryParse(view.Completed, out completed))
+      {
+        errors.Add(new SubmitError { Error = Strings.API_InvalidDate, Property = "Completed" });
+      }
+      else
+      {
+        model.Completed = completed;
+      }
 
-        if (model.metadata != view.Comments) model.metadata = view.Comments;
+      if (model.metadata != view.Comments) model.metadata = view.Comments;
 
-        if (model.Member.Id != view.Member.Id)
-        {
-          throw new InvalidOperationException("Don't know how to change member yet");
-        }
+      if (model.Member.Id != view.Member.Id)
+      {
+        throw new InvalidOperationException("Don't know how to change member yet");
+      }
 
-        if (view.Course.Id == null)
-        {
-          errors.Add(new SubmitError { Error = Strings.API_Required, Id = new[] { view.ReferenceId }, Property = "Course" });
-        }
-        else if (model.Course == null || model.Course.Id != view.Course.Id)
-        {
-          model.Course = (from c in db.TrainingCourses where c.Id == view.Course.Id select c).First();
-        }
+      if (view.Course.Id == null)
+      {
+        errors.Add(new SubmitError { Error = Strings.API_Required, Id = new[] { view.ReferenceId }, Property = "Course" });
+      }
+      else if (model.Course == null || model.Course.Id != view.Course.Id)
+      {
+        model.Course = (from c in db.TrainingCourses where c.Id == view.Course.Id select c).First();
+      }
 
-        switch (view.ExpirySrc)
-        {
-          case "default":
-            model.Expiry = model.Course.ValidMonths.HasValue ? model.Completed.AddMonths(model.Course.ValidMonths.Value) : (DateTime?)null;
-            break;
-          case "custom":
-            if (!string.IsNullOrWhiteSpace(view.Expires))
-            {
-              model.Expiry = DateTime.Parse(view.Expires);
-            }
-            else
-            {
-              errors.Add(new SubmitError { Error = Strings.API_TrainingRecord_CustomExpiryRequired, Property = "Expiry", Id = new[] { view.ReferenceId } });
-            }
-            break;
-          case "never":
-            model.Expiry = null;
-            break;
-        }
-
-        // Documentation required.
-        if (!model.UploadsPending && string.IsNullOrWhiteSpace(model.metadata))
-        {
-          if (!db.Documents.Any(f => f.ReferenceId == model.Id))
+      switch (view.ExpirySrc)
+      {
+        case "default":
+          model.Expiry = model.Course.ValidMonths.HasValue ? model.Completed.AddMonths(model.Course.ValidMonths.Value) : (DateTime?)null;
+          break;
+        case "custom":
+          if (!string.IsNullOrWhiteSpace(view.Expires))
           {
-            errors.Add(new SubmitError { Error = Strings.API_TrainingRecord_DocumentationRequired, Property = BaseApiController.ModelRootNodeName });
+            model.Expiry = DateTime.Parse(view.Expires);
           }
-        }
+          else
+          {
+            errors.Add(new SubmitError { Error = Strings.API_TrainingRecord_CustomExpiryRequired, Property = "Expiry", Id = new[] { view.ReferenceId } });
+          }
+          break;
+        case "never":
+          model.Expiry = null;
+          break;
+      }
 
-        // Prevent duplicate records
-        if (db.TrainingAward.Where(f => f.Id != model.Id && f.Completed == model.Completed && f.Course.Id == model.Course.Id && f.Member.Id == model.Member.Id).Count() > 0)
+      // Documentation required.
+      if (!model.UploadsPending && string.IsNullOrWhiteSpace(model.metadata))
+      {
+        if (!db.Documents.Any(f => f.ReferenceId == model.Id))
         {
-          ThrowSubmitErrors(new[] { new SubmitError { Error = Strings.API_TrainingRecord_Duplicate, Id = new[] { model.Id }, Property = BaseApiController.ModelRootNodeName } });
+          errors.Add(new SubmitError { Error = Strings.API_TrainingRecord_DocumentationRequired, Property = BaseApiController.ModelRootNodeName });
         }
+      }
 
-        if (errors.Count == 0)
-        {
-          db.SaveChanges();
-          db.RecalculateTrainingAwards(model.Member.Id);
-          db.SaveChanges();
-        }
+      // Prevent duplicate records
+      if (db.TrainingAward.Where(f => f.Id != model.Id && f.Completed == model.Completed && f.Course.Id == model.Course.Id && f.Member.Id == model.Member.Id).Count() > 0)
+      {
+        ThrowSubmitErrors(new[] { new SubmitError { Error = Strings.API_TrainingRecord_Duplicate, Id = new[] { model.Id }, Property = BaseApiController.ModelRootNodeName } });
+      }
 
-        view.ReferenceId = model.Id;
-        view.Course.Title = model.Course.DisplayName;
+      if (errors.Count == 0)
+      {
+        db.SaveChanges();
+        db.RecalculateTrainingAwards(model.Member.Id);
+        db.SaveChanges();
+      }
+      else
+      {
+        ThrowSubmitErrors(errors);
+      }
+
+      view.ReferenceId = model.Id;
+      view.Course.Title = model.Course.DisplayName;
       //}
       //catch (RuleViolationsException ex)
       //{
@@ -268,6 +279,22 @@ namespace Kcsara.Database.Web.api
       db.SaveChanges();
       db.RecalculateTrainingAwards(memberId);
       db.SaveChanges();
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "cdb.trainingeditors")]
+    public async Task<List<ParsedKcsaraCsv>> ParseKcsaraCsv()
+    {
+      var content = await Request.Content.ReadAsMultipartAsync();
+      
+      var file = content.Contents
+                  .Where(g => g.Headers.ContentDisposition.Name.Trim('"') == "file")
+                  .Cast<StreamContent>()
+                  .SingleOrDefault();
+      if (file == null) throw new InvalidOperationException();
+
+      var result = await _trainingRecords.ParseKcsaraCsv(await file.ReadAsStreamAsync());
+      return result;
     }
   }
 }

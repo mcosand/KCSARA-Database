@@ -12,6 +12,7 @@ namespace Kcsara.Database.Web
   using System.Web.Mvc;
   using System.Web.Optimization;
   using System.Web.Routing;
+  using Database.Services.Training;
   using Kcsar.Database.Model;
   using Kcsara.Database.Extensions;
   using Kcsara.Database.Services;
@@ -52,6 +53,7 @@ namespace Kcsara.Database.Web
       myKernel.Bind<Func<IKcsarContext>>().ToConstant((Func<IKcsarContext>)(() => new KcsarContext()));
 
       myKernel.Bind<AccountsService>().ToSelf().InSingletonScope();
+      myKernel.Bind<TrainingRecordsService>().ToSelf().InSingletonScope();
     }
 
     private static object kernelLock = new object();
