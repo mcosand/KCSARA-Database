@@ -811,7 +811,7 @@ namespace Kcsara.Database.Web.Controllers
       List<Guid> allCourses = new List<Guid>(haveFinished);
       allCourses.Add(eligibleFor);
 
-      var mails = ((IObjectContextAdapter)this.db).ObjectContext.ExecuteStoreQuery<string>(string.Format(@"SELECT p.lastname + ', ' + p.firstname + ' <' + pc.value + '>'
+      var mails = ((IObjectContextAdapter)this.db).ObjectContext.ExecuteStoreQuery<string>(string.Format(@"SELECT pc.value
 FROM ComputedTrainingAwards cta LEFT JOIN ComputedTrainingAwards cta2
  ON cta.member_id=cta2.member_id AND cta2.course_id='{0}' AND ISNULL(cta2.Expiry, '9999-12-31') >= GETDATE()
  JOIN Members p ON p.id=cta.member_id
