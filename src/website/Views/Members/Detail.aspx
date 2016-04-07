@@ -31,7 +31,7 @@
         <% } %>
           <% if ((bool)ViewData["CanEditMember"])
      { %>
-     <%: string.IsNullOrEmpty(m.Username) ? MvcHtmlString.Empty : Html.ActionLink<AccountController>(f => f.Detail(m.Username), m.Username) %><br />
+     <%: m.Username %><br />
   <% } %>
 
         <div style="position:absolute; bottom:.2em; right:.2em;">

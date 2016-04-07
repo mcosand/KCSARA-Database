@@ -16,34 +16,14 @@ namespace Kcsara.Database.Web.api
   using Kcsara.Database.Web.Services;
   using log4net;
   using Newtonsoft.Json;
-  using Kcsara.Database.Model.Accounts;
   using Model = Kcsar.Database.Model;
 
   [ModelValidationFilter]
   public class MembersController : BaseApiController
   {
-    readonly Lazy<AccountsService> accounts;
-
-    public MembersController(Lazy<AccountsService> accounts, Model.IKcsarContext db, ILog log)
+    public MembersController(Model.IKcsarContext db, ILog log)
       : base(db, log)
     {
-      this.accounts = accounts;
-    }
-
-    /// <summary>Gets account information for a given member.</summary>
-    /// <remarks>used by /account/detail/{username}</remarks>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    [HttpGet]
-    public AccountInfo AccountFor(Guid id)
-    {
-      var username = db.Members.Where(f => f.Id == id).Select(f => f.Username).FirstOrDefault();
-      if (string.IsNullOrWhiteSpace(username))
-      {
-        return null;
-      }
-
-      return accounts.Value.Get(username);
     }
 
     /// <summary>

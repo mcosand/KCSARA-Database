@@ -3,16 +3,10 @@
  */
 namespace Kcsara.Database.Web.Controllers
 {
-  using Kcsar.Database.Model;
-  using Kcsar.Membership;
-  using Kcsara.Database.Web.Model;
-  using Kcsara.Database.Web.Services;
-  using MvcContrib.UI;
   using System;
   using System.Collections.Generic;
   using System.Configuration;
   using System.Drawing;
-  using System.Globalization;
   using System.IO;
   using System.Linq;
   using System.Linq.Expressions;
@@ -22,7 +16,10 @@ namespace Kcsara.Database.Web.Controllers
   using System.Web;
   using System.Web.Mvc;
   using System.Web.Security;
+  using Kcsar.Database.Model;
   using Kcsara.Database.Services;
+  using Kcsara.Database.Web.Model;
+  using MvcContrib.UI;
 
   public class BaseController : Controller
   {
@@ -57,7 +54,7 @@ namespace Kcsara.Database.Web.Controllers
     protected override void Initialize(System.Web.Routing.RequestContext requestContext)
     {
       base.Initialize(requestContext);
-      Permissions = new AuthService(User, this.db);
+      Permissions = new AuthService(User, db);
       Document.StorageRoot = requestContext.HttpContext.Request.MapPath("~/Content/auth/documents/");
 
       if (Permissions.IsAuthenticated)

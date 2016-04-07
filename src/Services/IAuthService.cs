@@ -9,10 +9,8 @@ namespace Kcsara.Database.Services
 
   public interface IAuthService
   {
-    string Username { get; }
     Guid UserId { get; }
     bool IsSelf(Guid id);
-    bool IsSelf(string username);
     bool IsAdmin { get; }
     bool IsAuthenticated { get; }
     bool IsUser { get; }
@@ -22,11 +20,5 @@ namespace Kcsara.Database.Services
     bool IsUserOrLocal(HttpRequestBase request);
     bool IsRoleForPerson(string role, Guid personId);
     bool IsRoleForUnit(string role, Guid unitId);
-
-    bool ValidateUser(string username, string password);
-
-    IEnumerable<string> GetGroupsForUser(string username);
-    IEnumerable<string> GetGroupsForGroup(string group);
-    IEnumerable<string> GetGroupsIManage();
   }
 }

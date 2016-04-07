@@ -30,7 +30,7 @@
           </li>
           <li class="dropdown notifications-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              @(ViewBag.LoginUserName ?? string.Format("{0} {1}", ((Kcsar.Membership.KcsarUserProfile)Profile).FirstName, ((Kcsar.Membership.KcsarUserProfile)Profile).LastName))
+              @(ViewBag.LoginUserName ?? User.Identity.Name)
             </a>
             <ul class="dropdown-menu">
               <li>

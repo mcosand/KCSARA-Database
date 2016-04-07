@@ -2,17 +2,13 @@
  * Copyright 2013-2014 Matthew Cosand
  */
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NUnit.Framework;
-using Moq;
-using Kcsara.Database.Web.api;
-using Kcsar.Database.Model;
-using Kcsara.Database.Services;
 using System.Reflection;
 using System.Web.Http;
+using Kcsar.Database.Model;
+using Kcsara.Database.Web.api;
+using Moq;
+using NUnit.Framework;
 
 namespace Internal.Website.Api
 {

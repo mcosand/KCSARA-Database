@@ -1,11 +1,7 @@
 ﻿/*
- * Copyright 2013-2014 Matthew Cosand
+ * Copyright 2013-2016 Matthew Cosand
  */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 using Kcsara.Database.Services;
 
@@ -39,14 +35,6 @@ namespace Internal.Website
       get { return true; }
     }
 
-    public string Username
-    {
-      get
-      {
-        throw new NotImplementedException();
-      }
-    }
-
     public bool IsInRole(params string[] group)
     {
       return true;
@@ -75,31 +63,6 @@ namespace Internal.Website
     public bool IsRoleForUnit(string role, Guid unitId)
     {
       return true;
-    }
-
-    public bool IsSelf(string username)
-    {
-      return true;
-    }
-
-    public IEnumerable<string> GetGroupsForUser(string username)
-    {
-      return new string[0];
-    }
-
-    public IEnumerable<string> GetGroupsForGroup(string group)
-    {
-      return new string[0];
-    }
-
-    public bool ValidateUser(string username, string password)
-    {
-      return true;
-    }
-
-    public IEnumerable<string> GetGroupsIManage()
-    {
-      return new string[0];
     }
   }
 }

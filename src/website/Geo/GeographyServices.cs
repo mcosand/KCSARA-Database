@@ -3,10 +3,6 @@
  */
 namespace Kcsara.Database.Geo
 {
-  using Kcsar.Database.Model;
-  using Kcsar.Membership;
-  using log4net;
-  using Microsoft.SqlServer.Types;
   using System;
   using System.Configuration;
   using System.Data.SqlTypes;
@@ -16,6 +12,9 @@ namespace Kcsara.Database.Geo
   using System.Web;
   using System.Xml;
   using System.Xml.Linq;
+  using Kcsar.Database.Model;
+  using log4net;
+  using Microsoft.SqlServer.Types;
 
   public static class GeographyServices
   {

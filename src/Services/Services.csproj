@@ -96,20 +96,6 @@
     <Compile Include="AuthService.cs" />
     <Compile Include="EmailService.cs" />
     <Compile Include="IAuthService.cs" />
-    <Compile Include="Membership\DatabaseProfileProvider.cs" />
-    <Compile Include="Membership\INestedRoleProvider.cs" />
-    <Compile Include="Membership\InvalidPasswordException.cs" />
-    <Compile Include="Membership\ISetPassword.cs" />
-    <Compile Include="Membership\KcsarUserProfile.cs" />
-    <Compile Include="Membership\MembershipProvider.cs" />
-    <Compile Include="Membership\PasswordSyncConfiguration.cs" />
-    <Compile Include="Membership\RoleProvider.cs" />
-    <Compile Include="Membership\Synchronizers\EsarOffice365.cs" />
-    <Compile Include="Membership\Synchronizers\IPasswordSynchronizer.cs" />
-    <Compile Include="Membership\Synchronizers\VisualSVN.cs" />
-    <Compile Include="ObjectModel\AccountEnums.cs" />
-    <Compile Include="AccountService.cs" />
-    <Compile Include="ObjectModel\AccountInfo.cs" />
     <Compile Include="ObjectModel\NameIdPair.cs" />
     <Compile Include="ObjectModel\ParsedKcsaraCsv.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -119,7 +105,6 @@
       <DependentUpon>ServiceStrings.resx</DependentUpon>
     </Compile>
     <Compile Include="Training\TrainingRecordsService.cs" />
-    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

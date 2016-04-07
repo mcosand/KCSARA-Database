@@ -11,18 +11,17 @@
 <div class="header-container">
     <div class="nav-login">
       <% if (Request.IsAuthenticated) { %>
-        Welcome <b><%= Html.Encode(string.Format("{0} [{1}]", Profile.FirstName, Page.User.Identity.Name))%></b>!
+        <b><%: Page.User.Identity.Name %></b>
         <ul>
           <% if (ViewData["MemberId"] != null)
             { %>
           <li class="first"><%: Html.ActionLink<MembersController>(x => x.Detail((Guid)ViewData["MemberId"]), "My Page") %></li>
           <% } %>
-<%--            <li class="first"><%= Html.PopupActionLink<AccountController>(x => x.Settings(), "Settings", 500) %></li>
---%>            <li><%= Html.ActionLink<AccountController>(f => f.Logout(), Strings.LogoutPrompt) %></li>
+          <li><%= Html.ActionLink<HomeController>(f => f.Logout(), Strings.LogoutPrompt) %></li>
         </ul>
       <% } else { %> 
         <ul>
-            <li class="first"><%= Html.ActionLink<AccountController>(f => f.Login(), Strings.LoginPrompt) %></li>
+            <li class="first"><%= Html.ActionLink<HomeController>(f => f.Login(null), Strings.LoginPrompt) %></li>
         </ul>
       <% } %>
     </div>
@@ -71,7 +70,6 @@
             <% if (Page.User.IsInRole("cdb.admins")) { %>
             <li><%= Html.ActionLink<LogController>(f => f.Index(), "Change Log") %></li>
             <% } %>
-          <li><%= Html.ActionLink<AccountController>(f => f.Detail(Page.User.Identity.Name), "My Account") %></li>
           <% } %>
         </ul>
         <p id="showMInfoP" style="color:#888888; display:none"><input type="checkbox" id="showMInfo" />Show change info</p>

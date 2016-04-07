@@ -41,7 +41,6 @@ namespace Kcsara.Database.Web
 
       myKernel.Bind<IKcsarContext>().To<KcsarContext>();
       myKernel.Bind<ILog>().ToMethod(context => LogManager.GetLogger("Default"));
-      myKernel.Bind<IFormsAuthentication>().To<FormsAuthenticationWrapper>();
       myKernel.Bind<IAuthService>().To<AuthService>();
       myKernel.Bind<IPrincipal>().ToMethod(f => Thread.CurrentPrincipal);
       myKernel.Bind<Func<IPrincipal>>().ToConstant((Func<IPrincipal>)(() => Thread.CurrentPrincipal));
@@ -52,7 +51,6 @@ namespace Kcsara.Database.Web
 
       myKernel.Bind<Func<IKcsarContext>>().ToConstant((Func<IKcsarContext>)(() => new KcsarContext()));
 
-      myKernel.Bind<AccountsService>().ToSelf().InSingletonScope();
       myKernel.Bind<TrainingRecordsService>().ToSelf().InSingletonScope();
     }
 

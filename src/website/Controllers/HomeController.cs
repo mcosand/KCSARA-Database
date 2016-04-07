@@ -38,6 +38,17 @@ namespace Kcsara.Database.Web.Controllers
       return View();
     }
 
+    [Authorize]
+    public ActionResult Login(string returnUrl = null)
+    {
+      return Redirect(returnUrl ?? Url.Content("~/"));
+    }
+
+    public ActionResult Logout()
+    {
+      return Content("This should log out the user");
+    }
+
     public ActionResult Error(string message)
     {
       if (!string.IsNullOrWhiteSpace(message))
