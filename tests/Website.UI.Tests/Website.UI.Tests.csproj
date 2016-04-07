@@ -111,7 +111,6 @@
   <ItemGroup>
     <Compile Include="Animals\AnimalTests.cs" />
     <Compile Include="BrowserFixture.cs" />
-    <Compile Include="LeakPasswordSynchronizer.cs" />
     <Compile Include="Members\AddressTests.cs" />
     <Compile Include="Members\ContactTests.cs" />
     <Compile Include="Members\MembershipTests.cs" />
