@@ -7,6 +7,7 @@ namespace Kcsar.Database.Model
   using System;
   using System.Collections.Generic;
   using System.ComponentModel.DataAnnotations;
+  using System.Configuration;
   using System.Data.Entity;
   using System.Data.Entity.Core;
   using System.Data.Entity.Core.Objects;
@@ -56,7 +57,7 @@ namespace Kcsar.Database.Model
 
     public IDbSet<ExternalLogin> ExternalLogins { get; set; }
 
-    public KcsarContext() : this("DataStore") { }
+    public KcsarContext() : this(ConfigurationManager.AppSettings["dataStore"] ?? "DataStore") { }
 
     public KcsarContext(string connName)
       : base(connName)
