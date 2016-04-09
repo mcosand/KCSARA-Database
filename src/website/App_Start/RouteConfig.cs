@@ -16,6 +16,8 @@ namespace Kcsara.Database.Web
 
       routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+      routes.MapMvcAttributeRoutes();
+
       routes.MapRoute(
         name: "ErrorPage",
         url: "Error/{message}",
