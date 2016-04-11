@@ -1,14 +1,11 @@
-﻿using System;
-using System.Configuration;
+﻿using System.Configuration;
 using System.IdentityModel.Tokens;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin;
-using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OpenIdConnect;
 using Owin;
+using Sar.Web;
 
 [assembly: OwinStartup(typeof(Kcsara.Database.Web.Startup))]
 
@@ -25,7 +22,7 @@ namespace Kcsara.Database.Web
 
       app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
       
-      app.UseOpenIdConnectAuthentication(new OpenIdConnectAuthenticationOptions
+      app.Use<NonceCleanupOpenIdConnectAuthenticationMiddleware>(app, new OpenIdConnectAuthenticationOptions
       {
         Authority = ConfigurationManager.AppSettings["auth:authority"].Trim('/') + "/",
         ClientId = ConfigurationManager.AppSettings["auth:clientId"],

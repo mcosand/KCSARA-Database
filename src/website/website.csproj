@@ -421,6 +421,8 @@
     <Compile Include="Models\UnitMemberStatusViewModel.cs" />
     <Compile Include="NinjectResolver.cs" />
     <Compile Include="NinjectScope.cs" />
+    <Compile Include="NonceCleanupOpenIdConnectAuthenticationHandler.cs" />
+    <Compile Include="NonceCleanupOpenIdConnectAuthenticationMiddleware.cs" />
     <Compile Include="Services\BadgeService.cs" />
     <Compile Include="Services\CardDatabaseService.cs" />
     <Compile Include="Services\EncryptionService.cs" />
