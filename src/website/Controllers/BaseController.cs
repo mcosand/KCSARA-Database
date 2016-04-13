@@ -314,13 +314,7 @@ namespace Kcsara.Database.Web.Controllers
 
     public ActionResult CreateLoginRedirect()
     {
-      //use the current url for the redirect
-      string redirectOnSuccess = this.Request.Url.AbsolutePath;
-
-      //send them off to the login page
-      string redirectUrl = string.Format("?ReturnUrl={0}", redirectOnSuccess);
-      string loginUrl = FormsAuthentication.LoginUrl + redirectUrl;
-      return new RedirectResult(loginUrl);
+      return new HttpUnauthorizedResult();
     }
   }
 }
