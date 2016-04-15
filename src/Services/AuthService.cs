@@ -56,10 +56,7 @@ namespace Kcsara.Database.Services
 
     public bool IsInRole(params string[] group)
     {
-      return GetClaims(f => f.Type == ClaimsIdentity.DefaultRoleClaimType)
-              .Select(f => f.Value)
-              .Join(group, f => f, f => f, (a, b) => a)
-              .Any();
+      return group.Any(f => _principal.IsInRole(f));
     }
 
     public bool IsMembershipForPerson(Guid id)
