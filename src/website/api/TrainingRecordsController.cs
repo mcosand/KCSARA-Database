@@ -201,6 +201,7 @@ namespace Kcsara.Database.Web.api
 
       switch (view.ExpirySrc)
       {
+        default:
         case "default":
           model.Expiry = model.Course.ValidMonths.HasValue ? model.Completed.AddMonths(model.Course.ValidMonths.Value) : (DateTime?)null;
           break;
