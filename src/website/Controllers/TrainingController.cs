@@ -339,7 +339,8 @@ namespace Kcsara.Database.Web.Controllers
 
       var courses = this.db.GetCoreCompetencyCourses();
 
-      var file = ExcelService.Create(ExcelFileType.XLS);
+      
+      var file = ExcelService.Create(ExcelFileType.XLSX);
       var sheet = file.CreateSheet(unitShort);
 
       var headers = new[] { "DEM #", "Last Name", "First Name", "Field Type", "Good Until" }.Union(courses.Select(f => f.DisplayName)).ToArray();
@@ -372,21 +373,25 @@ namespace Kcsara.Database.Web.Controllers
             if (match.Expiry.HasValue)
             {
               if (match.Expiry < goodUntil) goodUntil = match.Expiry.Value;
-              text = match.Expiry.Value.ToString("yyyy-MM-dd");
+              sheet.CellAt(row, col + i).SetValue(match.Expiry.Value);
+
+            }
+            else
+            {
+              sheet.CellAt(row, col + i).SetValue(text);
             }
             coursesCount++;
-            sheet.CellAt(row, col + i).SetValue(text);
           }
         }
-        sheet.CellAt(row, goodColumn).SetValue(courses.Count == coursesCount ? goodUntil.ToString("yyyy-MM-dd") : "");
+        sheet.CellAt(row, goodColumn).SetValue(courses.Count == coursesCount ? goodUntil : (DateTime?)null);
         row++;
       }
-
+      sheet.AutoFitAll();
 
       MemoryStream ms = new MemoryStream();
       file.Save(ms);
       ms.Seek(0, SeekOrigin.Begin);
-      return this.File(ms, "application/vnd.ms-excel", string.Format("{0}-corecomp-{1:yyyy-MM-dd}.xls", unitShort, DateTime.Today));
+      return this.File(ms, "application/vnd.ms-excel", string.Format("{0}-corecomp-{1:yyyy-MM-dd}.xlsx", unitShort, DateTime.Today));
     }
 
     [Authorize(Roles = "cdb.users")]
