@@ -26,26 +26,35 @@
 <script runat="server">
   protected MvcHtmlString CCStatus(string name, bool span)
   {
+    Func<string, string> makeClasses = cls =>
+    {
+      if (cls == null) cls = string.Empty;
+      if (span) cls += " c";
+
+      if (string.IsNullOrWhiteSpace(cls)) return string.Empty;
+      return " class=\"" + cls.Trim() + "\"";
+    };
+
     var ccStatus = (Dictionary<string, TrainingStatus>)ViewData["CoreStatus"];
-    string s = span ? " colspan=\"3\" class=\"c\"" : "";
-    
+    string s = span ? " colspan=\"3\"" : "";
+
     TrainingStatus status;
     if (!ccStatus.TryGetValue(name, out status))
     {
-      return new MvcHtmlString("<td" + s + ">Unknown</td>");
+      return new MvcHtmlString("<td" + s + makeClasses(null) + ">Unknown</td>");
     }
-    
+
     if (status.Completed == null)
     {
-      return new MvcHtmlString("<td" + s + " class=\"exp_Missing\">Missing</td>");
+      return new MvcHtmlString("<td" + s + makeClasses("exp_Missing") + ">Missing</td>");
     }
 
     if (!status.Expires.HasValue)
     {
-      return new MvcHtmlString("<td" + s + ">Complete</td>");
+      return new MvcHtmlString("<td" + s + makeClasses(null) + ">Complete</td>");
     }
 
-    return new MvcHtmlString(string.Format("<td{0} class=\"exp_{1}\">{2:yyyy-MM-dd}</td>",
-      s, (status.Expires < DateTime.Today) ? "Expired" : "NotExpired", status.Expires));
+    return new MvcHtmlString(string.Format("<td{0}{1}>{2:yyyy-MM-dd}</td>",
+      s, makeClasses((status.Expires < DateTime.Today) ? "exp_Expired" : "exp_NotExpired"), status.Expires));
   }
 </script>

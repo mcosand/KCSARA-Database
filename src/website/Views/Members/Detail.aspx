@@ -36,7 +36,7 @@
 
         <div style="position:absolute; bottom:.2em; right:.2em;">
         Background Check: <%: m.BackgroundText %><br />
-        <% if ((bool)ViewData["IsUser"]) { %>WAC Expiration: <span class="wac-status">Loading...</span><br /> <% } %>
+        <%--<% if ((bool)ViewData["IsUser"]) { %>WAC Expiration: <span class="wac-status">Loading...</span><br /> <% } %>--%>
         <%= (bool)ViewData["CanEditPhoto"] ? Html.PopupActionLink<MembersController>(x => x.PhotoUpload(m.Id.ToString()), "Photo", 400) : MvcHtmlString.Empty %>
         <%= (bool)ViewData["CanPrintBadge"] ? Html.ActionLink<MembersController>(x => x.Badges(m.Id.ToString()), "Badges").ToString() : "" %>
         <%= (bool)ViewData["CanEditMember"] ? Html.PopupActionLink<MembersController>(x => x.Edit(m.Id), "Edit", 300).ToString() : "" %>
@@ -84,7 +84,7 @@
   <div>
   <% if ((bool)ViewData["IsUser"]) {  %>
     <div style="float:left; margin-right:8em;">
-    <h2>Training Awards:</h2>
+    <h2>Completed Training:</h2>
     <% Html.RenderPartial("MemberTrainingAwards", Model.Id); %>
     <%: Page.User.IsInRole("cdb.trainingeditors") ? Html.PopupActionLink<TrainingController>(f => f.RecalculateAwards(Model.Id), "Recalculate Awards") : MvcHtmlString.Empty %><br />
     <%= Html.ActionLink<MembersController>(f => f.Awards(m.Id), "View all awards") %>
@@ -92,10 +92,10 @@
     <% } %>
     <div style="float:left;">
     <h2>Required Training:</h2>
-    <% Html.RenderPartial("MemberRequiredTraining", Model.Id); /*ViewData["RequiredStatus"]);*/ %>
+<%--    <% Html.RenderPartial("MemberRequiredTraining", Model.Id); /*ViewData["RequiredStatus"]);*/ %>
     </div>
     <div style="float:left;">
-      <h2>Core Competencies:</h2>
+      <h2>Core Competencies:</h2>--%>
       <% Html.RenderPartial("MemberCoreCompetencies", Model.Id); %>
     </div>
     <div style="clear:both;"></div>
