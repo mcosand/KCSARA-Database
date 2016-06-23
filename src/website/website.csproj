@@ -613,7 +613,6 @@
     <Content Include="Scripts\ng-file-upload.min.js" />
     <Content Include="Scripts\np-autocomplete.js" />
     <Content Include="Scripts\nprogress.js" />
-    <Content Include="Scripts\sartopo.js" />
     <Content Include="Scripts\site\directives\password-validator.js" />
     <Content Include="Scripts\site\directives\scroll-if.js" />
     <Content Include="Scripts\site\directives\status-glyph.js" />
