@@ -9,7 +9,6 @@
       <%= Html.ActionLink<TrainingController>(x => x.CourseList(null,null,null,null), "Course List") %></li>
     <li>
       <%= Html.ActionLink<TrainingController>(x => x.List(null), "Past Trainings (Rosters)") %></li>
-    <li><%= Html.ActionLink<TrainingController>(x => x.RequiredTrainingReport(), "Required Training Report")  %></li>
     <li><%= Html.ActionLink<TrainingController>(x => x.CoreCompReport(null), "Core Competency Report (all members)")  %></li>
     <% if (User.IsInRole("cdb.trainingeditors")) { %>
       <li><%= Html.ActionLink<TrainingController>(x => x.Rules(), "View Training Equivalencies") %></li>

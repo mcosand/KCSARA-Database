@@ -248,20 +248,6 @@ namespace Kcsara.Database.Web.api
 
       view.ReferenceId = model.Id;
       view.Course.Title = model.Course.DisplayName;
-      //}
-      //catch (RuleViolationsException ex)
-      //{
-      //  foreach (RuleViolation v in ex.Errors)
-      //  {
-      //    errors.Add(new SubmitError { Error = v.ErrorMessage, Property = v.PropertyName, Id = new[] { v.EntityKey } });
-      //  }
-      //  // throw new InvalidOperationException("TODO: report errors");
-      //}
-
-      //if (errors.Count > 0)
-      //{
-      //  ThrowSubmitErrors(errors);
-      //}
 
       return view;
     }

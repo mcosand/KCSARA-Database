@@ -716,7 +716,6 @@
     <Content Include="Views\Training\Index.aspx" />
     <Content Include="Views\Training\List.aspx" />
     <Content Include="Views\Training\ReportStatus.aspx" />
-    <Content Include="Views\Training\RequiredTrainingReport.aspx" />
     <Content Include="Views\Training\Roster.aspx" />
     <Content Include="Views\Training\RosterAddedHeader.ascx" />
     <Content Include="Views\Training\Training.ascx" />

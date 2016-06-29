@@ -293,32 +293,8 @@ namespace Kcsara.Database.Web.Controllers
         }
       }
 
-
-      //var query = (from tr in ctx.TrainingRosters.Include("Person") where tr.TrainingAwards.Any(f => f.Course.Id == id) && tr.TimeIn > b && tr.TimeIn < e select tr).ToArray();
-      //rows = query.GroupBy(f => new { P = f.Person }).Select(f => new MemberRosterRow
-      //{
-      //    Person = new MemberSummaryRow
-      //    {
-      //        Id = f.Key.P.Id,
-      //        Name = f.Key.P.ReverseName,
-      //        WorkerNumber = f.Key.P.DEM
-      //    },
-      //    Count = f.Count(),
-      //    Hours = f.Sum(g => g.Hours)
-      //}).OrderByDescending(f => f.Hours).ThenBy(f => f.Person.Name).ToList();
       return Data(memberHours.Values.OrderByDescending(f => f.Hours).ThenBy(f => f.Person.Name));
     }
-
-    //public ActionResult RequiredTrainingForecast()
-    //{
-    //    DateTime time = DateTime.Now;
-    //    using (KcsarContext ctx = this.GetContext())
-    //    {
-    //        var activeCount = (from p in ctx.Members where p.WacLevel == WacLevel.Field && p.Memberships.Any(f => f.Status.IsActive && f.Activated < time 
-    //    }
-
-    //    return View();
-    //}
 
     [Authorize(Roles = "cdb.users")]
     public ActionResult CoreCompReport(Guid? id)
@@ -394,59 +370,6 @@ namespace Kcsara.Database.Web.Controllers
       return this.File(ms, "application/vnd.ms-excel", string.Format("{0}-corecomp-{1:yyyy-MM-dd}.xlsx", unitShort, DateTime.Today));
     }
 
-    [Authorize(Roles = "cdb.users")]
-    public ActionResult RequiredTrainingReport()
-    {
-      DateTime perfStart = DateTime.Now;
-      Dictionary<Member, CompositeTrainingStatus> model = new Dictionary<Member, CompositeTrainingStatus>();
-      IDictionary<SarUnit, IList<Member>> unitLookup = new Dictionary<SarUnit, IList<Member>>();
-
-      var members = (from um in this.db.UnitMemberships.Include("Person").Include("Status") where um.EndTime == null select um.Person).Distinct().OrderBy(x => x.LastName + ", " + x.FirstName);
-
-      var courses = (from c in this.db.TrainingCourses where c.WacRequired > 0 select c).OrderBy(x => x.DisplayName).ToList();
-
-      var expirations = (from e in this.db.ComputedTrainingAwards where e.Course.WacRequired > 0 orderby e.Member.Id select new { memberId = e.Member.Id, Award = e });
-
-      ViewData["courseList"] = (from c in courses select c.DisplayName).ToArray();
-      ViewData["Title"] = "Training Expiration Report";
-      ViewData["UnitTable"] = unitLookup;
-
-      foreach (Member m in members)
-      {
-        UnitMembership[] units = m.GetActiveUnits();
-        if (units.Length == 0)
-        {
-          continue;
-        }
-
-        foreach (var u in m.GetActiveUnits())
-        {
-          //if (!u.UnitReference.IsLoaded)
-          //{
-          //    u.UnitReference.Load();
-          //}
-          if (!unitLookup.ContainsKey(u.Unit))
-          {
-            unitLookup.Add(u.Unit, new List<Member>());
-          }
-          unitLookup[u.Unit].Add(m);
-        }
-
-        model.Add(m, CompositeTrainingStatus.Compute(m, (from e in expirations where e.memberId == m.Id select e.Award), courses, DateTime.Now));
-      }
-      ViewData["perf"] = (DateTime.Now - perfStart).TotalSeconds;
-      return View(model);
-    }
-
-    [HttpPost]
-    public DataActionResult GetRequiredTraining()
-    {
-      if (!Permissions.IsUserOrLocal(Request)) return GetLoginError();
-
-      object model = (from c in this.db.TrainingCourses where c.WacRequired > 0 select new ApiModels.TrainingCourse { Id = c.Id, Required = c.WacRequired, Title = c.DisplayName }).OrderBy(f => f.Title).ToList();
-      return Data(model);
-    }
-
     [HttpPost]
     public DataActionResult GetMemberExpirations(Guid id)
     {
@@ -479,40 +402,6 @@ namespace Kcsara.Database.Web.Controllers
 
 
       return Data(model);
-    }
-
-    public ActionResult GetRequiredTrainingExpirations(Guid? id)
-    {
-      if (!Permissions.IsUserOrLocal(Request)) return GetLoginError();
-
-      XmlDocument doc = new XmlDocument();
-      XmlElement root = doc.CreateElement("Expirations");
-      root.SetAttribute("generated", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss"));
-      doc.AppendChild(root);
-
-      var courses = (from c in this.db.TrainingCourses where c.WacRequired > 0 select c).OrderBy(x => x.DisplayName).ToList();
-
-      var source = this.db.GetActiveMembers(id, DateTime.Now, "ComputedAwards.Course");
-
-      foreach (Member m in source)
-      {
-        XmlElement person = doc.CreateElement("Member");
-        person.SetAttribute("id", m.Id.ToString());
-        person.SetAttribute("last", m.LastName);
-        person.SetAttribute("first", m.FirstName);
-        person.SetAttribute("dem", m.DEM);
-        person.SetAttribute("card", m.WacLevel.ToString());
-        root.AppendChild(person);
-        CompositeTrainingStatus stats = CompositeTrainingStatus.Compute(m, courses, DateTime.Now);
-        person.SetAttribute("current", stats.IsGood ? "yes" : "no");
-        foreach (TrainingCourse c in courses)
-        {
-          person.SetAttribute(Regex.Replace(c.DisplayName, "[^a-zA-Z0-9]", ""), stats.Expirations[c.Id].ToString().ToXmlAttr());
-        }
-      }
-
-
-      return new ContentResult { Content = doc.OuterXml, ContentType = "application/xml" };
     }
 
     [Authorize(Roles = "cdb.admins")]
@@ -564,41 +453,6 @@ namespace Kcsara.Database.Web.Controllers
         awards = awards.Where(f => f.Member.GetActiveUnits().Count() > 0).ToList();
       }
       return View(awards);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="id">Course ID</param>
-    /// <returns></returns>
-    [Authorize(Roles = "cdb.users")]
-    public ActionResult Eligible(Guid id)
-    {
-      TrainingCourse course = (from c in this.db.TrainingCourses where c.Id == id select c).First();
-
-      ViewData["Course"] = course;
-
-      IEnumerable<Member> memberList = course.GetEligibleMembers(
-          this.db.Members.Include("ComputedAwards").Include("ComputedAwards.Course").Include("ContactNumbers").OrderBy(f => f.LastName + f.FirstName),
-          false);
-
-      List<string> emailList = new List<string>();
-      foreach (Member m in memberList)
-      {
-        var emails = (from c in m.ContactNumbers where c.Type == "email" select c.Value);
-        foreach (string email in emails)
-        {
-          string text = string.Format("{0} <{1}>", m.FullName, email);
-          if (!emailList.Contains(text))
-          {
-            emailList.Add(text);
-          }
-        }
-      }
-      ViewData["emails"] = emailList;
-
-      return View(memberList);
-
     }
 
     #region SarEventController base class
@@ -781,38 +635,6 @@ namespace Kcsara.Database.Web.Controllers
     [Authorize(Roles = "cdb.users")]
     public ContentResult EligibleEmails(Guid? unit, Guid eligibleFor, Guid[] haveFinished)
     {
-      //using (var ctx = this.GetContext())
-      //{
-      //    var persons = (from m in ctx.GetActiveMembers(unit, DateTime.Now, "ComputedAwards", "Memberships.Status")
-      //                   where m.BackgroundDate != null
-      //                   && m.Memberships.Any(f => f.Unit.DisplayName == "ESAR" && f.Status.StatusName == "trainee" && f.EndTime == null)
-      //                   && m.ComputedAwards.Any(f => f.Course.Id == haveFinished)
-      //                   && m.ComputedAwards.All(f => f.Course.Id != eligibleFor)
-      //                   select m);
-
-      //    //var mails = (from m in ctx.GetActiveMembers(unit,DateTime.Now,"ContactNumbers") join ca in ctx.ComputedTrainingAwards on m.Id equals ca.Member.Id
-      //    //             where m.BackgroundDate != null
-      //    //              && m.Memberships.Any(f => f.Unit.DisplayName == "ESAR" && f.Status.StatusName == "trainee" && f.EndTime == null)
-      //    //              && m.ComputedAwards.Any(f => f.Course.Id == haveFinished)
-      //    //              && m.ComputedAwards.All(f => f.Course.Id != eligibleFor)
-      //    //             select m).SelectMany(f => f.ContactNumbers);
-
-      //    //var mails = ctx.UnitMemberships.Include("Person.ContactNumbers").Include("Unit").Include("Status").Where(ctx.GetActiveMembershipFilter(unit, DateTime.Now))
-      //    //    .Where(f => f.Status.StatusName == "trainee")
-      //    //    .SelectMany(f => f.Person.ContactNumbers)
-      //    //        .Where(f => f.Type == "email")
-      //    //        .Select(f => string.Format("{0} <{1}>", f.Person.FullName, f.Value));
-
-      //    //return new ContentResult { Content = string.Join("; ", mails), ContentType = "text/plain" };
-      //    // ctx.GetActiveMembers(unit, DateTime.Now).SelectMany(f => f.ComputedAwards, f => new { f.);
-
-      //    //var mails = (from m in ctx.GetActiveMembers(unit, DateTime.Now, "Contacts", "ComputedAwards")
-      //    //             from ca in ctx.ComputedTrainingAwards on ca.
-
-      //    //return new ContentResult { Content = string.Join("\n", persons.AsEnumerable().Select(f => f.ReverseName)), ContentType = "text/plain" };
-      //    //return new ContentResult { Content = string.Join("; ", mails.AsEnumerable().Select(f => string.Format("{0} <{1}>", f.Person.FullName, f.Value))), ContentType = "text/plain" };
-      //}
-
       List<Guid> allCourses = new List<Guid>(haveFinished);
       allCourses.Add(eligibleFor);
 
@@ -825,27 +647,6 @@ WHERE cta2.member_id is null and (cta.Expiry IS NULL OR cta.Expiry >= GETDATE())
 GROUP BY cta.member_id,lastname,firstname,pc.value
 HAVING COUNT(cta.member_id) = {2}
 ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Select(f => f.ToString())), haveFinished.Length));
-
-      ////var courses = ctx.TrainingAward.Where(f => allCourses.Contains(f.Course.Id)).ToList();
-
-
-
-      //var query = ctx.UnitMemberships.Include("Person.ContactNumbers").Include("Person.ComputedAwards.Course").Include("Unit").Include("Status").Where(ctx.GetActiveMembershipFilter(unit, DateTime.Now))
-      //    .Where(f => f.Status.StatusName == "trainee"
-      //                && f.Person.BackgroundDate.HasValue
-      //                && f.Person.ComputedAwards.All(g => g.Course.Id != eligibleFor));
-
-      //DateTime now = DateTime.Today;
-      //foreach (Guid prereq in haveFinished)
-      //{
-      //    query = query.Where(f => f.Person.ComputedAwards.Any(g => g.Course.Id == prereq && (g.Expiry == null || g.Expiry > now)));
-      //}
-
-      //var mails = query.SelectMany(f => f.Person.ContactNumbers)
-      //        .Where(f => f.Type == "email")
-      //        .OrderBy(f => f.Person.ReverseName)
-      //        .Select(f => string.Format("{0} <{1}>", f.Person.FullName, f.Value));
-
       return new ContentResult { Content = string.Join("; ", mails), ContentType = "text/plain" };
     }
 
