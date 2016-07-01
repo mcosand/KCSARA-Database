@@ -14,7 +14,15 @@
     <%= Styles.Render("~/Content/themes/base/jquery-ui") %>
     <%= Styles.Render("~/Content/site-style")%>
     <link href="<%= BundleTable.Bundles.ResolveBundleUrl("~/style/print")%>" rel="stylesheet" type="text/css" media="print" />
-    <%= Scripts.Render("~/script/core")%>
+  <%= Scripts.Render("~/script/core")%>
+  <script>
+          var atoken = <%
+      var user = Page.User as System.Security.Claims.ClaimsPrincipal;
+      var token = user == null ? null : (user.FindFirst("access_token") == null ? null : user.FindFirst("access_token").Value);
+      Response.Write(token == null ? "null" : "'" + token + "'");
+      %>;
+      if (atoken) $.ajaxSetup({ headers: { 'Authorization': 'Bearer ' + atoken }});
+  </script>
     <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
 </head>
 <body>
@@ -42,8 +50,8 @@
         </form>
     </div>
     <script type="text/javascript">
-        $(document).ready(function () {
-            kcsarInit('<%= this.ResolveUrl("~").TrimEnd('/')+'/' %>');
+      $(document).ready(function () {
+      kcsarInit('<%= this.ResolveUrl("~").TrimEnd('/')+'/' %>');
     });
     </script>
 <% if (ViewBag.GoogleAnalytics != null)
