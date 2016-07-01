@@ -1,27 +1,154 @@
-﻿/*
- * Copyright 2016 Matthew Cosand
- */
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
-using Kcsar.Database.Model;
 using Kcsara.Database.Model;
-using System.Data.Entity;
+using Kcsara.Database.Model.Training;
+using Data = Kcsar.Database.Model;
 
 namespace Kcsara.Database.Services.Training
 {
-  public class TrainingRecordsService
+  public interface ITrainingRecordsService
   {
-    private readonly Func<IKcsarContext> _dbFactory;
+    Task<List<TrainingStatus>> RequiredTrainingStatusForMember(Guid memberId, DateTime asOf);
+    Task<Dictionary<Guid, List<TrainingStatus>>> RequiredTrainingStatusForUnit(Guid? unitId, DateTime asOf);
+    Task<List<ParsedKcsaraCsv>> ParseKcsaraCsv(Stream dataStream);
+  }
 
-    public TrainingRecordsService(Func<IKcsarContext> dbFactory)
+  public class TrainingRecordsService : ITrainingRecordsService
+  {
+    private readonly Func<Data.IKcsarContext> _dbFactory;
+
+    /// <summary></summary>
+    public TrainingRecordsService(Func<Data.IKcsarContext> dbFactory)
     {
       _dbFactory = dbFactory;
     }
 
+    /// <summary></summary>
+    /// <param name="unitId"></param>
+    /// <returns></returns>
+    public async Task<List<TrainingStatus>> RequiredTrainingStatusForMember(Guid memberId, DateTime asOf)
+    {
+      using (var db = _dbFactory())
+      {
+        var memberQuery = db.Members.Where(f => f.Id == memberId);
+        var training = await RequiredTrainingStatus(db, memberQuery, asOf);
+
+        List<TrainingStatus> result;
+        if (!training.TryGetValue(memberId, out result))
+        {
+          throw new Exception("Member Not Found");
+        }
+
+        return result;
+      }
+    }
+
+    /// <summary></summary>
+    /// <param name="unitId"></param>
+    /// <returns></returns>
+    public async Task<Dictionary<Guid, List<TrainingStatus>>> RequiredTrainingStatusForUnit(Guid? unitId, DateTime asOf)
+    {
+      using (var db = _dbFactory())
+      {
+        var membershipQuery = db.UnitMemberships.Where(f => f.Status.IsActive && f.EndTime == null || f.EndTime > asOf);
+        if (unitId.HasValue) membershipQuery = membershipQuery.Where(f => f.Unit.Id == unitId.Value);
+
+        var membersQuery = membershipQuery.Select(f => f.Person).Distinct();
+
+        var training = await RequiredTrainingStatus(db, membersQuery, asOf);
+        return training;
+      }
+    }
+
+    /// <summary></summary>
+    /// <param name="db"></param>
+    /// <param name="members"></param>
+    /// <returns></returns>
+    private async Task<Dictionary<Guid, List<TrainingStatus>>> RequiredTrainingStatus(Data.IKcsarContext db, IQueryable<Data.Member> members, DateTime asOf)
+    {
+      // For all the specified members,
+      // - Get their required training (if any)
+      // - Get their completed training (if any)
+      //   - Filter completed training to only required courses
+      // - Return the status along with some extra information needed for later
+      var query = (from m in members
+                   join tr in db.RequiredTraining.Where(f => f.From <= asOf && f.Until > asOf) on m.WacLevel equals tr.WacLevel into group1
+
+                   from required in group1.DefaultIfEmpty()
+                   join cta in db.ComputedTrainingAwards on new { required.CourseId, m.Id } equals new { CourseId = cta.Course.Id, cta.Member.Id } into group2
+
+                   from completed in group2.DefaultIfEmpty()
+
+                   select new
+                   {
+                     Status = new TrainingStatus
+                     {
+                       Course = required == null ? null : new NameIdPair { Id = required.CourseId, Name = required.Course.DisplayName },
+                       Completed = completed.Completed,
+                       Expires = completed.Expiry
+                     },
+                     WacDate = m.WacLevelDate,
+                     Requirement = required,
+                     MemberId = m.Id
+                   });
+
+      var grouped = await query.GroupBy(f => f.MemberId).ToListAsync();
+
+      var withStatus = grouped.Select(f => new
+      {
+        MemberId = f.Key,
+        Courses = f
+            .GroupBy(g => new { WacDate = g.WacDate, CourseId = g.Status.Course == null ? (Guid?)null : g.Status.Course.Id })
+            // in the future there will be multiple "scopes" for required training (federal, state, county, team) and this test will
+            // filter out scopes that the member does not belong to or are not passed as arguments to this method
+            //.Where(g => true)
+            .Select(
+              g =>
+              {
+                var s = g.Select(h => h.Status).FirstOrDefault();
+
+                if (s == null || g.All(h => h.Requirement == null))
+                {
+                  return s;
+                }
+
+                if (s.Completed.HasValue)
+                {
+                  if (s.Expires.HasValue)
+                  {
+                    if (s.Expires.Value < asOf)
+                    {
+                      s.Status = g.Key.WacDate.AddMonths(g.Max(h => h.Requirement.GraceMonths)) > asOf ? Model.Training.ExpirationFlags.ToBeCompleted : Model.Training.ExpirationFlags.Expired;
+                    }
+                    else // isn't expired
+                    {
+                      s.Status = Model.Training.ExpirationFlags.NotExpired;
+                    }
+                  }
+                  else // doesn't expire
+                  {
+                    s.Status = Model.Training.ExpirationFlags.Complete;
+                  }
+                }
+                else // not completed
+                {
+                  s.Status = g.Key.WacDate.AddMonths(g.Max(h => h.Requirement.GraceMonths)) > asOf ? Model.Training.ExpirationFlags.ToBeCompleted : Model.Training.ExpirationFlags.Missing;
+                }
+                return s;
+              })
+      });
+
+      return withStatus.ToDictionary(f => f.MemberId, f => f.Courses.Where(g => g.Course != null).OrderBy(g => g.Course.Name).ToList());
+    }
+
+    /// <summary></summary>
+    /// <param name="dataStream"></param>
+    /// <returns></returns>
     public async Task<List<ParsedKcsaraCsv>> ParseKcsaraCsv(Stream dataStream)
     {
       var result = new List<ParsedKcsaraCsv>();
@@ -77,7 +204,7 @@ namespace Kcsara.Database.Services.Training
 
               if (matches.Count == 1)
               {
-                entry.Member = new NameIdPair(matches[0].Id, matches[0].FullName);
+                entry.Member = new NameIdPair { Id = matches[0].Id, Name = matches[0].FullName };
               }
               else if (matches.Count > 1 || multiple)
               {

@@ -10,7 +10,7 @@ var wacForm;
 $(document).ready(function () {
   wacForm = new ModelTable("#wacTable", "");
   wacForm.canEdit = false;
-  wacForm.getUrl = '<%= Url.Action("GetMemberExpirations", "Training", new { id = Model }) %>';
+  wacForm.getUrl = '<%= Url.Content("~/api2/member/" + Model + "/requiredtraining") %>';
   wacForm.objectType = "expiration";
   wacForm.unpacker = function (data) { return data.Expirations; }
   wacForm.renderer = function (data, row) {

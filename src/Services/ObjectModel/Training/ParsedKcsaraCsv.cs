@@ -3,7 +3,7 @@
  */
 using System;
 
-namespace Kcsara.Database.Model
+namespace Kcsara.Database.Model.Training
 {
   public class ParsedKcsaraCsv
   {
