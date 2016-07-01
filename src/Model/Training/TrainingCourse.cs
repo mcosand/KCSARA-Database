@@ -25,6 +25,8 @@ namespace Kcsar.Database.Model
     public virtual SarUnit Unit { get; set; }
     public virtual ICollection<ComputedTrainingAward> ComputedAwards { get; set; }
     public virtual ICollection<Training> Trainings { get; set; }
+    public virtual ICollection<TrainingRequired> RequiredBy { get; set; }
+
     public string PrerequisiteText { get; set; }
 
     public override string GetReportHtml()

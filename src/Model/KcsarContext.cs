@@ -42,6 +42,7 @@ namespace Kcsar.Database.Model
     public IDbSet<Document> Documents { get; set; }
     public IDbSet<TrainingRoster> TrainingRosters { get; set; }
     public IDbSet<TrainingRule> TrainingRules { get; set; }
+    public IDbSet<TrainingRequired> RequiredTraining { get; set; }
     public IDbSet<SarUnit> Units { get; set; }
     public IDbSet<UnitApplicant> UnitApplicants { get; set; }
     public IDbSet<UnitMembership> UnitMemberships { get; set; }
