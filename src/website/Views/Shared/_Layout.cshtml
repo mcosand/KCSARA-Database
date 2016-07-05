@@ -12,10 +12,19 @@
   <meta content="width=device-width, initial-scale=1, minimum-scale=1, user-scalable=yes" name="viewport">
   <link rel="apple-touch-icon" href="~/apple-touch-icon.png" />
   <title>@ViewData["Title"] - @Strings.DatabaseName</title>
-  <script type="text/javascript">window.appRoot = '@Url.Content("~/")'; var errorUrl = '@Url.RouteUrl("DefaultApi", new { httproute="", Controller = "telemetry", Action="error" })';</script>
+  <script type="text/javascript">window.appRoot = '@Url.Content("~/")'; var errorUrl = '@Url.RouteUrl("DefaultApi", new { httproute = "", Controller = "telemetry", Action = "error" })';</script>
   @Styles.Render("~/Content/bootstrap")
   @Scripts.Render("~/scripts/ng-core")
-  <script type="text/javascript">angular.module('sarDatabase', @Html.ToJson((object)(ViewBag.NgModules ?? new object[0])));</script>
+  <script type="text/javascript">
+    var atoken = @{ 
+        var user = User as System.Security.Claims.ClaimsPrincipal;
+        var token = user == null ? null : (user.FindFirst("access_token") == null ? null : user.FindFirst("access_token").Value);
+        <text>@(new HtmlString(token == null ? "null" : "'" + token + "'"))</text>;
+      };
+      angular.module('sarDatabase', @Html.ToJson((object)(ViewBag.NgModules ?? new object[0]))).run(function($http) {
+        if (atoken) $http.defaults.headers.common.Authorization = 'Bearer ' + atoken;
+      });;
+  </script>
   @Scripts.Render("~/scripts/ng-site")
 
   @RenderSection("head", false)

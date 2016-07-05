@@ -8,10 +8,7 @@ namespace Kcsara.Database.Web.api
   using System.Collections.Generic;
   using System.Linq;
   using System.Linq.Expressions;
-  using System.Net.Http;
-  using System.Threading.Tasks;
   using System.Web.Http;
-  using Database.Model;
   using Database.Services.Training;
   using Kcsara.Database.Web.api.Models;
   using Kcsara.Database.Web.Model;
@@ -266,22 +263,6 @@ namespace Kcsara.Database.Web.api
       db.SaveChanges();
       db.RecalculateTrainingAwards(memberId);
       db.SaveChanges();
-    }
-
-    [HttpPost]
-    [Authorize(Roles = "cdb.trainingeditors")]
-    public async Task<List<ParsedKcsaraCsv>> ParseKcsaraCsv()
-    {
-      var content = await Request.Content.ReadAsMultipartAsync();
-      
-      var file = content.Contents
-                  .Where(g => g.Headers.ContentDisposition.Name.Trim('"') == "file")
-                  .Cast<StreamContent>()
-                  .SingleOrDefault();
-      if (file == null) throw new InvalidOperationException();
-
-      var result = await _trainingRecords.ParseKcsaraCsv(await file.ReadAsStreamAsync());
-      return result;
     }
   }
 }

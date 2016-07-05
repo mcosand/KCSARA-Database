@@ -47,9 +47,9 @@ namespace Kcsara.Database.Web
       myKernel.Bind<IAppSettings>().To<AppSettings>();
       myKernel.Bind<IReportsService>().To<ReportsService>();
       myKernel.Bind<IExtensionProvider>().To<ExtensionProvider>().InSingletonScope();
+      myKernel.Bind<IHost>().ToMethod(context => new SystemWebHost());
+      myKernel.Load(new DIModule());
       myKernel.Get<IExtensionProvider>().Initialize();
-
-      myKernel.Bind<Func<IKcsarContext>>().ToConstant((Func<IKcsarContext>)(() => new KcsarContext()));
 
       myKernel.Bind<TrainingRecordsService>().ToSelf().InSingletonScope();
     }

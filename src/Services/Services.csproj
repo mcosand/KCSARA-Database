@@ -84,6 +84,8 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Spatial, Version=5.6.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Spatial.5.6.4\lib\net40\System.Spatial.dll</HintPath>
       <Private>True</Private>
@@ -97,10 +99,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Authorization\AuthorizationService.cs" />
+    <Compile Include="Authorization\UserInfoService.cs" />
     <Compile Include="AuthService.cs" />
     <Compile Include="DIModule.cs" />
     <Compile Include="EmailService.cs" />
+    <Compile Include="Exceptions\AuthorizationException.cs" />
     <Compile Include="IAuthService.cs" />
+    <Compile Include="IHost.cs" />
+    <Compile Include="ObjectModel\Authorization\UserInfo.cs" />
     <Compile Include="ObjectModel\NameIdPair.cs" />
     <Compile Include="ObjectModel\Training\ParsedKcsaraCsv.cs" />
     <Compile Include="ObjectModel\Training\TrainingStatus.cs" />

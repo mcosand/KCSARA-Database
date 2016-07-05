@@ -21,11 +21,15 @@ namespace Kcsara.Database.Services.Training
   public class TrainingRecordsService : ITrainingRecordsService
   {
     private readonly Func<Data.IKcsarContext> _dbFactory;
+    private readonly IAuthorizationService _authz;
+    private readonly IHost _host;
 
     /// <summary></summary>
-    public TrainingRecordsService(Func<Data.IKcsarContext> dbFactory)
+    public TrainingRecordsService(Func<Data.IKcsarContext> dbFactory, IAuthorizationService authSvc, IHost host)
     {
       _dbFactory = dbFactory;
+      _authz = authSvc;
+      _host = host;
     }
 
     /// <summary></summary>
@@ -33,6 +37,7 @@ namespace Kcsara.Database.Services.Training
     /// <returns></returns>
     public async Task<List<TrainingStatus>> RequiredTrainingStatusForMember(Guid memberId, DateTime asOf)
     {
+      if (!await _authz.AuthorizeAsync(_host.User, memberId, "Read:TrainingRecord@Member")) throw new AuthorizationException();
       using (var db = _dbFactory())
       {
         var memberQuery = db.Members.Where(f => f.Id == memberId);
@@ -53,6 +58,7 @@ namespace Kcsara.Database.Services.Training
     /// <returns></returns>
     public async Task<Dictionary<Guid, List<TrainingStatus>>> RequiredTrainingStatusForUnit(Guid? unitId, DateTime asOf)
     {
+      if (!await _authz.AuthorizeAsync(_host.User, unitId, "Read:TrainingRecord@Unit")) throw new AuthorizationException();
       using (var db = _dbFactory())
       {
         var membershipQuery = db.UnitMemberships.Where(f => f.Status.IsActive && f.EndTime == null || f.EndTime > asOf);
@@ -151,6 +157,8 @@ namespace Kcsara.Database.Services.Training
     /// <returns></returns>
     public async Task<List<ParsedKcsaraCsv>> ParseKcsaraCsv(Stream dataStream)
     {
+      if (!await _authz.AuthorizeAsync(_host.User, null, "Read:TrainingRecord")) throw new AuthorizationException();
+
       var result = new List<ParsedKcsaraCsv>();
 
       using (var db = _dbFactory())

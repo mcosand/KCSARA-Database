@@ -5,6 +5,7 @@ using System.IdentityModel.Tokens;
 using System.IO;
 using System.Web.Http;
 using IdentityServer3.AccessTokenValidation;
+using Kcsara.Database.Services;
 using Kcsara.Database.Services.Training;
 using Microsoft.Owin;
 using Newtonsoft.Json.Converters;
@@ -28,9 +29,9 @@ namespace Kcsara.Database.Api
       log4net.LogManager.GetLogger(typeof(Startup)).Info("Starting ...");
 
       IKernel kernel = new StandardKernel();
+      kernel.Bind<IHost>().ToMethod(context => new OwinHost());
       kernel.Load(new Services.DIModule());
       kernel.Bind<ITrainingRecordsService>().To<TrainingRecordsService>();
-
       JwtSecurityTokenHandler.InboundClaimTypeMap.Clear();
 
       var tokenAuthOptions = new IdentityServerBearerTokenAuthenticationOptions
