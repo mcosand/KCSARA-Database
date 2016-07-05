@@ -107,7 +107,9 @@
     <Compile Include="Exceptions\AuthorizationException.cs" />
     <Compile Include="IAuthService.cs" />
     <Compile Include="IHost.cs" />
+    <Compile Include="Members\MembersService.cs" />
     <Compile Include="ObjectModel\Authorization\UserInfo.cs" />
+    <Compile Include="ObjectModel\Members\MemberSummary.cs" />
     <Compile Include="ObjectModel\NameIdPair.cs" />
     <Compile Include="ObjectModel\Training\ParsedKcsaraCsv.cs" />
     <Compile Include="ObjectModel\Training\TrainingStatus.cs" />

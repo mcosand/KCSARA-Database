@@ -50,8 +50,6 @@ namespace Kcsara.Database.Web
       myKernel.Bind<IHost>().ToMethod(context => new SystemWebHost());
       myKernel.Load(new DIModule());
       myKernel.Get<IExtensionProvider>().Initialize();
-
-      myKernel.Bind<TrainingRecordsService>().ToSelf().InSingletonScope();
     }
 
     private static object kernelLock = new object();

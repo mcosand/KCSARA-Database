@@ -18,12 +18,9 @@ namespace Kcsara.Database.Web.api
   [ModelValidationFilter]
   public class TrainingRecordsController : BaseApiController
   {
-    private readonly TrainingRecordsService _trainingRecords;
-
-    public TrainingRecordsController(TrainingRecordsService trainingRecords, Data.IKcsarContext db, ILog log)
+    public TrainingRecordsController(Data.IKcsarContext db, ILog log)
       : base(db, log)
     {
-      _trainingRecords = trainingRecords;
     }
 
     [HttpGet]
