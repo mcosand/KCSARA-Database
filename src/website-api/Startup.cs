@@ -6,6 +6,7 @@ using System.IO;
 using System.Web.Http;
 using IdentityServer3.AccessTokenValidation;
 using Kcsara.Database.Services;
+using Kcsara.Database.Services.Members;
 using Kcsara.Database.Services.Training;
 using Microsoft.Owin;
 using Newtonsoft.Json.Converters;
@@ -32,6 +33,7 @@ namespace Kcsara.Database.Api
       kernel.Bind<IHost>().ToMethod(context => new OwinHost());
       kernel.Load(new Services.DIModule());
       kernel.Bind<ITrainingRecordsService>().To<TrainingRecordsService>();
+      kernel.Bind<IMembersService>().To<MembersService>();
       JwtSecurityTokenHandler.InboundClaimTypeMap.Clear();
 
       var tokenAuthOptions = new IdentityServerBearerTokenAuthenticationOptions
