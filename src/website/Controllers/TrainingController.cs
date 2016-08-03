@@ -313,13 +313,22 @@ namespace Kcsara.Database.Web.Controllers
       memberships = memberships.Where(um => um.EndTime == null && um.Status.IsActive);
       var members = memberships.Select(f => f.Person).Distinct().OrderBy(f => f.LastName).ThenBy(f => f.FirstName);
 
+      DateTime now = DateTime.Now;
+      DateTime lastYear = now.AddYears(-1);
+      var missionResponse = db.MissionRosters
+        .Where(f => f.TimeIn > lastYear)
+        .Select(f => new { MissionId = f.Mission.Id, PersonId = f.Person.Id })
+        .Distinct()
+        .GroupBy(f => f.PersonId)
+        .ToDictionary(f => f.Key, f => f.Count());
+
       var courses = this.db.GetCoreCompetencyCourses();
 
       
       var file = ExcelService.Create(ExcelFileType.XLSX);
       var sheet = file.CreateSheet(unitShort);
 
-      var headers = new[] { "DEM #", "Last Name", "First Name", "Field Type", "Good Until" }.Union(courses.Select(f => f.DisplayName)).ToArray();
+      var headers = new[] { "DEM #", "Last Name", "First Name", "Field Type", "Missions", "Good Until" }.Union(courses.Select(f => f.DisplayName)).ToArray();
       for (int i = 0; i < headers.Length; i++)
       {
         sheet.CellAt(0, i).SetValue(headers[i]);
@@ -334,7 +343,10 @@ namespace Kcsara.Database.Web.Controllers
         sheet.CellAt(row, 2).SetValue(member.FirstName);
         sheet.CellAt(row, 3).SetValue(member.WacLevel.ToString());
 
-        int goodColumn = 4;
+        int missionCount;
+        sheet.CellAt(row, 4).SetValue(missionResponse.TryGetValue(member.Id, out missionCount) ? missionCount : 0);
+
+        int goodColumn = 5;
         int col = goodColumn + 1;
 
         DateTime goodUntil = DateTime.MaxValue;
