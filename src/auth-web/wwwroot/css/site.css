@@ -1,0 +1,53 @@
+﻿@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  /* IE10+ CSS styles go here */
+  [flex]
+   { flex: 1 1 auto; }
+}
+
+@font-face {
+  font-family: 'FontAwesome';
+  src: url('../lib/font-awesome/fonts/fontawesome-webfont.eot?v=4.5.0');
+  src: url('../lib/font-awesome/fonts/fontawesome-webfont.eot?#iefix&v=4.5.0') format('embedded-opentype'), url('../lib/font-awesome/fonts/fontawesome-webfont.woff2?v=4.5.0') format('woff2'), url('../lib/font-awesome/fonts/fontawesome-webfont.woff?v=4.5.0') format('woff'), url('../lib/font-awesome/fonts/fontawesome-webfont.ttf?v=4.5.0') format('truetype'), url('../lib/font-awesome/fonts/fontawesome-webfont.svg?v=4.5.0#fontawesomeregular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.alert {
+  color: #dd2c00;
+  background-color: #f2dede;
+  border-color: #ebccd1;
+  padding: 15px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+.navbar-toggle {
+  min-width: 0;
+}
+
+.ng-cloak {
+  display: none;
+}
+
+.hidden {
+  display: none;
+}
+
+md-input-container {
+  margin-bottom: 0;
+}
+
+.text-danger {
+  color: #DD2C00;
+}
+
+md-card md-card-title {
+  flex: 0 0 auto;
+  padding-bottom:8px;
+}
+  md-card md-card-title.bordered {
+    border-bottom: solid 2px rgb(243,156,18)
+  }
+
+
+

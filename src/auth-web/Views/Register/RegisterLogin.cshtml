@@ -1,0 +1,65 @@
+﻿
+@{
+  ViewBag.Title = "Register";
+  Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Register Login</h2>
+<div layout="row">
+<div layout="column" ng-controller="RegisterLoginCtrl" flex-lg="50" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.Email))">
+  <p>Welcome @ViewBag.Name!</p>
+  <p>
+    The external login you have used to log into this site is not one that we recognize. Please take a few moments to help us
+    verify your access to this site.
+  </p>
+  <p>
+    Use the form to enter your email address. This address should have already been registered by your unit's administrator.
+    We'll send a verification code to this address and once you enter it in the form below you'll be ready to go!
+  </p>
+
+  <div class="step">
+    <div>
+      <div class="circle">1</div>
+      <div class="line"></div>
+    </div>
+    <div>
+      <div class="title">Send Code to Email</div>
+      <div class="body">
+        <small><i ng-if="emailForm.email.$error.server" class="fa fa-asterisk text-danger"> </i>This address needs to be already entered in the database by your unit's administrator.</small>
+        <form name="emailForm" method="post" flex="50" layout="column" layout-align="start start" novalidate ng-submit="sendCode()">
+          <md-input-container style="width:15em">
+            <label>Email</label>
+            <input name="email" type="email" ng-model-options="{'updateOn': 'blur'}" ng-readonly="sending || codeSent" ng-model="model.email" autocomplete="off" required server-error>
+            <div ng-messages="emailForm.email.$error" ng-if="emailForm.email.$invalid && (emailForm.email.$touched || emailForm.$submitted)">
+              <div ng-message="server" ng-show="emailForm.email.$error.server">{{serverErrors.email}}</div>
+              <div ng-message="required" ng-show="emailForm.email.$error.required">Email is required.</div>
+            </div>
+          </md-input-container>
+          <md-button type="submit" ng-disabled="sending || codeSent" class="md-raised md-primary">Send Code<i ng-class="{hidden: !sending}" class="fa fa-fw fa-spin fa-spinner"></i></md-button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="step">
+    <div>
+      <div class="circle">2</div>
+      <div class="line"></div>
+    </div>
+    <div>
+      <div class="title">Enter Verification Code</div>
+      <div class="body">
+        <form name="verifyForm" method="post" flex="60" layout="column" layout-align="start start" novalidate ng-submit="verify()">
+          <md-input-container style="width:15em">
+            <label>Verification Code</label>
+            <input name="code" type="text" ng-model="model.code" ng-disabled="!codeSent" autocomplete="off" required server-error>
+            <div ng-messages="verifyForm.code.$error" ng-if="verifyForm.code.$invalid && (verifyForm.code.$touched || verifyForm.$submitted)">
+              <div ng-message="server" ng-show="verifyForm.code.$error.server">{{serverErrors.code}}</div>
+              <div ng-message="required" ng-show="emailForm.email.$error.required">Verification code is required.</div>
+            </div>
+          </md-input-container>
+          <md-button type="submit" ng-disabled="verifying || !codeSent" class="md-raised md-primary">Verify Code<i ng-class="{hidden: !verifying}" class="fa fa-fw fa-spin fa-spinner"></i></md-button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div></div>
