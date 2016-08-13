@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using IdentityServer3.Core;
 using IdentityServer3.Core.Extensions;
 using IdentityServer3.Core.Models;
@@ -38,7 +39,7 @@ namespace Sar.Auth.Services
       _log = log.ForContext<SarUserService>();
     }
 
-    public async Task<object> GetUser(string username)
+    public async Task<object> GetUserAsync(string username)
     {
       using (var db = _dbFactory())
       {
@@ -50,6 +51,82 @@ namespace Sar.Auth.Services
           Username = user.Username
         };
       }
+    }
+
+    public async Task<object> CreateUserAsync(ProvisionUserRequest info)
+    {
+      if (string.IsNullOrWhiteSpace(info.Username)) throw new ArgumentException("username is required");
+      if (string.IsNullOrWhiteSpace(info.Email)) throw new ArgumentException("email is required");
+
+      var existing = await GetUserAsync(info.Username);
+      if (existing != null) {
+        _log.Warning("Tried to create user " + info.Username + " but it already exists");
+        throw new HttpException(400, "Username already exists");
+      }
+
+      using (var db = _dbFactory())
+      {
+        var salt = GetSalt();
+        var hashed = string.IsNullOrWhiteSpace(info.Password)
+                      ? null
+                      : salt + HashPassword(info.Password, salt);
+
+        var accountRow = new AccountRow
+        {
+          Id = Guid.NewGuid(),
+          Username = info.Username,
+          Email = info.Email,
+          FirstName = info.FirstName,
+          LastName = info.LastName,
+          PasswordHash = hashed,
+          PasswordDate = DateTime.UtcNow
+        };
+
+        db.Accounts.Add(accountRow);
+        await db.SaveChangesAsync();
+        _log.Information("Created account {account}", JsonConvert.SerializeObject(accountRow));
+
+        await _emailService.SendEmailAsync(info.Email, "KCSARA Account Created", "Your King County Search and Rescue account has been created.\r\n\r\nUsername: " + info.Username);
+        // Send mail to user
+      }
+      return await GetUserAsync(info.Username);
+    }
+
+    public async Task LinkMember(LinkMemberRequest body)
+    {
+      if (body == null) throw new ArgumentNullException(nameof(body));
+      if (string.IsNullOrWhiteSpace(body.Username)) throw new ArgumentException("username is required");
+      if (body.MemberId == Guid.Empty) throw new ArgumentException("memberid is required");
+
+      using (var db = _dbFactory())
+      {
+        var accountRow = await db.Accounts.FirstOrDefaultAsync(f => f.Username == body.Username);
+        if (accountRow == null)
+        {
+          _log.Information("Can't find account with username {username}", body.Username);
+          throw new NotFoundException("not found", "Account", body.Username);
+        }
+
+        accountRow.MemberId = body.MemberId;
+        await db.SaveChangesAsync();
+        _log.Information("Linked account {username} to member {memberId}", body.Username, body.MemberId);
+      }
+    }
+
+    private static string GetSalt()
+    {
+      return GetSalt(PasswordSaltLength);
+    }
+
+    private static string GetSalt(int maximumSaltLength)
+    {
+      var salt = new byte[maximumSaltLength * 3 / 4];
+      using (var random = new RNGCryptoServiceProvider())
+      {
+        random.GetNonZeroBytes(salt);
+      }
+
+      return Convert.ToBase64String(salt);
     }
 
     public override async Task AuthenticateExternalAsync(ExternalAuthenticationContext context)
@@ -331,7 +408,7 @@ namespace Sar.Auth.Services
         await db.SaveChangesAsync();
 
         _log.Information(LogStrings.SendingVerifyCode, email, provider, providerUserId);
-        await _emailService.SendEmail(email, Strings.VerifyMessageSubject, string.Format(Strings.VerifyMessageHtml, verification.Code));
+        await _emailService.SendEmailAsync(email, Strings.VerifyMessageSubject, string.Format(Strings.VerifyMessageHtml, verification.Code));
 
         return ProcessVerificationResult.Success;
       }

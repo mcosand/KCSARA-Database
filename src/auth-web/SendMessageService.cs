@@ -6,7 +6,7 @@ namespace Sar.Services
 {
   public interface ISendEmailService
   {
-    Task SendEmail(string to, string subject, string message, bool html = true);
+    Task SendEmailAsync(string to, string subject, string message, bool html = true);
     Task SendEmail(IEnumerable<string> to, string subject, string message, bool html = true);
   }
   public interface ISendTextService
@@ -22,7 +22,7 @@ namespace Sar.Services
       _host = host;
     }
 
-    public async Task SendEmail(string to, string subject, string message, bool html = true)
+    public async Task SendEmailAsync(string to, string subject, string message, bool html = true)
     {
       await SendEmail(new [] { to }, subject, message, html);
     }
