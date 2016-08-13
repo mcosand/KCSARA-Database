@@ -29,6 +29,9 @@ namespace Sar.Auth.Services
     private readonly IHost _host;
     private readonly ILogger _log;
 
+    private Dictionary<string, bool> unitStatusTypes = null;
+    private object statusTypeLock = new object();
+
     public SarUserService(Func<IAuthDbContext> dbFactory, IMemberInfoService memberService, IRolesService roles, ISendEmailService email, IHost host, ILogger log)
     {
       _memberService = memberService;
@@ -228,6 +231,18 @@ namespace Sar.Auth.Services
       List<Claim> claims = new List<Claim>();
       claims.Add(new Claim(Constants.ClaimTypes.ZoneInfo, "America/Los_Angeles"));
 
+      if (unitStatusTypes == null)
+      {
+        var data = await _memberService.GetStatusToAccountMap();
+        lock (statusTypeLock)
+        {
+          if (unitStatusTypes == null)
+          {
+            unitStatusTypes = data;
+          }
+        }
+      }
+
       using (var db = _dbFactory())
       {
         var accountId = new Guid(context.Subject.GetSubjectId());
@@ -246,12 +261,12 @@ namespace Sar.Auth.Services
 
           JsonSerializerSettings settings = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
 
-          var units = member.Units.Select(f => JsonConvert.SerializeObject(new { f.Id, f.Name }, settings));
+          var units = member.Units.Select(f => JsonConvert.SerializeObject(new { f.Org.Id, f.Org.Name }, settings));
           foreach (var unit in units)
           {
             claims.Add(new Claim(Scopes.UnitsClaim, unit));
           }
-          if (units.Any())
+          if (member.Units.Any(f => unitStatusTypes[(f.Org.Id.ToString() + f.Status).ToLowerInvariant()]))
           {
             claims.Add(new Claim(Scopes.RolesClaim, "cdb.users"));
           }

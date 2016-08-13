@@ -23,6 +23,17 @@ namespace Sar.Auth.Services
       _host = host;
     }
 
+    public async Task<Dictionary<string, bool>> GetStatusToAccountMap()
+    {
+      string token = await GetApiToken();
+
+      HttpClient client = new HttpClient();
+      client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await GetApiToken());
+      string typesJson = await client.GetStringAsync(_host.GetConfig("db-api:root") + "/units/statustypes");
+
+      var types = JsonConvert.DeserializeObject<UnitStatusType[]>(typesJson);
+      return types.ToDictionary(f => (f.Unit.Id.ToString() + f.Name).ToLowerInvariant(), f => f.GetsAccount);
+    }
 
     public async Task<IList<MemberInfo>> FindMembersByEmail(string email)
     {
@@ -62,7 +73,7 @@ namespace Sar.Auth.Services
 
       return new Member
       {
-        Units = info.Units.Select(f => units[f.Id]),
+        Units = info.Units.Select(f => new OrganizationMembership { Org = units[f.Unit.Id], Status = f.Status }),
         Id = info.Id,
         FirstName = info.First,
         LastName = info.Last,

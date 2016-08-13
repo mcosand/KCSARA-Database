@@ -12,5 +12,6 @@ namespace Sar.Auth
   {
     Task<IList<MemberInfo>> FindMembersByEmail(string email);
     Task<Member> GetMember(Guid memberId);
+    Task<Dictionary<string, bool>> GetStatusToAccountMap();
   }
 }

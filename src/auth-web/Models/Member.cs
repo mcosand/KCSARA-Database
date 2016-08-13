@@ -11,7 +11,7 @@ namespace Sar.Auth
   {
     public Member()
     {
-      Units = new List<Organization>();
+      Units = new List<OrganizationMembership>();
     }
 
     public Guid Id { get; set; }
@@ -26,6 +26,6 @@ namespace Sar.Auth
 
     public bool IsActive {  get { return Units != null && Units.Count() > 0;  } }
 
-    public IEnumerable<Organization> Units { get; set; }
+    public IEnumerable<OrganizationMembership> Units { get; set; }
   }
 }
