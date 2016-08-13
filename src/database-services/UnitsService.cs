@@ -16,6 +16,7 @@ namespace Kcsara.Database.Services
     Task<IEnumerable<Unit>> List();
     Task<IEnumerable<UnitMembership>> ListMemberships(Expression<Func<UnitMembership, bool>> predicate);
     Task<UnitMembership> CreateMembership(UnitMembership membership);
+    Task<IEnumerable<UnitStatusType>> ListStatusTypes(Guid? unitId = null);
   }
 
   public class UnitsService : IUnitsService
@@ -111,6 +112,26 @@ namespace Kcsara.Database.Services
         await db.SaveChangesAsync();
 
         return (await ListMemberships(f => f.Id == membershipRow.Id)).Single();
+      }
+    }
+
+    public async Task<IEnumerable<UnitStatusType>> ListStatusTypes(Guid? unitId = null)
+    {
+      if (!await _authz.AuthorizeAsync(_host.User, null, "Read:UnitStatusType")) throw new AuthorizationException();
+
+      using (var db = _dbFactory())
+      {
+        IQueryable<Data.UnitStatus> query = db.UnitStatusTypes;
+        if (unitId.HasValue) query = query.Where(f => f.Unit.Id == unitId.Value);
+
+        return (await query.Select(f => new UnitStatusType
+        {
+          Id = f.Id,
+          Unit = new NameIdPair { Id = f.Unit.Id, Name = f.Unit.DisplayName },
+          IsActive = f.IsActive,
+          GetsAccount = f.GetsAccount,
+          Name = f.StatusName
+        }).ToListAsync());
       }
     }
   }

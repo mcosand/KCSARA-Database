@@ -52,7 +52,7 @@ namespace Kcsara.Database.Services.Members
       if (!await _authz.AuthorizeAsync(_host.User, id, "Read:Member")) throw new AuthorizationException();
       using (var db = _dbFactory())
       {
-        var list = (await SummariesWithUnits<MemberInfo>(db.Members.Where(f => f.Id == id), (row, member) => {
+        var list = (await SummariesWithMemberships<MemberInfo>(db.Members.Where(f => f.Id == id), (row, member) => {
           member.First = row.FirstName;
           member.Last = row.LastName;
         })).ToArray();
@@ -96,7 +96,7 @@ namespace Kcsara.Database.Services.Members
 
       using (var db = _dbFactory())
       {
-        return await SummariesWithUnits<MemberSummary>(db.Members.Where(f => f.DEM == id || f.DEM == "SR" + id));
+        return await SummariesWithMemberships<MemberSummary>(db.Members.Where(f => f.DEM == id || f.DEM == "SR" + id));
       }
     }
 
@@ -118,7 +118,7 @@ namespace Kcsara.Database.Services.Members
 
       using (var db = _dbFactory())
       {
-        return await SummariesWithUnits<MemberSummary>(db.Members.Where(f => f.ContactNumbers.Any(g => SqlFunctions.PatIndex(pattern, g.Value) > 0)));
+        return await SummariesWithMemberships<MemberSummary>(db.Members.Where(f => f.ContactNumbers.Any(g => SqlFunctions.PatIndex(pattern, g.Value) > 0)));
       }
     }
 
@@ -130,7 +130,7 @@ namespace Kcsara.Database.Services.Members
       if (!await _authz.AuthorizeAsync(_host.User, null, "Read:Member")) throw new AuthorizationException();
       using (var db = _dbFactory())
       {
-        return await SummariesWithUnits<MemberSummary>(db.Members.Where(f => f.ContactNumbers.Any(g => g.Value == id && g.Type == "email")));
+        return await SummariesWithMemberships<MemberSummary>(db.Members.Where(f => f.ContactNumbers.Any(g => g.Value == id && g.Type == "email")));
       }
     }
 
@@ -139,7 +139,7 @@ namespace Kcsara.Database.Services.Members
     /// <param name="query"></param>
     /// <param name="modify"></param>
     /// <returns></returns>
-    internal static async Task<IEnumerable<T>> SummariesWithUnits<T>(IQueryable<Data.Member> query, Action<Data.Member, T> modify = null)
+    internal static async Task<IEnumerable<T>> SummariesWithMemberships<T>(IQueryable<Data.Member> query, Action<Data.Member, T> modify = null)
       where T : MemberSummary, new()
     {
       DateTime cutoff = DateTime.Now;
@@ -150,11 +150,10 @@ namespace Kcsara.Database.Services.Members
           Member = f,
           Units = f.Memberships
                    .Where(g => (g.EndTime == null || g.EndTime > cutoff) && g.Status.IsActive)
-                   .Select(g => g.Unit)
-                   .Select(g => new NameIdPair
+                   .Select(g => new UnitMembershipSummary
                    {
-                     Id = g.Id,
-                     Name = g.DisplayName
+                     Unit = new NameIdPair { Id = g.Unit.Id, Name = g.Unit.DisplayName },
+                     Status = g.Status.StatusName
                    }).Distinct()
         })
         .OrderBy(f => f.Member.LastName).ThenBy(f => f.Member.FirstName)
