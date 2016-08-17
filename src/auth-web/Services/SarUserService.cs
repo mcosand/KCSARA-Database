@@ -278,6 +278,11 @@ namespace Sar.Auth.Services
           {
             claims.Add(new Claim(Constants.ClaimTypes.Profile, string.Format(profileTemplate, member.Id)));
           }
+
+          if (!string.IsNullOrWhiteSpace(member.PhotoUrl))
+          {
+            claims.Add(new Claim("photo", member.PhotoUrl));
+          }
         }
 
         var roles = _roles.RolesForAccount(account.Id);
@@ -292,7 +297,7 @@ namespace Sar.Auth.Services
         claims.Add(new Claim(Constants.ClaimTypes.GivenName, account.FirstName));
         claims.Add(new Claim(Constants.ClaimTypes.FamilyName, account.LastName));
         claims.Add(new Claim(Constants.ClaimTypes.Name, account.FirstName + " " + account.LastName));
-
+        
 
         context.IssuedClaims = context.AllClaimsRequested ? claims : claims.Where(f => context.RequestedClaimTypes.Contains(f.Type));
       }
