@@ -179,6 +179,7 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnyHostCorsPolicyAttribute.cs" />
     <Compile Include="Controllers\Members\MemberContactsController.cs" />
     <Compile Include="Controllers\Members\MembersController.cs" />
     <Compile Include="Controllers\Training\TrainingRecordsController.cs" />

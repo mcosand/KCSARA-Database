@@ -30,6 +30,7 @@ namespace Kcsara.Database.Api.Controllers
 
     [HttpGet]
     [Route("members/{id}")]
+    [AnyHostCorsPolicy]
     public async Task<MemberInfo> Get(Guid id)
     {
       return await _members.GetMember(id);

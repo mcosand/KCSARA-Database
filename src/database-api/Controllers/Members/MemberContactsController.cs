@@ -18,6 +18,7 @@ namespace Kcsara.Database.Api.Controllers.Members
 
     [HttpGet]
     [Route("members/{memberId}/contacts")]
+    [AnyHostCorsPolicy]
     public async Task<IEnumerable<PersonContact>> ListContacts(Guid memberId)
     {
       return await _members.ListMemberContactsAsync(memberId);
@@ -25,6 +26,7 @@ namespace Kcsara.Database.Api.Controllers.Members
 
     [HttpPost]
     [Route("members/{memberId}/contacts")]
+    [AnyHostCorsPolicy]
     public async Task<PersonContact> CreateContact(Guid memberId, [FromBody] PersonContact contact)
     {
       return await _members.AddContact(memberId, contact);
