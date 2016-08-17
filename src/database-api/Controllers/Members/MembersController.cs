@@ -36,6 +36,14 @@ namespace Kcsara.Database.Api.Controllers
       return await _members.GetMember(id);
     }
 
+    [HttpGet]
+    [Route("members/{memberId}/emergencycontacts/count")]
+    [AnyHostCorsPolicy]
+    public async Task<object> EmergencyContactStatus(Guid memberId)
+    {
+      return new { Count = await _members.GetEmergencyContactCountAsync(memberId) };
+    }
+
     [HttpPost]
     [Route("members")]
     public async Task<MemberInfo> Provision(ProvisionMemberInfo body)

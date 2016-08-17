@@ -19,6 +19,7 @@ namespace Kcsara.Database.Services.Training
     Task<List<TrainingStatus>> RequiredTrainingStatusForMember(Guid memberId, DateTime asOf);
     Task<Dictionary<Guid, List<TrainingStatus>>> RequiredTrainingStatusForUnit(Guid? unitId, DateTime asOf);
     Task<List<ParsedKcsaraCsv>> ParseKcsaraCsv(Stream dataStream);
+    Task<List<TrainingStatus>> RecordsForMember(Guid memberId, DateTime now);
   }
 
   public class TrainingRecordsService : ITrainingRecordsService
@@ -93,7 +94,7 @@ namespace Kcsara.Database.Services.Training
 
                    from completed in group2.DefaultIfEmpty()
 
-                   select new
+                   select new CompletedCourseInfo
                    {
                      Status = new TrainingStatus
                      {
@@ -108,11 +109,16 @@ namespace Kcsara.Database.Services.Training
 
       var grouped = await query.GroupBy(f => f.MemberId).ToListAsync();
 
-      var withStatus = grouped.Select(f => new
+      return ComputeTrainingStatus(grouped, asOf);
+    }
+
+    private static Dictionary<Guid, List<TrainingStatus>> ComputeTrainingStatus(List<IGrouping<Guid, CompletedCourseInfo>> grouped, DateTime asOf)
+    {
+      var withStatus = grouped.Select(f => new MemberAndStatus
       {
         MemberId = f.Key,
         Courses = f
-            .GroupBy(g => new { WacDate = g.WacDate, CourseId = g.Status.Course == null ? (Guid?)null : g.Status.Course.Id })
+            .GroupBy(g => new WacDateAndCourse { WacDate = g.WacDate, CourseId = g.Status.Course == null ? (Guid?)null : g.Status.Course.Id })
             // in the future there will be multiple "scopes" for required training (federal, state, county, team) and this test will
             // filter out scopes that the member does not belong to or are not passed as arguments to this method
             //.Where(g => true)
@@ -153,6 +159,26 @@ namespace Kcsara.Database.Services.Training
       });
 
       return withStatus.ToDictionary(f => f.MemberId, f => f.Courses.Where(g => g.Course != null).OrderBy(g => g.Course.Name).ToList());
+    }
+
+    class WacDateAndCourse
+    {
+      public DateTime WacDate { get; set; }
+      public Guid? CourseId { get; set; }
+    }
+
+    class MemberAndStatus
+    {
+      public Guid MemberId { get; set; }
+      public IEnumerable<TrainingStatus> Courses { get; set; }
+    }
+
+    class CompletedCourseInfo
+    {
+      public TrainingStatus Status { get; set; }
+      public DateTime WacDate { get; set; }
+      public Data.TrainingRequired Requirement { get; set; }
+      public Guid MemberId { get; set; }
     }
 
     /// <summary></summary>
@@ -249,6 +275,48 @@ namespace Kcsara.Database.Services.Training
         }
       }
       return result;
+    }
+
+    public async Task<List<TrainingStatus>> RecordsForMember(Guid memberId, DateTime asOf)
+    {
+      if (!await _authz.AuthorizeAsync(_host.User, memberId, "Read:TrainingRecord@Member")) throw new AuthorizationException();
+      using (var db = _dbFactory())
+      {
+        var memberQuery = db.Members.Where(f => f.Id == memberId);
+        var member = memberQuery.Single();
+
+        var wacDate = member.WacLevelDate;
+
+        var courses = await db.TrainingCourses
+                                 .ToDictionaryAsync(f => f.Id, f => f);
+        var requirements = await db.RequiredTraining
+                                    .Where(f => f.From <= asOf && f.Until > asOf && f.WacLevel == member.WacLevel)
+                                    .ToDictionaryAsync(f => f.Id, f => f);
+
+        var list = await memberQuery.SelectMany(f => f.ComputedAwards).Select(f => new CompletedCourseInfo
+        {
+          Status = new TrainingStatus
+          {
+            Course = new NameIdPair { Id = f.Course.Id, Name = f.Course.DisplayName },
+            Completed = f.Completed,
+            Expires = f.Expiry
+          },
+          WacDate = wacDate,
+          MemberId = f.Member.Id
+        }).ToListAsync();
+
+        list.ForEach(item =>
+        {
+          Data.TrainingRequired required;
+          if (!requirements.TryGetValue(item.Status.Course.Id, out required))
+          {
+            required = new Data.TrainingRequired { Course = courses[item.Status.Course.Id], CourseId = item.Status.Course.Id, GraceMonths = 0, JustOnce = false };
+          }
+          item.Requirement = required;
+        });
+
+        return list.Any() ? ComputeTrainingStatus(list.GroupBy(f => f.MemberId).ToList(), asOf)[memberId] : new List<TrainingStatus>();
+      }
     }
   }
 }

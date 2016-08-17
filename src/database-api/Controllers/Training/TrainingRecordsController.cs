@@ -20,6 +20,13 @@ namespace Kcsara.Database.Api.Controllers
     }
 
     [HttpGet]
+    [Route("members/{memberId}/trainingrecords")]
+    public async Task<List<TrainingStatus>> MemberRecords(Guid memberId)
+    {
+      return await _records.RecordsForMember(memberId, DateTime.Now);
+    }
+
+    [HttpGet]
     [Route("members/{memberId}/requiredtraining")]
     public async Task<List<TrainingStatus>> MemberRequired(Guid memberId)
     {

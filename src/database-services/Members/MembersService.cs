@@ -25,6 +25,7 @@ namespace Kcsara.Database.Services.Members
     Task<MemberInfo> CreateMember(MemberInfo body);
     Task AddMembership(Guid id, Guid statusId);
     Task<PersonContact> AddContact(Guid id, PersonContact emailContact);
+    Task<int> GetEmergencyContactCountAsync(Guid memberId);
   }
 
   public class MembersService : IMembersService
@@ -52,9 +53,11 @@ namespace Kcsara.Database.Services.Members
       if (!await _authz.AuthorizeAsync(_host.User, id, "Read:Member")) throw new AuthorizationException();
       using (var db = _dbFactory())
       {
-        var list = (await SummariesWithMemberships<MemberInfo>(db.Members.Where(f => f.Id == id), (row, member) => {
+        var list = (await SummariesWithMemberships<MemberInfo>(db.Members.Where(f => f.Id == id), (row, member) =>
+        {
           member.First = row.FirstName;
           member.Last = row.LastName;
+          member.BackgroundKnown = row.BackgroundDate.HasValue;
         })).ToArray();
         if (list.Length == 0) return null;
 
@@ -208,6 +211,8 @@ namespace Kcsara.Database.Services.Members
 
     public async Task<PersonContact> AddContact(Guid id, PersonContact data)
     {
+      if (!await _authz.AuthorizeAsync(_host.User, id, "Create:MemberContact@Member")) throw new AuthorizationException();
+
       Guid newId;
       using (var db = _dbFactory())
       {
@@ -228,6 +233,16 @@ namespace Kcsara.Database.Services.Members
       }
 
       return (await _ListMemberContactsAsync(id, f => f.Id == newId)).First();
+    }
+
+    public async Task<int> GetEmergencyContactCountAsync(Guid memberId)
+    {
+      if (!await _authz.AuthorizeAsync(_host.User, memberId, "Read:Member")) throw new AuthorizationException();
+
+      using (var db = _dbFactory())
+      {
+        return await db.Members.Where(f => f.Id == memberId).Select(f => f.EmergencyContacts.Count).SingleOrDefaultAsync();
+      }
     }
   }
 }
