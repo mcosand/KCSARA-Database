@@ -121,23 +121,6 @@ namespace Kcsar.Database.Model
       return active;
     }
 
-
-    private ObjectContext comparisonContext = null;
-    protected ObjectContext ComparisonContext
-    {
-      get
-      {
-        if (this.comparisonContext == null)
-        {
-          var dbContext = new KcsarContext(this.Database.Connection.ConnectionString, this.Database.Log);
-          this.comparisonContext = ((IObjectContextAdapter)dbContext).ObjectContext;
-      //    this.comparisonContext.ContextOptions.ProxyCreationEnabled = false;
-      //    this.comparisonContext.ContextOptions.LazyLoadingEnabled = true;
-        }
-        return this.comparisonContext;
-      }
-    }
-
     private void AuditChange(ObjectStateEntry entry)
     {
       var obj = entry.Entity as IModelObject;
@@ -175,9 +158,7 @@ namespace Kcsar.Database.Model
           break;
 
         case EntityState.Deleted:
-          object original;
-          this.ComparisonContext.TryGetObjectByKey(entry.EntityKey, out original);
-          audit.Comment = ((IModelObject)original).GetReportHtml();
+          audit.Comment = "Deleted Object";
           break;
 
         default:
