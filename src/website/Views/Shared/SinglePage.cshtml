@@ -1,0 +1,229 @@
+﻿@{
+  Layout = null;
+}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" ng-app="sar-database">
+<head>
+  <base href="@Url.Content("~/")"></base>
+  <!-- Force latest IE rendering engine or ChromeFrame if installed -->
+  <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><![endif]-->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="apple-touch-icon" href="~/apple-touch-icon.png" />
+  <title>@ViewData["Title"] - @Strings.DatabaseName</title>
+  <script type="text/javascript">window.appRoot = '@Url.Content("~/")'; var errorUrl = '@Url.RouteUrl("DefaultApi", new { httproute = "", Controller = "telemetry", Action = "error" })';</script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="/assets/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+  @Styles.Render("~/assets/am.css")
+</head>
+<body layout="column" flex ng-controller="FrameCtrl" ng-cloak>
+  <div ng-controller="little"></div>
+  <md-toolbar class="">
+    <div class="md-toolbar-tools">
+      <md-button class="md-icon-button" aria-label="Main Menu" ng-click="showMainMenu()" hide-gt-sm ng-show="user.isLoggedIn">
+        <md-icon md-font-icon="fa fa-bars fa-lg"></md-icon>
+      </md-button>
+      <h2>
+        <span hide-xs>King County Search and Rescue</span>
+        <span hide-gt-xs>King County SAR</span>
+      </h2>
+      <span flex></span>
+      <md-button ng-show="user.isLoggedIn" class="md-icon-button" aria-label="Search" ng-click="search.showSearchMenu()">
+        <md-icon>search</md-icon>
+      </md-button>
+      <md-button class="md-icon-button" aria-label="Login Settings" ng-click="auth.showMenu()">
+        <md-icon ng-style="{opacity : (user.isLoggedIn ? '1' : '0.3')}">account_circle</md-icon>
+      </md-button>
+    </div>
+  </md-toolbar>
+  <div layout="row" layout-align=" stretch" flex>
+    <md-sidenav class="site-sidenav md-sidenav-left md-whiteframe-z2"
+                md-is-open="mainNavOpen"
+                md-component-id="mainMenu"
+                hide-print
+                md-is-locked-open="$mdMedia('gt-sm')"
+                ng-show="user.isLoggedIn">
+      <md-content flex role="navigation">
+        <ul class="main-menu">
+          <li ng-repeat="section in menu.sections" class="parent-list-item">
+            <h2 class="menu-heading md-subhead" ng-if="section.type === 'heading'" id="heading_{{ section.name}}">
+              {{section.name}}
+            </h2>
+            <menu-link section="section" ng-if="section.type === 'link' && !section.hidden"></menu-link>
+            <menu-toggle section="section" ng-if="section.type === 'toggle' && !section.hidden"></menu-toggle>
+          </li>
+        </ul>
+      </md-content>
+    </md-sidenav>
+
+    <div layout="column" flex>
+      <ui-view flex>
+        <md-content layout-padding flex>
+          Loading ...
+        </md-content>
+      </ui-view>
+
+      @*<footer class="main-footer">
+          <strong>King County Search and Rescue Association</strong>
+        </footer>*@
+    </div>
+    <md-sidenav flex="nogrow" class="md-sidenav-right"
+                md-is-open="auth.menuOpen"
+                md-component-id="authMenu"
+                md-whiteframe="4">
+      <md-content layout="column" layout-align="start stretch">
+        <md-list-item class="md-2-line" ng-click="null" ng-show="user.isLoggedIn">
+          <img ng-src="{{user.picture || '/content/auth/members/none.jpg'}}" class="md-avatar" alt="{{item.name}}" />
+          <div class="md-list-item-text" layout="column">
+            <h3>{{ user.name }}</h3>
+            <p>{{ user.email }}</p>
+          </div>
+        </md-list-item>
+        <md-button ng-show="user.isLoggedIn" class="md-raised" ng-click="doSignout()">Logout</md-button>
+        <md-button ng-hide="user.isLoggedIn" class="md-raised" ng-click="doSignin()">Login</md-button>
+      </md-content>
+    </md-sidenav>
+    <md-sidenav flex="nogrow" class="md-sidenav-right"
+                md-is-open="search.menuSearchOpen"
+                md-component-id="searchMenu"
+                md-whiteframe="4">
+      <md-content>
+        <md-autocomplete md-selected-item="search.selectedItem"
+                         md-search-text-change="search.searchTextChange(searchText)"
+                         md-search-text="search.searchText"
+                         md-selected-item-change="search.selectedItemChange(item)"
+                         md-items="item in search.querySearch(search.searchText)"
+                         md-item-text="item.summary.name"
+                         md-min-length="0"
+                         placeholder="Search members or missions"
+                         md-menu-class="autocomplete-custom-template"
+                         md-autofocus="true"
+                         md-delay="300">
+          <md-item-template>
+            <div layout="row" layout-align="start center" style="padding-top:5px; padding-bottom:5px;" flex>
+              <div ng-show="item.type == 'Mission'" class="search-img" ng-style="{'background-color': 'pink' }"></div>
+              <div ng-show="item.type == 'Member'" class="search-img" ng-style="{'background-image': 'url(&quot;' + window.appRoot + 'content/auth/members/' + (item.summary.photo ? item.summary.photo : 'none.jpg') + '&quot;)', opacity: item.summary.units.length ? 1.0 : 0.7 }"></div>
+              <div style="line-height:1em" flex>
+                <strong>{{item.summary.name}}</strong>
+                <div ng-show="item.type == 'Mission'">
+                  {{item.summary.start | date:'yyyy-MM-dd'}}<br />
+                  DEM# {{item.summary.stateNumber}}
+                </div>
+                <div ng-show="item.type == 'Member'">
+                  DEM# {{item.summary.dem}}
+                </div>
+              </div>
+            </div>
+
+          </md-item-template>
+        </md-autocomplete>
+      </md-content>
+    </md-sidenav>
+  </div>
+
+  @{
+    var user = User as System.Security.Claims.ClaimsPrincipal;
+    var bootstrapCode = (user != null && user.Identity.IsAuthenticated)
+                         ? "authService.bootstrapAuth('" + user.FindFirst("id_token")?.Value + "','" + user.FindFirst("access_token")?.Value + "', " + DateTimeOffset.Parse(user.FindFirst("expires_at").Value).ToUnixTimeSeconds() + ");"
+                         : "authService.bootstrapAuth();";
+    //"{"access_token":"4590d841e3872326e063d573d30e5814","token_type":"Bearer","scope":"network-node","expires_at":1473878103}"
+}
+    <script type="text/ng-template" id="/embedded/partials/home.html">
+      @Html.Raw(File.ReadAllText(Server.MapPath("~/assets/partials/home.html")))
+    </script>
+
+    @Scripts.Render("~/assets/am.js")
+    <script type="text/javascript">
+      angular.module('sar-database')
+      .config(['authServiceProvider', function(authProvider) {
+        authProvider.useOptions({
+          authority: '@System.Configuration.ConfigurationManager.AppSettings["auth:authority"].TrimEnd('/')',
+          client_id: '@System.Configuration.ConfigurationManager.AppSettings["auth:clientId"]',
+          redirect_uri: window.appRoot,
+          post_logout_redirect_uri: 'http://localhost:5000/user-manager-sample.html',
+          response_type: 'id_token token',
+          scope: 'openid email profile kcsara-profile',
+          automaticSilentRenew: true,
+          filterProtocolClaims: true,
+          loadUserInfo: true
+        });
+      }])
+      .run(['authService', function(authService) {
+              @Html.Raw(bootstrapCode)
+      }])
+
+    @*var oidcSettings = {
+      authority: '@System.Configuration.ConfigurationManager.AppSettings["auth:authority"].TrimEnd('/')',
+      client_id: '@System.Configuration.ConfigurationManager.AppSettings["auth:clientId"]',
+      redirect_uri: window.appRoot,
+      post_logout_redirect_uri: 'http://localhost:5000/user-manager-sample.html',
+      response_type: 'id_token token',
+      scope: 'openid email profile kcsara-profile',
+
+      // popup_redirect_uri: 'http://localhost:5000/user-manager-sample-popup.html',
+
+      // silent_redirect_uri: 'http://localhost:5000/user-manager-sample-silent.html',
+      automaticSilentRenew: true,
+
+      filterProtocolClaims: true,
+      loadUserInfo: true
+    };
+
+      var key = "oidc.user:" + oidcSettings.authority + ":" + oidcSettings.client_id;
+    @{
+      var user = User as System.Security.Claims.ClaimsPrincipal;
+      var token = user == null ? null : (user.FindFirst("access_token") == null ? null : user.FindFirst("access_token").Value);
+
+      if (user != null && user.Identity.IsAuthenticated)
+      {
+        <text>
+    var atoken = '@token';
+        sessionStorage.setItem(key, JSON.stringify({
+          "id_token": "@user.FindFirst("id_token").Value",
+          "access_token": "@token",
+          "token_type": "Bearer",
+          "scope": "@string.Join(" ", user.FindAll(f => f.Type == "scope").Select(f => f.Value))",
+          "expires_at": @DateTimeOffset.Parse(user.FindFirst("expires_at").Value).ToUnixTimeSeconds(),
+          "profile": {
+            "sub": "@user.FindFirst("sub").Value",
+            @{
+              var memberId = user.FindFirst("memberId")?.Value;
+            if (memberId != null) { <text>"memberId": "@memberId",</text> }
+            }
+            "email": "@user.FindFirst("email").Value",
+            "email_verified": "@user.FindFirst("email_verified").Value",
+            "picture": "@user.FindFirst("picture").Value",
+            "name": "@user.FindFirst("name").Value",
+            "given_name": "@user.FindFirst("given_name")",
+            "family_name": "@user.FindFirst("family_name")",
+            "amr": [ "password" ]
+          }
+      }));
+      </text>
+    }
+      else
+      {
+      <text>var atoken = null;</text>
+      }
+      }
+
+      var atoken = null;*@
+
+    </script>
+
+    @if (ViewBag.GoogleAnalytics != null)
+    {
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', '@ViewBag.GoogleAnalytics', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+    }
+</body>
+</html>

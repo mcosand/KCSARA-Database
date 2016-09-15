@@ -323,6 +323,15 @@
     <Compile Include="BlockRenderer.cs" />
     <Compile Include="CapturingResponseFilter.cs" />
     <Content Include="apple-touch-icon.png" />
+    <Content Include="assets\css\main-nav.css" />
+    <Content Include="assets\css\site.css" />
+    <Content Include="assets\js\directives\menuLink.js" />
+    <Content Include="assets\js\directives\menuToggle.js" />
+    <Content Include="assets\js\routes.js" />
+    <Content Include="assets\js\services\authService.js" />
+    <Content Include="assets\js\site.js" />
+    <Content Include="assets\partials\accounts\me.html" />
+    <Content Include="assets\partials\home.html" />
     <Content Include="Content\AdminLTE.css" />
     <Content Include="Content\AdminLTE.min.css" />
     <Content Include="Content\auth\animals\none.jpg" />
@@ -365,6 +374,7 @@
     <Compile Include="Controllers\MissionsController.cs" />
     <Compile Include="Controllers\MissionsController_Documents.cs" />
     <Compile Include="Controllers\MissionsController_Geography.cs" />
+    <Compile Include="Controllers\SinglePageController.cs" />
     <Compile Include="Controllers\TrackController.cs" />
     <Compile Include="CustomMultipartFormDataStreamProvider.cs" />
     <Compile Include="ExtensionProvider.cs" />
@@ -567,6 +577,7 @@
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\bootstrap-dialog.less" />
     <Content Include="Content\forms\ics109-log.pdf" />
+    <Content Include="bower.json" />
     <None Include="Properties\PublishProfiles\Local IIS.pubxml" />
     <None Include="parameters.xml" />
     <Content Include="help\images\new-member-1.jpg" />
@@ -746,6 +757,7 @@
     <Content Include="Views\Home\Error.cshtml" />
     <Content Include="Views\Training\UploadKcsara.cshtml" />
     <Content Include="Web.config" />
+    <Content Include="Views\Shared\SinglePage.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

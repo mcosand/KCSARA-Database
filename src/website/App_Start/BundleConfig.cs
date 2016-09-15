@@ -1,7 +1,4 @@
-﻿/*
- * Copyright 2012-2014 Matthew Cosand
- */
-using System.Web;
+﻿
 using System.Web.Optimization;
 
 namespace Kcsara.Database.Web
@@ -10,6 +7,26 @@ namespace Kcsara.Database.Web
   {
     public static void RegisterBundles(BundleCollection bundles)
     {
+      bundles.Add(new ScriptBundle("~/assets/am.js").Include(
+        "~/assets/lib/angular/angular.js",
+        "~/assets/lib/angular-ui-router/release/angular-ui-router.js",
+        "~/assets/lib/angular-aria/angular-aria.js",
+        "~/assets/lib/angular-animate/angular-animate.js",
+        "~/assets/lib/angular-messages/angular-messages.js",
+        "~/assets/lib/angular-material/angular-material.js",
+        "~/assets/lib/oidc-client/dist/oidc-client.js",
+        "~/assets/js/site.js",
+        "~/assets/js/routes.js",
+        "~/assets/js/services/*.js",
+        "~/assets/js/directives/*.js"
+        ));
+
+      bundles.Add(new StyleBundle("~/assets/am.css").Include(
+        "~/assets/lib/angular-material/angular-material.css",
+        "~/assets/css/site.css",
+        "~/assets/css/main-nav.css"
+        ));
+
       bundles.Add(new ScriptBundle("~/scripts/ng-core").Include(
         "~/Scripts/modernizr-*",
         "~/Scripts/jquery-{version}.js",
