@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Runtime.Caching;
 using System.Threading.Tasks;
-using Kcsara.Database.Model;
+using Kcsara.Database.Web.Model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Kcsara.Database.Services
+namespace Kcsara.Database.Web.Services
 {
   public interface IUserInfoService
   {

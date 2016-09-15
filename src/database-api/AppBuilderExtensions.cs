@@ -5,7 +5,6 @@ using System.IdentityModel.Tokens;
 using System.IO;
 using System.Web.Http;
 using IdentityServer3.AccessTokenValidation;
-using Microsoft.Owin;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Ninject;
@@ -15,33 +14,19 @@ using Owin;
 using Sar.Services;
 using Sar.Services.Auth;
 
-[assembly: OwinStartup(typeof(Kcsara.Database.Api.Startup))]
-
 namespace Kcsara.Database.Api
 {
-  public class Startup
+  public static class AppBuilderExtensions
   {
-    public void Configuration(IAppBuilder app)
+    public static IAppBuilder UseDatabaseApi(this IAppBuilder app, IKernel kernel)
     {
       NameValueCollection configStrings = ConfigurationManager.AppSettings;
 
-      FileInfo logConfigPath = new FileInfo(Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "log4net.config"));
-      log4net.Config.XmlConfigurator.ConfigureAndWatch(logConfigPath);
-      log4net.LogManager.GetLogger(typeof(Startup)).Info("Starting ...");
-
-      IKernel kernel = new StandardKernel();
-      kernel.Bind<IHost>().ToMethod(context => new OwinHost());
-      kernel.Bind<IAuthenticatedHost>().ToMethod(context => new OwinHost());
-      kernel.Load(new Services.DIModule());
       JwtSecurityTokenHandler.InboundClaimTypeMap.Clear();
 
       var tokenAuthOptions = new IdentityServerBearerTokenAuthenticationOptions
       {
         Authority = configStrings["auth:authority"]
-        //RequiredScopes = new[] { "db" }
-        // client credentials for the introspection endpoint
-        //ClientId = configStrings["auth:clientId"],
-        //ClientSecret = configStrings["auth:secret"]
       };
 
       var config = new HttpConfiguration();
@@ -61,6 +46,8 @@ namespace Kcsara.Database.Api
       app.UseIdentityServerBearerTokenAuthentication(tokenAuthOptions);
       app.UseNinjectMiddleware(() => kernel);
       app.UseNinjectWebApi(config);
+
+      return app;
     }
   }
 }

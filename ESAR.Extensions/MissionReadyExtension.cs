@@ -1,13 +1,10 @@
-﻿/*
- * Copyright 2014 Matthew Cosand
- */
-namespace ESAR.Extensions
+﻿namespace ESAR.Extensions
 {
   using System;
   using System.Collections.Generic;
   using System.Linq;
   using Kcsar.Database.Model;
-  using Kcsara.Database.Services.Reports;
+  using Kcsara.Database.Web.Services.Reports;
 
   public class MissionReadyExtension : IMissionReadyPlugin
   {

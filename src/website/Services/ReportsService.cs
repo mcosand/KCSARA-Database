@@ -1,7 +1,4 @@
-﻿/*
- * Copyright 2013-2014 Matthew Cosand
- */
-namespace Kcsara.Database.Services
+﻿namespace Kcsara.Database.Web.Services
 {
   using System;
   using System.Drawing;
@@ -10,7 +7,7 @@ namespace Kcsara.Database.Services
   using Kcsar.Database;
   using Kcsar.Database.Model;
   using Kcsara.Database.Extensions;
-  using Kcsara.Database.Services.Reports;
+  using Kcsara.Database.Web.Services.Reports;
   using Kcsara.Database.Web;
 
   /// <summary>

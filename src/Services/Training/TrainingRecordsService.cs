@@ -5,11 +5,11 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
-using Kcsara.Database.Model;
-using Kcsara.Database.Model.Training;
+using Kcsara.Database.Web.Model;
+using Kcsara.Database.Web.Model.Training;
 using Data = Kcsar.Database.Model;
 
-namespace Kcsara.Database.Services.Training
+namespace Kcsara.Database.Web.Services.Training
 {
   public interface ITrainingRecordsService
   {

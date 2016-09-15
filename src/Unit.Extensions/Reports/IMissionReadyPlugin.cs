@@ -1,7 +1,4 @@
-﻿/*
- * Copyright 2014 Matthew Cosand
- */
-namespace Kcsara.Database.Services.Reports
+﻿namespace Kcsara.Database.Web.Services.Reports
 {
   using System.Collections.Generic;
   using Kcsar.Database.Model;

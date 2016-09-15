@@ -1,7 +1,7 @@
 ﻿using System.Configuration;
 using System.Security.Claims;
 using System.Web;
-using Kcsara.Database.Services;
+using Kcsara.Database.Web.Services;
 
 namespace Kcsara.Database.Web
 {

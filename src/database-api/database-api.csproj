@@ -186,10 +186,11 @@
     <Compile Include="Controllers\Units\StatusTypesController.cs" />
     <Compile Include="Controllers\Units\MembershipController.cs" />
     <Compile Include="Controllers\Units\UnitsController.cs" />
+    <Compile Include="DIModule.cs" />
     <Compile Include="ExceptionFilter.cs" />
     <Compile Include="OwinHost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Startup.cs" />
+    <Compile Include="AppBuilderExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

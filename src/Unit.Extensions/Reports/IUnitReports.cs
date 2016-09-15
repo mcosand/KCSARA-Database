@@ -1,7 +1,4 @@
-﻿/*
- * Copyright 2015 Matthew Cosand
- */
-namespace Kcsara.Database.Extensions.Reports
+﻿namespace Kcsara.Database.Extensions.Reports
 {
   using System.Collections.Specialized;
   using System.IO;

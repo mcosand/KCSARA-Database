@@ -1,9 +1,6 @@
-﻿/*
- * Copyright 2016 Matthew Cosand
- */
-using System;
+﻿using System;
 
-namespace Kcsara.Database.Model.Training
+namespace Kcsara.Database.Web.Model.Training
 {
   public class ParsedKcsaraCsv
   {

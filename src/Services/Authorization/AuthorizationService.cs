@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Kcsara.Database.Model;
 
-namespace Kcsara.Database.Services
+namespace Kcsara.Database.Web.Services
 {
   public interface IAuthorizationService
   {

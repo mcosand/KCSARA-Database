@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Kcsar.Database.Model;
 using Ninject.Modules;
 
-namespace Kcsara.Database.Services
+namespace Kcsara.Database.Web.Services
 {
   public class DIModule : NinjectModule
   {

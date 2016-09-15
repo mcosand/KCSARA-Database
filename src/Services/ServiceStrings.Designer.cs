@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Kcsara.Database.Services {
+namespace Kcsara.Database.Web.Services {
     using System;
     
     

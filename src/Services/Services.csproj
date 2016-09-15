@@ -7,9 +7,9 @@
     <ProjectGuid>{86765896-3EC5-4010-A28A-716EB64A31F1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Kcsara.Database.Services</RootNamespace>
-    <AssemblyName>Kcsara.Database.Services</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <RootNamespace>Kcsara.Database.Web.Services</RootNamespace>
+    <AssemblyName>Kcsara.Database.Web.Services</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
@@ -131,7 +131,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\database-api\src\database-model\database-model.csproj">
+    <ProjectReference Include="..\database-model\database-model.csproj">
       <Project>{eae01ec9-f91d-4b72-a648-6ac96e688cce}</Project>
       <Name>database-model</Name>
     </ProjectReference>

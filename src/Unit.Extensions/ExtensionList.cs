@@ -1,7 +1,4 @@
-﻿/*
- * Copyright 2014 Matthew Cosand
- */
-namespace Kcsara.Database.Extensions
+﻿namespace Kcsara.Database.Extensions
 {
   using System;
   using System.Linq;

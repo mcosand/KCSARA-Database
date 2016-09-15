@@ -1,7 +1,4 @@
-﻿/*
- * Copyright 2010-2016 Matthew Cosand
- */
-namespace Kcsara.Database.Services
+﻿namespace Kcsara.Database.Web.Services
 {
   using System;
   using System.Collections.Generic;

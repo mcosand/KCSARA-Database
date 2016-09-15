@@ -1,10 +1,7 @@
-﻿/*
- * Copyright 2016 Matthew Cosand
- */
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace Kcsara.Database.Model
+namespace Kcsara.Database.Web.Model
 {
   public class UserInfo
   {

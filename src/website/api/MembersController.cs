@@ -1,8 +1,4 @@
-﻿/*
- * Copyright 2013-2014 Matthew Cosand
- */
-
-namespace Kcsara.Database.Web.api
+﻿namespace Kcsara.Database.Web.api
 {
   using System;
   using System.Collections.Generic;
@@ -11,9 +7,8 @@ namespace Kcsara.Database.Web.api
   using System.Linq;
   using System.Text.RegularExpressions;
   using System.Web.Http;
-  using Database.Services;
+  using Database.Web.Services;
   using Kcsara.Database.Web.api.Models;
-  using Kcsara.Database.Web.Services;
   using log4net;
   using Newtonsoft.Json;
   using Model = Kcsar.Database.Model;

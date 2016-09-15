@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Data = Kcsar.Database.Model;
-using Kcsara.Database.Services.ObjectModel.Members;
-using System.Text.RegularExpressions;
-using System.Data.Entity.SqlServer;
-using Kcsara.Database.Model;
 using System.Data.Entity;
+using System.Data.Entity.SqlServer;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Kcsara.Database.Web.Model;
+using Kcsara.Database.Web.Services.ObjectModel.Members;
+using Data = Kcsar.Database.Model;
 
-namespace Kcsara.Database.Services.Members
+namespace Kcsara.Database.Web.Services.Members
 {
   public interface IMembersService
   {

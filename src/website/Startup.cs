@@ -11,6 +11,7 @@ using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OpenIdConnect;
+using Ninject;
 using Owin;
 using Sar.Web;
 
@@ -20,6 +21,9 @@ namespace Kcsara.Database.Web
 {
   public class Startup
   {
+    // Lives here so other bootstrap system can replace it.
+    internal static IKernel kernel = new StandardKernel();
+
     public void Configuration(IAppBuilder app)
     {
       app.UseCookieAuthentication(new CookieAuthenticationOptions

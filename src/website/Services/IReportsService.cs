@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright 2013-2014 Matthew Cosand
  */
-namespace Kcsara.Database.Services
+namespace Kcsara.Database.Web.Services
 {
   using System;
   using System.IO;

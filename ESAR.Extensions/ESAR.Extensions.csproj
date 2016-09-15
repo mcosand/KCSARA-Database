@@ -55,7 +55,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\database-api\src\database-model\database-model.csproj">
+    <ProjectReference Include="..\src\database-model\database-model.csproj">
       <Project>{eae01ec9-f91d-4b72-a648-6ac96e688cce}</Project>
       <Name>database-model</Name>
     </ProjectReference>

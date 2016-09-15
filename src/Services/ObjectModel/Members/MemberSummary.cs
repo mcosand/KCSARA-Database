@@ -1,7 +1,7 @@
 ﻿using System;
-using Kcsara.Database.Model;
+using Kcsara.Database.Web.Model;
 
-namespace Kcsara.Database.Services.ObjectModel.Members
+namespace Kcsara.Database.Web.Services.ObjectModel.Members
 {
   public class MemberSummary
   {

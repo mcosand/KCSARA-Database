@@ -1,10 +1,6 @@
-﻿/*
- * Copyright 2013-2015 Matthew Cosand
- */
-namespace Kcsara.Database.Services
+﻿namespace Kcsara.Database.Web.Services
 {
   using System;
-  using System.Collections.Generic;
   using System.Web;
 
   public interface IAuthService
