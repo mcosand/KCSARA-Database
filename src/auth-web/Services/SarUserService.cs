@@ -287,7 +287,7 @@ namespace Sar.Auth.Services
 
           if (!string.IsNullOrWhiteSpace(member.PhotoUrl))
           {
-            claims.Add(new Claim("photo", member.PhotoUrl));
+            claims.Add(new Claim("picture", member.PhotoUrl));
           }
         }
 
