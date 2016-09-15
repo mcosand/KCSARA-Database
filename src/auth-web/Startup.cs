@@ -69,7 +69,7 @@ namespace Sar.Auth
         {
           ImgSrc = "'self' data:"
         },
-        AuthenticationOptions = new IdentityServer3.Core.Configuration.AuthenticationOptions
+        AuthenticationOptions = new AuthenticationOptions
         {
           // Try to prevent "request too long" errors when authenticating with Google, etc
           // https://github.com/IdentityServer/IdentityServer3/issues/1124
@@ -127,15 +127,18 @@ namespace Sar.Auth
       var googleId = ConfigurationManager.AppSettings["google:clientId"];
       var googleSecret = ConfigurationManager.AppSettings["google:clientSecret"];
 
-      var google = new GoogleOAuth2AuthenticationOptions
+      if (!string.IsNullOrWhiteSpace(googleId) && !string.IsNullOrWhiteSpace(googleSecret))
       {
-        AuthenticationType = "Google",
-        Caption = "Google",
-        SignInAsAuthenticationType = signInAsType,
-        ClientId = googleId,
-        ClientSecret = googleSecret
-      };
-      app.UseGoogleAuthentication(google);
+        var google = new GoogleOAuth2AuthenticationOptions
+        {
+          AuthenticationType = "Google",
+          Caption = "Google",
+          SignInAsAuthenticationType = signInAsType,
+          ClientId = googleId,
+          ClientSecret = googleSecret
+        };
+        app.UseGoogleAuthentication(google);
+      }
 
       var facebookId = ConfigurationManager.AppSettings["facebook:appId"];
       var facebookSecret = ConfigurationManager.AppSettings["facebook:appSecret"];
