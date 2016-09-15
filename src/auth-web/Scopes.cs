@@ -30,12 +30,12 @@ namespace Sar.Auth
         scopes.AddRange(new[] {
             StandardScopes.OpenId,
             StandardScopes.Profile,
-            StandardScopes.EmailAlwaysInclude,
-            new Scope { Name = "kcsara-profile", Type = ScopeType.Identity, IncludeAllClaimsForUser = true, Claims = new List<ScopeClaim>
+            StandardScopes.Email,
+            new Scope { Name = "kcsara-profile", Type = ScopeType.Identity, Claims = new List<ScopeClaim>
             {
-              new ScopeClaim(UnitsClaim, alwaysInclude: true),
-              new ScopeClaim(MemberIdClaim, alwaysInclude: true),
-              new ScopeClaim(RolesClaim, alwaysInclude: true)
+              new ScopeClaim(UnitsClaim),
+              new ScopeClaim(MemberIdClaim),
+              new ScopeClaim(RolesClaim)
             } }
         });
 

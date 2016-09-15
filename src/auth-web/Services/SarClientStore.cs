@@ -40,7 +40,7 @@ namespace Sar.Auth.Services
           Flow = row.Flow,
           RequireConsent = false,
           AllowRememberConsent = false,
-          AccessTokenType = AccessTokenType.Jwt
+          AccessTokenType = (row.Flow == Flows.Implicit) ? AccessTokenType.Reference : AccessTokenType.Jwt
         };
 
         switch (row.Flow)
