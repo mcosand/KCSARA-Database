@@ -1,0 +1,9 @@
+{
+  "name": "SAR Auth Site",
+  "private": true,
+  "dependencies": {
+    "angular": "^1.5.1",
+    "angular-material": "^1.0.7",
+    "font-awesome": "^4.5.0"
+  }
+}

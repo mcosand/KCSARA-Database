@@ -1,0 +1,42 @@
+﻿@model IdentityServer3.Core.ViewModels.LoggedOutViewModel
+@{
+	ViewBag.Title = "Logout";
+}
+
+<div class="page-header">
+	<h1>
+		@ViewBag.Title
+		<small id="confirmation">You are now logged out</small>
+	</h1>
+</div>
+<div class="row">
+    <div class="col-md-6 col-sm-6">
+        @* New logic ensuring a consistent message if we are logging out of any applications on the IdentityServer host *@
+        @if (Model.RedirectUrl == null)
+        {
+            <div>
+                Click <a href="/">here</a> to return to the home page
+            </div>
+        }
+        else
+        {
+            if (string.IsNullOrWhiteSpace(Model.RedirectUrl))
+            {
+                <div>
+                    Click <a href="/">here</a> to return to the home page
+                </div>
+            }
+            else
+            {
+                <div>
+                    Click <a href="@Model.RedirectUrl">here</a> to return to the
+                    <span>@Model.ClientName</span> application.
+                </div>
+            }
+            foreach (var url in Model.IFrameUrls)
+            {
+                <iframe class="signout" src="@url" style="display: none"></iframe>
+            }
+        }
+    </div>
+</div>

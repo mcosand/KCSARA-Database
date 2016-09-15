@@ -1,0 +1,49 @@
+﻿/* Vertical stepper */
+.step {
+  position: relative;
+  min-height: 32px /* circle-size */;
+}
+
+  .step .body {
+    padding-bottom: 25px;
+  }
+
+  .step > div:first-child {
+    position: static;
+    height: 0;
+  }
+
+  .step > div:last-child {
+    margin-left: 32px;
+    padding-left: 16px;
+  }
+
+.circle {
+  background: /*#F39C12*/ #222d32;
+  opacity: .9;
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+  border-radius: 16px;
+  position: relative;
+  color: white;
+  text-align: center;
+}
+
+.line {
+  position: absolute;
+  border-left: 1px solid gainsboro;
+  left: 16px;
+  bottom: 10px;
+  top: 42px;
+}
+
+.step:last-child .line {
+  display: none;
+}
+
+.title {
+  line-height: 32px;
+  font-weight: bold;
+}
+/* end vertical stepper */

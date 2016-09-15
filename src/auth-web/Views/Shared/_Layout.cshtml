@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>@ViewBag.Title - King County Search and Rescue</title>
+  @Styles.Render("~/wwwroot/css/core")
+</head>
+<body layout="row" ng-app="sarAuth" class="ng-cloak">
+  <div layout="column" flex id="content" role="main">
+    <md-toolbar class="md-whiteframe-z1 md-primary">
+      <div class="md-toolbar-tools">
+        @*<md-button class="md-icon-button" aria-label="Settings">
+            <md-icon md-svg-icon="/identity/wwwroot/lib/angular-material/img/icons/menu.svg"></md-icon>
+          </md-button>*@
+        <h2>
+          <strong>King County Search and Rescue</strong>
+        </h2>
+      </div>
+    </md-toolbar>
+    <md-content layout="column" flex="noshrink" id="content" layout-padding>
+      @RenderBody()
+    </md-content>
+  </div>
+
+  <script src="~/jsconfig"></script>
+  @Scripts.Render("~/wwwroot/js/core")
+  @RenderSection("scripts", required: false)
+</body>
+</html>

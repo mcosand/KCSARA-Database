@@ -1,0 +1,84 @@
+﻿@model IdentityServer3.Core.ViewModels.LoginViewModel
+@{
+  ViewBag.Title = "Login";
+}
+<div layout="row" layout-xs="column" layout-align="center stretch" ng-controller="LoginCtrl">
+  @if (Model.ExternalProviders.Any())
+  {
+    <md-card flex flex-gt-xs="40" flex-gt-md="20">
+      <md-card-title><md-card-title-text><span class="md-headline">Linked Accounts</span></md-card-title-text></md-card-title>
+      <md-card-content layout="column">
+        <p>Login with one of your existing accounts from another web site</p>
+        @foreach (var provider in Model.ExternalProviders)
+        {
+          IHtmlString icon = new HtmlString(string.Empty);
+          if (string.Equals(provider.Type, "google", StringComparison.OrdinalIgnoreCase)) { icon = Html.Raw("<i class=\"fa fa-fw fa-google\" style=\"color: #EA4335\"></i> "); }
+          else if (string.Equals(provider.Type, "facebook", StringComparison.OrdinalIgnoreCase)) { icon = Html.Raw("<i class=\"fa fa-fw fa-facebook-official\" style=\"color: #3B5998\"></i> "); }
+          else if (ViewBag.OpenIdIcons.ContainsKey(provider.Type))
+          {
+            string iconName = ViewBag.OpenIdIcons[provider.Type];
+            string iconColor = ViewBag.OpenIdColors[provider.Type];
+            icon = Html.Raw("<i class=\"fa fa-fw " + iconName + "\" style=\"color: " + iconColor + "\"></i> ");
+          }
+          <md-button href="@provider.Href">@icon@provider.Text</md-button>
+        }
+      </md-card-content>
+    </md-card>
+  }
+  @if (!string.IsNullOrWhiteSpace(Model.LoginUrl))
+  {
+    <md-card flex flex-gt-xs="40" flex-gt-md="20" class="login-card">
+      <form name="localForm" method="post" action="@Model.LoginUrl">
+        <md-card-title><md-card-title-text><span class="md-headline">KCSARA Account</span></md-card-title-text></md-card-title>
+        <md-card-content layout="column">
+          <p>Login with your King County Search and Rescue account.</p>
+          @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+          {
+            <div class="alert alert-danger">
+              @Model.ErrorMessage
+            </div>
+          }
+          <input type="hidden" name="@Model.AntiForgery.Name" value="@Model.AntiForgery.Value" />
+          <md-input-container>
+            <label>Username</label>
+            <input required name="username" autofocus id="username" type="text" ng-model="model.username" class="form-control" value="@Model.Username" maxlength="100" @(ViewBag.DisableUserNameChange == true ? "readonly='readonly'" : "")>
+            <div ng-messages="localForm.username.$error" ng-if="localForm.username.$invalid && (localForm.username.$touched || localForm.$submitted)">
+              <div ng-message="server" ng-show="localForm.username.$error.server">{{serverErrors.email}}</div>
+              <div ng-message="required" ng-show="localForm.username.$error.required">Username is required.</div>
+            </div>
+          </md-input-container>
+          <md-input-container>
+            <label>Password</label>
+            <input required id="password" name="password" type="password" ng-model="model.password" maxlength="100" autocomplete="off">
+            <div ng-messages="localForm.password.$error" ng-if="localForm.password.$invalid && (localForm.password.$touched || localForm.$submitted)">
+              <div ng-message="server" ng-show="localForm.password.$error.server">{{serverErrors.password}}</div>
+              <div ng-message="required" ng-show="localForm.password.$error.required">Password is required.</div>
+            </div>
+          </md-input-container>
+          <!--@if (Model.AllowRememberMe)
+            {
+              <div class="form-group login-remember">
+                <label for="rememberMe">
+                  <input type="checkbox" id="rememberMe" name="rememberMe" @(Model.RememberMe ? "checked='checked'" : "") value="true">
+                  <strong>Remember My Login</strong>
+                </label>
+              </div>
+            }-->
+          <!--<ul clas
+          s="list-unstyled">
+                @if (Model.AdditionalLinks != null)
+                {
+                  foreach (var link in Model.AdditionalLinks)
+                  {
+                    <li><a href="@link.Href" id="@link.Text.Replace(" ", "")">@link.Text</a></li>
+                  }
+                }
+              </ul>-->
+        </md-card-content>
+        <md-card-actions layout="row" layout-align="end center">
+          <md-button type="submit" ng-disabled="localForm.$invalid">Login</md-button>
+        </md-card-actions>
+      </form>
+    </md-card>
+  }
+</div>
