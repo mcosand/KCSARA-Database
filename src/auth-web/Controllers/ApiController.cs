@@ -1,7 +1,4 @@
-﻿/* 
- * Copyright Matthew Cosand
- */
-namespace Sar.Auth
+﻿namespace Sar.Database.Web.Auth.Controllers
 {
   using System;
   using System.Linq;
@@ -12,9 +9,8 @@ namespace Sar.Auth
   using System.Web.Http.Cors;
   using IdentityServer3.Core.Extensions;
   using IdentityServer3.Core.Validation;
-  using Sar.Auth.Models;
-  using Sar.Auth.Services;
   using Serilog;
+  using Services;
 
   public class ApiController : System.Web.Http.ApiController
   {

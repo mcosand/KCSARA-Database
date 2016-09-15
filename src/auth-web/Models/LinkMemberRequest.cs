@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
-namespace Sar.Auth
+namespace Sar.Database.Web.Auth
 {
   public class LinkMemberRequest
   {

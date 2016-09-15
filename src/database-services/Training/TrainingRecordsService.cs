@@ -5,14 +5,12 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
-using Kcsara.Database.Model;
-using Kcsara.Database.Model.Training;
-using Sar.Model;
-using Sar.Services;
-using Sar.Services.Auth;
+using Sar.Database.Model;
+using Sar.Database.Model.Training;
+using Sar.Database.Services.Training;
 using Data = Kcsar.Database.Model;
 
-namespace Kcsara.Database.Services.Training
+namespace Sar.Database.Services
 {
   public interface ITrainingRecordsService
   {
@@ -26,10 +24,10 @@ namespace Kcsara.Database.Services.Training
   {
     private readonly Func<Data.IKcsarContext> _dbFactory;
     private readonly IAuthorizationService _authz;
-    private readonly IAuthenticatedHost _host;
+    private readonly IHost _host;
 
     /// <summary></summary>
-    public TrainingRecordsService(Func<Data.IKcsarContext> dbFactory, IAuthorizationService authSvc, IAuthenticatedHost host)
+    public TrainingRecordsService(Func<Data.IKcsarContext> dbFactory, IAuthorizationService authSvc, IHost host)
     {
       _dbFactory = dbFactory;
       _authz = authSvc;
@@ -138,21 +136,21 @@ namespace Kcsara.Database.Services.Training
                   {
                     if (s.Expires.Value < asOf)
                     {
-                      s.Status = g.Key.WacDate.AddMonths(g.Max(h => h.Requirement.GraceMonths)) > asOf ? Model.Training.ExpirationFlags.ToBeCompleted : Model.Training.ExpirationFlags.Expired;
+                      s.Status = g.Key.WacDate.AddMonths(g.Max(h => h.Requirement.GraceMonths)) > asOf ? ExpirationFlags.ToBeCompleted : ExpirationFlags.Expired;
                     }
                     else // isn't expired
                     {
-                      s.Status = Model.Training.ExpirationFlags.NotExpired;
+                      s.Status = ExpirationFlags.NotExpired;
                     }
                   }
                   else // doesn't expire
                   {
-                    s.Status = Model.Training.ExpirationFlags.Complete;
+                    s.Status = ExpirationFlags.Complete;
                   }
                 }
                 else // not completed
                 {
-                  s.Status = g.Key.WacDate.AddMonths(g.Max(h => h.Requirement.GraceMonths)) > asOf ? Model.Training.ExpirationFlags.ToBeCompleted : Model.Training.ExpirationFlags.Missing;
+                  s.Status = g.Key.WacDate.AddMonths(g.Max(h => h.Requirement.GraceMonths)) > asOf ? ExpirationFlags.ToBeCompleted : ExpirationFlags.Missing;
                 }
                 return s;
               })

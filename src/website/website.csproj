@@ -806,18 +806,6 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\common\src\auth-client\auth-client.csproj">
-      <Project>{1A4C1A6F-A571-4CD5-8388-98FCECB56AFA}</Project>
-      <Name>auth-client</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\common\src\common-services\common-services.csproj">
-      <Project>{6fe506b3-0fd4-4539-ab78-ccce2a266ef7}</Project>
-      <Name>common-services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\common\src\database-api-client\database-api-client.csproj">
-      <Project>{74510427-2536-44e6-aa2e-a67338a4a682}</Project>
-      <Name>database-api-client</Name>
-    </ProjectReference>
     <ProjectReference Include="..\auth-web\auth-web.csproj">
       <Project>{f6be5572-5e76-435f-b8f3-fc3b3eaf2da7}</Project>
       <Name>auth-web</Name>
@@ -834,6 +822,10 @@
       <Project>{2e5c85da-32f0-43f1-83ed-026867aa2a6d}</Project>
       <Name>database-services</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\common\src\sar-common\sar-common.csproj">
+      <Project>{0291FA3F-BF88-4E6C-8F61-D9030D66228B}</Project>
+      <Name>sar-common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Services\Services.csproj">
       <Project>{86765896-3ec5-4010-a28a-716eb64a31f1}</Project>
       <Name>Services</Name>
@@ -841,6 +833,10 @@
     <ProjectReference Include="..\Unit.Extensions\Unit.Extensions.csproj">
       <Project>{f56a1669-1009-4203-8045-c890f9f93a2e}</Project>
       <Name>Unit.Extensions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\common\src\web-api-common\web-api-common.csproj">
+      <Project>{1D3FBAA4-8CB4-45F1-8709-AF2FF1940EBB}</Project>
+      <Name>web-api-common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Website.DefaultStrings\Website.DefaultStrings.csproj">
       <Project>{bafa9145-d19c-4f31-9f1a-c937499e76d5}</Project>

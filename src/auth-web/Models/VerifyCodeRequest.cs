@@ -1,7 +1,4 @@
-﻿/*
- * Copyright Matthew Cosand
- */
-namespace Sar.Auth.Models
+﻿namespace Sar.Database.Web.Auth
 {
   public class VerifyCodeRequest
   {

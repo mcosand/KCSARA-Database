@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sar.Auth.Services
+namespace Sar.Database.Web.Auth.Services
 {
   using System;
   using System.Collections;

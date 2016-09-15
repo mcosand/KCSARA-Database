@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Kcsara.Database.Model.Members;
-using Kcsara.Database.Services;
-using Kcsara.Database.Services.Members;
-using Sar.Services;
+using Sar.Database.Model.Members;
+using Sar.Database.Services;
 
-namespace Sar.Auth.Services
+namespace Sar.Database.Web.Auth.Services
 {
   class LocalMemberInfoService : IMemberInfoService
   {

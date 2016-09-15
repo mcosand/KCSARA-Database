@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Kcsara.Database.Services {
+namespace Sar.Database.Services {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Kcsara.Database.Services {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Kcsara.Database.Services.ServiceStrings", typeof(ServiceStrings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Sar.Database.Services.ServiceStrings", typeof(ServiceStrings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

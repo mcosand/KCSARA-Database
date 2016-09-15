@@ -7,8 +7,8 @@
     <ProjectGuid>{2E5C85DA-32F0-43F1-83ED-026867AA2A6D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Kcsara.Database.Services</RootNamespace>
-    <AssemblyName>Kcsara.Database.Services</AssemblyName>
+    <RootNamespace>Sar.Database.Services</RootNamespace>
+    <AssemblyName>Sar.Database.Services</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
@@ -99,14 +99,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AuthService.cs" />
+    <Compile Include="Auth\AuthorizationService.cs" />
+    <Compile Include="ClaimsPrincipalExtensions.cs" />
     <Compile Include="DIModule.cs" />
-    <Compile Include="EmailService.cs" />
-    <Compile Include="Exceptions\AuthorizationException.cs" />
-    <Compile Include="IAuthService.cs" />
+    <Compile Include="Auth\IRolesService.cs" />
     <Compile Include="Members\MembersService.cs" />
-    <Compile Include="ObjectModel\EnumConversions.cs" />
-    <Compile Include="ObjectModel\Training\ParsedKcsaraCsv.cs" />
+    <Compile Include="EnumConversions.cs" />
+    <Compile Include="SendMessageService.cs" />
+    <Compile Include="Training\ParsedKcsaraCsv.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceStrings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -126,21 +126,17 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\common\src\auth-client\auth-client.csproj">
-      <Project>{1a4c1a6f-a571-4cd5-8388-98fcecb56afa}</Project>
-      <Name>auth-client</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\common\src\common-services\common-services.csproj">
-      <Project>{6fe506b3-0fd4-4539-ab78-ccce2a266ef7}</Project>
-      <Name>common-services</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\common\src\database-api-client\database-api-client.csproj">
-      <Project>{74510427-2536-44e6-aa2e-a67338a4a682}</Project>
+      <Project>{EBB4EB71-3979-4C7A-A838-090E47750CEA}</Project>
       <Name>database-api-client</Name>
     </ProjectReference>
     <ProjectReference Include="..\database-model\database-model.csproj">
       <Project>{eae01ec9-f91d-4b72-a648-6ac96e688cce}</Project>
       <Name>database-model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\common\src\sar-common\sar-common.csproj">
+      <Project>{0291FA3F-BF88-4E6C-8F61-D9030D66228B}</Project>
+      <Name>sar-common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

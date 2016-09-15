@@ -14,11 +14,12 @@ using Microsoft.Owin.Security.OpenIdConnect;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ninject;
-using Sar.Auth;
-using Sar.Auth.Controllers;
+using Sar;
 using Sar.Auth.Data;
-using Sar.Auth.Services;
-using Sar.Services;
+using Sar.Database.Web.Auth;
+using Sar.Database.Web.Auth.Controllers;
+using Sar.Database.Web.Auth.Services;
+using Sar.Web;
 using Serilog;
 
 namespace Owin

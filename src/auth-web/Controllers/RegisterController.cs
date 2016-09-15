@@ -1,4 +1,4 @@
-﻿namespace Sar.Auth.Controllers
+﻿namespace Sar.Database.Web.Auth.Controllers
 {
   using System.Threading.Tasks;
   using System.Web;
@@ -31,7 +31,7 @@
       
       if (partial_login == null)
       {
-        return View("Error");
+        return View("AuthError");
       }
 
       ViewBag.Email = (partial_login.FindFirst(Constants.ClaimTypes.Email)

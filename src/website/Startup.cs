@@ -15,8 +15,9 @@ using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OpenIdConnect;
 using Ninject;
 using Owin;
-using Sar.Auth;
-using Sar.Services;
+using Sar;
+using Sar.Database.Web.Auth;
+using Sar.Web;
 
 [assembly: OwinStartup(typeof(Kcsara.Database.Web.Startup))]
 

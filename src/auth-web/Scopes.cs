@@ -1,13 +1,10 @@
-﻿/*
- * Copyright Matthew Cosand
- */
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using IdentityServer3.Core.Models;
 using Sar.Auth.Data;
 
-namespace Sar.Auth
+namespace Sar.Database.Web.Auth
 {
   public static class Scopes
   {

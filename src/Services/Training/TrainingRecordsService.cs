@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 using CsvHelper;
 using Kcsara.Database.Web.Model;
 using Kcsara.Database.Web.Model.Training;
-using Sar.Services;
-using Sar.Services.Auth;
+using Sar;
 using Data = Kcsar.Database.Model;
 
 namespace Kcsara.Database.Web.Services.Training
@@ -24,10 +23,10 @@ namespace Kcsara.Database.Web.Services.Training
   {
     private readonly Func<Data.IKcsarContext> _dbFactory;
     private readonly IAuthorizationService _authz;
-    private readonly IAuthenticatedHost _host;
+    private readonly IHost _host;
 
     /// <summary></summary>
-    public TrainingRecordsService(Func<Data.IKcsarContext> dbFactory, IAuthorizationService authSvc, IAuthenticatedHost host)
+    public TrainingRecordsService(Func<Data.IKcsarContext> dbFactory, IAuthorizationService authSvc, IHost host)
     {
       _dbFactory = dbFactory;
       _authz = authSvc;

@@ -1,7 +1,4 @@
-﻿/*
- * Copyright Matthew Cosand
- */
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -12,7 +9,7 @@ using IdentityServer3.Core.Models;
 using IdentityServer3.Core.Services;
 using Sar.Auth.Data;
 
-namespace Sar.Auth.Services
+namespace Sar.Database.Web.Auth.Services
 {
   public class SarClientStore : IClientStore
   {

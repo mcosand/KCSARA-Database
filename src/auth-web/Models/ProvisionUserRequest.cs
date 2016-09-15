@@ -1,4 +1,4 @@
-﻿namespace Sar.Auth
+﻿namespace Sar.Database.Web.Auth
 {
   public class ProvisionUserRequest : Member
   {

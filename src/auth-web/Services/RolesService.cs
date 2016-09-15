@@ -1,14 +1,11 @@
-﻿/*
- * Copyright Matthew Cosand
- */
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sar.Auth.Data;
-using Sar.Services.Auth;
+using Sar.Database.Services;
 using Serilog;
 
-namespace Sar.Auth.Services
+namespace Sar.Database.Web.Auth.Services
 {
   public class RolesService : IRolesService
   {

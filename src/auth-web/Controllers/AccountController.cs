@@ -1,15 +1,11 @@
 ﻿using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
-using IdentityServer3.Core;
 using IdentityServer3.Core.Extensions;
 using IdentityServer3.Core.Models;
 using IdentityServer3.Core.ViewModels;
-using Sar.Auth.Services;
-using Sar.Services;
+using Sar.Database.Web.Auth.Services;
 
-namespace Sar.Auth.Controllers
+namespace Sar.Database.Web.Auth.Controllers
 {
   public class AccountController : Controller
   {
@@ -107,7 +103,7 @@ namespace Sar.Auth.Controllers
     {
       ViewBag.ErrorMessage = model.ErrorMessage;
       ViewBag.RequestId = model.RequestId;
-      return View("AuthError", model);
+      return View("AuthError");
     }
 
     /// <summary>

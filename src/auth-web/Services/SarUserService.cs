@@ -11,15 +11,14 @@ using IdentityServer3.Core;
 using IdentityServer3.Core.Extensions;
 using IdentityServer3.Core.Models;
 using IdentityServer3.Core.Services.Default;
-using Kcsara.Database.Model.Members;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Sar.Auth.Data;
-using Sar.Services;
-using Sar.Services.Auth;
+using Sar.Database.Model.Members;
+using Sar.Database.Services;
 using Serilog;
 
-namespace Sar.Auth.Services
+namespace Sar.Database.Web.Auth.Services
 {
   public class SarUserService : UserServiceBase
   {

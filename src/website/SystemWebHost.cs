@@ -1,19 +1,13 @@
 ﻿using System.Configuration;
 using System.Security.Claims;
 using System.Web;
-using Kcsara.Database.Web.Services;
-using Sar.Services.Auth;
+using Sar.WebApi;
 
-namespace Kcsara.Database.Web
+namespace Sar.Database.Web
 {
-  public class SystemWebHost : IAuthenticatedHost
+  public class SystemWebHost : IWebApiHost
   {
-    public ClaimsPrincipal User
-    {
-      get { return (ClaimsPrincipal)HttpContext.Current.User; }
-    }
-
-    public string AccessToken
+    public string RequestToken
     {
       get
       {
@@ -23,6 +17,11 @@ namespace Kcsara.Database.Web
         if (parts.Length != 2 || parts[0] != "Bearer") return null;
         return parts[1];
       }
+    }
+
+    public ClaimsPrincipal User
+    {
+      get { return (ClaimsPrincipal)HttpContext.Current.User; }
     }
 
     public string GetConfig(string key)

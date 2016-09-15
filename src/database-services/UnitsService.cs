@@ -4,12 +4,12 @@ using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Kcsara.Database.Model.Units;
-using Sar.Model;
-using Sar.Services.Auth;
+using Sar;
+using Sar.Database.Model;
+using Sar.Database.Model.Units;
 using Data = Kcsar.Database.Model;
 
-namespace Kcsara.Database.Services
+namespace Sar.Database.Services
 {
   public interface IUnitsService
   {
@@ -23,9 +23,9 @@ namespace Kcsara.Database.Services
   {
     private readonly Func<Data.IKcsarContext> _dbFactory;
     private readonly IAuthorizationService _authz;
-    private readonly IAuthenticatedHost _host;
+    private readonly IHost _host;
 
-    public UnitsService(Func<Data.IKcsarContext> dbFactory, IAuthorizationService authSvc, IAuthenticatedHost host)
+    public UnitsService(Func<Data.IKcsarContext> dbFactory, IAuthorizationService authSvc, IHost host)
     {
       _dbFactory = dbFactory;
       _authz = authSvc;

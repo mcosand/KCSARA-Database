@@ -6,6 +6,7 @@
   using Newtonsoft.Json.Converters;
   using Ninject;
   using Ninject.Web.WebApi.OwinHost;
+  using Sar.Web;
 
   /// <summary>Configure API settings for the basic application</summary>
   public static class WebApiConfig

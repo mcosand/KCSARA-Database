@@ -4,8 +4,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Kcsara.Database.Model.Training;
-using Kcsara.Database.Services.Training;
+using Sar.Database.Model.Training;
+using Sar.Database.Services;
+using Sar.Database.Services.Training;
 
 namespace Kcsara.Database.Api.Controllers
 {

@@ -130,13 +130,13 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\common\src\auth-client\auth-client.csproj">
-      <Project>{1A4C1A6F-A571-4CD5-8388-98FCECB56AFA}</Project>
-      <Name>auth-client</Name>
+    <ProjectReference Include="..\..\..\common\src\sar-common\sar-common.csproj">
+      <Project>{0291FA3F-BF88-4E6C-8F61-D9030D66228B}</Project>
+      <Name>sar-common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\common\src\common-services\common-services.csproj">
-      <Project>{6fe506b3-0fd4-4539-ab78-ccce2a266ef7}</Project>
-      <Name>common-services</Name>
+    <ProjectReference Include="..\..\..\common\src\web-api-common\web-api-common.csproj">
+      <Project>{1D3FBAA4-8CB4-45F1-8709-AF2FF1940EBB}</Project>
+      <Name>web-api-common</Name>
     </ProjectReference>
     <ProjectReference Include="..\database-model\database-model.csproj">
       <Project>{EAE01EC9-F91D-4B72-A648-6AC96E688CCE}</Project>

@@ -5,8 +5,8 @@ namespace Sar.Auth.Migrations
   using System.Data.Entity.Migrations;
   using System.Linq;
   using Data;
+  using Database.Web.Auth.Services;
   using IdentityServer3.Core.Models;
-  using Services;
 
   internal sealed class Configuration : DbMigrationsConfiguration<Sar.Auth.Data.AuthDbContext>
   {

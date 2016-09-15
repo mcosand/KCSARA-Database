@@ -1,10 +1,7 @@
-﻿/*
- * Copyright 2016 Matthew Cosand
- */
-using System;
-using Sar.Model;
+﻿using System;
+using Sar.Database.Model;
 
-namespace Kcsara.Database.Model.Training
+namespace Sar.Database.Services.Training
 {
   public class ParsedKcsaraCsv
   {

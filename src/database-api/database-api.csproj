@@ -181,7 +181,6 @@
     <Compile Include="Controllers\Units\UnitsController.cs" />
     <Compile Include="DIModule.cs" />
     <Compile Include="ExceptionFilter.cs" />
-    <Compile Include="NamespaceControllerTypeResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AppBuilderExtensions.cs" />
   </ItemGroup>
@@ -198,17 +197,17 @@
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\common\src\auth-client\auth-client.csproj">
-      <Project>{1A4C1A6F-A571-4CD5-8388-98FCECB56AFA}</Project>
-      <Name>auth-client</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\common\src\common-services\common-services.csproj">
-      <Project>{6FE506B3-0FD4-4539-AB78-CCCE2A266EF7}</Project>
-      <Name>common-services</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\common\src\database-api-client\database-api-client.csproj">
-      <Project>{74510427-2536-44E6-AA2E-A67338A4A682}</Project>
+      <Project>{EBB4EB71-3979-4C7A-A838-090E47750CEA}</Project>
       <Name>database-api-client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\common\src\sar-common\sar-common.csproj">
+      <Project>{0291fa3f-bf88-4e6c-8f61-d9030d66228b}</Project>
+      <Name>sar-common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\common\src\web-api-common\web-api-common.csproj">
+      <Project>{1d3fbaa4-8cb4-45f1-8709-af2ff1940ebb}</Project>
+      <Name>web-api-common</Name>
     </ProjectReference>
     <ProjectReference Include="..\database-services\database-services.csproj">
       <Project>{2e5c85da-32f0-43f1-83ed-026867aa2a6d}</Project>

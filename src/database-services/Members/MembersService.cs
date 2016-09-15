@@ -6,13 +6,11 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Kcsara.Database.Model;
-using Kcsara.Database.Model.Members;
-using Sar.Model;
-using Sar.Services.Auth;
+using Sar.Database.Model;
+using Sar.Database.Model.Members;
 using Data = Kcsar.Database.Model;
 
-namespace Kcsara.Database.Services.Members
+namespace Sar.Database.Services
 {
   public interface IMembersService
   {
@@ -32,13 +30,13 @@ namespace Kcsara.Database.Services.Members
   {
     private readonly Func<Data.IKcsarContext> _dbFactory;
     private readonly IAuthorizationService _authz;
-    private readonly IAuthenticatedHost _host;
+    private readonly IHost _host;
 
     /// <summary></summary>
     /// <param name="dbFactory"></param>
     /// <param name="authSvc"></param>
     /// <param name="host"></param>
-    public MembersService(Func<Data.IKcsarContext> dbFactory, IAuthorizationService authSvc, IAuthenticatedHost host)
+    public MembersService(Func<Data.IKcsarContext> dbFactory, IAuthorizationService authSvc, IHost host)
     {
       _dbFactory = dbFactory;
       _authz = authSvc;

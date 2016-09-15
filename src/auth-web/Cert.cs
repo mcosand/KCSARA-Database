@@ -1,9 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
-using Serilog;
 
-namespace Sar.Auth
+namespace Sar.Database.Web.Auth
 {
   public static class Cert
   {
@@ -20,7 +19,7 @@ namespace Sar.Auth
 
       // If no signing cert is available use the test cert.
       using (var stream = useTest
-        ? assembly.GetManifestResourceStream("Sar.Auth.idsrv3test.pfx")
+        ? assembly.GetManifestResourceStream("Sar.Database.Web.Auth.idsrv3test.pfx")
         : new FileStream(certFilePath, FileMode.Open, FileAccess.Read))
       {
         return new X509Certificate2(ReadStream(stream), keyPhrase ?? "idsrv3test");

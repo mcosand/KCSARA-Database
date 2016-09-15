@@ -1,9 +1,6 @@
-﻿/*
- * Copyright Matthew Cosand
- */
-using System;
+﻿using System;
 
-namespace Sar.Auth
+namespace Sar.Database.Web.Auth
 {
   public class Organization
   {

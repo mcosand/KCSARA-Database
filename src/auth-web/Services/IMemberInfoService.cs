@@ -1,12 +1,9 @@
-﻿/*
- * Copyright Matthew Cosand
- */
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Kcsara.Database.Model.Members;
+using Sar.Database.Model.Members;
 
-namespace Sar.Auth
+namespace Sar.Database.Web.Auth
 {
   public interface IMemberInfoService
   {

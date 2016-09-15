@@ -1,9 +1,6 @@
-﻿using Kcsara.Database.Services.Members;
-using Kcsara.Database.Services.Training;
-using Ninject.Modules;
-using Sar.Services.Auth;
+﻿using Ninject.Modules;
 
-namespace Kcsara.Database.Services
+namespace Sar.Database.Services
 {
   public class DIModule : NinjectModule
   {

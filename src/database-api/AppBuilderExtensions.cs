@@ -10,6 +10,7 @@ using Newtonsoft.Json.Serialization;
 using Ninject;
 using Ninject.Web.WebApi.OwinHost;
 using Owin;
+using Sar.Web;
 
 namespace Kcsara.Database.Api
 {

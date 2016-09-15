@@ -1,11 +1,8 @@
-﻿/*
- * Copyright Matthew Cosand
- */
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Sar.Auth
+namespace Sar.Database.Web.Auth
 {
   public class Member
   {

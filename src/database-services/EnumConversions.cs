@@ -1,7 +1,6 @@
-﻿using Kcsara.Database.Model;
-using Data = Kcsar.Database.Model;
+﻿using Data = Kcsar.Database.Model;
 
-namespace Kcsara.Database.Services
+namespace Sar.Database.Model
 {
   public static class EnumConversionExtensions
   {

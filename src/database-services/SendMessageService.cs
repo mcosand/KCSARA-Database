@@ -2,7 +2,7 @@
 using System.Net.Mail;
 using System.Threading.Tasks;
 
-namespace Sar.Services
+namespace Sar.Database.Services
 {
   public interface ISendEmailService
   {

@@ -4,12 +4,11 @@ using IdentityServer3.Core.Services;
 using Ninject;
 using Ninject.Modules;
 using Sar.Auth.Data;
-using Sar.Auth.Services;
-using Sar.Services;
-using Sar.Services.Auth;
+using Sar.Database.Services;
+using Sar.Database.Web.Auth.Services;
 using Serilog;
 
-namespace Sar.Auth
+namespace Sar.Database.Web.Auth
 {
   public class DIModule : NinjectModule
   {
