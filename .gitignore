@@ -4,7 +4,9 @@ cert.pfx
 cert.cer
 cert.pvk
 
+log4net.config
 logs/
+
 /publish/
 **/wwwroot/lib/
 *.csproj.user
