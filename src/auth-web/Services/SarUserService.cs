@@ -116,6 +116,12 @@ namespace Sar.Auth.Services
       }
     }
 
+    public static string GetSaltedPassword(string password)
+    {
+      string salt = GetSalt();
+      return salt + HashPassword(password, salt);
+    }
+
     private static string GetSalt()
     {
       return GetSalt(PasswordSaltLength);
