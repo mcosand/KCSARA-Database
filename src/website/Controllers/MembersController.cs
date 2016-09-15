@@ -27,7 +27,7 @@ namespace Kcsara.Database.Web.Controllers
 
   public class MembersController : BaseController
   {
-    public MembersController(IKcsarContext db) : base(db) { }
+    public MembersController(IKcsarContext db, IAppSettings settings) : base(db, settings) { }
 
     /// <summary>Vdir-relative directory to the meber's photo store. Includes trailing-slash.</summary>
     public const string PhotosStoreRelativePath = "~/Content/auth/members/";

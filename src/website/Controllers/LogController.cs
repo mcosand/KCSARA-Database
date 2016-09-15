@@ -12,7 +12,7 @@ namespace Kcsara.Database.Web.Controllers
 
   public class LogController : BaseController
   {
-    public LogController(IKcsarContext db) : base(db) { }
+    public LogController(IKcsarContext db, IAppSettings settings) : base(db, settings) { }
 
     [Authorize(Roles = "cdb.admins")]
     public ViewResult Index()

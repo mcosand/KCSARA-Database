@@ -29,11 +29,6 @@ namespace Kcsara.Database.Web.Controllers
     public IAuthService Permissions = null;
     protected readonly IAppSettings settings;
     protected readonly IKcsarContext db;
-    
-    public BaseController(IKcsarContext db)
-      : this(db, Ninject.ResolutionExtensions.Get<IAppSettings>(MvcApplication.myKernel))
-    {
-    }
 
     public BaseController(IKcsarContext db, IAppSettings settings)
       : base()

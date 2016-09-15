@@ -16,14 +16,15 @@ using System.Web;
 using System.Web.Http;
 using Kcsar.Database.Model;
 using Kcsara.Database.Web.Model;
+using Kcsara.Database.Web.Services;
 using log4net;
 
 namespace Kcsara.Database.Web.api
 {
   public abstract class DocumentsController : BaseApiController
   {
-    public DocumentsController(IKcsarContext db, ILog log)
-      : base(db, log)
+    public DocumentsController(IKcsarContext db, IAuthService auth, ILog log)
+      : base(db, auth, log)
     { }
 
     [HttpGet]
@@ -44,8 +45,8 @@ namespace Kcsara.Database.Web.api
             Size = d.Size,
             Type = d.Type,
             Mime = d.MimeType,
-            Url = Url.Route("defaultApi", new { controller = this.ControllerContext.ControllerDescriptor.ControllerName, action = "Get", id = d.Id }),
-            Thumbnail = Url.Route("defaultApi", new { controller = this.ControllerContext.ControllerDescriptor.ControllerName, action = "Thumbnail", id = d.Id })
+            Url = Url.Content($"~/api/{this.ControllerContext.ControllerDescriptor.ControllerName}/Get/{d.Id}"),
+            Thumbnail = Url.Content($"~/api/{this.ControllerContext.ControllerDescriptor.ControllerName}/Thumbnail/{d.Id}")
           };
     }
 

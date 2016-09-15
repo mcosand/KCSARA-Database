@@ -18,7 +18,7 @@ namespace Kcsara.Database.Web.Controllers
 
   public class AnimalsController : BaseController
   {
-    public AnimalsController(IKcsarContext db) : base(db) { }
+    public AnimalsController(IKcsarContext db, IAppSettings settings) : base(db, settings) { }
 
     /// <summary>Vdir-relative directory to the meber's photo store. Includes trailing-slash.</summary>
     public const string PhotosStoreRelativePath = "~/Content/auth/animals/";

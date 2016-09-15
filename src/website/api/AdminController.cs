@@ -15,8 +15,8 @@ namespace Kcsara.Database.Web.api
   [ModelValidationFilter]
   public class AdminController : BaseApiController
   {
-    public AdminController(IKcsarContext db, ILog log)
-      : base(db, log)
+    public AdminController(IKcsarContext db, Services.IAuthService auth, ILog log)
+      : base(db, auth, log)
     { }
 
     [HttpPost]

@@ -13,8 +13,8 @@
   [ModelValidationFilter]
   public class TrainingRecordsController : BaseApiController
   {
-    public TrainingRecordsController(Data.IKcsarContext db, ILog log)
-      : base(db, log)
+    public TrainingRecordsController(Data.IKcsarContext db, Services.IAuthService auth, ILog log)
+      : base(db, auth, log)
     {
     }
 

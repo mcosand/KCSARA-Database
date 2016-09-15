@@ -4,7 +4,10 @@ using System.Configuration;
 using System.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Web.Http;
 using IdentityModel.Client;
+using Kcsara.Database.Api;
+using Kcsara.Database.Web.api;
 using Microsoft.AspNet.Identity;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.Owin;
@@ -26,6 +29,8 @@ namespace Kcsara.Database.Web
 
     public void Configuration(IAppBuilder app)
     {
+      app.Map("/api2", apiApp => apiApp.UseDatabaseApi(kernel));
+
       app.UseCookieAuthentication(new CookieAuthenticationOptions
       {
         AuthenticationType = "Cookies"
@@ -106,6 +111,13 @@ namespace Kcsara.Database.Web
           }
         }
       });
+
+      //app.Map("/api", apiApp =>
+      //{
+      //  var config = new HttpConfiguration();
+      //  WebApiConfig.Register(config, kernel);
+      //  app.UseWebApi(config);
+      //});
     }
   }
 }

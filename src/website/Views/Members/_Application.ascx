@@ -81,14 +81,14 @@
             var mDocId = (doc.Id) ? "&mDocId=" + doc.Id : "";
             self.Documents.setState(
                 "Do you want to record that you've reviewed and understand the contents of the document '" + doc.Title + "'?",
-                '<%= Url.RouteUrl("defaultApi", new { httproute="", controller = "Members", action = "SignUnitDocument", id=Model.Id }) %>/?docId=' + doc.DocId + mDocId
+                '<%= Url.Content($"~/api/members/signunitdocument/{Model.Id}") %>/?docId=' + doc.DocId + mDocId
                 );};
 
         this.Documents.doDocSubmitted = function (doc) {
             var mDocId = (doc.Id) ? "&mDocId=" + doc.Id : "";
             self.Documents.setState(
             "Press 'OK' to indicate that you have submitted the completed document '" + doc.Title + "' to:\n\n" + doc.SubmitTo,
-            '<%= Url.RouteUrl("defaultApi", new { httproute="", controller = "Members", action = "SubmitUnitDocument", id = Model.Id }) %>/?docId=' + doc.DocId + mDocId
+            '<%= Url.Content($"~/api/members/submitUnitDocument/{Model.Id}") %>/?docId=' + doc.DocId + mDocId
             );};
 
         this.Documents.doDocSignoffEx = function (doc, approve) {
@@ -96,7 +96,7 @@
 
             self.Documents.setState(
                     (approve ? "Accept" : "Reject") + " document '" + doc.Title + "'?",
-                    '<%= Url.RouteUrl("defaultApi", new { httproute="", controller = "Members", action = "SignoffUnitDocument", id=Model.Id }) %>/?docId=' + doc.DocId + mDocId + "&approve=" + approve
+                    '<%= Url.Content($"~/api/members/signoffunitdocument/{Model.Id}") %>/?docId=' + doc.DocId + mDocId + "&approve=" + approve
             );
         };
 
@@ -114,7 +114,7 @@
         this.GetData = function ()
         {
             this.isLoading(true);
-            $.ajax({ type: 'GET', url: '<%= Url.RouteUrl("defaultApi", new { httproute="", controller = "Members", action = "GetApplications", id=Model.Id }) %>', dataType: 'json', contentType: 'application/json; charset=utf-8' })
+            $.ajax({ type: 'GET', url: '<%= Url.Content($"~/api/members/getapplications{Model.Id}") %>', dataType: 'json', contentType: 'application/json; charset=utf-8' })
             .done(function (result) {
                 self.Rows(makeDates(result, ['Started']));
                 window.setTimeout(self.GetDocuments, 0);
@@ -126,7 +126,7 @@
 
         this.GetDocuments = function () {
             self.Documents.isLoading(true);
-            $.ajax({ type: 'GET', url: '<%= Url.RouteUrl("defaultApi", new { httproute="", controller = "Members", action = "GetUnitDocuments", id=Model.Id }) %>', dataType: 'json', contentType: 'application/json; charset=utf-8' })
+            $.ajax({ type: 'GET', url: '<%= Url.Content($"~/api/members/getunitdocuments/{Model.Id}") %>', dataType: 'json', contentType: 'application/json; charset=utf-8' })
             .done(function (result) {
                 self.Documents(makeDates(result, ['StatusDate']));
             })
@@ -141,7 +141,7 @@
 
             var doit = confirm(msg);
             if (doit) {
-                $.ajax({ type: 'POST', url: '<%= Url.RouteUrl("defaultApi", new { httproute="", controller = "Units", action = "WithdrawApplication" }) %>/' + row.Id, dataType: 'json', contentType: 'application/json; charset=utf-8' })
+                $.ajax({ type: 'POST', url: '<%= Url.Content("~/api/units/WithdrawApplication") %>/' + row.Id, dataType: 'json', contentType: 'application/json; charset=utf-8' })
                 .done(function (result) {
                     self.GetData();
                 })

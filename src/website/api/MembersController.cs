@@ -16,8 +16,8 @@
   [ModelValidationFilter]
   public class MembersController : BaseApiController
   {
-    public MembersController(Model.IKcsarContext db, ILog log)
-      : base(db, log)
+    public MembersController(Model.IKcsarContext db, Services.IAuthService auth, ILog log)
+      : base(db, auth, log)
     {
     }
 

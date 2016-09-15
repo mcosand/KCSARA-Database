@@ -19,8 +19,8 @@ namespace Kcsara.Database.Web.api
   {
     readonly Lazy<MembersController> membersController;
 
-    public UnitsController(Lazy<MembersController> membersController, Model.IKcsarContext db, ILog log)
-      : base(db, log)
+    public UnitsController(Lazy<MembersController> membersController, Services.IAuthService auth, Model.IKcsarContext db, ILog log)
+      : base(db, auth, log)
     {
       this.membersController = membersController;
     }

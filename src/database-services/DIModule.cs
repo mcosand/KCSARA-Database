@@ -11,7 +11,7 @@ namespace Kcsara.Database.Services
   {
     public override void Load()
     {
-      Bind<Func<IKcsarContext>>().ToConstant((Func<IKcsarContext>)(() => new KcsarContext())).InSingletonScope();
+      //Bind<Func<IKcsarContext>>().ToConstant((Func<IKcsarContext>)(() => new KcsarContext())).InSingletonScope();
       Bind<IUserInfoService>().To<UserInfoService>().InSingletonScope();
       Bind<IAuthorizationService>().To<AuthorizationService>().InSingletonScope();
 

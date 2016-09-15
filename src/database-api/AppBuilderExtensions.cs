@@ -4,6 +4,7 @@ using System.Configuration;
 using System.IdentityModel.Tokens;
 using System.IO;
 using System.Web.Http;
+using System.Web.Http.Dispatcher;
 using IdentityServer3.AccessTokenValidation;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
@@ -30,6 +31,10 @@ namespace Kcsara.Database.Api
       };
 
       var config = new HttpConfiguration();
+      // Getting Ninject OwinHost and Ninject WebHost to live together isn't really supported.
+      // I think this is the guts of .UseNinjectMiddleware but there may be bugs here.
+      config.DependencyResolver = new OwinNinjectDependencyResolver(kernel);
+
       config.MapHttpAttributeRoutes();
 
       config.Filters.Add(new ExceptionFilter());
@@ -43,9 +48,10 @@ namespace Kcsara.Database.Api
 
       config.EnableCors();
 
+      config.Services.Replace(typeof(IHttpControllerTypeResolver), new NamespaceControllerTypeResolver("Kcsara.Database.Api.Controllers"));
+
       app.UseIdentityServerBearerTokenAuthentication(tokenAuthOptions);
-      app.UseNinjectMiddleware(() => kernel);
-      app.UseNinjectWebApi(config);
+      app.UseWebApi(config);
 
       return app;
     }

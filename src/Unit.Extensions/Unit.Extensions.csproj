@@ -65,7 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\database-model\database-model.csproj">
-      <Project>{eae01ec9-f91d-4b72-a648-6ac96e688cce}</Project>
+      <Project>{EAE01EC9-F91D-4B72-A648-6AC96E688CCE}</Project>
       <Name>database-model</Name>
     </ProjectReference>
   </ItemGroup>

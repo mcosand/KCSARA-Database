@@ -12,7 +12,7 @@
   <meta content="width=device-width, initial-scale=1, minimum-scale=1, user-scalable=yes" name="viewport">
   <link rel="apple-touch-icon" href="~/apple-touch-icon.png" />
   <title>@ViewData["Title"] - @Strings.DatabaseName</title>
-  <script type="text/javascript">window.appRoot = '@Url.Content("~/")'; var errorUrl = '@Url.RouteUrl("DefaultApi", new { httproute = "", Controller = "telemetry", Action = "error" })';</script>
+  <script type="text/javascript">window.appRoot = '@Url.Content("~/")'; var errorUrl = '@Url.Content("~/api/telemetry/error")';</script>
   @Styles.Render("~/Content/bootstrap")
   @Scripts.Render("~/scripts/ng-core")
   <script type="text/javascript">

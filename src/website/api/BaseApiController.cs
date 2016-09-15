@@ -22,11 +22,6 @@ namespace Kcsara.Database.Web.api
     //    GlobalConfiguration.Configuration.Filters.Add(new ExceptionFilter());
     //}
 
-    public BaseApiController(IKcsarContext db, ILog log)
-      : this(db, Ninject.ResolutionExtensions.Get<IAuthService>(MvcApplication.myKernel), log)
-    {
-    }
-
     public BaseApiController(IKcsarContext db, IAuthService auth, ILog log)
       : base()
     {

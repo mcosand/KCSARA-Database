@@ -17,7 +17,7 @@ namespace Kcsara.Database.Web.Controllers
 
   public partial class AdminController : BaseController
   {
-    public AdminController(IKcsarContext db) : base(db) { }
+    public AdminController(IKcsarContext db, IAppSettings settings) : base(db, settings) { }
 
     [Authorize]
     public ActionResult Index()

@@ -14,7 +14,7 @@ namespace Kcsara.Database.Web.Controllers
   public class TrackController : BaseController
   {
     private readonly ILog log;
-    public TrackController(IKcsarContext db, ILog log) : base(db)
+    public TrackController(IKcsarContext db, IAppSettings settings, ILog log) : base(db, settings)
     {
       this.log = log;
     }

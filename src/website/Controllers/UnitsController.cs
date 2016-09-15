@@ -26,7 +26,7 @@ namespace Kcsara.Database.Web.Controllers
     private readonly IReportsService reports;
     private readonly Lazy<IExtensionProvider> extensions;
 
-    public UnitsController(Lazy<IExtensionProvider> extensions, IReportsService reports, IKcsarContext db) : base(db)
+    public UnitsController(Lazy<IExtensionProvider> extensions, IReportsService reports, IKcsarContext db, IAppSettings settings) : base(db, settings)
     {
       this.reports = reports;
       this.extensions = extensions;

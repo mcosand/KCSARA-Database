@@ -14,8 +14,8 @@ namespace Kcsara.Database.Web.api
 {
   public class TrainingDocumentsController : DocumentsController
   {
-    public TrainingDocumentsController(IKcsarContext db, ILog log)
-      : base(db, log)
+    public TrainingDocumentsController(IKcsarContext db, Services.IAuthService auth, ILog log)
+      : base(db, auth, log)
     { }
 
     protected override bool CanAddDocuments(Guid id)

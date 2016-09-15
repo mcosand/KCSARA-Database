@@ -92,7 +92,7 @@
         var loadData = function (sensitive, reason) {
             self.isLoading(true);
             var reasonArg = (reason == null) ? '' : "&reason=" + encodeURIComponent(reason);
-            $.ajax({ type: 'GET', url: '<%= Url.RouteUrl("defaultApi", new { httproute="", controller = "Members", action = "GetMedical", id=Model.Id }) %>?showSensitive=' + sensitive + reasonArg, dataType: 'json', contentType: 'application/json; charset=utf-8' })
+            $.ajax({ type: 'GET', url: '<%= Url.Content($"~/api/members/getMedical/{Model.Id}") %>?showSensitive=' + sensitive + reasonArg, dataType: 'json', contentType: 'application/json; charset=utf-8' })
                         .done(function (result) {
                             self.hasSensitive(result.Allergies || result.Medications || result.Disclosure || result.Contacts.length > 0);
                             self.sensitiveLoaded(sensitive);
@@ -145,7 +145,7 @@
 
         this.doSave = function() {
             self.isLoading(true);
-            $.ajax({ type: 'POST', url: '<%= Url.RouteUrl("defaultApi", new { httproute="", controller = "Members", action = "SaveMedical" }) %>', data: ko.toJSON(self.Data), dataType: 'json', contentType: 'application/json; charset=utf-8' })
+            $.ajax({ type: 'POST', url: '<%= Url.Content("~/api/members/savemedical") %>', data: ko.toJSON(self.Data), dataType: 'json', contentType: 'application/json; charset=utf-8' })
             .done(function (result) {
                 if (result == 'OK') { self.showDialog(false); }
                 else { alert(result); }

@@ -167,7 +167,7 @@
       if (doit) {
         self.applyEnabled(false);
 
-        $.ajax({ type: 'POST', url: '@Url.RouteUrl("defaultApi", new { httproute="", controller = "Units", action = "SubmitApplication", id=u.Id })?memberId=@((Guid)ViewBag.ActorId)', dataType: 'json', contentType: 'application/json; charset=utf-8' })
+        $.ajax({ type: 'POST', url: '@Url.Content($"~/api/units/sumbmitapplication/{u.Id}")?memberId=@((Guid)ViewBag.ActorId)', dataType: 'json', contentType: 'application/json; charset=utf-8' })
         .done(function (result) {
           window.location.href = '@Url.Action("Detail", "Members", new { id=ViewBag.ActorId })';
         })
@@ -182,7 +182,7 @@
     this.documents.isLoading = ko.observable(true);
     this.documents.getData = function () {
       self.documents.isLoading(true);
-      $.ajax({ type: 'GET', url: '@Url.RouteUrl("defaultApi", new { httproute="", controller = "Units", action = "GetDocuments", id=Model.Id })', dataType: 'json', contentType: 'application/json; charset=utf-8' })
+      $.ajax({ type: 'GET', url: '@Url.Content($"~/api/units/getdocuments/{Model.Id}")', dataType: 'json', contentType: 'application/json; charset=utf-8' })
               .done(function (result) {
                 self.documents($.map(result, function (val) { return new UnitDocument(val); }));
               })
@@ -201,7 +201,7 @@
 
     this.documents.doSave = function () {
       self.documents.isLoading(true);
-      $.ajax({ type: 'POST', url: '@Url.RouteUrl("defaultApi", new { httproute="", controller = "Units", action = "SaveDocuments", id=Model.Id })', data: ko.toJSON(self.documents), dataType: 'json', contentType: 'application/json; charset=utf-8' })
+      $.ajax({ type: 'POST', url: '@Url.Content($"~/api/units/savedocuments/{Model.Id}")', data: ko.toJSON(self.documents), dataType: 'json', contentType: 'application/json; charset=utf-8' })
           .done(function (result) {
             if (result == 'OK') { alert('Saved successfully'); }
             else { alert(result); }

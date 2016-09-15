@@ -1,11 +1,11 @@
-﻿/*
- * Copyright 2013-2014 Matthew Cosand
- */
-namespace Kcsara.Database.Web.api
+﻿namespace Kcsara.Database.Web.api
 {
   using System.Web.Http;
+  using System.Web.Http.Dispatcher;
+  using Api;
   using Newtonsoft.Json.Converters;
   using Ninject;
+  using Ninject.Web.WebApi.OwinHost;
 
   /// <summary>Configure API settings for the basic application</summary>
   public static class WebApiConfig
@@ -15,7 +15,7 @@ namespace Kcsara.Database.Web.api
     /// <param name="kernel">Composition root.</param>
     public static void Register(HttpConfiguration config, IKernel kernel)
     {
-      config.DependencyResolver = new NinjectResolver(kernel);
+      config.DependencyResolver = new OwinNinjectDependencyResolver(kernel);
 
       config.MapHttpAttributeRoutes();
 
@@ -35,6 +35,8 @@ namespace Kcsara.Database.Web.api
       config.Filters.Add(new AuthorizeAttribute());
 
       config.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new StringEnumConverter());
+
+      config.Services.Replace(typeof(IHttpControllerTypeResolver), new NamespaceControllerTypeResolver("Kcsara.Database.Web.api"));
     }
   }
 }

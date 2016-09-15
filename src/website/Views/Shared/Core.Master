@@ -9,7 +9,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
     <link rel="apple-touch-icon" href="<%= Url.Content("~/apple-touch-icon.png") %>" />
     <title><%: ViewData["Title"] %></title>
-    <script type="text/javascript">var errorUrl = '<%= Url.RouteUrl("DefaultApi", new { httproute="", Controller = "telemetry", Action="error" }) %>';</script>
+    <script type="text/javascript">var errorUrl = '<%= Url.Content("~/api/telemetry/error") %>';</script>
     <!--[if lt IE 9]><script src="<%= Url.Content("~/Scripts/html5.js") %>"></script><![endif]-->
     <%= Styles.Render("~/Content/themes/base/jquery-ui") %>
     <%= Styles.Render("~/Content/site-style")%>

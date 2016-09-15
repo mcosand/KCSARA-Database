@@ -35,7 +35,7 @@ namespace Kcsara.Database.Web.Controllers
 
   public class MapController : BaseController
   {
-    public MapController(IKcsarContext db) : base(db) { }
+    public MapController(IKcsarContext db, IAppSettings settings) : base(db, settings) { }
 
     ///// <summary>
     ///// 

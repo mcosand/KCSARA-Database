@@ -14,8 +14,8 @@ namespace Kcsara.Database.Web.api
   [Authorize]
   public class TrackController : BaseApiController
   {
-    public TrackController(IKcsarContext db, ILog log)
-      : base(db, log)
+    public TrackController(IKcsarContext db, Services.IAuthService auth, ILog log)
+      : base(db, auth, log)
     { }
 
     /// <summary>Client trapped a generic unhandled error.</summary>

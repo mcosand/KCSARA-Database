@@ -19,7 +19,7 @@ namespace Kcsara.Database.Web.Controllers
 
   public partial class MissionsController : SarEventController<Mission, MissionRoster>
   {
-    public MissionsController(IKcsarContext db) : base(db) { }
+    public MissionsController(IKcsarContext db, IAppSettings settings) : base(db, settings) { }
 
     [Authorize]
     public override ActionResult Index()

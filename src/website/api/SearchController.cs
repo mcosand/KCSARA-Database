@@ -17,8 +17,8 @@ namespace Kcsara.Database.Web.api
   {
     private static string allTypes = string.Join(",", Enum.GetNames(typeof(SearchResultType)));
 
-    public SearchController(IKcsarContext db, ILog log)
-      : base(db, log)
+    public SearchController(IKcsarContext db, Services.IAuthService auth, ILog log)
+      : base(db, auth, log)
     { }
 
     /// <summary>

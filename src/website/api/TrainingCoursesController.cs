@@ -17,8 +17,8 @@ namespace Kcsara.Database.Web.api
 {
   public class TrainingCoursesController : BaseApiController
   {
-    public TrainingCoursesController(Data.IKcsarContext db, ILog log)
-      : base(db, log)
+    public TrainingCoursesController(Data.IKcsarContext db, Services.IAuthService auth, ILog log)
+      : base(db, auth, log)
     { }
 
     [HttpGet]

@@ -19,7 +19,7 @@ namespace Kcsara.Database.Web.Controllers
     where R : class, IRosterEntry<E, R>, new()
     where E : class, IRosterEvent<E, R>, new()
   {
-    public SarEventController(IKcsarContext db) : base(db) { }
+    public SarEventController(IKcsarContext db, IAppSettings settings) : base(db, settings) { }
 
     [Authorize]
     public virtual ActionResult Index()

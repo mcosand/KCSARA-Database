@@ -47,7 +47,7 @@
           this.isLoading = ko.observable(true);
           this.GetData = function () {
               this.isLoading(true);
-              $.ajax({ type: 'GET', url: '<%= Url.RouteUrl("defaultApi", new { httproute="", controller = "Units", action = "GetApplicants", id=Model.Id }) %>', dataType: 'json', contentType: 'application/json; charset=utf-8' })
+              $.ajax({ type: 'GET', url: '<%= Url.Content($"~/api/units/getapplicants/{Model.Id}") %>', dataType: 'json', contentType: 'application/json; charset=utf-8' })
             .done(function (result) {
                 self.Rows(makeDates(result, ['Started']));
             })

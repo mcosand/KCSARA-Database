@@ -79,7 +79,7 @@
                 <strong>Documentation:</strong>
                 <div style="border-top: solid 1px #888; padding: .5em;">
                     <div id="recordDocs" data-bind="jqFileUpload: $data">
-                        <form id="fileupload" data-bind="attr: {action: '<%= Url.RouteUrl("DefaultApi", new { httproute = "", controller = "TrainingDocuments", action = "PutFiles" }) %>/' + Model().ReferenceId() }" method="POST" enctype="multipart/form-data">
+                        <form id="fileupload" data-bind="attr: {action: '<%= Url.Content("~/api/trainingdocuments/PutFiles") %>/' + Model().ReferenceId() }" method="POST" enctype="multipart/form-data">
                             <!-- ko if: IsLoadingDocs -->
                             <img src="<%= Url.Content("~/content/images/progress.gif") %>" alt="Loading Documents ..." style="width:100%; height:12px" />
                             <!-- /ko -->
@@ -132,7 +132,7 @@
     </div>
     <script type="text/javascript">
         var globalCourseList = ko.observableArray();
-        $.getJSON("<%= Url.RouteUrl("DefaultApi", new { httproute = "", controller = "TrainingCourses", action = "GetAll" }) %>", function (data) {
+        $.getJSON("<%= Url.Content("~/api/trainingcourses/getall") %>", function (data) {
             globalCourseList.removeAll();
             for (var d in data) {
                 globalCourseList.push(ko.mapping.fromJS(data[d]));
@@ -169,7 +169,7 @@
             recordEditor.RemoveSaved = function (model) {
                 if (confirm('Removing "' + model.Title + '"\n\nThis action is immediate and can not be undone. Continue?')) {
                     recordEditor.IsDeletingDoc(true);
-                    $.ajax("<%= Url.RouteUrl("DefaultApi", new { httproute = "", controller = "TrainingDocuments", action = "delete" }) %>/" + model.Id,
+                    $.ajax("<%= Url.Content("~/api/trainingdocuments/delete") %>/" + model.Id,
                         {
                             type: 'POST',
                             contentType: 'application/json',
@@ -191,7 +191,7 @@
             var result = false;
             model.PendingUploads(recordEditor.PendingDocuments().length);
             recordEditor.IsSendingRecord(true);
-            $.ajax("<%= Url.RouteUrl("DefaultApi", new { httproute = "", controller = "TrainingRecords", action = "Post" }) %>",
+            $.ajax("<%= Url.Content("~/api/trainingrecords/post") %>",
            {
                type: 'POST',
                contentType: "application/json",
@@ -237,7 +237,7 @@
                 me.RecordEditor.Errors([]);
                 if (model != null) {
                     recordEditor.IsLoadingDocs(true);
-                    $.ajax('<%= Url.RouteUrl("DefaultApi", new { httproute = "", controller = "TrainingDocuments", action = "GetList" }) %>/' + model.ReferenceId(),
+                    $.ajax('<%= Url.Content("~/api/trainingdocuments/getlist") %>/' + model.ReferenceId(),
                {
                    type: 'GET',
                    contentType: "application/json",
@@ -268,7 +268,7 @@
         this.DeleteRecord = function (model) {
             if (confirm('Delete "' + model.Course.Title() + '" on ' + model.Completed() + '?'))
             {
-                $.ajax("<%= Url.RouteUrl("DefaultApi", new { httproute = "", controller = "TrainingRecords", action = "Delete" }) %>/" + model.ReferenceId(),
+                $.ajax("<%= Url.Content("~/api/trainingrecords/delete") %>/" + model.ReferenceId(),
                 {
                    type: 'POST',
                    contentType: "application/json"
@@ -280,7 +280,7 @@
 
         this.ReloadHistory = function () {
             me.IsLoadingRecords(true);
-            $.getJSON("<%= Url.RouteUrl("DefaultApi", new { httproute = "", controller = "TrainingRecords", action = ((ViewData["history"] != null) ? "FindForMember" : "FindComputedForMember"), id = Model }) %>")
+            $.getJSON("<%= Url.Content($"~/api/trainingrecords/{((ViewData["history"] != null) ? "FindForMember" : "FindComputedForMember")}/{Model}") %>")
                 .done(function (data) {
                     ko.mapping.fromJS(data, me.List);
                 })

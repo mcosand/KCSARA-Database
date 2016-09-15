@@ -20,7 +20,7 @@ namespace Kcsara.Database.Web.Controllers
 
   public partial class TrainingController : SarEventController<Training, TrainingRoster>
   {
-    public TrainingController(IKcsarContext db) : base(db) { }
+    public TrainingController(IKcsarContext db, IAppSettings settings) : base(db, settings) { }
 
     public override ActionResult Index()
     {

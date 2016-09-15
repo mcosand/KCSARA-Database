@@ -11,8 +11,8 @@ namespace Kcsara.Database.Web.api
   /// <summary>Provides telemetry back to server. Not for general use.</summary>
   public class TelemetryController : BaseApiController
   {
-    public TelemetryController(IKcsarContext db, ILog log)
-      : base(db, log)
+    public TelemetryController(IKcsarContext db, Services.IAuthService auth, ILog log)
+      : base(db, auth, log)
     { }
 
     /// <summary>Client trapped a generic unhandled error.</summary>
