@@ -36,7 +36,7 @@ namespace Sar.Auth.Controllers
     /// </returns>
     public ActionResult Login(LoginViewModel model, SignInMessage message)
     {
-      var openIdProviders = _config.GetConfig("openId:providers").Split(',');
+      var openIdProviders = (_config.GetConfig("openId:providers") ?? string.Empty).Split(',');
       ViewBag.OpenIdIcons = openIdProviders.ToDictionary(f => f, f => "fa-" + _config.GetConfig("openId:" + f + ":fa-icon"));
       ViewBag.OpenIdColors = openIdProviders.ToDictionary(f => f, f => _config.GetConfig("openId:" + f + ":icon-color"));
 
