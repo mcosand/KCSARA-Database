@@ -1,0 +1,25 @@
+﻿Every time you refresh the model from the database, you'll need to redo the storage model.
+
+
+From: http://social.msdn.microsoft.com/forums/en-US/adodotnetentityframework/thread/b0ac34d7-91de-4af9-8064-af4625fd6a25/
+
+<edmx:ConceptualModels>
+
+
+<Property Name="LocationData" Type="Binary" Nullable="true" MaxLength="2147483647" FixedLength="false" />
+
+
+<edmx:StorageModels>
+
+<Property Name="LocationData" Type="varbinary(max)" />
+
+And
+
+I my object write property:
+Code Snippet
+
+public SqlGeometry Location
+{
+ get{ return LocationData == null ? null : SqlGeometry.STGeomFromWKB(new SqlBytes(LocationData), 0); }
+ set {  LocationData = value.STAsBinary().Buffer; }
+}
