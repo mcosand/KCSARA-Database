@@ -271,21 +271,11 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="app.config" />
     <None Include="Properties\PublishProfiles\LocalFileSystem.pubxml" />
     <Compile Include="AppBuilderExtensions.cs" />
     <Compile Include="Controllers\RegisterController.cs" />
     <Compile Include="Services\LocalMemberInfoService.cs" />
-    <None Include="Web.Debug.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
-    <None Include="Web.Release.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Web.config">
-      <SubType>Designer</SubType>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
@@ -358,7 +348,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
-    <Compile Include="WebSetup.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\common\src\database-api-client\database-api-client.csproj">
