@@ -79,7 +79,8 @@ namespace Owin
                                 //Href = "~/localregistration"
                                 Href = "localregistration"
                             }
-                        }
+                        },
+          EnablePostSignOutAutoRedirect = true
         },
 
         EventsOptions = new EventsOptions

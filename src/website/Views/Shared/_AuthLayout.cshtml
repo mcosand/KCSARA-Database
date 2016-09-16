@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>@ViewBag.Title - King County Search and Rescue</title>
   @Styles.Render("~/wwwroot/css/auth-core")
+  @RenderSection("head", required: false)
 </head>
 <body layout="row" ng-app="sarAuth" class="ng-cloak">
   <div layout="column" flex id="content" role="main">
@@ -14,7 +15,8 @@
             <md-icon md-svg-icon="/identity/wwwroot/lib/angular-material/img/icons/menu.svg"></md-icon>
           </md-button>*@
         <h2>
-          <strong>King County Search and Rescue</strong>
+          <span hide-xs>King County Search and Rescue</span>
+          <span hide-gt-xs>King County SAR</span>
         </h2>
       </div>
     </md-toolbar>

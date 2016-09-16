@@ -8,6 +8,7 @@ using IdentityServer3.Core;
 using IdentityServer3.Core.Models;
 using IdentityServer3.Core.Services;
 using Sar.Auth.Data;
+using Sar.Services.Auth;
 
 namespace Sar.Database.Web.Auth.Services
 {
@@ -50,7 +51,7 @@ namespace Sar.Database.Web.Auth.Services
           case Flows.Implicit:
           case Flows.Hybrid:
             client.RedirectUris = row.RedirectUris.Select(g => g.Uri).ToList();
-            client.PostLogoutRedirectUris = new List<string>();
+            client.PostLogoutRedirectUris = row.LogoutUris.Select(g => g.Uri).ToList();
             client.AllowedScopes = new List<string> {
                 Constants.StandardScopes.OpenId,
                 Constants.StandardScopes.Profile,
@@ -60,6 +61,7 @@ namespace Sar.Database.Web.Auth.Services
             return client;
           case Flows.AuthorizationCode:
             client.RedirectUris = row.RedirectUris.Select(g => g.Uri).ToList();
+            client.PostLogoutRedirectUris = row.LogoutUris.Select(g => g.Uri).ToList();
             client.AllowedScopes = new List<string> {
                 Constants.StandardScopes.OpenId,
                 Constants.StandardScopes.Profile,

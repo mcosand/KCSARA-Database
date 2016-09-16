@@ -1,7 +1,4 @@
-﻿/*
- * Copyright Matthew Cosand
- */
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using IdentityServer3.Core.Models;
@@ -25,6 +22,8 @@ namespace Sar.Auth.Data
     public bool Enabled { get; set; }
 
     public virtual ICollection<ClientUriRow> RedirectUris { get; set; }
+
+    public virtual ICollection<ClientLogoutUriRow> LogoutUris { get; set; }
 
     [MaxLength(255)]
     public string AddedScopes { get; set; }

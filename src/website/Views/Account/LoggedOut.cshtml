@@ -41,3 +41,10 @@
         }
     </div>
 </div>
+
+@section head{
+  @if (Model.RedirectUrl != null && Model.AutoRedirect)
+  {
+    <meta http-equiv="refresh" content="@Math.Max(Model.AutoRedirectDelay, 0);url=@Model.RedirectUrl" />
+  }
+}
