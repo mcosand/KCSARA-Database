@@ -1,7 +1,4 @@
-﻿/*
- * Copyright 2012-2015 Matthew Cosand
- */
-using System.Web.Http;
+﻿using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
 
@@ -17,6 +14,14 @@ namespace Kcsara.Database.Web
       routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
       routes.MapMvcAttributeRoutes();
+
+      routes.MapRoute(
+        name: "Register",
+        url: "auth/{action}",
+        defaults: new { controller = "Register" },
+        namespaces: new[] { "Sar.Auth.Controllers" }
+        );
+
 
       routes.MapRoute(
         name: "ErrorPage",

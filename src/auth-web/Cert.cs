@@ -5,9 +5,9 @@ using Serilog;
 
 namespace Sar.Auth
 {
-  internal static class Cert
+  public static class Cert
   {
-    public static X509Certificate2 Load(string keyPhrase, ILogger log)
+    public static X509Certificate2 Load(string keyPhrase, Action<string> logWarn)
     {
       var assembly = typeof(Cert).Assembly;
       var certFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "cert.pfx");
@@ -15,7 +15,7 @@ namespace Sar.Auth
       bool useTest = !File.Exists(certFilePath) || string.IsNullOrWhiteSpace(keyPhrase);
       if (useTest)
       {
-        log.Warning("Signing certificate not setup {filepath}. Using test certificate", certFilePath);
+        logWarn($"Signing certificate not setup {certFilePath}. Using test certificate");
       }
 
       // If no signing cert is available use the test cert.

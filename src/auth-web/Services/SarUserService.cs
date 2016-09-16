@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Sar.Auth.Data;
 using Sar.Services;
+using Sar.Services.Auth;
 using Serilog;
 
 namespace Sar.Auth.Services

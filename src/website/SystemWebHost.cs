@@ -2,10 +2,11 @@
 using System.Security.Claims;
 using System.Web;
 using Kcsara.Database.Web.Services;
+using Sar.Services.Auth;
 
 namespace Kcsara.Database.Web
 {
-  public class SystemWebHost : IHost
+  public class SystemWebHost : IAuthenticatedHost
   {
     public ClaimsPrincipal User
     {

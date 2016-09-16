@@ -1,37 +1,34 @@
 ﻿using System;
 using System.Configuration;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Web;
 using IdentityServer3.Core;
 using IdentityServer3.Core.Configuration;
 using IdentityServer3.Core.Models;
 using IdentityServer3.Core.Services;
 using IdentityServer3.Core.Services.Default;
-using Microsoft.Owin;
 using Microsoft.Owin.Security.Facebook;
 using Microsoft.Owin.Security.Google;
 using Microsoft.Owin.Security.OpenIdConnect;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ninject;
-using Owin;
+using Sar.Auth;
 using Sar.Auth.Controllers;
 using Sar.Auth.Data;
 using Sar.Auth.Services;
 using Sar.Services;
 using Serilog;
 
-[assembly: OwinStartup(typeof(Sar.Auth.Startup))]
-
-namespace Sar.Auth
+namespace Owin
 {
   [ExcludeFromCodeCoverage]
-  public sealed class Startup
+  public static class AppBuilderExtensions
   {
-    public void Configuration(IAppBuilder app)
+    public static void UseAuthServer(this IAppBuilder app, IKernel kernel, X509Certificate2 signingCert)
     {
-      var kernel = WebSetup.SetupDependencyInjection(RegisterServices, ConfigurationManager.AppSettings);
+      //var kernel = WebSetup.SetupDependencyInjection(RegisterServices, ConfigurationManager.AppSettings);
       var config = kernel.Get<IHost>();
       var log = kernel.Get<ILogger>();
 
@@ -62,7 +59,7 @@ namespace Sar.Auth
       {
         SiteName = Strings.ThisServiceName,
         EnableWelcomePage = false,
-        SigningCertificate = Cert.Load(config.GetConfig("cert:key"), log),
+        SigningCertificate = signingCert,
         Factory = factory,
         RequireSsl = false,
         CspOptions = new CspOptions
@@ -97,29 +94,6 @@ namespace Sar.Auth
 
       // This must come after .UseIdentityServer so APIs can get identity values off the OWIN context
       WebSetup.SetupWebApi(app, kernel);
-    }
-
-    private static void RegisterServices(IKernel kernel)
-    {
-      kernel.Bind<SarUserService>().ToSelf();
-      kernel.Bind<IClientStore>().To<SarClientStore>();
-      kernel.Bind<Func<IAuthDbContext>>().ToMethod(ctx => () => new AuthDbContext());
-      kernel.Bind<ISendEmailService>().To<DefaultSendMessageService>().InSingletonScope();
-      kernel.Bind<IHost>().To<Host>().InSingletonScope();
-      kernel.Bind<IRolesService>().To<RolesService>().InSingletonScope();
-
-      var config = kernel.Get<IHost>();
-
-      //string assemblyNames = config["diAssemblies"] ?? string.Empty;
-      //foreach (var assemblyName in assemblyNames.Split(','))
-      //{
-      //  kernel.Load(Assembly.Load(assemblyName));
-      //}
-
-      if (!kernel.GetBindings(typeof(IMemberInfoService)).Any())
-      {
-        kernel.Bind<IMemberInfoService>().To<ApiMemberInfoService>();
-      }
     }
 
     public static void ConfigureIdentityProviders(IAppBuilder app, string signInAsType)

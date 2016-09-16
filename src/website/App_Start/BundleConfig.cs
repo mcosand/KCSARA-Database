@@ -10,6 +10,26 @@ namespace Kcsara.Database.Web
   {
     public static void RegisterBundles(BundleCollection bundles)
     {
+      bundles.Add(new ScriptBundle("~/wwwroot/js/auth-core").Include(
+        "~/wwwroot/lib/angular/angular.js",
+        "~/wwwroot/lib/angular-animate/angular-animate.js",
+        "~/wwwroot/lib/angular-aria/angular-aria.js",
+        "~/wwwroot/lib/angular-messages/angular-messages.js",
+        "~/wwwroot/lib/angular-material/angular-material.js",
+        "~/wwwroot/js/auth/sar-common.js",
+        "~/wwwroot/js/auth/directives/server-error.js",
+        "~/wwwroot/js/auth/site.js",
+        "~/wwwroot/js/auth/page/login.js",
+        "~/wwwroot/js/auth/page/registerlogin.js"
+        ));
+
+      bundles.Add(new StyleBundle("~/wwwroot/css/auth-core").Include(
+        "~/wwwroot/lib/angular-material/angular-material.css",
+        "~/wwwroot/lib/font-awesome/css/font-awesome.css",
+        "~/wwwroot/css/auth/site.css",
+        "~/wwwroot/css/auth/vertical-stepper.css"
+        ));
+
       bundles.Add(new ScriptBundle("~/scripts/ng-core").Include(
         "~/Scripts/modernizr-*",
         "~/Scripts/jquery-{version}.js",

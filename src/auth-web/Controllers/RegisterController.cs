@@ -1,7 +1,4 @@
-﻿/*
- * Copyright Matthew Cosand
- */
-namespace Sar.Auth.Controllers
+﻿namespace Sar.Auth.Controllers
 {
   using System.Threading.Tasks;
   using System.Web;
@@ -20,14 +17,12 @@ namespace Sar.Auth.Controllers
     }
 
     // GET: Account
-    [Route("register")]
     public ActionResult Register()
     {
       return View();
     }
 
     [HttpGet]
-    [Route("registerlogin")]
     public async Task<ActionResult> RegisterLogin()
     {
       // this verifies that we have a partial signin from idsvr

@@ -20,7 +20,7 @@
 
       $http({
         method: 'POST',
-        url: window.appRoot + 'externalVerificationCode',
+        url: window.appRoot + 'auth/externalVerificationCode',
         data: { email: $scope.model.email }
       }).then(function (resp) {
         if (resp.data.success) { $scope.codeSent = true; }
@@ -40,7 +40,7 @@
       $scope.verifying = true;
       $http({
         method: 'POST',
-        url: window.appRoot + 'verifyExternalCode',
+        url: window.appRoot + 'auth/verifyExternalCode',
         data: { code: $scope.model.code, email: $scope.model.email }
       }).then(function (resp) {
         if (resp.data.success) { $window.location.href = resp.data.url; }

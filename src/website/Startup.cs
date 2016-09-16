@@ -4,10 +4,9 @@ using System.Configuration;
 using System.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using System.Web.Http;
 using IdentityModel.Client;
 using Kcsara.Database.Api;
-using Kcsara.Database.Web.api;
+using log4net;
 using Microsoft.AspNet.Identity;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.Owin;
@@ -16,7 +15,8 @@ using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OpenIdConnect;
 using Ninject;
 using Owin;
-using Sar.Web;
+using Sar.Auth;
+using Sar.Services;
 
 [assembly: OwinStartup(typeof(Kcsara.Database.Web.Startup))]
 
@@ -29,7 +29,11 @@ namespace Kcsara.Database.Web
 
     public void Configuration(IAppBuilder app)
     {
-      app.Map("/api2", apiApp => apiApp.UseDatabaseApi(kernel));
+      var config = kernel.Get<IHost>();
+
+      var signingCertificate = Cert.Load(config.GetConfig("cert:key"), kernel.Get<ILog>().Warn);
+      app.Map("/auth", authApp => authApp.UseAuthServer(kernel, signingCertificate));
+      app.Map("/api2", apiApp => apiApp.UseDatabaseApi(kernel, signingCertificate));
 
       app.UseCookieAuthentication(new CookieAuthenticationOptions
       {

@@ -7,13 +7,12 @@ using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Http.Cors;
-using Kcsara.Database.Model;
 using Kcsara.Database.Model.Members;
 using Kcsara.Database.Services.Members;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Sar.Services;
+using Sar.Services.Auth;
 
 namespace Kcsara.Database.Api.Controllers
 {
@@ -21,10 +20,12 @@ namespace Kcsara.Database.Api.Controllers
   {
     private readonly IMembersService _members;
     private readonly IHost _host;
+    private readonly IAuthorizationService _authz;
 
-    public MembersController(IMembersService members, IHost host)
+    public MembersController(IMembersService members, IAuthorizationService authz, IHost host)
     {
       _members = members;
+      _authz = authz;
       _host = host;
     }
 
@@ -33,6 +34,8 @@ namespace Kcsara.Database.Api.Controllers
     [AnyHostCorsPolicy]
     public async Task<MemberInfo> Get(Guid id)
     {
+      if (!await _authz.AuthorizeAsync(User as ClaimsPrincipal, id, "Read:Member")) throw new AuthorizationException();
+
       return await _members.GetMember(id);
     }
 
@@ -41,6 +44,8 @@ namespace Kcsara.Database.Api.Controllers
     [AnyHostCorsPolicy]
     public async Task<object> EmergencyContactStatus(Guid memberId)
     {
+      if (!await _authz.AuthorizeAsync(User as ClaimsPrincipal, memberId, "Read:Member")) throw new AuthorizationException();
+
       return new { Count = await _members.GetEmergencyContactCountAsync(memberId) };
     }
 
@@ -100,6 +105,8 @@ namespace Kcsara.Database.Api.Controllers
     [Route("Members/ByWorkerNumber/{id}")]
     public async Task<IEnumerable<MemberSummary>> ByWorkerNumber(string id)
     {
+      if (!await _authz.AuthorizeAsync(User as ClaimsPrincipal, null, "Read:Member")) throw new AuthorizationException();
+
       return await _members.ByWorkerNumber(id);
     }
 
@@ -107,6 +114,8 @@ namespace Kcsara.Database.Api.Controllers
     [Route("Members/ByPhoneNumber/{id}")]
     public async Task<IEnumerable<MemberSummary>> ByPhoneNumber(string id)
     {
+      if (!await _authz.AuthorizeAsync(User as ClaimsPrincipal, null, "Read:Member")) throw new AuthorizationException();
+
       return await _members.ByPhoneNumber(id);
     }
 
@@ -114,6 +123,8 @@ namespace Kcsara.Database.Api.Controllers
     [Route("Members/ByEmail/{id}")]
     public async Task<IEnumerable<MemberSummary>> ByEmail(string id)
     {
+      if (!await _authz.AuthorizeAsync(User as ClaimsPrincipal, null, "Read:Member")) throw new AuthorizationException();
+
       return await _members.ByEmail(id);
     }
   }

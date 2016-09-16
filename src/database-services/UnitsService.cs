@@ -34,8 +34,6 @@ namespace Kcsara.Database.Services
 
     public async Task<IEnumerable<Unit>> List()
     {
-      if (! await _authz.AuthorizeAsync(_host.User, null, "Read:Unit")) throw new AuthorizationException();
-      
       using (var db = _dbFactory())
       {
         var list = await db.Units.OrderBy(f => f.DisplayName).Select(f => new Unit
@@ -51,8 +49,6 @@ namespace Kcsara.Database.Services
 
     public async Task<IEnumerable<UnitMembership>> ListMemberships(Expression<Func<UnitMembership, bool>> predicate)
     {
-      if (! await _authz.AuthorizeAsync(_host.User, null, "Read:UnitMembership")) throw new AuthorizationException();
-
       using (var db = _dbFactory())
       {
         var query = db.UnitMemberships.Select(f => new UnitMembership
@@ -86,8 +82,6 @@ namespace Kcsara.Database.Services
 
     public async Task<UnitMembership> CreateMembership(UnitMembership membership)
     {
-      if (! await _authz.AuthorizeAsync(_host.User, null, "Create:UnitMembership")) throw new AuthorizationException();
-
       if (membership == null) throw new ArgumentNullException(nameof(membership));
       if (membership.Unit == null || membership.Unit.Id == Guid.Empty) throw new ArgumentException("unit.id is required");
       if (membership.Member == null || membership.Member.Id == Guid.Empty) throw new ArgumentException("unit.id is required");
@@ -117,8 +111,6 @@ namespace Kcsara.Database.Services
 
     public async Task<IEnumerable<UnitStatusType>> ListStatusTypes(Guid? unitId = null)
     {
-      if (!await _authz.AuthorizeAsync(_host.User, null, "Read:UnitStatusType")) throw new AuthorizationException();
-
       using (var db = _dbFactory())
       {
         IQueryable<Data.UnitStatus> query = db.UnitStatusTypes;

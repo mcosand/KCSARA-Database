@@ -106,7 +106,6 @@
     <Compile Include="EmailService.cs" />
     <Compile Include="Exceptions\AuthorizationException.cs" />
     <Compile Include="IAuthService.cs" />
-    <Compile Include="IHost.cs" />
     <Compile Include="Members\MembersService.cs" />
     <Compile Include="ObjectModel\Authorization\UserInfo.cs" />
     <Compile Include="ObjectModel\Members\MemberSummary.cs" />
@@ -131,6 +130,14 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\common\src\auth-client\auth-client.csproj">
+      <Project>{1A4C1A6F-A571-4CD5-8388-98FCECB56AFA}</Project>
+      <Name>auth-client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\common\src\common-services\common-services.csproj">
+      <Project>{6fe506b3-0fd4-4539-ab78-ccce2a266ef7}</Project>
+      <Name>common-services</Name>
+    </ProjectReference>
     <ProjectReference Include="..\database-model\database-model.csproj">
       <Project>{EAE01EC9-F91D-4B72-A648-6AC96E688CCE}</Project>
       <Name>database-model</Name>

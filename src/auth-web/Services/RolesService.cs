@@ -5,15 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sar.Auth.Data;
+using Sar.Services.Auth;
 using Serilog;
 
 namespace Sar.Auth.Services
 {
-  public interface IRolesService
-  {
-    List<string> RolesForAccount(Guid accountId);
-  }
-
   public class RolesService : IRolesService
   {
     private readonly Func<IAuthDbContext> _dbFactory;

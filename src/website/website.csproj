@@ -27,6 +27,7 @@
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <IISExpressSSLPort>44394</IISExpressSSLPort>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -450,8 +451,6 @@
     <Compile Include="Models\UnitMemberStatusViewModel.cs" />
     <Compile Include="NinjectResolver.cs" />
     <Compile Include="NinjectScope.cs" />
-    <Compile Include="NonceCleanupOpenIdConnectAuthenticationHandler.cs" />
-    <Compile Include="NonceCleanupOpenIdConnectAuthenticationMiddleware.cs" />
     <Compile Include="Services\BadgeService.cs" />
     <Compile Include="Services\CardDatabaseService.cs" />
     <Compile Include="Services\EncryptionService.cs" />
@@ -463,6 +462,13 @@
     <Compile Include="Startup.cs" />
     <Compile Include="SystemWebHost.cs" />
     <Compile Include="Utils.cs" />
+    <Content Include="wwwroot\css\auth\site.css" />
+    <Content Include="wwwroot\css\auth\vertical-stepper.css" />
+    <Content Include="wwwroot\js\auth\directives\server-error.js" />
+    <Content Include="wwwroot\js\auth\page\login.js" />
+    <Content Include="wwwroot\js\auth\page\registerlogin.js" />
+    <Content Include="wwwroot\js\auth\sar-common.js" />
+    <Content Include="wwwroot\js\auth\site.js" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\common.css" />
@@ -591,6 +597,8 @@
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\bootstrap-dialog.less" />
     <Content Include="Content\forms\ics109-log.pdf" />
+    <Content Include=".bowerrc" />
+    <Content Include="bower.json" />
     <None Include="Properties\PublishProfiles\Local IIS.pubxml" />
     <None Include="parameters.xml" />
     <Content Include="help\images\new-member-1.jpg" />
@@ -770,6 +778,15 @@
     <Content Include="Views\Home\Error.cshtml" />
     <Content Include="Views\Training\UploadKcsara.cshtml" />
     <Content Include="Web.config" />
+    <Content Include="Views\Account\Consent.cshtml" />
+    <Content Include="Views\Account\LoggedOut.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Account\Logout.cshtml" />
+    <Content Include="Views\Account\Permissions.cshtml" />
+    <Content Include="Views\Register\Register.cshtml" />
+    <Content Include="Views\Register\RegisterLogin.cshtml" />
+    <Content Include="Views\Shared\AuthError.cshtml" />
+    <Content Include="Views\Shared\_AuthLayout.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -783,14 +800,27 @@
     <Folder Include="App_Data\" />
     <Folder Include="Content\auth\documents\" />
     <Folder Include="ObjectModel\" />
+    <Folder Include="wwwroot\lib\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\common\src\auth-client\auth-client.csproj">
+      <Project>{1A4C1A6F-A571-4CD5-8388-98FCECB56AFA}</Project>
+      <Name>auth-client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\common\src\common-services\common-services.csproj">
+      <Project>{6fe506b3-0fd4-4539-ab78-ccce2a266ef7}</Project>
+      <Name>common-services</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\common\src\database-api-client\database-api-client.csproj">
       <Project>{74510427-2536-44e6-aa2e-a67338a4a682}</Project>
       <Name>database-api-client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\auth-web\auth-web.csproj">
+      <Project>{f6be5572-5e76-435f-b8f3-fc3b3eaf2da7}</Project>
+      <Name>auth-web</Name>
     </ProjectReference>
     <ProjectReference Include="..\database-api\database-api.csproj">
       <Project>{0E98B7B5-73A5-44D0-BD64-C6313A84991E}</Project>
@@ -817,6 +847,19 @@
       <Name>Website.DefaultStrings</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
+  <Target Name="BeforeBuild">
+    <ItemGroup>
+      <Content Include="wwwroot\lib\**\*">
+      </Content>
+    </ItemGroup>
+  </Target>
+  <Target Name="Publish">
+    <ItemGroup>
+      <Content Include="wwwroot\lib\**\*">
+      </Content>
+    </ItemGroup>
+  </Target>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

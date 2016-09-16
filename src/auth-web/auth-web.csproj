@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build;Package" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\..\..\packages\Microsoft.Net.Compilers.1.2.1\build\Microsoft.Net.Compilers.props" Condition="Exists('..\..\..\packages\Microsoft.Net.Compilers.1.2.1\build\Microsoft.Net.Compilers.props')" />
   <Import Project="..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -10,20 +10,13 @@
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{F6BE5572-5E76-435F-B8F3-FC3B3EAF2DA7}</ProjectGuid>
-    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Sar.Auth</RootNamespace>
     <AssemblyName>Sar.AuthWeb</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <UseIISExpress>true</UseIISExpress>
-    <IISExpressAnonymousAuthentication />
-    <IISExpressWindowsAuthentication />
-    <IISExpressUseClassicPipelineMode />
-    <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <IISExpressSSLPort>44300</IISExpressSSLPort>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -244,27 +237,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Global.asax" />
     <Content Include="packages.config" />
-    <Content Include="wwwroot\css\site.css" />
-    <Content Include="wwwroot\css\vertical-stepper.css" />
-    <Content Include="wwwroot\js\directives\server-error.js" />
-    <Content Include="wwwroot\js\page\registerlogin.js" />
-    <Content Include="wwwroot\js\page\login.js" />
-    <Content Include="wwwroot\js\sar-common.js" />
-    <Content Include="wwwroot\js\site.js" />
     <EmbeddedResource Include="idsrv3test.pfx" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Web.config" />
-    <Content Include="Views\Register\Register.cshtml" />
-    <Content Include="Views\Account\Consent.cshtml" />
-    <Content Include="Views\Account\LoggedOut.cshtml" />
-    <Content Include="Views\Account\Login.cshtml" />
-    <Content Include="Views\Account\Logout.cshtml" />
-    <Content Include="Views\Account\Permissions.cshtml" />
-    <Content Include=".bowerrc" />
-    <Content Include="bower.json" />
-    <Content Include="Views\Register\RegisterLogin.cshtml" />
     <EmbeddedResource Include="LogStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>LogStrings.Designer.cs</LastGenOutput>
@@ -295,9 +271,8 @@
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="Properties\PublishProfiles\LocalFileSystem.pubxml" />
-    <Content Include="Views\Root\Index.cshtml" />
-    <Content Include="Views\Shared\Error.cshtml" />
-    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Compile Include="Controllers\RegisterController.cs" />
+    <Compile Include="Services\LocalMemberInfoService.cs" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -314,13 +289,10 @@
     <Compile Include="ApiExceptionLogger.cs" />
     <Compile Include="ApiUserExceptionHandler.cs" />
     <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
-    <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\NinjectWebCommon.cs" />
     <Compile Include="Controllers\ApiController.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Cert.cs" />
-    <Compile Include="Controllers\RegisterController.cs" />
-    <Compile Include="Controllers\RootController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Data\AccountRow.cs" />
     <Compile Include="Data\AuthDbContext.cs" />
@@ -330,12 +302,10 @@
     <Compile Include="Data\LoginLogRow.cs" />
     <Compile Include="Data\RoleRow.cs" />
     <Compile Include="Data\VerificationRow.cs" />
+    <Compile Include="DIModule.cs" />
     <Compile Include="Exceptions\MultipleMatchesException.cs" />
     <Compile Include="Exceptions\NotFoundException.cs" />
     <Compile Include="Exceptions\UserErrorException.cs" />
-    <Compile Include="Global.asax.cs">
-      <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
     <Compile Include="Host.cs" />
     <Compile Include="Migrations\201603242356298_Initial.cs" />
     <Compile Include="Migrations\201603242356298_Initial.Designer.cs">
@@ -388,16 +358,13 @@
     <Compile Include="Services\RolesService.cs" />
     <Compile Include="Services\SarClientStore.cs" />
     <Compile Include="Services\SarUserService.cs" />
-    <Compile Include="Startup.cs" />
+    <Compile Include="AppBuilderExtensions.cs" />
     <Compile Include="Strings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
     <Compile Include="WebSetup.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="wwwroot\lib\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\common\src\auth-client\auth-client.csproj">
@@ -412,46 +379,19 @@
       <Project>{74510427-2536-44e6-aa2e-a67338a4a682}</Project>
       <Name>database-api-client</Name>
     </ProjectReference>
+    <ProjectReference Include="..\database-services\database-services.csproj">
+      <Project>{2e5c85da-32f0-43f1-83ed-026867aa2a6d}</Project>
+      <Name>database-services</Name>
+    </ProjectReference>
   </ItemGroup>
-  <Target Name="BeforeBuild">
-    <ItemGroup>
-      <Content Include="wwwroot\lib\**\*">
-      </Content>
-    </ItemGroup>
-  </Target>
-  <Target Name="Publish">
-    <ItemGroup>
-      <Content Include="wwwroot\lib\**\*">
-      </Content>
-    </ItemGroup>
-  </Target>
+  <ItemGroup>
+    <Folder Include="Views\Shared\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
-  <ProjectExtensions>
-    <VisualStudio>
-      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
-        <WebProjectProperties>
-          <UseIIS>True</UseIIS>
-          <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>4944</DevelopmentServerPort>
-          <DevelopmentServerVPath>/auth/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:4944/auth/</IISUrl>
-          <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
-          <IISAppRootUrl>http://localhost:4944/auth/</IISAppRootUrl>
-          <NTLMAuthentication>False</NTLMAuthentication>
-          <UseCustomServer>False</UseCustomServer>
-          <CustomServerUrl>
-          </CustomServerUrl>
-          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
-        </WebProjectProperties>
-      </FlavorProperties>
-    </VisualStudio>
-  </ProjectExtensions>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>

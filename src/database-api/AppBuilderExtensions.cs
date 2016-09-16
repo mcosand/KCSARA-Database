@@ -1,25 +1,21 @@
-﻿using System;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.Configuration;
 using System.IdentityModel.Tokens;
-using System.IO;
+using System.Security.Cryptography.X509Certificates;
 using System.Web.Http;
 using System.Web.Http.Dispatcher;
 using IdentityServer3.AccessTokenValidation;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Ninject;
-using Ninject.Web.Common.OwinHost;
 using Ninject.Web.WebApi.OwinHost;
 using Owin;
-using Sar.Services;
-using Sar.Services.Auth;
 
 namespace Kcsara.Database.Api
 {
   public static class AppBuilderExtensions
   {
-    public static IAppBuilder UseDatabaseApi(this IAppBuilder app, IKernel kernel)
+    public static IAppBuilder UseDatabaseApi(this IAppBuilder app, IKernel kernel, X509Certificate2 signingCert)
     {
       NameValueCollection configStrings = ConfigurationManager.AppSettings;
 
@@ -27,7 +23,9 @@ namespace Kcsara.Database.Api
 
       var tokenAuthOptions = new IdentityServerBearerTokenAuthenticationOptions
       {
-        Authority = configStrings["auth:authority"]
+        Authority = configStrings["auth:authority"],
+        IssuerName = configStrings["auth:authority"],
+        SigningCertificate = signingCert
       };
 
       var config = new HttpConfiguration();

@@ -50,7 +50,6 @@ namespace Kcsara.Database.Services.Members
     /// <returns></returns>
     public async Task<MemberInfo> GetMember(Guid id)
     {
-      if (!await _authz.AuthorizeAsync(_host.User, id, "Read:Member")) throw new AuthorizationException();
       using (var db = _dbFactory())
       {
         var list = (await SummariesWithMemberships<MemberInfo>(db.Members.Where(f => f.Id == id), (row, member) =>
@@ -67,7 +66,6 @@ namespace Kcsara.Database.Services.Members
 
     public async Task<MemberInfo> CreateMember(MemberInfo member)
     {
-      if (!await _authz.AuthorizeAsync(_host.User, null, "Create:Member")) throw new AuthorizationException();
       using (var db = _dbFactory())
       {
         var row = new Data.Member
@@ -93,8 +91,6 @@ namespace Kcsara.Database.Services.Members
     /// <returns></returns>
     public async Task<IEnumerable<MemberSummary>> ByWorkerNumber(string id)
     {
-      if (!await _authz.AuthorizeAsync(_host.User, null, "Read:Member")) throw new AuthorizationException();
-
       id = id.TrimStart('S', 'R');
 
       using (var db = _dbFactory())
@@ -108,7 +104,6 @@ namespace Kcsara.Database.Services.Members
     /// <returns></returns>
     public async Task<IEnumerable<MemberSummary>> ByPhoneNumber(string id)
     {
-      if (!await _authz.AuthorizeAsync(_host.User, null, "Read:Member")) throw new AuthorizationException();
       if (id.Length < 10 || !Regex.IsMatch(id, "\\d+"))
       {
         return new MemberSummary[0];
@@ -130,7 +125,6 @@ namespace Kcsara.Database.Services.Members
     /// <returns></returns>
     public async Task<IEnumerable<MemberSummary>> ByEmail(string id)
     {
-      if (!await _authz.AuthorizeAsync(_host.User, null, "Read:Member")) throw new AuthorizationException();
       using (var db = _dbFactory())
       {
         return await SummariesWithMemberships<MemberSummary>(db.Members.Where(f => f.ContactNumbers.Any(g => g.Value == id && g.Type == "email")));
@@ -187,7 +181,6 @@ namespace Kcsara.Database.Services.Members
     /// <returns></returns>
     private async Task<IEnumerable<PersonContact>> _ListMemberContactsAsync(Guid memberId, Expression<Func<Data.PersonContact, bool>> predicate = null)
     {
-      if (!await _authz.AuthorizeAsync(_host.User, memberId, "Read:Member")) throw new AuthorizationException();
       using (var db = _dbFactory())
       {
         var query = db.Members.Where(f => f.Id == memberId).SelectMany(f => f.ContactNumbers);
@@ -211,8 +204,6 @@ namespace Kcsara.Database.Services.Members
 
     public async Task<PersonContact> AddContact(Guid id, PersonContact data)
     {
-      if (!await _authz.AuthorizeAsync(_host.User, id, "Create:MemberContact@Member")) throw new AuthorizationException();
-
       Guid newId;
       using (var db = _dbFactory())
       {
@@ -237,8 +228,6 @@ namespace Kcsara.Database.Services.Members
 
     public async Task<int> GetEmergencyContactCountAsync(Guid memberId)
     {
-      if (!await _authz.AuthorizeAsync(_host.User, memberId, "Read:Member")) throw new AuthorizationException();
-
       using (var db = _dbFactory())
       {
         return await db.Members.Where(f => f.Id == memberId).Select(f => f.EmergencyContacts.Count).SingleOrDefaultAsync();

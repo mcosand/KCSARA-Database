@@ -1,8 +1,9 @@
-﻿/*
- * Copyright Matthew Cosand
- */
-using System.Linq;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
+using IdentityServer3.Core;
+using IdentityServer3.Core.Extensions;
 using IdentityServer3.Core.Models;
 using IdentityServer3.Core.ViewModels;
 using Sar.Auth.Services;
@@ -104,7 +105,9 @@ namespace Sar.Auth.Controllers
     // The custom MvcViewService wants to find this here in order to propagate the model.
     public ActionResult Error(ErrorViewModel model)
     {
-      return View(model);
+      ViewBag.ErrorMessage = model.ErrorMessage;
+      ViewBag.RequestId = model.RequestId;
+      return View("AuthError", model);
     }
 
     /// <summary>

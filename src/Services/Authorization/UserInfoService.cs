@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Kcsara.Database.Web.Model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Sar.Services;
+using Sar.Services.Auth;
 
 namespace Kcsara.Database.Web.Services
 {
@@ -17,14 +19,14 @@ namespace Kcsara.Database.Web.Services
 
   public class UserInfoService : IUserInfoService
   {
-    private readonly IHost _host;
+    private readonly IAuthenticatedHost _host;
     private string _userInfoEndpoint = null;
     private object _discoveryLock = new object();
 
     private readonly ObjectCache _cache = new MemoryCache("userinfo");
     private readonly CacheItemPolicy _cachePolicy = new CacheItemPolicy { SlidingExpiration = TimeSpan.FromMinutes(10) };
 
-    public UserInfoService(IHost host)
+    public UserInfoService(IAuthenticatedHost host)
     {
       _host = host;
     }

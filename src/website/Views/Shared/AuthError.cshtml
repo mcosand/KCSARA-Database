@@ -1,0 +1,19 @@
+﻿@{
+  ViewBag.Title = "Error";
+  Layout = "~/Views/Shared/_AuthLayout.cshtml";
+}
+
+<div class="page-header">
+  <h1>@ViewBag.Title</h1>
+</div>
+<div class="row">
+  <div class="col-md-6 col-sm-6">
+      <div class="alert alert-danger">
+          @if (!string.IsNullOrWhiteSpace(ViewBag.ErrorMessage))
+          {
+              <div>@(ViewBag.ErrorMessage)</div>
+          }
+      </div>
+    <div class="request-id">Request Id: <span>@(ViewBag.RequestId)</span></div>
+  </div>
+</div>

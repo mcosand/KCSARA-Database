@@ -1,6 +1,7 @@
 ﻿@model IdentityServer3.Core.ViewModels.LoginViewModel
 @{
   ViewBag.Title = "Login";
+  Layout = "~/Views/Shared/_AuthLayout.cshtml";
 }
 <div layout="row" layout-xs="column" layout-align="center stretch" ng-controller="LoginCtrl">
   @if (Model.ExternalProviders.Any())

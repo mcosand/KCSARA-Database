@@ -182,7 +182,6 @@
     <Compile Include="DIModule.cs" />
     <Compile Include="ExceptionFilter.cs" />
     <Compile Include="NamespaceControllerTypeResolver.cs" />
-    <Compile Include="OwinHost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AppBuilderExtensions.cs" />
   </ItemGroup>

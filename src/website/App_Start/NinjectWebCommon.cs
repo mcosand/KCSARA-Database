@@ -16,6 +16,8 @@ namespace Kcsara.Database.Web
 
   using Ninject;
   using Ninject.Web.Common;
+  using Sar.Services;
+  using Sar.Services.Auth;
 
   public static class NinjectWebCommon
   {
@@ -80,10 +82,14 @@ namespace Kcsara.Database.Web
       kernel.Bind<IAppSettings>().To<AppSettings>();
       kernel.Bind<IReportsService>().To<ReportsService>();
       kernel.Bind<IExtensionProvider>().To<ExtensionProvider>().InSingletonScope();
-      kernel.Bind<IHost>().ToMethod(context => new SystemWebHost());
+
+      var host = new SystemWebHost();
+      kernel.Bind<IHost>().ToConstant(host);
+      kernel.Bind<IAuthenticatedHost>().ToConstant(host);
       kernel.Load(new Services.DIModule());
       kernel.Get<IExtensionProvider>().Initialize();
-      
+
+      kernel.Load(new Sar.Auth.DIModule());
       kernel.Load(new Kcsara.Database.Api.DIModule());
       kernel.Load(new Kcsara.Database.Services.DIModule());
     }

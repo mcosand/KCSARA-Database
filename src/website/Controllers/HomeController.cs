@@ -24,6 +24,13 @@ namespace Kcsara.Database.Web.Controllers
       this.reports = reports;
     }
 
+    [Route("jsconfig")]
+    [HttpGet]
+    public ContentResult JSConfig()
+    {
+      return Content(string.Format("window.appRoot = '{0}';", Url.Content("~/")), "text/javascript");
+    }
+
     public ActionResult Index()
     {
       ViewData["Title"] = Strings.DatabaseName;
