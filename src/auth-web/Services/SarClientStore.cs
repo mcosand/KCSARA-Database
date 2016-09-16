@@ -8,7 +8,6 @@ using IdentityServer3.Core;
 using IdentityServer3.Core.Models;
 using IdentityServer3.Core.Services;
 using Sar.Auth.Data;
-using Sar.Services.Auth;
 
 namespace Sar.Database.Web.Auth.Services
 {
