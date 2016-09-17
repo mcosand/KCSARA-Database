@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Sar.Auth.Data
 {
-  [Table("ClientUris")]
-  public class ClientUriRow
+  [Table("ClientLogoutUris")]
+  public class ClientLogoutUriRow
   {
     public int Id { get; set; }
 

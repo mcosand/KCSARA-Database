@@ -264,6 +264,9 @@
     <EmbeddedResource Include="Migrations\201604151909093_FlowType.resx">
       <DependentUpon>201604151909093_FlowType.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201609142343515_LogoutUris.resx">
+      <DependentUpon>201609142343515_LogoutUris.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
@@ -282,6 +285,7 @@
     <Compile Include="Data\AccountRow.cs" />
     <Compile Include="Data\AuthDbContext.cs" />
     <Compile Include="Data\ClientRow.cs" />
+    <Compile Include="Data\ClientLogoutUriRow.cs" />
     <Compile Include="Data\ClientUriRow.cs" />
     <Compile Include="Data\ExternalLoginRow.cs" />
     <Compile Include="Data\LoginLogRow.cs" />
@@ -315,6 +319,10 @@
     <Compile Include="Migrations\201604151909093_FlowType.cs" />
     <Compile Include="Migrations\201604151909093_FlowType.Designer.cs">
       <DependentUpon>201604151909093_FlowType.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201609142343515_LogoutUris.cs" />
+    <Compile Include="Migrations\201609142343515_LogoutUris.Designer.cs">
+      <DependentUpon>201609142343515_LogoutUris.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\LinkMemberRequest.cs" />

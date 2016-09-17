@@ -30,6 +30,10 @@ namespace Sar.Auth.Migrations
           RedirectUris = new List<ClientUriRow>
           {
             new ClientUriRow { Uri = "http://localhost:4944" }
+          },
+          LogoutUris = new List<ClientLogoutUriRow>
+          {
+            new ClientLogoutUriRow { Uri = "http://localhost:4944" }
           }
         });
 
