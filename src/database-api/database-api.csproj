@@ -199,7 +199,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\common\src\database-api-client\database-api-client.csproj">
-      <Project>{EBB4EB71-3979-4C7A-A838-090E47750CEA}</Project>
+      <Project>{6FCDA865-1BAE-47C6-8A4F-715F0FF89C47}</Project>
       <Name>database-api-client</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\common\src\sar-common\sar-common.csproj">

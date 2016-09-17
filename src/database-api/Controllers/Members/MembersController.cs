@@ -10,7 +10,6 @@ using System.Web.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Sar;
-using Sar.Database;
 using Sar.Database.Model.Members;
 using Sar.Database.Services;
 

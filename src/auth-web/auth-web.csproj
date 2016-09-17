@@ -267,6 +267,9 @@
     <EmbeddedResource Include="Migrations\201609142343515_LogoutUris.resx">
       <DependentUpon>201609142343515_LogoutUris.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201609170525175_schema.resx">
+      <DependentUpon>201609170525175_schema.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
@@ -275,6 +278,10 @@
     <None Include="Properties\PublishProfiles\LocalFileSystem.pubxml" />
     <Compile Include="AppBuilderExtensions.cs" />
     <Compile Include="Controllers\RegisterController.cs" />
+    <Compile Include="Migrations\201609170525175_schema.cs" />
+    <Compile Include="Migrations\201609170525175_schema.Designer.cs">
+      <DependentUpon>201609170525175_schema.cs</DependentUpon>
+    </Compile>
     <Compile Include="Services\LocalMemberInfoService.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -351,7 +358,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\common\src\database-api-client\database-api-client.csproj">
-      <Project>{EBB4EB71-3979-4C7A-A838-090E47750CEA}</Project>
+      <Project>{6FCDA865-1BAE-47C6-8A4F-715F0FF89C47}</Project>
       <Name>database-api-client</Name>
     </ProjectReference>
     <ProjectReference Include="..\database-services\database-services.csproj">

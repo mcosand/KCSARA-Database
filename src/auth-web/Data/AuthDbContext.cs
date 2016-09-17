@@ -28,6 +28,7 @@ namespace Sar.Auth.Data
 
     protected override void OnModelCreating(DbModelBuilder modelBuilder)
     {
+      modelBuilder.HasDefaultSchema("auth");
       modelBuilder.Entity<RoleRow>().HasMany(f => f.Clients).WithMany(f => f.Roles).Map(f => f.ToTable("ClientRoles"));
       modelBuilder.Entity<RoleRow>().HasMany(f => f.Accounts).WithMany(f => f.Roles).Map(f => f.ToTable("AccountRoles"));
       modelBuilder.Entity<RoleRow>().HasMany(f => f.Owners).WithMany().Map(f => f.ToTable("RoleOwners"));
