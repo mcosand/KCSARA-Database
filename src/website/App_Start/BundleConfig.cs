@@ -25,7 +25,6 @@ namespace Kcsara.Database.Web
 
       bundles.Add(new StyleBundle("~/wwwroot/css/auth-core").Include(
         "~/wwwroot/lib/angular-material/angular-material.css",
-        "~/wwwroot/lib/font-awesome/css/font-awesome.css",
         "~/wwwroot/css/auth/site.css",
         "~/wwwroot/css/auth/vertical-stepper.css"
         ));
