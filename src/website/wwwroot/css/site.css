@@ -1,0 +1,24 @@
+﻿.search-img {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  z-index: 10;
+  width: 36px;
+  height: 36px;
+  background-position: center center;
+  background-size: 36px 48px;
+  background-repeat: no-repeat;
+  border-radius: 50%;
+  display: inline-block;
+  margin: 0px 6px 0px -6px;
+}
+
+.main-footer {
+  background: #fff;
+  padding: 15px;
+  color: #444;
+  border-top: 1px solid #d2d6de;
+  font-size:14px;
+}
+
+md-list-item .md-no-style.md-button p {
+  word-break: break-all;
+}

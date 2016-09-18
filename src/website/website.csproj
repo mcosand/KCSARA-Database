@@ -344,6 +344,15 @@
     <Compile Include="BlockRenderer.cs" />
     <Compile Include="CapturingResponseFilter.cs" />
     <Content Include="apple-touch-icon.png" />
+    <Content Include="wwwroot\css\main-nav.css" />
+    <Content Include="wwwroot\css\site.css" />
+    <Content Include="wwwroot\js\directives\menuLink.js" />
+    <Content Include="wwwroot\js\directives\menuToggle.js" />
+    <Content Include="wwwroot\js\routes.js" />
+    <Content Include="wwwroot\js\services\authService.js" />
+    <Content Include="wwwroot\js\site.js" />
+    <Content Include="wwwroot\partials\accounts\me.html" />
+    <Content Include="wwwroot\partials\home.html" />
     <Content Include="Content\AdminLTE.css" />
     <Content Include="Content\AdminLTE.min.css" />
     <Content Include="Content\auth\animals\none.jpg" />
@@ -386,6 +395,7 @@
     <Compile Include="Controllers\MissionsController.cs" />
     <Compile Include="Controllers\MissionsController_Documents.cs" />
     <Compile Include="Controllers\MissionsController_Geography.cs" />
+    <Compile Include="Controllers\SinglePageController.cs" />
     <Compile Include="Controllers\TrackController.cs" />
     <Compile Include="CustomMultipartFormDataStreamProvider.cs" />
     <Compile Include="ExtensionProvider.cs" />
@@ -784,6 +794,7 @@
     <Content Include="Views\Register\RegisterLogin.cshtml" />
     <Content Include="Views\Shared\AuthError.cshtml" />
     <Content Include="Views\Shared\_AuthLayout.cshtml" />
+    <Content Include="Views\Shared\SinglePage.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

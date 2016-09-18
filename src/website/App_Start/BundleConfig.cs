@@ -1,7 +1,4 @@
-﻿/*
- * Copyright 2012-2014 Matthew Cosand
- */
-using System.Web;
+﻿
 using System.Web.Optimization;
 
 namespace Kcsara.Database.Web
@@ -27,6 +24,26 @@ namespace Kcsara.Database.Web
         "~/wwwroot/lib/angular-material/angular-material.css",
         "~/wwwroot/css/auth/site.css",
         "~/wwwroot/css/auth/vertical-stepper.css"
+        ));
+
+      bundles.Add(new ScriptBundle("~/js/am.js").Include(
+        "~/wwwroot/lib/angular/angular.js",
+        "~/wwwroot/lib/angular-ui-router/release/angular-ui-router.js",
+        "~/wwwroot/lib/angular-aria/angular-aria.js",
+        "~/wwwroot/lib/angular-animate/angular-animate.js",
+        "~/wwwroot/lib/angular-messages/angular-messages.js",
+        "~/wwwroot/lib/angular-material/angular-material.js",
+        "~/wwwroot/lib/oidc-client/dist/oidc-client.js",
+        "~/wwwroot/js/site.js",
+        "~/wwwroot/js/routes.js",
+        "~/wwwroot/js/services/*.js",
+        "~/wwwroot/js/directives/*.js"
+        ));
+
+      bundles.Add(new StyleBundle("~/css/am.css").Include(
+        "~/wwwroot/lib/angular-material/angular-material.css",
+        "~/wwwroot/css/site.css",
+        "~/wwwroot/css/main-nav.css"
         ));
 
       bundles.Add(new ScriptBundle("~/scripts/ng-core").Include(

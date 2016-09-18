@@ -1,7 +1,4 @@
-﻿/*
- * Copyright Matthew Cosand
- */
-using System;
+﻿using System;
 using System.Configuration;
 using System.Data.Entity;
 using System.Threading.Tasks;

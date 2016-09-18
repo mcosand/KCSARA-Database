@@ -1,9 +1,10 @@
 {
-  "name": "SAR Auth Site",
+  "name": "sar-database",
   "private": true,
   "dependencies": {
-    "angular": "^1.5.1",
-    "angular-material": "^1.0.7",
+    "angular-material": "^1.1.1",
+    "oidc-client": "^1.1.0",
+    "angular-ui-router": "^0.3.1"
     "font-awesome": "^4.5.0"
   }
 }

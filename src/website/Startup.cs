@@ -4,6 +4,7 @@ using System.Configuration;
 using System.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Web;
 using IdentityModel.Client;
 using Kcsara.Database.Api;
 using log4net;
@@ -54,6 +55,7 @@ namespace Kcsara.Database.Web
         RedirectUri = configStrings["auth:redirect"].Trim('/') + "/",
         ResponseType = "code id_token token",
         Scope = "openid email profile kcsara-profile" + (addScopes.Length > 0 ? " " + string.Join(" ", addScopes) : string.Empty),
+        PostLogoutRedirectUri = configStrings["auth:redirect"].Trim('/') + "/",
         TokenValidationParameters = new TokenValidationParameters
         {
           NameClaimType = "name",
