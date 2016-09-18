@@ -22,3 +22,11 @@
 md-list-item .md-no-style.md-button p {
   word-break: break-all;
 }
+
+md-autocomplete-wrap {
+  border-bottom: solid 1px orange;
+}
+
+md-autocomplete-wrap.md-menu-showing {
+  border-bottom-width: 0px;
+}

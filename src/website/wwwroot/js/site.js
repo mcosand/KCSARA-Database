@@ -1,8 +1,5 @@
-﻿angular.module('sar-database', ['ui.router', 'ngMaterial'])
+﻿angular.module('sar-database', ['ngMaterial', 'ui.router.title', 'ui.router'])
 
-//.run(function ($http) {
-//  if (atoken) $http.defaults.headers.common.Authorization = 'Bearer ' + atoken;
-//})
 
 .config(['$mdThemingProvider', function ($mdThemingProvider) {
   //http://mcg.mbitson.com/
@@ -66,9 +63,24 @@
   };
 })
 
-.controller('little', ['authService', function (authService) { console.log(authService.getUser()); }])
-.controller('FrameCtrl', ['authService', '$scope', '$mdSidenav', '$http', '$location', '$window', '$rootScope',
-  function (authService, $scope, $mdSidenav, $http, $location, $window, $rootScope) {
+.factory('httpRequestInterceptor', ['currentUser', function (currentUser) {
+  return {
+    request: function (config) {
+      if (config.url.indexOf('/api') == 0 && currentUser.user && currentUser.user.access_token) {
+        config.headers['Authorization'] = 'Bearer ' + currentUser.user.access_token;
+      }
+      return config;
+    }
+  };
+}])
+
+.config(function ($httpProvider) {
+  $httpProvider.interceptors.push('httpRequestInterceptor');
+})
+
+
+.controller('FrameCtrl', ['authService', '$scope', '$mdSidenav', '$http', '$location', '$window', '$timeout', '$rootScope',
+  function (authService, $scope, $mdSidenav, $http, $location, $window, $timeout, $rootScope) {
   var self = this;
 
   function readUser() {
@@ -118,6 +130,8 @@
       $window.sessionStorage.removeItem('oidc:returnUrl')
       if (returnUrl != $location.url()) $window.location.href = returnUrl;
     }
+
+    $scope.closeMainMenu();
 
     var path = $location.path();
 
@@ -201,7 +215,8 @@
 
   angular.extend($scope, {
     mainNavOpen: false,
-    showMainMenu: function () { $mdSidenav('mainMenu').open(); },
+    showMainMenu: function () { $mdSidenav('mainMenu').open(); $scope.mainNavOpen = true; },
+    closeMainMenu: function () { $timeout(function () { $mdSidenav('mainMenu').close(); $scope.mainNavOpen = false; }); },
     menu: menu,
     user: {
       isLoggedIn: false

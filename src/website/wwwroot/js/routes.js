@@ -1,7 +1,7 @@
 ﻿var routes = {
-  'home': {url: '/', templateUrl:'/embedded/partials/home.html' },
-  'accounts':{ url: '/accounts', template: '<div>Accounts page</div>' },
-  'accounts_me': { url: '/accounts/me', templateUrl: '/assets/partials/accounts/me.html' }
+  'home': { url: '/', templateUrl: '/embedded/partials/home.html', resolve: { $title: function () { return 'Home'; } } },
+  'accounts': { url: '/accounts', template: '<div>Accounts page</div>', resolve: { $title: function () { return 'Accounts'; } } },
+  'accounts_me': { url: '/accounts/me', templateUrl: '/wwwroot/partials/accounts/me.html', resolve: { $title: function () { return 'My Account'; } } }
 };
 
 angular.module('sar-database')

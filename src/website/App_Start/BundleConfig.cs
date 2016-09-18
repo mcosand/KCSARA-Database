@@ -33,6 +33,7 @@ namespace Kcsara.Database.Web
         "~/wwwroot/lib/angular-animate/angular-animate.js",
         "~/wwwroot/lib/angular-messages/angular-messages.js",
         "~/wwwroot/lib/angular-material/angular-material.js",
+        "~/wwwroot/lib/angular-ui-router-title/angular-ui-router-title.js",
         "~/wwwroot/lib/oidc-client/dist/oidc-client.js",
         "~/wwwroot/js/site.js",
         "~/wwwroot/js/routes.js",

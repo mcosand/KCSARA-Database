@@ -348,6 +348,7 @@
     <Content Include="wwwroot\css\site.css" />
     <Content Include="wwwroot\js\directives\menuLink.js" />
     <Content Include="wwwroot\js\directives\menuToggle.js" />
+    <Content Include="wwwroot\js\directives\title.js" />
     <Content Include="wwwroot\js\routes.js" />
     <Content Include="wwwroot\js\services\authService.js" />
     <Content Include="wwwroot\js\site.js" />
