@@ -175,6 +175,7 @@
   menu = {
     sections: [
       { name: 'Main Menu', type: 'heading' },
+      { name: "Members", type: 'link', icon: 'person', url: window.appRoot + 'members' },
       {
         name: "Missions", type: 'toggle', icon: 'terrain', pages:
         [
@@ -189,7 +190,7 @@
             { name: "Reports", type: "link", url: window.appRoot + "training" }
           ]
       },
-      { name: "Units", type: 'link', icon: 'contacts', url: window.appRoot + 'units' },
+      { name: "Units", type: 'link', icon: 'group', url: window.appRoot + 'units' },
       { name: "Animals", type: 'link', icon: 'pets', url: window.appRoot + 'animals' },
       { name: 'Admin Menu', type: 'heading' },
       { name: 'My Account', type: 'link', url: window.appRoot + "accounts/me" }
