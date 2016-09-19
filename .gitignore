@@ -3,7 +3,6 @@ log4net.config
 
 src/website/Content/auth/*
 src/website/Properties/PublishProfiles/
-Web.Release.config
 web.local.config
 src/website/assets/lib
 
