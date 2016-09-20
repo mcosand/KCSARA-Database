@@ -1,0 +1,28 @@
+﻿<md-content layout-padding flex ng-controller="UnitsDetailCtrl">
+  <md-card>
+    <md-card-header>
+      <md-card-header-text>
+        <span class="md-title">{{unit.name}} Reports</span>
+      </md-card-header-text>
+    </md-card-header>
+    <md-card-content>
+      <md-list flex>
+        <md-list-item>
+          <div class="md-list-item-text">
+            <a class="md-accent" ng-href="/units/roster/{{unit.id}}" href="#">View Roster</a>
+          </div>
+        </md-list-item>
+        <md-list-item>
+          <div class="md-list-item-text">
+            <a class="md-accent" ng-href="/units/downloadroster/{{unit.id}}" href="#" target="_self">Download Roster</a> (Contact information for active members)
+          </div>
+        </md-list-item>
+        <md-list-item>
+          <div class="md-list-item-text">
+            <a class="md-accent" ng-href="/units/corecompreport/{{unit.id}}" href="#" target="_self">Download Core Competency Report</a>
+          </div>
+        </md-list-item>
+      </md-list>
+    </md-card-content>
+  </md-card>
+</md-content>

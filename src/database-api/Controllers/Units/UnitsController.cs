@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -24,8 +25,16 @@ namespace Kcsara.Database.Api.Controllers.Units
     [Route("units")]
     public async Task<IEnumerable<Unit>> List()
     {
-      if (!await _authz.AuthorizeAsync(User as ClaimsPrincipal, null, "Read:Unit")) throw new AuthorizationException();
+      await _authz.EnsureAsync(User as ClaimsPrincipal, null, "Read:Unit");
       return await _units.List();
+    }
+
+    [HttpGet]
+    [Route("units/{id}")]
+    public async Task<Unit> Get(Guid id)
+    {
+      await _authz.EnsureAsync(User as ClaimsPrincipal, id, "Read:Unit");
+      return await _units.Get(id);
     }
   }
 }

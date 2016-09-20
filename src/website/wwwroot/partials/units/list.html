@@ -1,0 +1,19 @@
+﻿<md-content layout-padding flex ng-controller="UnitsCtrl">
+  <md-card>
+    <md-card-header>
+      <md-card-header-text>
+        <span class="md-title">Unit List</span>
+      </md-card-header-text>
+    </md-card-header>
+    <md-card-content>
+      <md-list flex>
+        <md-list-item class="md-2-line" ng-repeat="unit in units" ng-href="/units/detail/{{unit.id}}">
+          <div class="md-list-item-text">
+            <h3>{{unit.name}}</h3>
+            <p>{{unit.fullName}}</p>
+          </div>
+        </md-list-item>
+      </md-list>
+    </md-card-content>
+  </md-card>
+</md-content>

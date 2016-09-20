@@ -10,6 +10,7 @@ namespace Sar.Database.Services
   public interface IAuthorizationService
   {
     Task<bool> AuthorizeAsync(ClaimsPrincipal user, object resource, string policyName);
+    Task<bool> EnsureAsync(ClaimsPrincipal user, object resource, string policyName, bool throwIfDenied = true);
   }
 
   public class AuthorizationService : IAuthorizationService
@@ -19,6 +20,13 @@ namespace Sar.Database.Services
     public AuthorizationService(IRolesService rolesService)
     {
       _rolesService = rolesService;
+    }
+
+    public Task<bool> EnsureAsync(ClaimsPrincipal user, object resource, string policyName, bool throwIfDenied = true)
+    {
+      var result = Authorize(user, resource, policyName);
+      if (result == false && throwIfDenied) throw new AuthorizationException();
+      return Task.FromResult(result);
     }
 
     public Task<bool> AuthorizeAsync(ClaimsPrincipal user, object resource, string policyName)

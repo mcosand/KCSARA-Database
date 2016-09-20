@@ -1,4 +1,4 @@
-﻿angular.module('sar-database', ['ngMaterial', 'ui.router.title', 'ui.router'])
+﻿angular.module('sar-database', ['ngMaterial', 'ui.router.title', 'ui.router', 'ngResource', 'md.data.table', 'restangular'])
 
 
 .config(['$mdThemingProvider', function ($mdThemingProvider) {

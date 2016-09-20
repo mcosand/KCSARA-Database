@@ -7,6 +7,7 @@ using System.Web.Http;
 using Sar;
 using Sar.Database;
 using Sar.Database.Model;
+using Sar.Database.Model.Members;
 using Sar.Database.Model.Units;
 using Sar.Database.Services;
 
@@ -57,7 +58,7 @@ namespace Kcsara.Database.Api.Controllers.Units
       if (!await _authz.AuthorizeAsync(User as ClaimsPrincipal, membership.Unit.Id, "Create:UnitMembership@UnitId")) throw new AuthorizationException();
       if (!await _authz.AuthorizeAsync(User as ClaimsPrincipal, memberId, "Create:UnitMembership@MemberId")) throw new AuthorizationException();
 
-      if (membership.Member == null) membership.Member = new NameIdPair();
+      if (membership.Member == null) membership.Member = new MemberSummary();
       membership.Member.Id = memberId;
 
       return await _units.CreateMembership(membership);

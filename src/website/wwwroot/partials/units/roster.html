@@ -1,0 +1,31 @@
+﻿<md-content layout-padding flex ng-controller="UnitsRosterCtrl">
+  <md-card>
+    <md-card-header>
+      <md-card-header-text>
+        <span class="md-title">{{unit.name}} Roster</span>
+      </md-card-header-text>
+    </md-card-header>
+    <md-card-content>
+      <md-table-container>
+        <table md-table sortable-columns md-progress="loading">
+          <thead md-head md-order="query.order" md-on-reorder="getRoster">
+            <tr md-row>
+              <th md-column md-order-by="member.name">Name</th>
+              <th md-column md-order-by="member.workerNumber"><span>DEM #</span></th>
+              <th md-column md-order-by="status">Status</th>
+              <th md-column>Since</th>
+            </tr>
+          </thead>
+          <tbody md-body>
+            <tr md-row md-auto-select ng-repeat="membership in roster | orderBy: query.order">
+              <td md-cell><a href="#" target="_self" ng-href="/members/detail/{{membership.member.id}}">{{membership.member.name}}</a></td>
+              <td md-cell>{{membership.member.workerNumber}}</td>
+              <td md-cell>{{membership.status}}</td>
+              <td md-cell>{{membership.since}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </md-table-container>
+    </md-card-content>
+  </md-card>
+</md-content>

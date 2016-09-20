@@ -1,8 +1,4 @@
-﻿/*
- * Copyright 2008-2015 Matthew Cosand
- */
-
-namespace Kcsara.Database.Web.Controllers
+﻿namespace Kcsara.Database.Web.Controllers
 {
   using System;
   using System.Collections.Generic;
@@ -32,17 +28,6 @@ namespace Kcsara.Database.Web.Controllers
       this.extensions = extensions;
     }
 
-    /// <summary>Get a list of existing units.</summary>
-    /// <returns>ViewModel</returns>
-    [Authorize]
-    public ActionResult Index()
-    {
-      ViewData["Title"] = "Member Units";
-      ViewData["Message"] = "Member Units here";
-
-      return View((from u in this.db.Units orderby u.DisplayName select u).AsEnumerable());
-    }
-
     /// <summary>
     /// 
     /// </summary>
@@ -56,27 +41,6 @@ namespace Kcsara.Database.Web.Controllers
 
       //ViewBag.Unit = unit;
       return View(unit);
-    }
-
-    /// <summary>An HTML view of unit members.</summary>
-    /// <param name="id">The Unit ID</param>
-    /// <returns>ViewModel</returns>
-    [Authorize]
-    [AcceptVerbs(HttpVerbs.Get)]
-    public ActionResult Roster(Guid id)
-    {
-
-
-      ViewData["Title"] = "Unit Roster";
-
-      SarUnit unit = (from u in this.db.Units where u.Id == id select u).First();
-      ViewData["Unit"] = unit;
-
-      var members = this.db.UnitMemberships.Include("Person").Include("Status").Where(um => um.Unit.Id == id && um.EndTime == null);
-      members = members.OrderBy(f => f.Person.LastName).ThenBy(f => f.Person.FirstName);
-
-      return View(members);
-
     }
 
     public DataActionResult GetMemberEmails(string id)
@@ -299,31 +263,12 @@ namespace Kcsara.Database.Web.Controllers
       return this.File(ms, "application/vnd.ms-excel", filename);
     }
 
-    [Authorize]
-    [AcceptVerbs(HttpVerbs.Get)]
-    public ActionResult Detail(Guid id)
-    {
-      SarUnit unit = (from u in this.db.Units.Include("StatusTypes") where u.Id == id select u).First();
 
-      ViewData["Title"] = "Unit Detail: " + unit.DisplayName;
 
-      Member actor = this.db.Members.Include("Memberships.Status").SingleOrDefault(f => f.Username == User.Identity.Name);
 
-      ViewBag.AppStatus = unit.ApplicationStatus;
-      ViewBag.AppText = unit.ApplicationsText;
-      ViewBag.CanApply = unit.ApplicationStatus == ApplicationStatus.Yes
-          && actor != null
-          && !actor.Memberships.Any(f => f.Status.IsActive && f.EndTime == null && f.Unit.Id == unit.Id)
-          && !actor.ApplyingTo.Any(f => f.Unit.Id == unit.Id && f.IsActive);
-      ViewBag.ActorId = Permissions.UserId;
 
-      ViewBag.CanEditDocuments = api.UnitsController.CanEditDocuments(Permissions, id);
 
-      var unitReports = extensions.Value.For<IUnitReports>(unit);
-      ViewBag.UnitReports = (unitReports != null) ? unitReports.ListReports() : new UnitReportInfo[0];
 
-      return View(unit);
-    }
 
     [Authorize]
     public ActionResult DownloadReport(Guid? id, string reportName)

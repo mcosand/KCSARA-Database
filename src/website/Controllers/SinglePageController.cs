@@ -9,6 +9,9 @@ namespace Kcsara.Database.Web.Controllers
   {
     [Authorize]
     [Route("accounts/{*page}")]
+    [Route("units")]
+    [Route("units/detail/{*page}")]
+    [Route("units/roster/{*page}")]
     public ActionResult AuthRequired(string page)
     {
       return View("SinglePage");

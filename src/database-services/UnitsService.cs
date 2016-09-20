@@ -4,8 +4,8 @@ using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Sar;
 using Sar.Database.Model;
+using Sar.Database.Model.Members;
 using Sar.Database.Model.Units;
 using Data = Kcsar.Database.Model;
 
@@ -17,6 +17,7 @@ namespace Sar.Database.Services
     Task<IEnumerable<UnitMembership>> ListMemberships(Expression<Func<UnitMembership, bool>> predicate);
     Task<UnitMembership> CreateMembership(UnitMembership membership);
     Task<IEnumerable<UnitStatusType>> ListStatusTypes(Guid? unitId = null);
+    Task<Unit> Get(Guid id);
   }
 
   public class UnitsService : IUnitsService
@@ -47,6 +48,21 @@ namespace Sar.Database.Services
       }
     }
 
+    public async Task<Unit> Get(Guid id)
+    {
+      using (var db = _dbFactory())
+      {
+        var result = await db.Units.Select(f => new Unit
+        {
+          Id = f.Id,
+          Name = f.DisplayName,
+          FullName = f.LongName
+        }).SingleOrDefaultAsync(f => f.Id == id);
+
+        return result;
+      }
+    }
+
     public async Task<IEnumerable<UnitMembership>> ListMemberships(Expression<Func<UnitMembership, bool>> predicate)
     {
       using (var db = _dbFactory())
@@ -59,10 +75,12 @@ namespace Sar.Database.Services
             Id = f.Unit.Id,
             Name = f.Unit.DisplayName
           },
-          Member = new NameIdPair
+          Member = new MemberSummary
           {
             Id = f.Person.Id,
-            Name = f.Person.LastName + ", " + f.Person.FirstName
+            Name = f.Person.FirstName + " " + f.Person.LastName,
+            WorkerNumber = f.Person.DEM,
+            Photo = f.Person.PhotoFile
           },
           IsActive = f.Status.IsActive,
           Status = f.Status.StatusName,

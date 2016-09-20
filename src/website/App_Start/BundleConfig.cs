@@ -27,22 +27,28 @@ namespace Kcsara.Database.Web
         ));
 
       bundles.Add(new ScriptBundle("~/js/am.js").Include(
+        "~/wwwroot/lib/lodash/dist/lodash.js",
         "~/wwwroot/lib/angular/angular.js",
+        "~/wwwroot/lib/angular-resource/angular-resource.js",
         "~/wwwroot/lib/angular-ui-router/release/angular-ui-router.js",
         "~/wwwroot/lib/angular-aria/angular-aria.js",
         "~/wwwroot/lib/angular-animate/angular-animate.js",
         "~/wwwroot/lib/angular-messages/angular-messages.js",
         "~/wwwroot/lib/angular-material/angular-material.js",
+        "~/wwwroot/lib/restangular/dist/restangular.js",
+        "~/wwwroot/lib/angular-material-data-table/dist/md-data-table.js",
         "~/wwwroot/lib/angular-ui-router-title/angular-ui-router-title.js",
         "~/wwwroot/lib/oidc-client/dist/oidc-client.js",
         "~/wwwroot/js/site.js",
         "~/wwwroot/js/routes.js",
         "~/wwwroot/js/services/*.js",
         "~/wwwroot/js/directives/*.js"
-        ));
+        )
+        .IncludeDirectory("~/wwwroot/js/controllers", "*.js", true));
 
       bundles.Add(new StyleBundle("~/css/am.css").Include(
         "~/wwwroot/lib/angular-material/angular-material.css",
+        "~/wwwroot/lib/angular-material-data-table/dist/md-data-table.css",
         "~/wwwroot/css/site.css",
         "~/wwwroot/css/main-nav.css"
         ));
