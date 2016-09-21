@@ -140,7 +140,8 @@ namespace Sar.Database.Services
           Unit = new NameIdPair { Id = f.Unit.Id, Name = f.Unit.DisplayName },
           IsActive = f.IsActive,
           GetsAccount = f.GetsAccount,
-          Name = f.StatusName
+          Name = f.StatusName,
+          WacLevel = (WacLevel)(int)f.WacLevel
         }).ToListAsync());
       }
     }

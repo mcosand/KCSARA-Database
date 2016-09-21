@@ -30,3 +30,9 @@ md-autocomplete-wrap {
 md-autocomplete-wrap.md-menu-showing {
   border-bottom-width: 0px;
 }
+
+md-card-header-text button.md-button.md-icon-button {
+  padding-top:0px;
+  padding-bottom:0px;
+  height:24px;
+}

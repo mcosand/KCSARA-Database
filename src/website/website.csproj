@@ -311,7 +311,6 @@
     <Compile Include="api\Models\TrainingCourse.cs" />
     <Compile Include="api\Models\TrainingRecord.cs" />
     <Compile Include="api\Models\UnitDocument.cs" />
-    <Compile Include="api\SearchController.cs" />
     <Compile Include="api\TrackController.cs" />
     <Compile Include="api\UnitsController.cs" />
     <Compile Include="api\MembersController.cs" />

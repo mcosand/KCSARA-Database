@@ -172,6 +172,7 @@
     <Compile Include="AnyHostCorsPolicyAttribute.cs" />
     <Compile Include="Controllers\Members\MemberContactsController.cs" />
     <Compile Include="Controllers\Members\MembersController.cs" />
+    <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Controllers\Training\TrainingRecordsController.cs" />
     <Compile Include="Controllers\Units\StatusTypesController.cs" />
     <Compile Include="Controllers\Units\MembershipController.cs" />

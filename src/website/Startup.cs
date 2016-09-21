@@ -39,7 +39,8 @@ namespace Kcsara.Database.Web
 
       app.UseCookieAuthentication(new CookieAuthenticationOptions
       {
-        AuthenticationType = "Cookies"
+        AuthenticationType = "Cookies",
+        ExpireTimeSpan = TimeSpan.FromSeconds(AuthConstants.TokenLifetime)
       });
 
       app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
@@ -100,6 +101,11 @@ namespace Kcsara.Database.Web
                 n.AuthenticationTicket.Properties);
           },
 
+          AuthenticationFailed = n =>
+          {
+            LogManager.GetLogger(typeof(Startup)).Debug("Auth Failed", n.Exception);
+            return Task.FromResult(0);
+          },
           RedirectToIdentityProvider = n =>
           {
             // if signing out, add the id_token_hint

@@ -11,6 +11,7 @@ namespace Sar.Database.Services
       Bind<ITrainingRecordsService>().To<TrainingRecordsService>();
       Bind<IMembersService>().To<MembersService>();
       Bind<IUnitsService>().To<UnitsService>();
+      Bind<IEventsService>().To<EventsService>();
     }
   }
 }

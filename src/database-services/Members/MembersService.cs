@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Sar.Database.Model;
 using Sar.Database.Model.Members;
+using Sar.Database.Model.Search;
 using Data = Kcsar.Database.Model;
 
 namespace Sar.Database.Services
@@ -18,6 +19,8 @@ namespace Sar.Database.Services
     Task<IEnumerable<MemberSummary>> ByPhoneNumber(string id);
     Task<IEnumerable<MemberSummary>> ByWorkerNumber(string id);
     Task<IEnumerable<MemberSummary>> ByEmail(string id);
+
+    Task<IList<MemberSearchResult>> SearchAsync(string query);
 
     Task<IEnumerable<PersonContact>> ListMemberContactsAsync(Guid memberId);
     Task<MemberInfo> CreateMember(MemberInfo body);
@@ -59,6 +62,34 @@ namespace Sar.Database.Services
         if (list.Length == 0) return null;
 
         return list[0];
+      }
+    }
+
+    public async Task<IList<MemberSearchResult>> SearchAsync(string query)
+    {
+      var now = DateTime.Now;
+      var last12Months = now.AddMonths(-12);
+
+      using (var db = _dbFactory())
+      {
+        var summaries = await SummariesWithMemberships<MemberSummary>(db.Members.Where(f => (f.FirstName + " " + f.LastName).StartsWith(query)
+                             || (f.LastName + ", " + f.FirstName).StartsWith(query)
+                             || (f.DEM.StartsWith(query) || f.DEM.StartsWith("SR" + query)))
+          .OrderByDescending(f => f.Memberships.Any(g => g.Status.IsActive && (g.EndTime == null || g.EndTime > now)))
+          .ThenByDescending(f => f.MissionRosters.Count(g => g.TimeIn > last12Months))
+          .ThenByDescending(f => f.MissionRosters.Count())
+          .ThenBy(f => f.LastName)
+          .ThenBy(f => f.FirstName)
+          .ThenBy(f => f.Id)
+          );
+
+        var list = summaries.Select((m, i) => new MemberSearchResult
+        {
+          Score = (m.Units.Length == 0 ? 300 : 1000) - i,
+          Summary = m
+        }).ToList();
+
+        return list;
       }
     }
 

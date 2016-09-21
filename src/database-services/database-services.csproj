@@ -103,6 +103,7 @@
     <Compile Include="ClaimsPrincipalExtensions.cs" />
     <Compile Include="DIModule.cs" />
     <Compile Include="Auth\IRolesService.cs" />
+    <Compile Include="Events\EventsService.cs" />
     <Compile Include="Members\MembersService.cs" />
     <Compile Include="EnumConversions.cs" />
     <Compile Include="SendMessageService.cs" />

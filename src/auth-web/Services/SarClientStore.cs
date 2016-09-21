@@ -37,7 +37,8 @@ namespace Sar.Database.Web.Auth.Services
           Flow = row.Flow,
           RequireConsent = false,
           AllowRememberConsent = false,
-          AccessTokenType = (row.Flow == Flows.Implicit) ? AccessTokenType.Reference : AccessTokenType.Jwt
+          AccessTokenType = (row.Flow == Flows.Implicit) ? AccessTokenType.Reference : AccessTokenType.Jwt,
+          AccessTokenLifetime = AuthConstants.TokenLifetime
         };
 
         switch (row.Flow)

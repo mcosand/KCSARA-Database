@@ -63,13 +63,19 @@
   };
 })
 
-.factory('httpRequestInterceptor', ['currentUser', function (currentUser) {
+.factory('httpRequestInterceptor', ['currentUser', '$q', function (currentUser, $q) {
   return {
     request: function (config) {
       if (config.url.indexOf('/api') == 0 && currentUser.user && currentUser.user.access_token) {
         config.headers['Authorization'] = 'Bearer ' + currentUser.user.access_token;
       }
       return config;
+    },
+    responseError: function authResponseError(response) {
+      if (response.status == 401) {
+        debugger;
+      }
+      return $q.reject(response);
     }
   };
 }])
@@ -234,7 +240,7 @@
 
         return $http({
           method: 'GET',
-          url: window.appRoot + 'api/search?q=' + encodeURIComponent(text)
+          url: window.appRoot + 'api2/search?q=' + encodeURIComponent(text)
         }).then(function successCallback(response) {
           return response.data;
         }, function errorCallback(response) {
