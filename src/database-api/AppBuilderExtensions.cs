@@ -43,6 +43,7 @@ namespace Kcsara.Database.Api
       config.Filters.Add(new AuthorizeAttribute());
 
       config.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new StringEnumConverter());
+      config.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new ItemPermissionConverter());
       config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
 
       config.SuppressDefaultHostAuthentication();

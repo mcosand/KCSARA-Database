@@ -13,11 +13,11 @@ namespace Sar.Database.Services
 {
   public interface IUnitsService
   {
-    Task<IEnumerable<Unit>> List();
-    Task<IEnumerable<UnitMembership>> ListMemberships(Expression<Func<UnitMembership, bool>> predicate);
+    Task<ListPermissionWrapper<Unit>> List();
+    Task<ListPermissionWrapper<UnitMembership>> ListMemberships(Expression<Func<UnitMembership, bool>> predicate);
     Task<UnitMembership> CreateMembership(UnitMembership membership);
-    Task<IEnumerable<UnitStatusType>> ListStatusTypes(Guid? unitId = null);
-    Task<Unit> Get(Guid id);
+    Task<ListPermissionWrapper<UnitStatusType>> ListStatusTypes(Guid? unitId = null);
+    Task<ItemPermissionWrapper<Unit>> Get(Guid id);
   }
 
   public class UnitsService : IUnitsService
@@ -33,7 +33,7 @@ namespace Sar.Database.Services
       _host = host;
     }
 
-    public async Task<IEnumerable<Unit>> List()
+    public async Task<ListPermissionWrapper<Unit>> List()
     {
       using (var db = _dbFactory())
       {
@@ -44,11 +44,15 @@ namespace Sar.Database.Services
           FullName = f.LongName
         }).ToListAsync();
 
-        return list;
+        return new ListPermissionWrapper<Unit>
+        {
+          C = 1,
+          Items = list.Select(f => PermissionWrapper.Create(f, 1, 1))
+        };
       }
     }
 
-    public async Task<Unit> Get(Guid id)
+    public async Task<ItemPermissionWrapper<Unit>> Get(Guid id)
     {
       using (var db = _dbFactory())
       {
@@ -59,11 +63,11 @@ namespace Sar.Database.Services
           FullName = f.LongName
         }).SingleOrDefaultAsync(f => f.Id == id);
 
-        return result;
+        return PermissionWrapper.Create(result, 1, 1);
       }
     }
 
-    public async Task<IEnumerable<UnitMembership>> ListMemberships(Expression<Func<UnitMembership, bool>> predicate)
+    public async Task<ListPermissionWrapper<UnitMembership>> ListMemberships(Expression<Func<UnitMembership, bool>> predicate)
     {
       using (var db = _dbFactory())
       {
@@ -94,7 +98,11 @@ namespace Sar.Database.Services
         }
 
         var list = await query.OrderBy(f => f.Member.Name).ThenBy(f => f.Unit.Name).ToListAsync();
-        return list;
+        return new ListPermissionWrapper<UnitMembership>
+        {
+          C = 1,
+          Items = list.Select(f => PermissionWrapper.Create(f, 1, 1))
+        };
       }
     }
 
@@ -123,26 +131,30 @@ namespace Sar.Database.Services
         db.UnitMemberships.Add(membershipRow);
         await db.SaveChangesAsync();
 
-        return (await ListMemberships(f => f.Id == membershipRow.Id)).Single();
+        return (await ListMemberships(f => f.Id == membershipRow.Id)).Items.Select(f => f.Item).Single();
       }
     }
 
-    public async Task<IEnumerable<UnitStatusType>> ListStatusTypes(Guid? unitId = null)
+    public async Task<ListPermissionWrapper<UnitStatusType>> ListStatusTypes(Guid? unitId = null)
     {
       using (var db = _dbFactory())
       {
         IQueryable<Data.UnitStatus> query = db.UnitStatusTypes;
         if (unitId.HasValue) query = query.Where(f => f.Unit.Id == unitId.Value);
 
-        return (await query.Select(f => new UnitStatusType
+        return new ListPermissionWrapper<UnitStatusType>
         {
-          Id = f.Id,
-          Unit = new NameIdPair { Id = f.Unit.Id, Name = f.Unit.DisplayName },
-          IsActive = f.IsActive,
-          GetsAccount = f.GetsAccount,
-          Name = f.StatusName,
-          WacLevel = (WacLevel)(int)f.WacLevel
-        }).ToListAsync());
+          C = 1,
+          Items = (await query.Select(f => new UnitStatusType
+          {
+            Id = f.Id,
+            Unit = new NameIdPair { Id = f.Unit.Id, Name = f.Unit.DisplayName },
+            IsActive = f.IsActive,
+            GetsAccount = f.GetsAccount,
+            Name = f.StatusName,
+            WacLevel = (WacLevel)(int)f.WacLevel
+          }).ToListAsync()).Select(f => PermissionWrapper.Create(f, 1, 1))
+        };
       }
     }
   }

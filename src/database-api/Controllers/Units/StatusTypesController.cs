@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Sar;
 using Sar.Database;
+using Sar.Database.Model;
 using Sar.Database.Model.Units;
 using Sar.Database.Services;
 
@@ -23,7 +25,7 @@ namespace Kcsara.Database.Api.Controllers.Units
     
     [HttpGet]
     [Route("units/statustypes")]
-    public async Task<IEnumerable<UnitStatusType>> List()
+    public async Task<ListPermissionWrapper<UnitStatusType>> List()
     {
       if (!await _authz.AuthorizeAsync(User as ClaimsPrincipal, null, "Read:UnitStatusType")) throw new AuthorizationException();
 
@@ -32,7 +34,7 @@ namespace Kcsara.Database.Api.Controllers.Units
 
     [HttpGet]
     [Route("units/{unitId}/statustypes")]
-    public async Task<IEnumerable<UnitStatusType>> ListForUnit(Guid unitId)
+    public async Task<ListPermissionWrapper<UnitStatusType>> ListForUnit(Guid unitId)
     {
       await _authz.EnsureAsync(User as ClaimsPrincipal, unitId, "Read:UnitStatusType");
 

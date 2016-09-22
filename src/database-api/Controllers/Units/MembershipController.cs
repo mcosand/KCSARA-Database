@@ -26,7 +26,7 @@ namespace Kcsara.Database.Api.Controllers.Units
     
     [HttpGet]
     [Route("members/{memberId}/memberships")]
-    public async Task<IEnumerable<UnitMembership>> ListForMember(Guid memberId, bool history = false)
+    public async Task<ListPermissionWrapper<UnitMembership>> ListForMember(Guid memberId, bool history = false)
     {
       if (!await _authz.AuthorizeAsync(User as ClaimsPrincipal, memberId, "Read:UnitMembership@MemberId")) throw new AuthorizationException();
 
@@ -39,7 +39,7 @@ namespace Kcsara.Database.Api.Controllers.Units
 
     [HttpGet]
     [Route("units/{unitId}/memberships")]
-    public async Task<IEnumerable<UnitMembership>> ListForUnit(Guid unitId, bool history = false)
+    public async Task<ListPermissionWrapper<UnitMembership>> ListForUnit(Guid unitId, bool history = false)
     {
       if (!await _authz.AuthorizeAsync(User as ClaimsPrincipal, unitId, "Read:UnitMembership@UnitId")) throw new AuthorizationException();
 

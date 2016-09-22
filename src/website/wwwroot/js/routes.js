@@ -2,10 +2,8 @@
   var resolveUnitTitle =
   {
     unit: ['unitsService', '$stateParams', function (Units, $stateParams) {
-      // Use Contacts service to retrieve a contact
-      return Units.units.get({ id: $stateParams.id });
+      return Units.units.one($stateParams.id).get();
     }],
-    // Dynamic title showing the name of contact
     $title: ['unit', function (unit) {
       return unit.name;
     }]

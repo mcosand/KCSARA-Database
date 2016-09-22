@@ -30,7 +30,7 @@
       <div class="md-toolbar-tools">
         <span>Unit Status Types</span>
         <div flex></div>
-        <md-button class="md-icon-button md-accent" aria-label="Add Status Type">
+        <md-button class="md-icon-button md-accent" aria-label="Add Status Type" ng-if="statusTypes.list._c">
           <md-icon>add_circle</md-icon>
         </md-button>
       </div>
@@ -51,7 +51,10 @@
               <td md-cell>{{s.name}}</a></td>
               <td md-cell>{{s.isActive}}</td>
               <td md-cell>{{s.wacLevel}}</td>
-              <td md-cell></td>
+              <td md-cell>
+                <md-button class="md-icon-button md-accent" aria-label="Edit Type" ng-if="s._u"><md-icon>edit</md-icon></md-button>
+                <md-button class="md-icon-button md-accent" aria-label="Delete Type" ng-if="s._d"><md-icon>trash</md-icon></md-button>
+              </td>
             </tr>
           </tbody>
         </table>

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Sar;
 using Sar.Database;
+using Sar.Database.Model;
 using Sar.Database.Model.Units;
 using Sar.Database.Services;
 
@@ -23,7 +24,7 @@ namespace Kcsara.Database.Api.Controllers.Units
 
     [HttpGet]
     [Route("units")]
-    public async Task<IEnumerable<Unit>> List()
+    public async Task<ListPermissionWrapper<Unit>> List()
     {
       await _authz.EnsureAsync(User as ClaimsPrincipal, null, "Read:Unit");
       return await _units.List();
@@ -31,7 +32,7 @@ namespace Kcsara.Database.Api.Controllers.Units
 
     [HttpGet]
     [Route("units/{id}")]
-    public async Task<Unit> Get(Guid id)
+    public async Task<ItemPermissionWrapper<Unit>> Get(Guid id)
     {
       await _authz.EnsureAsync(User as ClaimsPrincipal, id, "Read:Unit");
       return await _units.Get(id);

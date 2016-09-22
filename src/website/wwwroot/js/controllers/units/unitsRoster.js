@@ -1,4 +1,4 @@
-﻿angular.module('sar-database').controller("UnitsRosterCtrl", ['$stateParams', '$scope', '$rootScope', '$timeout', 'unitsService', 'Restangular', function ($stateParams, $scope, $rootScope, $timeout, unitsService, Restangular) {
+﻿angular.module('sar-database').controller("UnitsRosterCtrl", ['$stateParams', '$scope', '$rootScope', '$timeout', 'unitsService', 'Restangular', function ($stateParams, $scope, $rootScope, $timeout, Units, Restangular) {
   angular.extend($scope, {
     query: {
       order: 'name',
@@ -7,15 +7,15 @@
     },
 
     getRoster: function () {
-      $scope.loading = Restangular.one('api2/units', $stateParams.id).all('memberships').getList().then(function (data) {
+      $scope.loading = Units.units.one($stateParams.id).all('memberships').getList().then(function (data) {
         $scope.roster = data;
       })
     },
-
-    unit: unitsService.units.get({ id: $stateParams.id }, function () {
-      $rootScope.$title = $scope.unit.name;
-      // $timeout(function () { $rootScope.title = $scope.unit.name; });
-    })
+    unit: {},
+    roster: []
   });
   $scope.getRoster()
+  Units.units.one($stateParams.id).get().then(function (unit) {
+    $scope.unit = unit;
+  })
 }]);

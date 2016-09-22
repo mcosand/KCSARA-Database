@@ -36,10 +36,10 @@ namespace Sar.Database.Web.Auth.Services
     {
       var info = await _members.GetMember(memberId);
 
-      var units = (await _units.List()).ToDictionary(f => f.Id, f => new Organization {
-        Id = f.Id,
-        Name = f.Name,
-        LongName = f.FullName
+      var units = (await _units.List()).Items.ToDictionary(f => f.Item.Id, f => new Organization {
+        Id = f.Item.Id,
+        Name = f.Item.Name,
+        LongName = f.Item.FullName
       });
 
       var email = (await _members.ListMemberContactsAsync(memberId)).Where(f => f.Type == "email").FirstOrDefault();
@@ -58,7 +58,7 @@ namespace Sar.Database.Web.Auth.Services
 
     public async Task<Dictionary<string, bool>> GetStatusToAccountMap()
     {
-      return (await _units.ListStatusTypes()).ToDictionary(f => (f.Unit.Id.ToString() + f.Name).ToLowerInvariant(), f => f.GetsAccount);
+      return (await _units.ListStatusTypes()).Items.ToDictionary(f => (f.Item.Unit.Id.ToString() + f.Item.Name).ToLowerInvariant(), f => f.Item.GetsAccount);
     }
   }
 }

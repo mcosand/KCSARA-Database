@@ -1,7 +1,7 @@
 ﻿angular.module('sar-database', ['ngMaterial', 'ui.router.title', 'ui.router', 'ngResource', 'md.data.table', 'restangular'])
 
 
-.config(['$mdThemingProvider', function ($mdThemingProvider) {
+.config(['$mdThemingProvider', 'RestangularProvider', function ($mdThemingProvider, RestangularProvider) {
   //http://mcg.mbitson.com/
   $mdThemingProvider.definePalette('sar-yellow', {
     '50': '#ffffff',
@@ -44,6 +44,21 @@
   .primaryPalette('sar-yellow')
   .accentPalette('sar-green')
   .backgroundPalette('grey');
+
+  RestangularProvider.setBaseUrl('/api2');
+  // add a response interceptor
+  RestangularProvider.addResponseInterceptor(function (data, operation, what, url, response, deferred) {
+    var extractedData;
+    // .. to look for getList operations
+    if (operation === "getList") {
+      // .. and handle the data and meta data
+      extractedData = data.items || data;
+      extractedData._c = data.c;
+    } else {
+      extractedData = data.item || data;
+    }
+    return extractedData;
+  });
 }])
 
   .filter('nospace', function () {
