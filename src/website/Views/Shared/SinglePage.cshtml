@@ -1,6 +1,7 @@
 ﻿@{
   Layout = null;
-  var t = Strings.DatabaseName;
+  var groupName = (System.Configuration.ConfigurationManager.AppSettings["site:groupName"] ?? "King County Search and Rescue");
+  var shortName = (System.Configuration.ConfigurationManager.AppSettings["site:shortName"] ?? "King County SAR");
 }
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" ng-app="sar-database">
@@ -12,7 +13,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="apple-touch-icon" href="~/apple-touch-icon.png" />
-  <title ng-bind="($title || '') + ' - @t'"></title>
+  <title ng-bind="($title || '') + ' - @groupName'"></title>
   <script type="text/javascript">window.appRoot = '@Url.Content("~/")'; var errorUrl = '@Url.RouteUrl("DefaultApi", new { httproute = "", Controller = "telemetry", Action = "error" })';</script>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="@Url.Content("~/wwwroot/lib/font-awesome/css/font-awesome.min.css")" rel="stylesheet" />
@@ -26,8 +27,8 @@
       </md-button>
       <h2>
         <a href="@Url.Content("~/")">
-          <span hide-xs>King County Search and Rescue</span>
-          <span hide-gt-xs>King County SAR</span>
+          <span hide-xs>{{$groupName}}</span>
+          <span hide-gt-xs>{{$shortName}}</span>
         </a>
       </h2>
       <span flex></span>
@@ -152,7 +153,8 @@
     }])
     .run(['authService', '$rootScope', function (authService, $rootScope) {
       @Html.Raw(bootstrapCode)
-      $rootScope.groupName = '@(System.Configuration.ConfigurationManager.AppSettings["site:groupName"] ?? "King County Search and Rescue")';
+      $rootScope.$groupName = '@groupName';
+      $rootScope.$shortName = '@shortName';
     }])
   </script>
 
