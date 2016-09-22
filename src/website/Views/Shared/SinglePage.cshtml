@@ -36,7 +36,7 @@
         <md-icon>search</md-icon>
       </md-button>
       <md-button class="md-icon-button" aria-label="Login Settings" ng-click="auth.showMenu()" ng-cloak>
-        <md-icon ng-style="{opacity : (user.isLoggedIn ? '1' : '0.3')}">account_circle</md-icon>
+        <md-icon ng-style="{opacity : ($currentUser.user ? '1' : '0.3')}">account_circle</md-icon>
       </md-button>
     </div>
   </md-toolbar>
@@ -46,7 +46,7 @@
                 md-component-id="mainMenu"
                 hide-print
                 md-is-locked-open="$mdMedia('gt-sm')"
-                ng-show="user.isLoggedIn">
+                ng-show="$currentUser.user">
       <md-content flex role="navigation">
         <ul class="main-menu">
           <li ng-repeat="section in menu.sections" class="parent-list-item">
@@ -76,15 +76,15 @@
                 md-component-id="authMenu"
                 md-whiteframe="4">
       <md-content layout="column" layout-align="start stretch">
-        <md-list-item class="md-2-line" ng-click="null" ng-show="user.isLoggedIn">
-          <img ng-src="{{user.picture || '/content/auth/members/none.jpg'}}" class="md-avatar" alt="{{item.name}}" />
+        <md-list-item class="md-2-line" ng-click="null" ng-show="$currentUser.user">
+          <img ng-src="{{$currentUser.user.profile.picture || '/content/images/nophoto.jpg'}}" class="md-avatar" alt="{{$currentUser.user.profile.name}}" />
           <div class="md-list-item-text" layout="column">
-            <h3>{{ user.name }}</h3>
-            <p>{{ user.email }}</p>
+            <h3>{{ $currentUser.user.profile.name }}</h3>
+            <p>{{ $currentUser.user.profile.email }}</p>
           </div>
         </md-list-item>
-        <md-button ng-show="user.isLoggedIn" class="md-raised" ng-click="doSignout()">Logout</md-button>
-        <md-button ng-hide="user.isLoggedIn" class="md-raised" ng-click="doSignin()">Login</md-button>
+        <md-button ng-show="$currentUser.user" class="md-raised" ng-click="doSignout()">Logout</md-button>
+        <md-button ng-hide="$currentUser.user" class="md-raised" ng-click="doSignin()">Login</md-button>
       </md-content>
     </md-sidenav>
     <md-sidenav flex="nogrow" class="md-sidenav-right"

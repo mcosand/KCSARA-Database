@@ -104,15 +104,6 @@
   function (authService, $scope, $mdSidenav, $http, $location, $window, $timeout, $rootScope) {
   var self = this;
 
-  function readUser() {
-    var user = authService.getUser().then(function (user) {
-      $scope.user = user
-        ? angular.extend({ isLoggedIn: true }, user.profile)
-        : { isLoggedIn: false };
-    });
-  }
-
-  authService.subscribe($scope, readUser);
 
   this.isSelected = function isSelected(page) {
     return menu.isPageSelected(page);
@@ -240,9 +231,6 @@
     showMainMenu: function () { $mdSidenav('mainMenu').open(); $scope.mainNavOpen = true; },
     closeMainMenu: function () { $timeout(function () { $mdSidenav('mainMenu').close(); $scope.mainNavOpen = false; }); },
     menu: menu,
-    user: {
-      isLoggedIn: false
-    },
     auth: {
       menuOpen: false,
       showMenu: function () { $mdSidenav('authMenu').open(); }
@@ -283,12 +271,5 @@
       authService.signin();
     }
   });
-  readUser();
 }])
 ;
-
-//Oidc.Log.logger = console;
-//Oidc.Log.level = Oidc.Log.INFO;
-//var mgr = new Oidc.UserManager(oidcSettings);
-//mgr.getUser().then(function (user) {
-//});
