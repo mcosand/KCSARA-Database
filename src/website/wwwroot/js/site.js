@@ -1,4 +1,4 @@
-﻿angular.module('sar-database', ['ngMaterial', 'ui.router.title', 'ui.router', 'ngResource', 'md.data.table', 'restangular'])
+﻿angular.module('sar-database', ['ngMaterial', 'ui.router.title', 'ui.router', 'md.data.table', 'restangular'])
 
 
 .config(['$mdThemingProvider', 'RestangularProvider', function ($mdThemingProvider, RestangularProvider) {
@@ -46,12 +46,10 @@
   .backgroundPalette('grey');
 
   RestangularProvider.setBaseUrl('/api2');
-  // add a response interceptor
   RestangularProvider.addResponseInterceptor(function (data, operation, what, url, response, deferred) {
     var extractedData;
-    // .. to look for getList operations
+    // Many lists come back as an object with permissions and the actual list instide.
     if (operation === "getList") {
-      // .. and handle the data and meta data
       extractedData = data.items || data;
       extractedData._c = data.c;
     } else {
@@ -81,16 +79,21 @@
 .factory('httpRequestInterceptor', ['currentUser', '$q', function (currentUser, $q) {
   return {
     request: function (config) {
+      if (currentUser.loggingIn) {
+        return $q.reject();
+      }
       if (config.url.indexOf('/api') == 0 && currentUser.user && currentUser.user.access_token) {
         config.headers['Authorization'] = 'Bearer ' + currentUser.user.access_token;
       }
       return config;
     },
-    responseError: function authResponseError(response) {
-      if (response.status == 401) {
-        debugger;
+    responseError: function authResponseError(rejection) {
+      if (rejection && rejection.status == 401 && !currentUser.loggingIn) {
+        // handle unauthorized requests here.
+        return $q.reject(rejection);
+      } else {
+        return $q.reject(rejection);
       }
-      return $q.reject(response);
     }
   };
 }])
@@ -100,10 +103,9 @@
 })
 
 
-.controller('FrameCtrl', ['authService', '$scope', '$mdSidenav', '$http', '$location', '$window', '$timeout', '$rootScope',
-  function (authService, $scope, $mdSidenav, $http, $location, $window, $timeout, $rootScope) {
+.controller('FrameCtrl', ['authService', '$scope', '$mdSidenav', '$http', '$state', '$location', '$window', '$timeout', '$rootScope',
+  function (authService, $scope, $mdSidenav, $http, $state, $location, $window, $timeout, $rootScope) {
   var self = this;
-
 
   this.isSelected = function isSelected(page) {
     return menu.isPageSelected(page);
@@ -133,16 +135,9 @@
     menu.toggleSelectSection(section);
   };
 
-  $rootScope.$on('$locationChangeSuccess', onLocationChange);
   var menu;
+  $rootScope.$on('$locationChangeSuccess', onLocationChange);
   function onLocationChange() {
-    var returnUrl = $window.sessionStorage.getItem('oidc:returnUrl');
-    if (returnUrl) {
-      debugger;
-      $window.sessionStorage.removeItem('oidc:returnUrl')
-      if (returnUrl != $location.url()) $window.location.href = returnUrl;
-    }
-
     $scope.closeMainMenu();
 
     var path = $location.path();
@@ -268,8 +263,8 @@
     },
     doSignin: function () {
       $window.sessionStorage.setItem('oidc:returnUrl', $location.url());
-      authService.signin();
+      authService.startLogin();
     }
   });
-}])
+  }])
 ;

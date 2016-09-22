@@ -9,8 +9,15 @@
     }]
   };
 
+  var resolveUserLoaded = ['authService', function ResolveUserLoaded(Auth) {
+    return Auth.getUser();
+  }];
+  var resolveUserSignedIn = ['authService', function ResolveUserSignedIn(Auth) {
+    return Auth.ensureAuthenticatedAsync();
+  }];
+
   var routes = {
-    'home': { url: '/', templateUrl: '/embedded/partials/home.html', resolve: { $title: function () { return 'Home'; } } },
+    'home': { url: '/', templateUrl: '/embedded/partials/home.html', data: { allowAnonymous: true }, resolve: { $title: function () { return 'Home'; } } },
     'units': { url: '/units', templateUrl: '/wwwroot/partials/units/list.html', resolve: { $title: function () { return 'Units' } } },
     'unitsDetail': { url: '/units/detail/:id', templateUrl: '/wwwroot/partials/units/detail.html', resolve: resolveUnitTitle },
     'unitsRoster': { url: '/units/roster/:id', templateUrl: '/wwwroot/partials/units/roster.html', resolve: resolveUnitTitle },
@@ -19,12 +26,35 @@
   };
 
   angular.module('sar-database')
+  .config(function ($provide) {
+    $provide.decorator('$state', function ($delegate, $rootScope) {
+      $rootScope.$on('$stateChangeStart', function (event, state, params) {
+        $delegate.next = state;
+        $delegate.toParams = params;
+      });
+      return $delegate;
+    });
+  })
   .config(['$locationProvider', '$stateProvider', '$urlRouterProvider', function ($locationProvider, $stateProvider, $urlRouterProvider) {
-    console.log('running');
     $locationProvider.html5Mode(true)
     for (var r in routes) {
-      $stateProvider.state(r, routes[r]);
+      var opts = routes[r];
+
+      opts.resolve = opts.resolve || {};
+      opts.resolve._userLoaded = (opts.data && opts.data.allowAnonymous)
+                                      ? resolveUserLoaded
+                                      : resolveUserSignedIn;
+      $stateProvider.state(r, opts);
     }
+    $stateProvider.state('login_callback', {
+      url: '/loggedIn', template: 'Logging in ...', data: { allowAnonymous: true }, resolve: {
+        finishLogin: ['authService', '$timeout', '$state', function (Auth, $timeout, $state) {
+          return Auth.finishLoginAsync().then(function (newState) {
+            $timeout(function () { $state.go(newState.name, newState.p) });
+          })
+        }]
+      }
+    });
     $urlRouterProvider.otherwise('/');
   }]);
 };

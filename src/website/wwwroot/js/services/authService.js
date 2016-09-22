@@ -1,62 +1,82 @@
 ﻿angular.module('sar-database')
 
   .provider('currentUser', function CurrentUserProvider() {
-    this.$get = function CurrentUserFactory() {
-      return {
+    this.$get = ['$rootScope', function CurrentUserFactory($rootScope) {
+      var instance = {
         user: null
       };
-    }
+      $rootScope.$currentUser = instance;
+      return instance;
+    }]
   })
 
 .provider('authService', function AuthServiceProvider() {
   var options = {};
 
-  this.useOptions = function(newOptions) {
+  this.useOptions = function (newOptions) {
     angular.extend(options, newOptions);
   };
 
-  this.$get = ['currentUser', '$rootScope', '$window', '$http', function AuthServiceFactory(currentUser, $rootScope, $window, $http) {
+  this.$get = ['currentUser', '$rootScope', '$state', '$window', '$http', '$q', '$timeout', function AuthServiceFactory(currentUser, $rootScope, $state, $window, $http, $q, $timeout) {
     Oidc.Log.logger = console;
     Oidc.Log.level = Oidc.Log.INFO;
-    
+
+    var storageKey = "oidc.user:" + options.authority + ':' + options.client_id;
+    var storedUser = JSON.parse($window.sessionStorage.getItem(storageKey) || 'null');
+    if (storedUser) {
+      if (storedUser.expires_at && storedUser.expires_at < Math.floor(Date.now() / 1000) - 20) {
+//        console.log('%% stored user was expired. Dumped it.')
+        $window.sessionStorage.removeItem(storageKey);
+        storedUser = null;
+      }
+      else {
+        currentUser.user = storedUser;
+      }
+    }
+
     var mgr = new Oidc.UserManager(options);
 
-    var notifyChange = function () {
-      $rootScope.$emit('auth-service-update');
-    }
-
-    function getStorageKey() {
-      return "oidc.user:" + options.authority + ':' + options.client_id;
-    }
-
-    var service = {
+    var service;
+    service = {
       getUser: function AuthService_getUser() {
-        return mgr.getUser();
-      },
-      bootstrapAuth: function (id_token, access_token, expires_at) {
-        if (id_token && access_token && expires_at) {
-          var packet = { id_token: id_token, access_token: access_token, expires_at: expires_at, isOpenIdConnect: true }
-          currentUser.user = packet;
-          mgr.settings.validator._processClaims(packet).then(function (user) {
-            $window.sessionStorage.setItem(getStorageKey(), JSON.stringify(user));
-            mgr._events._userLoaded.raise(user);
-          })
-        }
-      },
-      ensureAuthenticated: function () {
-        alert('Not yet implemented');
+        return mgr.getUser().then(function (user) {
+          currentUser.user = user;
+          return user;
+        });
       },
       signout: function () {
-        console.log('begin signout');
+        var token = currentUser.user.id_token;
         mgr.removeUser().then(function () {
-          $window.location = '/logout';
-          //mgr.signoutRedirect().then(function () {
-          //  console.log('am signing out');
-          //})
+          mgr.signoutRedirect({ id_token_hint: token });
         })
       },
-      signin: function () {
-        $window.location = '/login';
+      startLogin: function AuthService_startLogin() {
+        $window.sessionStorage.setItem('oidc:returnState', JSON.stringify({ name: $state.next.name, p: $state.toParams }));
+        mgr.signinRedirect();
+      },
+      finishLoginAsync: function AuthService_finishLogin() {
+        console.log('%% finishing login')
+        return mgr.signinRedirectCallback().then(function (user) {
+          currentUser.user = user;
+          var returnState = { name: 'home' };
+          var storedTarget = $window.sessionStorage.getItem('oidc:returnState');
+          if (storedTarget) {
+            $window.sessionStorage.removeItem('oidc:returnState');
+            returnState = JSON.parse(storedTarget);
+          }
+          return returnState;
+        });
+      },
+      ensureAuthenticatedAsync: function () {
+        return service.getUser().then(function (user) {
+
+          currentUser.user = user;
+          if (user == null) {
+            currentUser.loggingIn = true;
+            service.startLogin();
+            return $q.reject;
+          }
+        });
       },
       subscribe: function (scope, callback) {
         var handler = $rootScope.$on('auth-service-update', callback);
@@ -64,10 +84,31 @@
       }
     };
 
+    var notifyChange = function (msg) {
+      $rootScope.$emit('auth-service-update', msg);
+    }
+
     mgr.events.addUserLoaded(function (user) {
       currentUser.user = user;
-      notifyChange();
+      notifyChange({ action: 'loaded' });
     });
+    mgr.events.addUserUnloaded(function () {
+      currentUser.user = null;
+    })
+    mgr.events.addAccessTokenExpiring(function () {
+      console.log('ALERT: token expiring');
+      var remaining = Math.max(currentUser.user.expires_at - Math.ceil(Date.now() / 1000), 0);
+      notifyChange({ action: 'expiring', remaining: remaining });
+    })
+    mgr.events.addAccessTokenExpired(function () {
+      currentUser.user = null;
+      notifyChange({ action: 'expired' });
+    });
+    mgr.events.addUserSignedOut(function () {
+      currentUser.user = null;
+    });
+
+    $rootScope.startLogin = service.startLogin;
 
     return service;
   }];

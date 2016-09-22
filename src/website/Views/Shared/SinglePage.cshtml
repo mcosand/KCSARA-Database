@@ -124,13 +124,6 @@
       </md-content>
     </md-sidenav>
   </div>
-
-  @{
-    var user = User as System.Security.Claims.ClaimsPrincipal;
-    var bootstrapCode = (user != null && user.Identity.IsAuthenticated)
-                         ? "authService.bootstrapAuth('" + user.FindFirst("id_token")?.Value + "','" + user.FindFirst("access_token")?.Value + "', " + DateTimeOffset.Parse(user.FindFirst("expires_at").Value).ToUnixTimeSeconds() + ");"
-                         : "authService.bootstrapAuth();";
-  }
   <script type="text/ng-template" id="/embedded/partials/home.html">
     @Html.Raw(File.ReadAllText(Server.MapPath("~/wwwroot/partials/home.html")))
   </script>
@@ -142,17 +135,17 @@
       authProvider.useOptions({
         authority: '@System.Configuration.ConfigurationManager.AppSettings["auth:authority"].TrimEnd('/')',
         client_id: '@System.Configuration.ConfigurationManager.AppSettings["auth:spaClientId"]',
-        redirect_uri: window.appRoot,
-        post_logout_redirect_uri: 'http://localhost:5000/user-manager-sample.html',
+        redirect_uri: location.origin + window.appRoot + 'loggedIn',
+        silent_redirect_uri: location.origin + window.appRoot + 'loginSilent',
+        automaticSilentRenew: true,
+        post_logout_redirect_uri: location.origin + window.appRoot,
         response_type: 'id_token token',
         scope: 'openid email profile kcsara-profile',
-        automaticSilentRenew: true,
         filterProtocolClaims: true,
         loadUserInfo: true
       });
     }])
     .run(['authService', '$rootScope', function (authService, $rootScope) {
-      @Html.Raw(bootstrapCode)
       $rootScope.$groupName = '@groupName';
       $rootScope.$shortName = '@shortName';
     }])

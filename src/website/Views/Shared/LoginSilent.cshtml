@@ -1,0 +1,17 @@
+﻿@{
+  Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Silent refresh</title>
+</head>
+<body>
+  @Scripts.Render("~/wwwroot/lib/oidc-client/dist/oidc-client.js")
+  <script>
+    Oidc.Log.logger = console;
+    Oidc.Log.logLevel = Oidc.Log.INFO;
+    new Oidc.UserManager().signinSilentCallback();
+  </script>
+</body>
+</html>

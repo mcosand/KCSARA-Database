@@ -799,6 +799,7 @@
     <Content Include="Views\Shared\AuthError.cshtml" />
     <Content Include="Views\Shared\_AuthLayout.cshtml" />
     <Content Include="Views\Shared\SinglePage.cshtml" />
+    <Content Include="Views\Shared\LoginSilent.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
