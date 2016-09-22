@@ -2,9 +2,11 @@
 using System.Configuration;
 using System.IdentityModel.Tokens;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Dispatcher;
 using IdentityServer3.AccessTokenValidation;
+using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Ninject;
@@ -26,7 +28,8 @@ namespace Kcsara.Database.Api
       {
         Authority = configStrings["auth:authority"],
         IssuerName = configStrings["auth:authority"],
-        SigningCertificate = signingCert
+        SigningCertificate = signingCert,
+        TokenProvider = new QueryStringOAuthBearerProvider("access_token")
       };
 
       var config = new HttpConfiguration();
@@ -53,6 +56,32 @@ namespace Kcsara.Database.Api
       app.UseWebApi(config);
 
       return app;
+    }
+
+    public class QueryStringOAuthBearerProvider : OAuthBearerAuthenticationProvider
+    {
+      readonly string _name;
+
+      public QueryStringOAuthBearerProvider(string name)
+      {
+        _name = name;
+      }
+
+      public override Task RequestToken(OAuthRequestTokenContext context)
+      {
+        var queryValue = context.Request.Query.Get(_name);
+        var headerValue = context.Request.Headers.Get("Authorization");
+
+        if (!string.IsNullOrWhiteSpace(headerValue) && headerValue.StartsWith("Bearer "))
+        {
+          context.Token = headerValue.Substring(7);
+        } else if (!string.IsNullOrEmpty(queryValue))
+        {
+          context.Token = queryValue;
+        }
+
+        return Task.FromResult<object>(null);
+      }
     }
   }
 }

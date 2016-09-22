@@ -105,7 +105,7 @@
           <md-item-template>
             <div layout="row" layout-align="start center" style="padding-top:5px; padding-bottom:5px;" flex>
               <div ng-show="item.type == 'Mission'" class="search-img" ng-style="{'background-color': 'pink' }"></div>
-              <div ng-show="item.type == 'Member'" class="search-img" ng-style="{'background-image': 'url(&quot;' + window.appRoot + 'content/auth/members/' + (item.summary.photo ? item.summary.photo : 'none.jpg') + '&quot;)', opacity: item.summary.units.length ? 1.0 : 0.7 }"></div>
+              <div ng-show="item.type == 'Member'" class="search-img" ng-style="{'background-image': 'url(&quot;/api2/members/' + item.summary.id + '/photo?access_token='+ ($currentUser.user || {}).access_token + '&quot;)', opacity: item.summary.units.length ? 1.0 : 0.7 }"></div>
               <div style="line-height:1em" flex>
                 <strong>{{item.summary.name}}</strong>
                 <div ng-show="item.type == 'Mission'">
@@ -140,7 +140,7 @@
     .config(['authServiceProvider', function (authProvider) {
       authProvider.useOptions({
         authority: '@System.Configuration.ConfigurationManager.AppSettings["auth:authority"].TrimEnd('/')',
-        client_id: '@System.Configuration.ConfigurationManager.AppSettings["auth:clientId"]',
+        client_id: '@System.Configuration.ConfigurationManager.AppSettings["auth:spaClientId"]',
         redirect_uri: window.appRoot,
         post_logout_redirect_uri: 'http://localhost:5000/user-manager-sample.html',
         response_type: 'id_token token',

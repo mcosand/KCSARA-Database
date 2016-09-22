@@ -1,4 +1,6 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
+using System.IO;
 using System.Security.Claims;
 using System.Web;
 using Sar.WebApi;
@@ -27,6 +29,15 @@ namespace Sar.Database.Web
     public string GetConfig(string key)
     {
       return ConfigurationManager.AppSettings[key];
+    }
+
+    public Stream OpenFile(string relativePath)
+    {
+      var basePath = AppDomain.CurrentDomain.BaseDirectory;
+      var path = Path.Combine(basePath, relativePath);
+      if (!path.StartsWith(basePath, StringComparison.OrdinalIgnoreCase)) throw new ArgumentException("can't navigate to parent directory");
+
+      return File.OpenRead(path);
     }
   }
 }

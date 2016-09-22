@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -36,6 +37,23 @@ namespace Kcsara.Database.Api.Controllers
       if (!await _authz.AuthorizeAsync(User as ClaimsPrincipal, id, "Read:Member")) throw new AuthorizationException();
 
       return await _members.GetMember(id);
+    }
+
+    [HttpGet]
+    [AllowAnonymous]
+    [Route("members/{memberId}/photo")]
+    public async Task<HttpResponseMessage> MemberPhoto(Guid memberId)
+    {
+      await _authz.EnsureAsync(User as ClaimsPrincipal, memberId, "Read:Member");
+      var member = await _members.GetMember(memberId);
+      Stream imageStream = _host.OpenFile(string.IsNullOrWhiteSpace(member?.Photo) ? "content\\images\\nophoto.jpg" : ("content\\auth\\members\\" + member.Photo));
+      var response = new HttpResponseMessage
+      {
+        Content = new StreamContent(imageStream)
+      };
+      response.Content.Headers.ContentType = new MediaTypeHeaderValue("image/jpg");
+
+      return response;
     }
 
     [HttpGet]

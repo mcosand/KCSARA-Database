@@ -8,20 +8,28 @@ namespace Kcsara.Database.Web.Controllers
   public class SinglePageController : Controller
   {
     [Authorize]
-    [Route("accounts/{*page}")]
-    [Route("units")]
-    [Route("units/detail/{*page}")]
-    [Route("units/roster/{*page}")]
     public ActionResult AuthRequired(string page)
     {
       return View("SinglePage");
     }
 
     [Route("")]
+    [Route("accounts/{*page}")]
+    [Route("loggedIn")]
+    [Route("units")]
+    [Route("units/detail/{*page}")]
+    [Route("units/roster/{*page}")]
     [Route("accounts/resetpassword")]
     public ActionResult Public(string page)
     {
       return View("SinglePage");
+    }
+
+    [HttpGet]
+    [Route("loginSilent")]
+    public ActionResult LoginSilent()
+    {
+      return View();
     }
 
     [HttpGet]
