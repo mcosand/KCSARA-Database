@@ -19,28 +19,28 @@
   <link href="@Url.Content("~/wwwroot/lib/font-awesome/css/font-awesome.min.css")" rel="stylesheet" />
   @Styles.Render("~/css/am.css")
 </head>
-<body layout="column" flex ng-controller="FrameCtrl" ng-cloak>
+<body layout="column" flex ng-controller="FrameCtrl">
   <md-toolbar class="">
     <div class="md-toolbar-tools">
-      <md-button class="md-icon-button" aria-label="Main Menu" ng-click="showMainMenu()" hide-gt-sm ng-show="user.isLoggedIn">
+      <md-button class="md-icon-button" aria-label="Main Menu" ng-click="showMainMenu()" hide-gt-sm ng-show="$currentUser.user" ng-cloak>
         <md-icon md-font-icon="fa fa-bars fa-lg"></md-icon>
       </md-button>
       <h2>
-        <a href="@Url.Content("~/")">
+        <a href="@Url.Content("~/")" ng-cloak>
           <span hide-xs>{{$groupName}}</span>
           <span hide-gt-xs>{{$shortName}}</span>
         </a>
       </h2>
       <span flex></span>
-      <md-button ng-show="user.isLoggedIn" class="md-icon-button" aria-label="Search" ng-click="search.showSearchMenu()">
+      <md-button ng-show="$currentUser.user" class="md-icon-button" aria-label="Search" ng-click="search.showSearchMenu()" ng-cloak>
         <md-icon>search</md-icon>
       </md-button>
-      <md-button class="md-icon-button" aria-label="Login Settings" ng-click="auth.showMenu()">
+      <md-button class="md-icon-button" aria-label="Login Settings" ng-click="auth.showMenu()" ng-cloak>
         <md-icon ng-style="{opacity : (user.isLoggedIn ? '1' : '0.3')}">account_circle</md-icon>
       </md-button>
     </div>
   </md-toolbar>
-  <div layout="row" layout-align=" stretch" flex>
+  <div layout="row" layout-align=" stretch" flex ng-cloak>
     <md-sidenav class="site-sidenav md-sidenav-left md-whiteframe-z2"
                 md-is-open="mainNavOpen"
                 md-component-id="mainMenu"
