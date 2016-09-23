@@ -345,6 +345,7 @@
     <Content Include="Content\images\nophoto.jpg" />
     <Content Include="wwwroot\css\main-nav.css" />
     <Content Include="wwwroot\css\site.css" />
+    <Content Include="wwwroot\js\controllers\editDialogController.js" />
     <Content Include="wwwroot\js\controllers\units\unitsRoster.js" />
     <Content Include="wwwroot\js\controllers\units\unitsDetail.js" />
     <Content Include="wwwroot\js\directives\menuLink.js" />
@@ -478,6 +479,7 @@
     <Content Include="wwwroot\js\auth\page\registerlogin.js" />
     <Content Include="wwwroot\js\auth\sar-common.js" />
     <Content Include="wwwroot\js\auth\site.js" />
+    <Content Include="wwwroot\partials\units\editStatus.html" />
     <Content Include="wwwroot\partials\units\roster.html" />
     <Content Include="wwwroot\partials\units\detail.html" />
     <Content Include="wwwroot\partials\units\list.html" />

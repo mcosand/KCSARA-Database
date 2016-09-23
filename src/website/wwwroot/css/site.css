@@ -36,3 +36,24 @@ md-card-header-text button.md-button.md-icon-button {
   padding-bottom:0px;
   height:24px;
 }
+
+md-toolbar.md-table-toolbar .md-toolbar-tools > .md-button.md-icon-button:last-child
+{
+  /* So action buttons in toolbars line up with buttons in tables */
+  margin-right: 0px;
+}
+
+table.md-table td.md-cell.td-actions-cell:last-child, table.md-table th.md-column.th-actions:last-child {
+  padding-right: 0px;
+}
+td.md-cell.td-actions-cell {
+  width: 24px;
+  white-space: nowrap;
+}
+
+md-dialog md-input-container .md-errors-spacer {
+  min-height: initial;
+}
+md-dialog-actions {
+  border-top: solid 1px #FFD284;
+}

@@ -2,6 +2,9 @@
 @{
   ViewBag.Title = "Login";
   Layout = "~/Views/Shared/_AuthLayout.cshtml";
+  var groupName = (System.Configuration.ConfigurationManager.AppSettings["site:groupName"] ?? "King County Search and Rescue");
+  var groupAcronym = (System.Configuration.ConfigurationManager.AppSettings["site:groupAcronym"] ?? "KCSARA");
+
 }
 <div layout="row" layout-xs="column" layout-align="center stretch" ng-controller="LoginCtrl">
   @if (Model.ExternalProviders.Any())
@@ -30,9 +33,9 @@
   {
     <md-card flex flex-gt-xs="40" flex-gt-md="20" class="login-card">
       <form name="localForm" method="post" action="@Model.LoginUrl">
-        <md-card-title><md-card-title-text><span class="md-headline">KCSARA Account</span></md-card-title-text></md-card-title>
+        <md-card-title><md-card-title-text><span class="md-headline">@groupAcronym Account</span></md-card-title-text></md-card-title>
         <md-card-content layout="column">
-          <p>Login with your King County Search and Rescue account.</p>
+          <p>Login with your @groupName account.</p>
           @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
           {
             <div class="alert alert-danger">

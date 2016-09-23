@@ -20,15 +20,15 @@
   @Styles.Render("~/css/am.css")
 </head>
 <body layout="column" flex ng-controller="FrameCtrl">
-  <md-toolbar class="">
+  <md-toolbar class="md-accent">
     <div class="md-toolbar-tools">
       <md-button class="md-icon-button" aria-label="Main Menu" ng-click="showMainMenu()" hide-gt-sm ng-show="$currentUser.user" ng-cloak>
         <md-icon md-font-icon="fa fa-bars fa-lg"></md-icon>
       </md-button>
       <h2>
         <a href="@Url.Content("~/")" ng-cloak>
-          <span hide-xs>{{$groupName}}</span>
-          <span hide-gt-xs>{{$shortName}}</span>
+          <span hide-xs>@groupName</span>
+          <span hide-gt-xs>@shortName</span>
         </a>
       </h2>
       <span flex></span>

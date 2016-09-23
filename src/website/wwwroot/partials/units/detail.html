@@ -9,17 +9,17 @@
       <md-list flex>
         <md-list-item>
           <div class="md-list-item-text">
-            <a class="md-accent" ng-href="/units/roster/{{unit.id}}" href="#">View Roster</a>
+            <a class="md-primary" ng-href="/units/roster/{{unit.id}}" href="#">View Roster</a>
           </div>
         </md-list-item>
         <md-list-item>
           <div class="md-list-item-text">
-            <a class="md-accent" ng-href="/units/downloadroster/{{unit.id}}" href="#" target="_self">Download Roster</a> (Contact information for active members)
+            <a class="md-primary" ng-href="/units/downloadroster/{{unit.id}}" href="#" target="_self">Download Roster</a> (Contact information for active members)
           </div>
         </md-list-item>
         <md-list-item>
           <div class="md-list-item-text">
-            <a class="md-accent" ng-href="/units/corecompreport/{{unit.id}}" href="#" target="_self">Download Core Competency Report</a>
+            <a class="md-primary" ng-href="/units/corecompreport/{{unit.id}}" href="#" target="_self">Download Core Competency Report</a>
           </div>
         </md-list-item>
       </md-list>
@@ -30,7 +30,7 @@
       <div class="md-toolbar-tools">
         <span>Unit Status Types</span>
         <div flex></div>
-        <md-button class="md-icon-button md-accent" aria-label="Add Status Type" ng-if="statusTypes.list._c">
+        <md-button class="md-icon-button md-primary" aria-label="Add Status Type" ng-if="statusTypes.list._c" ng-click="createNew($event)">
           <md-icon>add_circle</md-icon>
         </md-button>
       </div>
@@ -43,7 +43,7 @@
               <th md-column md-order-by="member.name">Status Name</th>
               <th md-column md-order-by="member.workerNumber">Is Active?</th>
               <th md-column md-order-by="status">WAC Level</th>
-              <th md-column></th>
+              <th md-column class="th-actions"></th>
             </tr>
           </thead>
           <tbody md-body>
@@ -51,9 +51,9 @@
               <td md-cell>{{s.name}}</a></td>
               <td md-cell>{{s.isActive}}</td>
               <td md-cell>{{s.wacLevel}}</td>
-              <td md-cell>
-                <md-button class="md-icon-button md-accent" aria-label="Edit Type" ng-if="s._u"><md-icon>edit</md-icon></md-button>
-                <md-button class="md-icon-button md-accent" aria-label="Delete Type" ng-if="s._d"><md-icon>trash</md-icon></md-button>
+              <td md-cell class="td-actions-cell">
+                <md-button class="md-icon-button md-primary" aria-label="Edit Type" ng-if="s._u" ng-click="editStatus($event, s)"><md-icon>edit</md-icon></md-button>
+                <md-button class="md-icon-button md-warn" aria-label="Delete Type" ng-if="s._d" ng-click="deleteStatus($event, s)"><md-icon>delete</md-icon></md-button>
               </td>
             </tr>
           </tbody>

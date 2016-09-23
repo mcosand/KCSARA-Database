@@ -14,12 +14,12 @@
     '700': '#be780a',
     '800': '#a16608',
     '900': '#845307',
-    'A100': '#ffffff',
-    'A200': '#fce7c6',
-    'A400': '#f4a82f',
-    'A700': '#be780a',
+    'A100': '#FFD284', // main
+    'A200': '#f39c12',
+    'A400': '#f4a82f', // hue-2
+    'A700': '#be780a', // hue-3
     'contrastDefaultColor': 'light',
-    'contrastDarkColors': '50 100 200 300 400 A100 A200 A400 A700'
+    'contrastDarkColors': '50 100 200 300 400 A100 A700'
   })
   .definePalette('sar-green', {
     '50': '#97ffb1',
@@ -41,8 +41,8 @@
   });;
 
   $mdThemingProvider.theme('default')
-  .primaryPalette('sar-yellow')
-  .accentPalette('sar-green')
+  .primaryPalette('sar-green')
+  .accentPalette('sar-yellow')
   .backgroundPalette('grey');
 
   RestangularProvider.setBaseUrl('/api2');

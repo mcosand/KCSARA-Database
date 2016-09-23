@@ -1,9 +1,13 @@
-﻿<!DOCTYPE html>
+﻿@{ 
+  var groupName = (System.Configuration.ConfigurationManager.AppSettings["site:groupName"] ?? "King County Search and Rescue");
+  var shortName = (System.Configuration.ConfigurationManager.AppSettings["site:shortName"] ?? "King County SAR");
+}
+<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>@ViewBag.Title - King County Search and Rescue</title>
+  <title>@ViewBag.Title - @groupName</title>
   <link href="@Url.Content("~/wwwroot/lib/font-awesome/css/font-awesome.min.css")" rel="stylesheet" />
   @Styles.Render("~/wwwroot/css/auth-core")
   @RenderSection("head", required: false)
@@ -16,8 +20,8 @@
             <md-icon md-svg-icon="/identity/wwwroot/lib/angular-material/img/icons/menu.svg"></md-icon>
           </md-button>*@
         <h2>
-          <span hide-xs>King County Search and Rescue</span>
-          <span hide-gt-xs>King County SAR</span>
+          <span hide-xs>@groupName</span>
+          <span hide-gt-xs>@shortName</span>
         </h2>
       </div>
     </md-toolbar>
