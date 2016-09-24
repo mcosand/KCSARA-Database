@@ -59,10 +59,10 @@ namespace Sar.Database.Services
         || scopes.Any(f => f.StartsWith("db-w-"))
         )) return true;
 
-      if (m.Groups[1].Value == "Create" && (
-        roles.Any(f => f == "cdb.admins")
-        || scopes.Any(f => f.StartsWith("db-w-"))
-        )) return true;
+      if ((m.Groups[1].Value == "Create" || m.Groups[1].Value == "Update" || m.Groups[1].Value == "Delete")
+        && (roles.Any(f => f == "cdb.admins") || scopes.Any(f => f.StartsWith("db-w-")))
+        ) return true;
+
       return false;
     }
   }

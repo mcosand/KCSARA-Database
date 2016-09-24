@@ -5,7 +5,9 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Dispatcher;
+using System.Web.Http.ExceptionHandling;
 using IdentityServer3.AccessTokenValidation;
+using log4net;
 using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
@@ -39,8 +41,11 @@ namespace Kcsara.Database.Api
 
       config.MapHttpAttributeRoutes();
 
-      config.Filters.Add(new ExceptionFilter());
       config.Filters.Add(new AuthorizeAttribute());
+      config.Services.Replace(
+         typeof(IExceptionHandler),
+         new ExceptionHandler(LogManager.GetLogger("Kcsara.Database.Api")));
+
 
       config.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new StringEnumConverter());
       config.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new ItemPermissionConverter());

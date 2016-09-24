@@ -1,38 +1,22 @@
-﻿<md-dialog>
-  <form ng-cloak>
-    <md-toolbar class="md-accent">
-      <div class="md-toolbar-tools">
-        <h2>{{::titlePrefix}} Unit Status</h2>
-        <span flex></span>
-        <md-button class="md-icon-button" ng-click="cancel()">
-          <md-icon aria-label="Close dialog">close</md-icon>
-        </md-button>
-      </div>
-    </md-toolbar>
-    <md-dialog-content>
-      <div class="md-dialog-content">
-        <md-input-container>
-          <label>Name</label>
-          <input ng-model="item.name" md-auto-focus>
-        </md-input-container>
-        <md-input-container class="md-block" flex-gt-sm>
-          <label>WAC Level</label>
-          <md-select ng-model="item.wacLevel">
-            <md-option ng-repeat="level in wacLevels" value="{{level}}">{{level}}</md-option>
-          </md-select>
-        </md-input-container>
-        <md-switch ng-model="item.isActive" aria-label="Is Active">
-          Is Active Member
-        </md-switch>
-        <md-switch ng-model="item.getsAccount" aria-label="Gets Database Account">
-          Gets Database Account
-        </md-switch>
-      </div>
-    </md-dialog-content>
-    <md-dialog-actions layout="row">
-      <span flex></span>
-      <md-button ng-disable="saving" ng-click="save()">Save <span ng-if="saving">X</span></md-button>
-      <md-button ng-click="cancel()">Cancel</md-button>
-    </md-dialog-actions>
-  </form>
-</md-dialog>
+﻿<edit-dialog name="editUnitStatus">
+  <md-input-container>
+    <label>Name</label>
+    <input ng-model="item.name" name="name" md-auto-focus required>
+    <div ng-messages="editUnitStatus.name.$error">
+      <div ng-message="required">Name is required.</div>
+      <div ng-message="server">{{editUnitStatus.name.$error.server}}</div>
+    </div>
+  </md-input-container>
+  <md-input-container class="md-block" flex-gt-sm>
+    <label>WAC Level</label>
+    <md-select ng-model="item.wacLevel" name="wacLevel">
+      <md-option ng-repeat="level in more.wacLevels" value="{{level}}">{{level}}</md-option>
+    </md-select>
+  </md-input-container>
+  <md-switch ng-model="item.isActive" name="isActive" aria-label="Is Active">
+    Is Active Member
+  </md-switch>
+  <md-switch ng-model="item.getsAccount" name="getsAccount" aria-label="Gets Database Account">
+    Gets Database Account
+  </md-switch>
+</edit-dialog>

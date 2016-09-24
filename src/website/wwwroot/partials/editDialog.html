@@ -1,0 +1,23 @@
+﻿
+  <form ng-cloak>
+    <md-toolbar class="md-accent">
+      <div class="md-toolbar-tools">
+        <h2>{{::title}}</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon aria-label="Close dialog">close</md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div class="md-dialog-content" ng-transclude>
+      </div>
+      <md-progress-linear md-mode="indeterminate" class="md-accent" ng-disabled="!saving"></md-progress-linear>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button ng-disable="saving" ng-click="save()">Save</md-button>
+      <md-button ng-click="cancel()">Cancel</md-button>
+    </md-dialog-actions>
+  </form>
+

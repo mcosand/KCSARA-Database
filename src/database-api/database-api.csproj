@@ -178,10 +178,11 @@
     <Compile Include="Controllers\Units\MembershipController.cs" />
     <Compile Include="Controllers\Units\UnitsController.cs" />
     <Compile Include="DIModule.cs" />
-    <Compile Include="ExceptionFilter.cs" />
+    <Compile Include="ExceptionHandler.cs" />
     <Compile Include="ItemPermissionConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AppBuilderExtensions.cs" />
+    <Compile Include="ValidateModelState.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

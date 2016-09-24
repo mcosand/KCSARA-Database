@@ -4,7 +4,7 @@
     save: function () {
       $scope.saving = true;
       if (locals.saveMethod) {
-        locals.saveMethod(locals.item).then(function (data) {
+        locals.saveMethod($scope, locals.item).then(function (data) {
           $scope.saving = false;
           $mdDialog.hide(data);
         }, function () {

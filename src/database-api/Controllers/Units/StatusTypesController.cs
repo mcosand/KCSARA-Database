@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -39,6 +40,43 @@ namespace Kcsara.Database.Api.Controllers.Units
       await _authz.EnsureAsync(User as ClaimsPrincipal, unitId, "Read:UnitStatusType");
 
       return await _units.ListStatusTypes(unitId);
+    }
+
+    [HttpPost]
+    [ValidateModelState]
+    [Route("units/{unitId}/statusTypes")]
+    public async Task<UnitStatusType> CreateNew(Guid unitId, [FromBody]UnitStatusType statusType)
+    {
+      await _authz.EnsureAsync(User as ClaimsPrincipal, unitId, "Create:UnitStatusType@UnitId");
+
+      if (statusType.Unit != null && statusType.Unit.Id != unitId)
+      {
+        throw new UserErrorException("Unit ids do not match", string.Format("Tried to save statusType with unit id {0} under unit {1}", statusType.Unit.Id, unitId));
+      }
+
+      return statusType; //await _units.SaveStatusType(statusType);
+    }
+
+    [HttpPut]
+    [ValidateModelState]
+    [Route("units/{unitId}/statusTypes/{statusTypeId}")]
+    public async Task<UnitStatusType> Save(Guid unitId, Guid statusTypeId, [FromBody]UnitStatusType statusType)
+    {
+      await _authz.EnsureAsync(User as ClaimsPrincipal, statusTypeId, "Update:UnitStatusType");
+
+      if (statusType.Unit.Id != unitId) ModelState.AddModelError("unit.id", "Can not be changed");
+      if (statusType.Id != statusTypeId) ModelState.AddModelError("id", "Can not be changed");
+
+      return statusType;
+    }
+
+    [HttpDelete]
+    [Route("units/{unitId}/statusTypes/{statusTypeId}")]
+    public async Task Delete(Guid unitId, Guid statusTypeId)
+    {
+      await _authz.EnsureAsync(User as ClaimsPrincipal, statusTypeId, "Delete:UnitStatusType");
+
+      return;
     }
   }
 }
