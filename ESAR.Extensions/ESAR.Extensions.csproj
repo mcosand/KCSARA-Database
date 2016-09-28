@@ -59,9 +59,9 @@
       <Project>{EAE01EC9-F91D-4B72-A648-6AC96E688CCE}</Project>
       <Name>database-model</Name>
     </ProjectReference>
-    <ProjectReference Include="..\src\Unit.Extensions\Unit.Extensions.csproj">
+    <ProjectReference Include="..\src\database-api-extensions\database-api-extensions.csproj">
       <Project>{f56a1669-1009-4203-8045-c890f9f93a2e}</Project>
-      <Name>Unit.Extensions</Name>
+      <Name>database-api-extensions</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

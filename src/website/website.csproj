@@ -405,7 +405,6 @@
     <Compile Include="Controllers\SinglePageController.cs" />
     <Compile Include="Controllers\TrackController.cs" />
     <Compile Include="CustomMultipartFormDataStreamProvider.cs" />
-    <Compile Include="ExtensionProvider.cs" />
     <Compile Include="IAppSettings.cs" />
     <Compile Include="Controllers\SarEventController.cs" />
     <Compile Include="Controllers\TrainingController.cs" />
@@ -847,9 +846,9 @@
       <Project>{86765896-3ec5-4010-a28a-716eb64a31f1}</Project>
       <Name>Services</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Unit.Extensions\Unit.Extensions.csproj">
+    <ProjectReference Include="..\database-api-extensions\database-api-extensions.csproj">
       <Project>{f56a1669-1009-4203-8045-c890f9f93a2e}</Project>
-      <Name>Unit.Extensions</Name>
+      <Name>database-api-extensions</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\common\src\web-api-common\web-api-common.csproj">
       <Project>{1D3FBAA4-8CB4-45F1-8709-AF2FF1940EBB}</Project>

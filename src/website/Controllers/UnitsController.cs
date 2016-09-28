@@ -1,20 +1,17 @@
 ﻿namespace Kcsara.Database.Web.Controllers
 {
   using System;
-  using System.Collections.Generic;
-  using System.Collections.Specialized;
   using System.Configuration;
   using System.IO;
   using System.Linq;
   using System.Text;
   using System.Web.Mvc;
   using System.Xml;
-  using Database.Extensions;
-  using Database.Extensions.Reports;
   using Kcsar.Database;
   using Kcsar.Database.Model;
   using Kcsara.Database.Web.Services;
   using Kcsara.Database.Web.Model;
+  using Sar.Database.Api.Extensions;
 
   /// <summary>Views related to SAR units.</summary>
   public class UnitsController : BaseController

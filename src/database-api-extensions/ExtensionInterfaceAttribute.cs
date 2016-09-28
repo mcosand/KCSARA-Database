@@ -1,4 +1,4 @@
-﻿namespace Kcsara.Database.Extensions
+﻿namespace Sar.Database.Api.Extensions
 {
   using System;
 

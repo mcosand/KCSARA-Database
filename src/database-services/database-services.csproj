@@ -105,6 +105,7 @@
     <Compile Include="DIModule.cs" />
     <Compile Include="Auth\IRolesService.cs" />
     <Compile Include="Events\EventsService.cs" />
+    <Compile Include="ExtensionProvider.cs" />
     <Compile Include="IUsersService.cs" />
     <Compile Include="Members\MembersService.cs" />
     <Compile Include="EnumConversions.cs" />
@@ -133,6 +134,10 @@
     <ProjectReference Include="..\..\..\common\src\database-api-client\database-api-client.csproj">
       <Project>{6FCDA865-1BAE-47C6-8A4F-715F0FF89C47}</Project>
       <Name>database-api-client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\database-api-extensions\database-api-extensions.csproj">
+      <Project>{f56a1669-1009-4203-8045-c890f9f93a2e}</Project>
+      <Name>database-api-extensions</Name>
     </ProjectReference>
     <ProjectReference Include="..\database-model\database-model.csproj">
       <Project>{eae01ec9-f91d-4b72-a648-6ac96e688cce}</Project>

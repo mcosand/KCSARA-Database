@@ -1,7 +1,4 @@
-﻿/*
- * Copyright 2015 Matthew Cosand
- */
-namespace SMR.Extensions
+﻿namespace SMR.Extensions
 {
   using System;
   using System.Collections.Generic;
@@ -9,8 +6,8 @@ namespace SMR.Extensions
   using System.IO;
   using System.Linq;
   using Kcsar.Database.Model;
-  using Kcsara.Database.Extensions.Reports;
   using OfficeOpenXml;
+  using Sar.Database.Api.Extensions;
 
   public partial class SmrReports : IUnitReports
   {

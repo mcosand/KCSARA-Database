@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using log4net;
+using Sar.Database.Api.Extensions;
 using Sar.Database.Model;
 using Sar.Database.Model.Members;
 using Sar.Database.Model.Units;
@@ -21,6 +22,7 @@ namespace Sar.Database.Services
     Task<ItemPermissionWrapper<Unit>> Get(Guid id);
     Task DeleteStatusType(Guid statusTypeId);
     Task<UnitStatusType> SaveStatusType(UnitStatusType statusType);
+    Task<UnitReportInfo[]> ListReports(Guid unitId);
   }
 
   public class UnitsService : IUnitsService
@@ -29,11 +31,13 @@ namespace Sar.Database.Services
     private readonly IUsersService _users;
     private readonly ILog _log;
     private readonly IHost _host;
+    private readonly IExtensionProvider _extensions;
 
-    public UnitsService(Func<Data.IKcsarContext> dbFactory, IUsersService users, IHost host, ILog log)
+    public UnitsService(Func<Data.IKcsarContext> dbFactory, IUsersService users, IExtensionProvider extensions, IHost host, ILog log)
     {
       _dbFactory = dbFactory;
       _users = users;
+      _extensions = extensions;
       _log = log;
       _host = host;
     }
@@ -201,6 +205,18 @@ namespace Sar.Database.Services
         if (status == null) throw new NotFoundException("not found", "UnitStatusType", statusTypeId.ToString());
         db.UnitStatusTypes.Remove(status);
         await db.SaveChangesAsync();
+      }
+    }
+
+    public async Task<UnitReportInfo[]> ListReports(Guid unitId)
+    {
+      using (var db = _dbFactory())
+      {
+        var unit = await db.Units.FirstOrDefaultAsync(f => f.Id == unitId);
+        if (unit == null) throw new NotFoundException("Not found", "Unit", unitId.ToString());
+
+        var reportProvider = _extensions.For<IUnitReports>(unit);
+        return reportProvider != null ? reportProvider.ListReports() : new UnitReportInfo[0];
       }
     }
   }

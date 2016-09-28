@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Sar;
 using Sar.Database;
+using Sar.Database.Api.Extensions;
 using Sar.Database.Model;
 using Sar.Database.Model.Units;
 using Sar.Database.Services;
@@ -36,6 +37,14 @@ namespace Kcsara.Database.Api.Controllers.Units
     {
       await _authz.EnsureAsync(User as ClaimsPrincipal, id, "Read:Unit");
       return await _units.Get(id);
+    }
+
+    [HttpGet]
+    [Route("units/{unitId}/reports")]
+    public async Task<UnitReportInfo[]> ListReports(Guid unitId)
+    {
+      await _authz.EnsureAsync(User as ClaimsPrincipal, unitId, "Read:Unit");
+      return await _units.ListReports(unitId);
     }
   }
 }

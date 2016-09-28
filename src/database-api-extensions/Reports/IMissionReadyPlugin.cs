@@ -1,8 +1,7 @@
-﻿namespace Kcsara.Database.Web.Services.Reports
+﻿namespace Sar.Database.Api.Extensions
 {
   using System.Collections.Generic;
   using Kcsar.Database.Model;
-  using Kcsara.Database.Extensions;
 
   [ExtensionInterface]
   public interface IMissionReadyPlugin

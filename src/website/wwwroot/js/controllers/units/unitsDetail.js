@@ -12,6 +12,7 @@
         })
       },
     },
+    reports: Units.units.one($stateParams.id).all('reports').getList().$object,
     createNew: function(ev) {
       var status = Units.createStatusType($scope.unit);
       $scope.editStatus(ev, status);

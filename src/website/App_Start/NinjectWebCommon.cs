@@ -8,7 +8,6 @@ namespace Kcsara.Database.Web
   using System.Security.Principal;
   using System.Threading;
   using System.Web;
-  using Database.Extensions;
   using Database.Web.Services;
   using Kcsar.Database.Model;
   using log4net;
@@ -82,13 +81,11 @@ namespace Kcsara.Database.Web
       kernel.Bind<Func<IPrincipal>>().ToConstant((Func<IPrincipal>)(() => Thread.CurrentPrincipal));
       kernel.Bind<IAppSettings>().To<AppSettings>();
       kernel.Bind<IReportsService>().To<ReportsService>();
-      kernel.Bind<IExtensionProvider>().To<ExtensionProvider>().InSingletonScope();
 
       var host = new SystemWebHost();
       kernel.Bind<IHost>().ToConstant(host);
       kernel.Bind<IWebApiHost>().ToConstant(host);
       kernel.Load(new Services.DIModule());
-      kernel.Get<IExtensionProvider>().Initialize();
 
       kernel.Load(new Sar.Database.Web.Auth.DIModule());
       kernel.Load(new Kcsara.Database.Api.DIModule());

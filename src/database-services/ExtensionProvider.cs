@@ -1,7 +1,4 @@
-﻿/*
- * Copyright 2014-2015 Matthew Cosand
- */
-namespace Kcsara.Database.Web
+﻿namespace Sar.Database.Services
 {
   using System;
   using System.Collections.Generic;
@@ -9,8 +6,8 @@ namespace Kcsara.Database.Web
   using System.IO;
   using System.Linq;
   using System.Reflection;
+  using Api.Extensions;
   using Kcsar.Database.Model;
-  using Kcsara.Database.Extensions;
   using log4net;
   using Ninject;
 

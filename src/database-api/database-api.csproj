@@ -204,6 +204,10 @@
       <Project>{1d3fbaa4-8cb4-45f1-8709-af2ff1940ebb}</Project>
       <Name>web-api-common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\database-api-extensions\database-api-extensions.csproj">
+      <Project>{F56A1669-1009-4203-8045-C890F9F93A2E}</Project>
+      <Name>database-api-extensions</Name>
+    </ProjectReference>
     <ProjectReference Include="..\database-services\database-services.csproj">
       <Project>{2e5c85da-32f0-43f1-83ed-026867aa2a6d}</Project>
       <Name>database-services</Name>

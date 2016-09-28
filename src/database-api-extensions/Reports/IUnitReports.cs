@@ -1,4 +1,4 @@
-﻿namespace Kcsara.Database.Extensions.Reports
+﻿namespace Sar.Database.Api.Extensions
 {
   using System.Collections.Specialized;
   using System.IO;
