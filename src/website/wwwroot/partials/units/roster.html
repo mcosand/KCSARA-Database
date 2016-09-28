@@ -18,7 +18,7 @@
           </thead>
           <tbody md-body>
             <tr md-row md-auto-select ng-repeat="membership in roster | orderBy: query.order">
-              <td md-cell><a href="#" target="_self" ng-href="/members/detail/{{membership.member.id}}" md-colors="{color:'accent'}">{{membership.member.name}}</a></td>
+              <td md-cell><a href="#" target="_self" ng-href="/members/detail/{{membership.member.id}}" md-colors="{color:'primary'}">{{membership.member.name}}</a></td>
               <td md-cell>{{membership.member.workerNumber}}</td>
               <td md-cell>{{membership.status}}</td>
               <td md-cell>{{membership.since}}</td>
