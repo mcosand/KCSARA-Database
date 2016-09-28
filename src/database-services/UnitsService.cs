@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using log4net;
 using Sar.Database.Model;
 using Sar.Database.Model.Members;
 using Sar.Database.Model.Units;
@@ -18,18 +19,22 @@ namespace Sar.Database.Services
     Task<UnitMembership> CreateMembership(UnitMembership membership);
     Task<ListPermissionWrapper<UnitStatusType>> ListStatusTypes(Guid? unitId = null);
     Task<ItemPermissionWrapper<Unit>> Get(Guid id);
+    Task DeleteStatusType(Guid statusTypeId);
+    Task<UnitStatusType> SaveStatusType(UnitStatusType statusType);
   }
 
   public class UnitsService : IUnitsService
   {
     private readonly Func<Data.IKcsarContext> _dbFactory;
-    private readonly IAuthorizationService _authz;
+    private readonly IUsersService _users;
+    private readonly ILog _log;
     private readonly IHost _host;
 
-    public UnitsService(Func<Data.IKcsarContext> dbFactory, IAuthorizationService authSvc, IHost host)
+    public UnitsService(Func<Data.IKcsarContext> dbFactory, IUsersService users, IHost host, ILog log)
     {
       _dbFactory = dbFactory;
-      _authz = authSvc;
+      _users = users;
+      _log = log;
       _host = host;
     }
 
@@ -155,6 +160,47 @@ namespace Sar.Database.Services
             WacLevel = (WacLevel)(int)f.WacLevel
           }).ToListAsync()).Select(f => PermissionWrapper.Create(f, 1, 1))
         };
+      }
+    }
+
+    public async Task<UnitStatusType> SaveStatusType(UnitStatusType statusType)
+    {
+      using (var db = _dbFactory())
+      {
+        var match = await db.UnitStatusTypes.FirstOrDefaultAsync(
+          f => f.Id != statusType.Id &&
+          f.UnitId == statusType.Unit.Id &&
+          f.StatusName == statusType.Name);
+        if (match != null) throw new DuplicateItemException("UnitStatusType", statusType.Id.ToString());
+
+        var updater = await ObjectUpdater.CreateUpdater(
+          db.UnitStatusTypes,
+          statusType.Id,
+          f => {
+            f.UnitId = statusType.Unit.Id;
+            f.Unit = db.Units.Single(g => g.Id == f.UnitId);
+          });
+
+        updater.Update(f => f.StatusName, statusType.Name);
+        updater.Update(f => f.WacLevel, statusType.WacLevel.FromModel());
+        updater.Update(f => f.IsActive, statusType.IsActive);
+        updater.Update(f => f.GetsAccount, statusType.GetsAccount);
+
+        await updater.Persist(db);
+
+        return (await ListStatusTypes()).Items.Single(f => f.Item.Id == updater.Instance.Id).Item;
+      }
+    }
+
+    public async Task DeleteStatusType(Guid statusTypeId)
+    {
+      using (var db = _dbFactory())
+      {
+        var status = await db.UnitStatusTypes.FirstOrDefaultAsync(f => f.Id == statusTypeId);
+
+        if (status == null) throw new NotFoundException("not found", "UnitStatusType", statusTypeId.ToString());
+        db.UnitStatusTypes.Remove(status);
+        await db.SaveChangesAsync();
       }
     }
   }

@@ -1,6 +1,8 @@
-﻿using System.Collections.Specialized;
+﻿using System;
+using System.Collections.Specialized;
 using System.Configuration;
 using System.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -15,6 +17,8 @@ using Ninject;
 using Ninject.Web.WebApi.OwinHost;
 using Owin;
 using Sar.Web;
+
+using AppFunc = System.Func<System.Collections.Generic.IDictionary<string, object>, System.Threading.Tasks.Task>;
 
 namespace Kcsara.Database.Api
 {
@@ -58,7 +62,21 @@ namespace Kcsara.Database.Api
 
       config.Services.Replace(typeof(IHttpControllerTypeResolver), new NamespaceControllerTypeResolver("Kcsara.Database.Api.Controllers"));
 
+      var userService = kernel.Get<Sar.Database.Services.IUsersService>();
       app.UseIdentityServerBearerTokenAuthentication(tokenAuthOptions);
+      app.Use(new Func<AppFunc, AppFunc>(next => (async env =>
+      {
+        var identity = new Microsoft.Owin.OwinContext(env)?.Authentication?.User.Identity as ClaimsIdentity;
+        var subClaim = identity?.FindFirst("sub")?.Value;
+        Guid sub;
+        if (!string.IsNullOrWhiteSpace(subClaim) && Guid.TryParse(subClaim, out sub))
+        {
+          var user = await userService.GetUser(sub);
+          identity.AddClaim(new Claim("name", user.Name));
+        }
+
+        await next.Invoke(env);
+      })));
       app.UseWebApi(config);
 
       return app;

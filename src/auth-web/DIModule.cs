@@ -25,7 +25,7 @@ namespace Sar.Database.Web.Auth
       Bind<Func<IAuthDbContext>>().ToMethod(ctx => () => new AuthDbContext());
       Bind<ISendEmailService>().To<DefaultSendMessageService>().InSingletonScope();
       Bind<IRolesService>().To<RolesService>().InSingletonScope();
-
+      Bind<IUsersService>().To<ApiUsersService>().InSingletonScope();
       var config = Kernel.Get<IHost>();
 
       if (!Kernel.GetBindings(typeof(IMemberInfoService)).Any())

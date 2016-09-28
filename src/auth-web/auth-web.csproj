@@ -283,6 +283,7 @@
     <Compile Include="Migrations\201609170525175_schema.Designer.cs">
       <DependentUpon>201609170525175_schema.cs</DependentUpon>
     </Compile>
+    <Compile Include="Services\ApiUsersService.cs" />
     <Compile Include="Services\LocalMemberInfoService.cs" />
   </ItemGroup>
   <ItemGroup>

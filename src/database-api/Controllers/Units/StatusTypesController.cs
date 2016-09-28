@@ -49,12 +49,18 @@ namespace Kcsara.Database.Api.Controllers.Units
     {
       await _authz.EnsureAsync(User as ClaimsPrincipal, unitId, "Create:UnitStatusType@UnitId");
 
+      if (statusType.Id != Guid.Empty)
+      {
+        throw new UserErrorException("New unit status shouldn't include an id");
+      }
+
       if (statusType.Unit != null && statusType.Unit.Id != unitId)
       {
         throw new UserErrorException("Unit ids do not match", string.Format("Tried to save statusType with unit id {0} under unit {1}", statusType.Unit.Id, unitId));
       }
 
-      return statusType; //await _units.SaveStatusType(statusType);
+      statusType = await _units.SaveStatusType(statusType);
+      return statusType;
     }
 
     [HttpPut]
@@ -67,6 +73,9 @@ namespace Kcsara.Database.Api.Controllers.Units
       if (statusType.Unit.Id != unitId) ModelState.AddModelError("unit.id", "Can not be changed");
       if (statusType.Id != statusTypeId) ModelState.AddModelError("id", "Can not be changed");
 
+      if (!ModelState.IsValid) throw new UserErrorException("Invalid parameters");
+
+      statusType = await _units.SaveStatusType(statusType);
       return statusType;
     }
 
@@ -76,7 +85,7 @@ namespace Kcsara.Database.Api.Controllers.Units
     {
       await _authz.EnsureAsync(User as ClaimsPrincipal, statusTypeId, "Delete:UnitStatusType");
 
-      return;
+      await _units.DeleteStatusType(statusTypeId);
     }
   }
 }

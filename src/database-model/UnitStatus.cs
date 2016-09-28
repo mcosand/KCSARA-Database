@@ -7,6 +7,7 @@ namespace Kcsar.Database.Model
   using System;
   using System.Collections.Generic;
   using System.ComponentModel.DataAnnotations;
+  using System.ComponentModel.DataAnnotations.Schema;
   using System.Runtime.Serialization;
 
   public class UnitStatus : ModelObject
@@ -16,6 +17,11 @@ namespace Kcsar.Database.Model
     public int InternalWacLevel { get; set; }
     public bool IsActive { get; set; }
     public bool GetsAccount { get; set; }
+
+    [Column("Unit_Id")]
+    public Guid UnitId { get; set; }
+
+    [ForeignKey("UnitId")]
     public virtual SarUnit Unit { get; set; }
     public virtual ICollection<UnitMembership> Memberships { get; set; }
 

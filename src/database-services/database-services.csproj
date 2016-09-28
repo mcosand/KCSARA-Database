@@ -100,12 +100,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Auth\AuthorizationService.cs" />
+    <Compile Include="Auth\User.cs" />
     <Compile Include="ClaimsPrincipalExtensions.cs" />
     <Compile Include="DIModule.cs" />
     <Compile Include="Auth\IRolesService.cs" />
     <Compile Include="Events\EventsService.cs" />
+    <Compile Include="IUsersService.cs" />
     <Compile Include="Members\MembersService.cs" />
     <Compile Include="EnumConversions.cs" />
+    <Compile Include="ObjectUpdater.cs" />
     <Compile Include="SendMessageService.cs" />
     <Compile Include="Training\ParsedKcsaraCsv.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
