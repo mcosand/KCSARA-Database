@@ -22,7 +22,12 @@
             <a class="md-primary" ng-href="/training/corecompreport/{{unit.id}}" href="#" target="_self">Download Core Competency Report</a>
           </div>
         </md-list-item>
-        <md-list-item ng-repeat="report in reports">
+        <md-list-item ng-if="reports.loading">
+          <div class="md-list-item-text">
+            Loading Unit Reports ...
+          </div>
+        </md-list-item>
+        <md-list-item ng-repeat="report in reports.list">
           <div class="md-list-item-text">
             <a class="md-primary" ng-href="/units/downloadreport/{{unit.id}}?reportName={{report.key}}" href="#" target="_self">{{report.name}}</a>
           </div>
