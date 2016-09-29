@@ -481,6 +481,7 @@
     <Content Include="wwwroot\js\auth\page\registerlogin.js" />
     <Content Include="wwwroot\js\auth\sar-common.js" />
     <Content Include="wwwroot\js\auth\site.js" />
+    <Content Include="wwwroot\partials\units\edit.html" />
     <Content Include="wwwroot\partials\units\editStatus.html" />
     <Content Include="wwwroot\partials\units\roster.html" />
     <Content Include="wwwroot\partials\units\detail.html" />

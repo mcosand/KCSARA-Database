@@ -1,0 +1,24 @@
+﻿<edit-dialog name="editUnit">
+  <md-input-container class="md-block">
+    <label>Short Name</label>
+    <input ng-model="item.name" name="name" md-auto-focus required>
+    <div ng-messages="editUnit.name.$error">
+      <div ng-message="required">Short Name is required.</div>
+      <div ng-message="server">{{editUnit.name.$error.server}}</div>
+    </div>
+  </md-input-container>
+  <md-input-container class="md-block">
+    <label>Full Name</label>
+    <input ng-model="item.fullName" name="fullName" required>
+    <div ng-messages="editUnit.fullName.$error">
+      <div ng-message="required">Full Name is required.</div>
+      <div ng-message="server">{{editUnit.fullName.$error.server}}</div>
+    </div>
+  </md-input-container>
+  <md-input-container class="md-block">
+    <label>County</label>
+    <md-select ng-model="item.county" name="county">
+      <md-option ng-repeat="county in more.counties" value="{{county.toLowerCase()}}">{{county}}</md-option>
+    </md-select>
+  </md-input-container>
+</edit-dialog>

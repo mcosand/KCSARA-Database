@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
@@ -23,6 +22,8 @@ namespace Sar.Database.Services
     Task DeleteStatusType(Guid statusTypeId);
     Task<UnitStatusType> SaveStatusType(UnitStatusType statusType);
     Task<UnitReportInfo[]> ListReports(Guid unitId);
+    Task<Unit> Save(Unit unit);
+    Task Delete(Guid unitId);
   }
 
   public class UnitsService : IUnitsService
@@ -42,6 +43,7 @@ namespace Sar.Database.Services
       _host = host;
     }
 
+    #region CRUD
     public async Task<ListPermissionWrapper<Unit>> List()
     {
       using (var db = _dbFactory())
@@ -50,7 +52,8 @@ namespace Sar.Database.Services
         {
           Id = f.Id,
           Name = f.DisplayName,
-          FullName = f.LongName
+          FullName = f.LongName,
+          County = f.County
         }).ToListAsync();
 
         return new ListPermissionWrapper<Unit>
@@ -69,12 +72,51 @@ namespace Sar.Database.Services
         {
           Id = f.Id,
           Name = f.DisplayName,
-          FullName = f.LongName
+          FullName = f.LongName,
+          County = f.County
         }).SingleOrDefaultAsync(f => f.Id == id);
 
         return PermissionWrapper.Create(result, 1, 1);
       }
     }
+
+
+    public async Task<Unit> Save(Unit unit)
+    {
+      using (var db = _dbFactory())
+      {
+        var match = await db.Units.FirstOrDefaultAsync(
+          f => f.Id != unit.Id &&
+          f.DisplayName == unit.Name);
+        if (match != null) throw new DuplicateItemException("Unit", unit.Id.ToString());
+
+        var updater = await ObjectUpdater.CreateUpdater(
+          db.Units,
+          unit.Id,
+          null);
+
+        updater.Update(f => f.DisplayName, unit.Name);
+        updater.Update(f => f.LongName, unit.FullName);
+        updater.Update(f => f.County, unit.County);
+
+        await updater.Persist(db);
+
+        return (await List()).Items.Single(f => f.Item.Id == updater.Instance.Id).Item;
+      }
+    }
+
+    public async Task Delete(Guid unitId)
+    {
+      using (var db = _dbFactory())
+      {
+        var unit = await db.Units.FirstOrDefaultAsync(f => f.Id == unitId);
+
+        if (unit == null) throw new NotFoundException("not found", "Unit", unitId.ToString());
+        db.Units.Remove(unit);
+        await db.SaveChangesAsync();
+      }
+    }
+    #endregion
 
     public async Task<ListPermissionWrapper<UnitMembership>> ListMemberships(Expression<Func<UnitMembership, bool>> predicate)
     {
@@ -144,6 +186,7 @@ namespace Sar.Database.Services
       }
     }
 
+    #region Status Types
     public async Task<ListPermissionWrapper<UnitStatusType>> ListStatusTypes(Guid? unitId = null)
     {
       using (var db = _dbFactory())
@@ -207,6 +250,7 @@ namespace Sar.Database.Services
         await db.SaveChangesAsync();
       }
     }
+    #endregion
 
     public async Task<UnitReportInfo[]> ListReports(Guid unitId)
     {

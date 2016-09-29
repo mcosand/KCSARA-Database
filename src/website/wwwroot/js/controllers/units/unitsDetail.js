@@ -12,7 +12,16 @@
         })
       },
     },
-    reports: Units.units.one($stateParams.id).all('reports').getList().$object,
+    reports: {
+      list: [],
+      loading: true,
+      getList: function() {
+        Units.units.one($stateParams.id).all('reports').getList().then(function(data) {
+          $scope.reports.list = data;
+          delete $scope.reports.loading;
+        })
+      }
+    },
     createNew: function(ev) {
       var status = Units.createStatusType($scope.unit);
       $scope.editStatus(ev, status);
@@ -29,4 +38,5 @@
     }
   });
   $scope.statusTypes.getList();
+  $scope.reports.getList();
 }]);

@@ -151,6 +151,7 @@
     .run(['authService', '$rootScope', function (authService, $rootScope) {
       $rootScope.$groupName = '@groupName';
       $rootScope.$shortName = '@shortName';
+      $rootScope.$defaultCounty = '@((System.Configuration.ConfigurationManager.AppSettings["county"] ?? "King").ToLowerInvariant())';
     }])
   </script>
 

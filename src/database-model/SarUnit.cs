@@ -21,7 +21,7 @@ namespace Kcsar.Database.Model
     public virtual ICollection<UnitStatus> StatusTypes { get; set; }
     public bool HasOvertime { get; set; }
 
-    public string ApplicationsText { get; set; }
+    public string ApplicationsText { get; set; } = string.Empty;
 
     public ApplicationStatus ApplicationStatus { get; set; }
 
