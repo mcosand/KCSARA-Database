@@ -1,8 +1,4 @@
-﻿/*
- * Copyright 2009-2014 Matthew Cosand
- */
-
-namespace Kcsar.Database.Model
+﻿namespace Kcsar.Database.Model
 {
     using System;
 
@@ -16,11 +12,11 @@ namespace Kcsar.Database.Model
 
         public Guid Id { get; protected set; }
 
-        public DateTime? Expiry { get; set; }
+        public DateTimeOffset? Expiry { get; set; }
         public virtual TrainingCourse Course { get; set; }
         public virtual TrainingRule Rule { get; set; }
         public virtual Member Member { get; set; }
-        public DateTime? Completed { get; set; }
+        public DateTimeOffset? Completed { get; set; }
         public virtual TrainingRoster Roster { get; set; }
 
         public ComputedTrainingAward(TrainingAward award)
@@ -33,7 +29,7 @@ namespace Kcsar.Database.Model
             this.Completed = award.Completed;
         }
 
-        public DateTime? NullableCompleted { get { return this.Completed; } }
+        public DateTimeOffset? NullableCompleted { get { return this.Completed; } }
 
         public override string ToString()
         {

@@ -66,7 +66,7 @@ namespace Kcsara.Database.Api
       app.UseIdentityServerBearerTokenAuthentication(tokenAuthOptions);
       app.Use(new Func<AppFunc, AppFunc>(next => (async env =>
       {
-        var identity = new Microsoft.Owin.OwinContext(env)?.Authentication?.User.Identity as ClaimsIdentity;
+        var identity = new Microsoft.Owin.OwinContext(env)?.Authentication?.User?.Identity as ClaimsIdentity;
         var subClaim = identity?.FindFirst("sub")?.Value;
         Guid sub;
         if (!string.IsNullOrWhiteSpace(subClaim) && Guid.TryParse(subClaim, out sub))

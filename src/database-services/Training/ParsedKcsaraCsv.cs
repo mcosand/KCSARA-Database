@@ -11,7 +11,7 @@ namespace Sar.Database.Services.Training
     public NameIdPair Member { get; set; }
     public NameIdPair Course { get; set; }
 
-    public DateTime Completed { get; set; }
+    public DateTimeOffset Completed { get; set; }
 
     public Guid? Existing { get; set; }
     public string Error { get; set; }

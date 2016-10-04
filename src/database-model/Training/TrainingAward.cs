@@ -1,21 +1,16 @@
-﻿/*
- * Copyright 2009-2014 Matthew Cosand
- */
-
-namespace Kcsar.Database.Model
+﻿namespace Kcsar.Database.Model
 {
   using System;
   using System.Collections.Generic;
   using System.ComponentModel.DataAnnotations;
   using System.ComponentModel.DataAnnotations.Schema;
-  using System.Linq;
   using System.Threading;
 
   public class TrainingAward : ModelObject, ITrainingAward
   {
     [Required]
-    public DateTime Completed { get; set; }
-    public DateTime? Expiry { get; set; }
+    public DateTimeOffset Completed { get; set; }
+    public DateTimeOffset? Expiry { get; set; }
     public string DocPath { get; set; }
     public string metadata { get; set; }
     [Required]
@@ -48,7 +43,7 @@ namespace Kcsar.Database.Model
     }
 
 
-    public DateTime? NullableCompleted { get { return new DateTime?(this.Completed); } }
+    public DateTimeOffset? NullableCompleted { get { return new DateTimeOffset?(this.Completed); } }
 
     public TrainingRule Rule { get { return null; } }
 

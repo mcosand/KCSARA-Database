@@ -1,0 +1,49 @@
+﻿<md-content layout-padding flex ng-controller="TrainingUploadRecordsCtrl">
+  <div class="step">
+    <div>
+      <div class="circle">1</div>
+      <div class="line"></div>
+    </div>
+    <div>
+      <div class="title">Upload File</div>
+      <div class="body">
+
+        <form name="form" style="margin:auto">
+          <div class="md-button md-raised" ng-disabled="uploading" ngf-select="upload($file)">Click to select file</div>
+          <p>- or -</p>
+          <div ngf-drop="upload($file)" class="drop-box" style="width:200px; height:100px; border:dashed 2px #888; border-radius:5px"
+               ngf-drag-over-class="'dragover'" ng-drop-disabled="uploading"
+               ngf-pattern="'.csv'"><div style="margin:1em auto; padding:1em; text-align:center">Drop CSV report here</div></div>
+          <div class="ng-cloak" ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="step">
+    <div>
+      <div class="circle">2</div>
+      <div class="line"></div>
+    </div>
+    <div>
+      <div class="title">Review Matches</div>
+      <div class="body ng-cloak">
+        <md-progress-circular md-mode="indeterminate" md-diameter="40" class="md-accent" ng-if="uploading"></md-progress-circular>
+        <md-list flex>
+          <md-list-item class="md-2-line" ng-repeat="p in parsed">
+            <div class="md-list-item-text">
+              <h3><strong>{{p.name}}</strong> ({{p.email}})</h3>
+              <p>Will give credit for {{p.course.name}} to {{p.member.name || '??'}} effective {{p.completed.format('YYYY-MM-DD')}}</p>
+              <p md-colors="{color: 'warn'}" ng-if="p.error">{{p.error}}</p>
+            </div>
+            <md-chips ng-if="p.existing"><md-chip>Done</md-chip></md-chips>
+            <md-checkbox class="md-secondary" ng-model="p.selected" ng-if="!(p.existing || p.error)"></md-checkbox>
+          </md-list-item>
+        </md-list>
+        <div ng-show="parsed.length">
+          <md-button ng-disabled="!selected().length || working" ng-click="apply()" class="md-accent md-raised">Accept Selected Entries</md-button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</md-content>

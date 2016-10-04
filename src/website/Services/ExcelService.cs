@@ -530,7 +530,7 @@ namespace Kcsara.Database.Web
     /// <param name="value">The new string value.</param>
     public abstract void SetValue(string value);
 
-    public abstract void SetValue(DateTime? value);
+    public abstract void SetValue(DateTimeOffset? value);
 
     /// <summary>Gets the numeric value of the cell.</summary>
     public abstract double? NumericValue { get; }
@@ -539,7 +539,7 @@ namespace Kcsara.Database.Web
     public abstract string StringValue { get; }
 
     /// <summary>Gets the date stored in the cell.</summary>
-    public abstract DateTime? DateValue { get; }
+    public abstract DateTimeOffset? DateValue { get; }
 
     /// <summary>Sets the background color of the cell.</summary>
     /// <param name="color">The desired color of the cell background. null will set the cell to 'NoFill'</param>
@@ -579,7 +579,7 @@ namespace Kcsara.Database.Web
       _cell = cell;
     }
 
-    public override void SetValue(DateTime? value)
+    public override void SetValue(DateTimeOffset? value)
     {
       if (value.HasValue) { this._cell.Value = value.Value;  }
       else { this._cell.Value = ""; }
@@ -607,9 +607,9 @@ namespace Kcsara.Database.Web
     }
 
     /// <summary>Gets the date stored in the cell.</summary>
-    public override DateTime? DateValue
+    public override DateTimeOffset? DateValue
     {
-      get { return typeof(DateTime).IsAssignableFrom(this._cell.Value.GetType()) ? (DateTime?)this._cell.Value : null; }
+      get { return typeof(DateTimeOffset).IsAssignableFrom(this._cell.Value.GetType()) ? (DateTimeOffset?)this._cell.Value : null; }
     }
 
     /// <summary>Gets the string value of the cell.</summary>
@@ -684,7 +684,7 @@ namespace Kcsara.Database.Web
       _cell = cell;
     }
 
-    public override void SetValue(DateTime? value)
+    public override void SetValue(DateTimeOffset? value)
     {
       throw new NotImplementedException();
     }
@@ -733,7 +733,7 @@ namespace Kcsara.Database.Web
     }
 
     /// <summary>Gets the date stored in the cell.</summary>
-    public override DateTime? DateValue
+    public override DateTimeOffset? DateValue
     {
       get { return this._cell.DateCellValue; }
     }

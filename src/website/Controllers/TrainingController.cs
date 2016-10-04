@@ -349,7 +349,7 @@ namespace Kcsara.Database.Web.Controllers
         int goodColumn = 5;
         int col = goodColumn + 1;
 
-        DateTime goodUntil = DateTime.MaxValue;
+        DateTimeOffset goodUntil = DateTimeOffset.MaxValue;
         int coursesCount = 0;
 
         for (int i = 0; i < courses.Count; i++)
@@ -371,7 +371,7 @@ namespace Kcsara.Database.Web.Controllers
             coursesCount++;
           }
         }
-        sheet.CellAt(row, goodColumn).SetValue(courses.Count == coursesCount ? goodUntil : (DateTime?)null);
+        sheet.CellAt(row, goodColumn).SetValue(courses.Count == coursesCount ? goodUntil : (DateTimeOffset?)null);
         row++;
       }
       sheet.AutoFitAll();

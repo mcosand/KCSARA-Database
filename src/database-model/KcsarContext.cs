@@ -462,11 +462,11 @@ namespace Kcsar.Database.Model
 
               if (sources.All(f => awards.ContainsKey(f.Value)))
               {
-                DateTime? completed = sources.Max(f => awards[f.Value].Completed);
-                DateTime? expiry = null;
+                DateTimeOffset? completed = sources.Max(f => awards[f.Value].Completed);
+                DateTimeOffset? expiry = null;
                 if (sources.Any(f => awards[f.Value].Expiry != null))
                 {
-                  expiry = sources.Min(f => awards[f.Value].Expiry ?? DateTime.MaxValue);
+                  expiry = sources.Min(f => awards[f.Value].Expiry ?? DateTimeOffset.MaxValue);
                 }
                 awardInLoop |= RewardTraining(m, courses, awards, rule, completed, expiry, fields[1]);
               }
@@ -478,7 +478,7 @@ namespace Kcsar.Database.Model
       return retVal;
     }
 
-    private bool RewardTraining(Member m, Dictionary<Guid, TrainingCourse> courses, Dictionary<Guid, ComputedTrainingAward> awards, TrainingRule rule, DateTime? completed, DateTime? expiry, string newAwardsString)
+    private bool RewardTraining(Member m, Dictionary<Guid, TrainingCourse> courses, Dictionary<Guid, ComputedTrainingAward> awards, TrainingRule rule, DateTimeOffset? completed, DateTimeOffset? expiry, string newAwardsString)
     {
       IEnumerable<string> results = newAwardsString.Split('+');
       bool awarded = false;

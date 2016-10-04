@@ -22,7 +22,8 @@
     'unitsDetail': { url: '/units/detail/:id', templateUrl: '/wwwroot/partials/units/detail.html', resolve: resolveUnitTitle },
     'unitsRoster': { url: '/units/roster/:id', templateUrl: '/wwwroot/partials/units/roster.html', resolve: resolveUnitTitle },
     'accounts': { url: '/accounts', template: '<div>Accounts page</div>', resolve: { $title: function () { return 'Accounts'; } } },
-    'accounts_me': { url: '/accounts/me', templateUrl: '/wwwroot/partials/accounts/me.html', resolve: { $title: function () { return 'My Account'; } } }
+    'accounts_me': { url: '/accounts/me', templateUrl: '/wwwroot/partials/accounts/me.html', resolve: { $title: function () { return 'My Account'; } } },
+    'training': { url: '/training/uploadrecords', templateUrl: '/wwwroot/partials/training/upload-records.html', resolve: { $title: function () { return 'Upload Training Records' }}}
   };
 
   angular.module('sar-database')

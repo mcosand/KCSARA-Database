@@ -23,7 +23,7 @@ namespace Kcsara.Database.Web
       bundles.Add(new StyleBundle("~/wwwroot/css/auth-core").Include(
         "~/wwwroot/lib/angular-material/angular-material.css",
         "~/wwwroot/css/auth/site.css",
-        "~/wwwroot/css/auth/vertical-stepper.css"
+        "~/wwwroot/css/vertical-stepper.css"
         ));
 
       bundles.Add(new ScriptBundle("~/js/am.js").Include(
@@ -35,10 +35,12 @@ namespace Kcsara.Database.Web
         "~/wwwroot/lib/angular-animate/angular-animate.js",
         "~/wwwroot/lib/angular-messages/angular-messages.js",
         "~/wwwroot/lib/angular-material/angular-material.js",
+        "~/scripts/ng-file-upload.js",
         "~/wwwroot/lib/restangular/dist/restangular.js",
         "~/wwwroot/lib/angular-material-data-table/dist/md-data-table.js",
         "~/wwwroot/lib/angular-ui-router-title/angular-ui-router-title.js",
         "~/wwwroot/lib/oidc-client/dist/oidc-client.js",
+        "~/Scripts/moment.js",
         "~/wwwroot/js/site.js",
         "~/wwwroot/js/routes.js",
         "~/wwwroot/js/services/*.js",
@@ -50,7 +52,8 @@ namespace Kcsara.Database.Web
         "~/wwwroot/lib/angular-material/angular-material.css",
         "~/wwwroot/lib/angular-material-data-table/dist/md-data-table.css",
         "~/wwwroot/css/site.css",
-        "~/wwwroot/css/main-nav.css"
+        "~/wwwroot/css/main-nav.css",
+        "~/wwwroot/css/vertical-stepper.css"
         ));
 
       bundles.Add(new ScriptBundle("~/scripts/ng-core").Include(

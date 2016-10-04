@@ -1,4 +1,4 @@
-﻿angular.module('sar-database', ['ngMaterial', 'ngMessages', 'ui.router.title', 'ui.router', 'md.data.table', 'restangular'])
+﻿angular.module('sar-database', ['ngMaterial', 'ngMessages', 'ui.router.title', 'ui.router', 'md.data.table', 'restangular', 'ngFileUpload'])
 
 
 .config(['$mdThemingProvider', 'RestangularProvider', function ($mdThemingProvider, RestangularProvider) {

@@ -57,3 +57,7 @@ md-dialog md-input-container .md-errors-spacer {
 md-dialog-actions {
   border-top: solid 1px #FFD284;
 }
+
+md-list-item md-chips .md-chips {
+  box-shadow: none;
+}

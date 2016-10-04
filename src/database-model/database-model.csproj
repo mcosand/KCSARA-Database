@@ -109,6 +109,10 @@
     <Compile Include="Migrations\201609252247480_UnitStatusNonNullKey.Designer.cs">
       <DependentUpon>201609252247480_UnitStatusNonNullKey.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201610041514024_AwardsDateTimeOffsets.cs" />
+    <Compile Include="Migrations\201610041514024_AwardsDateTimeOffsets.Designer.cs">
+      <DependentUpon>201610041514024_AwardsDateTimeOffsets.cs</DependentUpon>
+    </Compile>
     <Compile Include="Training\ComputedTrainingAward.cs" />
     <Compile Include="ContactInfoSubType.cs" />
     <Compile Include="Animal.cs" />
@@ -285,6 +289,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201609252247480_UnitStatusNonNullKey.resx">
       <DependentUpon>201609252247480_UnitStatusNonNullKey.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610041514024_AwardsDateTimeOffsets.resx">
+      <DependentUpon>201610041514024_AwardsDateTimeOffsets.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

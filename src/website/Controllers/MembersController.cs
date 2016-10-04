@@ -1296,7 +1296,7 @@ namespace Kcsara.Database.Web.Controllers
     {
       List<string> names;
       List<Dictionary<DateTime, int>> hourSeries = new List<Dictionary<DateTime, int>>();
-      List<Dictionary<DateTime, Tuple<int, string>>> promotions = new List<Dictionary<DateTime, Tuple<int, string>>>();
+      var promotions = new List<Dictionary<DateTimeOffset, Tuple<int, string>>>();
       Guid esar = new Guid("C2F99BB4-3056-4097-9345-4B8797F40E10");
 
       names = this.db.Members.WhereIn(f => f.Id, m).OrderBy(f => f.LastName).ThenBy(f => f.FirstName).ThenBy(f => f.Id).Select(f => f.FirstName + " " + f.LastName).ToList();
@@ -1307,7 +1307,7 @@ namespace Kcsara.Database.Web.Controllers
 
       Guid lastId = Guid.Empty;
       Dictionary<DateTime, int> hours = new Dictionary<DateTime, int>();
-      Dictionary<DateTime, Tuple<int, string>> promotes = new Dictionary<DateTime, Tuple<int, string>>();
+      var promotes = new Dictionary<DateTimeOffset, Tuple<int, string>>();
       double hoursSum = 0;
       TimeSpan offset = TimeSpan.FromSeconds(0);
       DateTime lastTime = DateTime.MinValue;
@@ -1330,7 +1330,7 @@ namespace Kcsara.Database.Web.Controllers
           hoursSum = 0;
           lastId = personId;
           hours = new Dictionary<DateTime, int>();
-          promotes = new Dictionary<DateTime, Tuple<int, string>>();
+          promotes = new Dictionary<DateTimeOffset, Tuple<int, string>>();
           if (relative.HasValue && relative.Value)
           {
             offset = (row.TimeIn ?? row.Mission.StartTime) - new DateTime(1900, 1, 1);

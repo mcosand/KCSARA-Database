@@ -11,9 +11,9 @@ namespace Kcsar.Database.Model
 
   public struct TrainingStatus
   {
-    public DateTime? Expires;
+    public DateTimeOffset? Expires;
     public ExpirationFlags Status;
-    public DateTime? Completed;
+    public DateTimeOffset? Completed;
     public string CourseName;
     public Guid CourseId;
 
@@ -49,7 +49,7 @@ namespace Kcsar.Database.Model
       this.Expirations = new Dictionary<Guid, TrainingStatus>();
     }
 
-    public static CompositeTrainingStatus Compute(Member m, IEnumerable<TrainingCourse> courses, DateTime when)
+    public static CompositeTrainingStatus Compute(Member m, IEnumerable<TrainingCourse> courses, DateTimeOffset when)
     {
       //if (!m.ComputedAwards.IsLoaded)
       //{
@@ -59,7 +59,7 @@ namespace Kcsar.Database.Model
       return CompositeTrainingStatus.Compute(m, m.ComputedAwards, courses, when);
     }
 
-    public static CompositeTrainingStatus Compute(Member m, IEnumerable<ComputedTrainingAward> awards, IEnumerable<TrainingCourse> courses, DateTime when)
+    public static CompositeTrainingStatus Compute(Member m, IEnumerable<ComputedTrainingAward> awards, IEnumerable<TrainingCourse> courses, DateTimeOffset when)
     {
       CompositeTrainingStatus result = new CompositeTrainingStatus();
 

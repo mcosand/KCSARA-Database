@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Sar.Database.Model.Training;
@@ -14,16 +15,38 @@ namespace Kcsara.Database.Api.Controllers
   public class TrainingRecordsController : ApiController
   {
     private readonly ITrainingRecordsService _records;
+    private readonly IAuthorizationService _authz;
 
-    public TrainingRecordsController(ITrainingRecordsService records)
+    public TrainingRecordsController(ITrainingRecordsService records, IAuthorizationService authz)
     {
       _records = records;
+      _authz = authz;
+    }
+
+    [HttpPost]
+    [ValidateModelState]
+    [Route("trainingrecords")]
+    public async Task<TrainingRecord> CreateNew([FromBody]TrainingRecord record)
+    {
+      await _authz.EnsureAsync(User as ClaimsPrincipal, record.Member.Id, "Create:TrainingRecord@MemberId");
+      if (record.Member.Id == Guid.Empty)
+      {
+        ModelState.AddModelError("Member.Id", "required");
+      }
+      if (record.Course.Id == Guid.Empty)
+      {
+        ModelState.AddModelError("Course.Id", "required");
+      }
+
+      record = await _records.SaveAsync(record);
+      return record;
     }
 
     [HttpGet]
     [Route("members/{memberId}/trainingrecords")]
     public async Task<List<TrainingStatus>> MemberRecords(Guid memberId)
     {
+      await _authz.EnsureAsync(User as ClaimsPrincipal, memberId, "Read:TrainingRecord@MemberId");
       return await _records.RecordsForMember(memberId, DateTime.Now);
     }
 
@@ -31,6 +54,7 @@ namespace Kcsara.Database.Api.Controllers
     [Route("members/{memberId}/requiredtraining")]
     public async Task<List<TrainingStatus>> MemberRequired(Guid memberId)
     {
+      await _authz.EnsureAsync(User as ClaimsPrincipal, memberId, "Read:TrainingRecord@MemberId");
       return await _records.RequiredTrainingStatusForMember(memberId, DateTime.Now);
     }
 
@@ -45,6 +69,8 @@ namespace Kcsara.Database.Api.Controllers
     [Route("TrainingRecords/ParseKcsaraCsv")]
     public async Task<List<ParsedKcsaraCsv>> ParseKcsaraCsv()
     {
+      await _authz.EnsureAsync(User as ClaimsPrincipal, null, "Read:TrainingRecord");
+
       var content = await Request.Content.ReadAsMultipartAsync();
 
       var file = content.Contents

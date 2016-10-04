@@ -20,6 +20,7 @@ namespace Kcsara.Database.Web.Controllers
     [Route("units/detail/{*page}")]
     [Route("units/roster/{*page}")]
     [Route("accounts/resetpassword")]
+    [Route("training/uploadrecords")]
     public ActionResult Public(string page)
     {
       return View("SinglePage");

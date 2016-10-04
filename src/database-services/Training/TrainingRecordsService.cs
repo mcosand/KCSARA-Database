@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CsvHelper;
 using Sar.Database.Model;
@@ -14,10 +15,12 @@ namespace Sar.Database.Services
 {
   public interface ITrainingRecordsService
   {
-    Task<List<TrainingStatus>> RequiredTrainingStatusForMember(Guid memberId, DateTime asOf);
-    Task<Dictionary<Guid, List<TrainingStatus>>> RequiredTrainingStatusForUnit(Guid? unitId, DateTime asOf);
+    Task<List<TrainingStatus>> RequiredTrainingStatusForMember(Guid memberId, DateTimeOffset asOf);
+    Task<Dictionary<Guid, List<TrainingStatus>>> RequiredTrainingStatusForUnit(Guid? unitId, DateTimeOffset asOf);
     Task<List<ParsedKcsaraCsv>> ParseKcsaraCsv(Stream dataStream);
-    Task<List<TrainingStatus>> RecordsForMember(Guid memberId, DateTime now);
+    Task<List<TrainingStatus>> RecordsForMember(Guid memberId, DateTimeOffset now);
+    Task<ListPermissionWrapper<TrainingRecord>> List(Expression<Func<TrainingRecord, bool>> filter);
+    Task<TrainingRecord> SaveAsync(TrainingRecord record);
   }
 
   public class TrainingRecordsService : ITrainingRecordsService
@@ -37,7 +40,7 @@ namespace Sar.Database.Services
     /// <summary></summary>
     /// <param name="unitId"></param>
     /// <returns></returns>
-    public async Task<List<TrainingStatus>> RequiredTrainingStatusForMember(Guid memberId, DateTime asOf)
+    public async Task<List<TrainingStatus>> RequiredTrainingStatusForMember(Guid memberId, DateTimeOffset asOf)
     {
       if (!await _authz.AuthorizeAsync(_host.User, memberId, "Read:TrainingRecord@Member")) throw new AuthorizationException();
       using (var db = _dbFactory())
@@ -58,7 +61,7 @@ namespace Sar.Database.Services
     /// <summary></summary>
     /// <param name="unitId"></param>
     /// <returns></returns>
-    public async Task<Dictionary<Guid, List<TrainingStatus>>> RequiredTrainingStatusForUnit(Guid? unitId, DateTime asOf)
+    public async Task<Dictionary<Guid, List<TrainingStatus>>> RequiredTrainingStatusForUnit(Guid? unitId, DateTimeOffset asOf)
     {
       if (!await _authz.AuthorizeAsync(_host.User, unitId, "Read:TrainingRecord@Unit")) throw new AuthorizationException();
       using (var db = _dbFactory())
@@ -77,7 +80,7 @@ namespace Sar.Database.Services
     /// <param name="db"></param>
     /// <param name="members"></param>
     /// <returns></returns>
-    private async Task<Dictionary<Guid, List<TrainingStatus>>> RequiredTrainingStatus(Data.IKcsarContext db, IQueryable<Data.Member> members, DateTime asOf)
+    private async Task<Dictionary<Guid, List<TrainingStatus>>> RequiredTrainingStatus(Data.IKcsarContext db, IQueryable<Data.Member> members, DateTimeOffset asOf)
     {
       // For all the specified members,
       // - Get their required training (if any)
@@ -110,7 +113,7 @@ namespace Sar.Database.Services
       return ComputeTrainingStatus(grouped, asOf);
     }
 
-    private static Dictionary<Guid, List<TrainingStatus>> ComputeTrainingStatus(List<IGrouping<Guid, CompletedCourseInfo>> grouped, DateTime asOf)
+    private static Dictionary<Guid, List<TrainingStatus>> ComputeTrainingStatus(List<IGrouping<Guid, CompletedCourseInfo>> grouped, DateTimeOffset asOf)
     {
       var withStatus = grouped.Select(f => new MemberAndStatus
       {
@@ -161,7 +164,7 @@ namespace Sar.Database.Services
 
     class WacDateAndCourse
     {
-      public DateTime WacDate { get; set; }
+      public DateTimeOffset WacDate { get; set; }
       public Guid? CourseId { get; set; }
     }
 
@@ -174,7 +177,7 @@ namespace Sar.Database.Services
     class CompletedCourseInfo
     {
       public TrainingStatus Status { get; set; }
-      public DateTime WacDate { get; set; }
+      public DateTimeOffset WacDate { get; set; }
       public Data.TrainingRequired Requirement { get; set; }
       public Guid MemberId { get; set; }
     }
@@ -210,7 +213,7 @@ namespace Sar.Database.Services
                 Email = row[1],
                 Name = row[0],
                 Link = link,
-                Completed = DateTime.Parse(row[6])
+                Completed = DateTimeOffset.Parse(row[6])
               };
 
               NameIdPair course;
@@ -256,8 +259,8 @@ namespace Sar.Database.Services
 
         if (result.Count > 0)
         {
-          DateTime min = result.Min(f => f.Completed);
-          DateTime max = result.Max(f => f.Completed);
+          DateTimeOffset min = result.Min(f => f.Completed);
+          DateTimeOffset max = result.Max(f => f.Completed);
           var awards = db.TrainingAward.Where(f => f.Completed >= min && f.Completed <= max).ToList();
 
           foreach (var row in result)
@@ -275,7 +278,7 @@ namespace Sar.Database.Services
       return result;
     }
 
-    public async Task<List<TrainingStatus>> RecordsForMember(Guid memberId, DateTime asOf)
+    public async Task<List<TrainingStatus>> RecordsForMember(Guid memberId, DateTimeOffset asOf)
     {
       if (!await _authz.AuthorizeAsync(_host.User, memberId, "Read:TrainingRecord@Member")) throw new AuthorizationException();
       using (var db = _dbFactory())
@@ -314,6 +317,83 @@ namespace Sar.Database.Services
         });
 
         return list.Any() ? ComputeTrainingStatus(list.GroupBy(f => f.MemberId).ToList(), asOf)[memberId] : new List<TrainingStatus>();
+      }
+    }
+
+
+
+    public async Task<TrainingRecord> SaveAsync(TrainingRecord record)
+    {
+      using (var db = _dbFactory())
+      {
+        var match = await db.TrainingAward.FirstOrDefaultAsync(
+          f => f.Id != record.Id &&
+          f.Member.Id == record.Member.Id &&
+          f.Course.Id == record.Course.Id &&
+          f.Completed == record.Completed
+          );
+        if (match != null) throw new DuplicateItemException("TrainingRecord", record.Id.ToString());
+
+        var updater = await ObjectUpdater.CreateUpdater(
+          db.TrainingAward,
+          record.Id,
+          null
+          );
+
+        var course = await db.TrainingCourses.FirstOrDefaultAsync(f => f.Id == record.Course.Id);
+        updater.Update(f => f.Member, await db.Members.FirstOrDefaultAsync(f => f.Id == record.Member.Id));
+        updater.Update(f => f.Course, course);
+        updater.Update(f => f.Completed, record.Completed);
+
+        int? courseMonths = updater.Instance.Course.ValidMonths;
+        DateTimeOffset? expiration;
+        switch (record.ExpirySrc)
+        {
+          default:
+          case "default":
+            expiration = course.ValidMonths.HasValue ? record.Completed.AddMonths(course.ValidMonths.Value) : (DateTimeOffset?)null;
+            break;
+          case "custom":
+            expiration = record.Expires;
+            break;
+          case "never":
+            expiration = null;
+            break;
+        }
+        updater.Update(f => f.Expiry, expiration);
+
+        await updater.Persist(db);
+
+        return (await List(f => f.Id == updater.Instance.Id)).Items.Single().Item;
+      }
+    }
+
+    public async Task<ListPermissionWrapper<TrainingRecord>> List(Expression<Func<TrainingRecord, bool>> filter)
+    {
+      using (var db = _dbFactory())
+      {
+        var list = await db.TrainingAward
+          .Select(f => new TrainingRecord
+        {
+          Id = f.Id,
+          Member = new NameIdPair { Id = f.Member.Id, Name = f.Member.FirstName + " " + f.Member.LastName },
+          Course = new NameIdPair { Id = f.Course.Id, Name = f.Course.DisplayName },
+          Completed = f.Completed,
+          Expires = f.Expiry,
+          Comments = f.metadata,
+          Source = (f.Roster != null) ? "roster" : "direct",
+          ReferenceId = (from roster in db.TrainingRosters where roster.Id == f.Roster.Id select (Guid?)roster.Training.Id).FirstOrDefault() ?? f.Id,
+        })
+        .Where(filter)
+        .OrderByDescending(f => f.Completed)
+        .ThenBy(f => f.Source)
+        .ToListAsync();
+
+        return new ListPermissionWrapper<TrainingRecord>
+        {
+          C = 1,
+          Items = list.Select(f => PermissionWrapper.Create(f, 1, 1))
+        };
       }
     }
   }

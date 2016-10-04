@@ -346,6 +346,7 @@
     <Content Include="wwwroot\css\main-nav.css" />
     <Content Include="wwwroot\css\site.css" />
     <Content Include="wwwroot\js\controllers\editDialogController.js" />
+    <Content Include="wwwroot\js\controllers\training\uploadRecords.js" />
     <Content Include="wwwroot\js\controllers\units\unitsRoster.js" />
     <Content Include="wwwroot\js\controllers\units\unitsDetail.js" />
     <Content Include="wwwroot\js\directives\editDialog.js" />
@@ -475,12 +476,13 @@
     <Compile Include="SystemWebHost.cs" />
     <Compile Include="Utils.cs" />
     <Content Include="wwwroot\css\auth\site.css" />
-    <Content Include="wwwroot\css\auth\vertical-stepper.css" />
+    <Content Include="wwwroot\css\vertical-stepper.css" />
     <Content Include="wwwroot\js\auth\directives\server-error.js" />
     <Content Include="wwwroot\js\auth\page\login.js" />
     <Content Include="wwwroot\js\auth\page\registerlogin.js" />
     <Content Include="wwwroot\js\auth\sar-common.js" />
     <Content Include="wwwroot\js\auth\site.js" />
+    <Content Include="wwwroot\partials\training\upload-records.html" />
     <Content Include="wwwroot\partials\units\edit.html" />
     <Content Include="wwwroot\partials\units\editStatus.html" />
     <Content Include="wwwroot\partials\units\roster.html" />

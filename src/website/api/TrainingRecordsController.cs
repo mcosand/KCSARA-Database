@@ -192,7 +192,7 @@
       {
         default:
         case "default":
-          model.Expiry = model.Course.ValidMonths.HasValue ? model.Completed.AddMonths(model.Course.ValidMonths.Value) : (DateTime?)null;
+          model.Expiry = model.Course.ValidMonths.HasValue ? model.Completed.AddMonths(model.Course.ValidMonths.Value) : (DateTimeOffset?)null;
           break;
         case "custom":
           if (!string.IsNullOrWhiteSpace(view.Expires))
