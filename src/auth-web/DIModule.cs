@@ -20,12 +20,17 @@ namespace Sar.Database.Web.Auth
       Log.Logger = logConfig.CreateLogger();
       Bind<ILogger>().ToConstant(Log.Logger);
 
+      var scopeStore = SarScopeStore.Create(() => new AuthDbContext());
+
       Bind<SarUserService>().ToSelf();
       Bind<IClientStore>().To<SarClientStore>();
+      Bind<IScopeStore>().ToConstant(scopeStore);
       Bind<Func<IAuthDbContext>>().ToMethod(ctx => () => new AuthDbContext());
       Bind<ISendEmailService>().To<DefaultSendMessageService>().InSingletonScope();
       Bind<IRolesService>().To<RolesService>().InSingletonScope();
       Bind<IUsersService>().To<ApiUsersService>().InSingletonScope();
+      Bind<EntityFrameworkTokenHandleStore>().ToSelf();
+
       var config = Kernel.Get<IHost>();
 
       if (!Kernel.GetBindings(typeof(IMemberInfoService)).Any())

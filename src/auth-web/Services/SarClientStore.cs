@@ -45,7 +45,7 @@ namespace Sar.Database.Web.Auth.Services
         {
           case Flows.ClientCredentials:
             client.AllowedScopes = (row.AddedScopes ?? "").Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-            client.Claims = row.Roles.Select(f => new Claim(Scopes.RolesClaim, f.Id)).ToList();
+            client.Claims = row.Roles.Select(f => new Claim(SarScopeStore.RolesClaim, f.Id)).ToList();
             client.PrefixClientClaims = false;
             return client;
           case Flows.Implicit:

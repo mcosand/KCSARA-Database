@@ -270,6 +270,9 @@
     <EmbeddedResource Include="Migrations\201609170525175_schema.resx">
       <DependentUpon>201609170525175_schema.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610042354590_TokenStore.resx">
+      <DependentUpon>201610042354590_TokenStore.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
@@ -279,6 +282,17 @@
     <Compile Include="AppBuilderExtensions.cs" />
     <Compile Include="AuthConstants.cs" />
     <Compile Include="Controllers\RegisterController.cs" />
+    <Compile Include="Data\TokenRow.cs" />
+    <Compile Include="Migrations\201610042354590_TokenStore.cs" />
+    <Compile Include="Migrations\201610042354590_TokenStore.Designer.cs">
+      <DependentUpon>201610042354590_TokenStore.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Serialization\AsyncHelper.cs" />
+    <Compile Include="Serialization\ClaimConverter.cs" />
+    <Compile Include="Serialization\ClaimsPrincipalConverter.cs" />
+    <Compile Include="Serialization\ClientConverter.cs" />
+    <Compile Include="Serialization\ScopeConverter.cs" />
+    <Compile Include="Services\EntityFrameworkTokenHandleStore.cs" />
     <Compile Include="Migrations\201609170525175_schema.cs" />
     <Compile Include="Migrations\201609170525175_schema.Designer.cs">
       <DependentUpon>201609170525175_schema.cs</DependentUpon>
@@ -347,10 +361,10 @@
     <Compile Include="Models\VerifyCodeRequest.cs" />
     <Compile Include="Models\Organization.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Scopes.cs" />
     <Compile Include="Services\MvcViewService.cs" />
     <Compile Include="Services\RolesService.cs" />
     <Compile Include="Services\SarClientStore.cs" />
+    <Compile Include="Services\SarScopeStore.cs" />
     <Compile Include="Services\SarUserService.cs" />
     <Compile Include="Strings.Designer.cs">
       <AutoGen>True</AutoGen>

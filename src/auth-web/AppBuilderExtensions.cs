@@ -41,11 +41,12 @@ namespace Owin
       {
         UserService = new Registration<IUserService>(resolver => userService),
         ClientStore = new Registration<IClientStore>(resolver => clientStore),
+        ScopeStore = new Registration<IScopeStore>(resolver => kernel.Get<IScopeStore>()),
         CorsPolicyService = new Registration<ICorsPolicyService>(resolver => corsService),
         ViewService = new Registration<IViewService, MvcViewService<AccountController>>(),
-        TokenSigningService = new Registration<ITokenSigningService, MyTokenSigningService>()
-      }
-      .UseInMemoryScopes(Scopes.Get(kernel.Get<Func<IAuthDbContext>>()));
+        TokenSigningService = new Registration<ITokenSigningService, MyTokenSigningService>(),
+        TokenHandleStore = new Registration<ITokenHandleStore>(resolver => kernel.Get<EntityFrameworkTokenHandleStore>())
+      };
 
       // These registrations are also needed since these are dealt with using non-standard construction
       factory.Register(new Registration<HttpContext>(resolver => HttpContext.Current));

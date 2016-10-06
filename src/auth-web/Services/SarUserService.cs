@@ -270,14 +270,14 @@ namespace Sar.Database.Web.Auth.Services
           var units = member.Units.Select(f => JsonConvert.SerializeObject(new { f.Org.Id, f.Org.Name }, settings));
           foreach (var unit in units)
           {
-            claims.Add(new Claim(Scopes.UnitsClaim, unit));
+            claims.Add(new Claim(SarScopeStore.UnitsClaim, unit));
           }
           if (member.Units.Any(f => unitStatusTypes[(f.Org.Id.ToString() + f.Status).ToLowerInvariant()]))
           {
-            claims.Add(new Claim(Scopes.RolesClaim, "cdb.users"));
+            claims.Add(new Claim(SarScopeStore.RolesClaim, "cdb.users"));
           }
 
-          claims.Add(new Claim(Scopes.MemberIdClaim, member.Id.ToString()));
+          claims.Add(new Claim(SarScopeStore.MemberIdClaim, member.Id.ToString()));
 
           string profileTemplate = _host.GetConfig("memberProfileTemplate");
           if (!string.IsNullOrWhiteSpace(profileTemplate))
@@ -294,7 +294,7 @@ namespace Sar.Database.Web.Auth.Services
         var roles = _roles.RolesForAccount(account.Id);
         foreach (var role in roles)
         {
-          claims.Add(new Claim(Scopes.RolesClaim, role));
+          claims.Add(new Claim(SarScopeStore.RolesClaim, role));
         }
       
         claims.Add(new Claim(Constants.ClaimTypes.Subject, account.Id.ToString()));
