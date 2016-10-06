@@ -13,7 +13,7 @@
               <th md-column md-order-by="member.name">Name</th>
               <th md-column md-order-by="member.workerNumber"><span>DEM #</span></th>
               <th md-column md-order-by="status">Status</th>
-              <th md-column>Since</th>
+              <th md-column md-order-by="start">Since</th>
             </tr>
           </thead>
           <tbody md-body>
@@ -21,7 +21,7 @@
               <td md-cell><a href="#" target="_self" ng-href="/members/detail/{{membership.member.id}}" md-colors="{color:'primary'}">{{membership.member.name}}</a></td>
               <td md-cell>{{membership.member.workerNumber}}</td>
               <td md-cell>{{membership.status}}</td>
-              <td md-cell>{{membership.since}}</td>
+              <td md-cell>{{membership.start | simpleDate}}</td>
             </tr>
           </tbody>
         </table>

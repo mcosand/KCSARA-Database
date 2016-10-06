@@ -30,9 +30,11 @@ namespace Kcsara.Database.Api.Controllers.Units
     {
       if (!await _authz.AuthorizeAsync(User as ClaimsPrincipal, memberId, "Read:UnitMembership@MemberId")) throw new AuthorizationException();
 
+      DateTimeOffset now = DateTimeOffset.UtcNow;
+
       Expression<Func<UnitMembership, bool>> predicate = history
         ? (Expression<Func<UnitMembership, bool>> )(f => f.Member.Id == memberId)
-        : (f => f.Member.Id == memberId && f.IsActive);
+        : (f => f.Member.Id == memberId &&f.IsActive && (f.End == null || f.End > now));
 
       return await _units.ListMemberships(predicate);
     }
@@ -43,9 +45,11 @@ namespace Kcsara.Database.Api.Controllers.Units
     {
       if (!await _authz.AuthorizeAsync(User as ClaimsPrincipal, unitId, "Read:UnitMembership@UnitId")) throw new AuthorizationException();
 
+      if (!await _authz.AuthorizeAsync(unitId, "Read:UnitMembership@UnitId")) throw new AuthorizationException();
+
       Expression<Func<UnitMembership, bool>> predicate = history
         ? (Expression<Func<UnitMembership, bool>>)(f => f.Unit.Id == unitId)
-        : (f => f.Unit.Id == unitId && f.IsActive);
+        : (f => f.Unit.Id == unitId && f.IsActive && (f.End == null || f.End > now));
 
       return await _units.ListMemberships(predicate);
     }
