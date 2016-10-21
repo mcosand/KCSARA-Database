@@ -26,7 +26,7 @@ namespace Kcsara.Database.Api.Controllers.Members
     [AnyHostCorsPolicy]
     public async Task<IEnumerable<PersonContact>> ListContacts(Guid memberId)
     {
-      if (!await _authz.AuthorizeAsync(User as ClaimsPrincipal, memberId, "Read:Member")) throw new AuthorizationException();
+      await _authz.EnsureAsync(memberId, "Read:Member");
 
       return await _members.ListMemberContactsAsync(memberId);
     }
@@ -36,7 +36,7 @@ namespace Kcsara.Database.Api.Controllers.Members
     [AnyHostCorsPolicy]
     public async Task<PersonContact> CreateContact(Guid memberId, [FromBody] PersonContact contact)
     {
-      if (!await _authz.AuthorizeAsync(User as ClaimsPrincipal, memberId, "Create:MemberContact@Member")) throw new AuthorizationException();
+      await _authz.EnsureAsync(memberId, "Create:MemberContact@Member");
       return await _members.AddContact(memberId, contact);
     }
   }

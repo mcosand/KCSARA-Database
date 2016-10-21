@@ -28,7 +28,7 @@ namespace Kcsara.Database.Api.Controllers
     [Route("trainingrecords")]
     public async Task<TrainingRecord> CreateNew([FromBody]TrainingRecord record)
     {
-      await _authz.EnsureAsync(User as ClaimsPrincipal, record.Member.Id, "Create:TrainingRecord@MemberId");
+      await _authz.EnsureAsync(record.Member.Id, "Create:TrainingRecord@MemberId");
       if (record.Member.Id == Guid.Empty)
       {
         ModelState.AddModelError("Member.Id", "required");
@@ -46,7 +46,7 @@ namespace Kcsara.Database.Api.Controllers
     [Route("members/{memberId}/trainingrecords")]
     public async Task<List<TrainingStatus>> MemberRecords(Guid memberId)
     {
-      await _authz.EnsureAsync(User as ClaimsPrincipal, memberId, "Read:TrainingRecord@MemberId");
+      await _authz.EnsureAsync(memberId, "Read:TrainingRecord@MemberId");
       return await _records.RecordsForMember(memberId, DateTime.Now);
     }
 
@@ -54,7 +54,7 @@ namespace Kcsara.Database.Api.Controllers
     [Route("members/{memberId}/requiredtraining")]
     public async Task<List<TrainingStatus>> MemberRequired(Guid memberId)
     {
-      await _authz.EnsureAsync(User as ClaimsPrincipal, memberId, "Read:TrainingRecord@MemberId");
+      await _authz.EnsureAsync(memberId, "Read:TrainingRecord@MemberId");
       return await _records.RequiredTrainingStatusForMember(memberId, DateTime.Now);
     }
 
@@ -69,7 +69,7 @@ namespace Kcsara.Database.Api.Controllers
     [Route("TrainingRecords/ParseKcsaraCsv")]
     public async Task<List<ParsedKcsaraCsv>> ParseKcsaraCsv()
     {
-      await _authz.EnsureAsync(User as ClaimsPrincipal, null, "Read:TrainingRecord");
+      await _authz.EnsureAsync(null, "Read:TrainingRecord");
 
       var content = await Request.Content.ReadAsMultipartAsync();
 

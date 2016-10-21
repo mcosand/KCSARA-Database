@@ -42,7 +42,6 @@ namespace Sar.Database.Services
     /// <returns></returns>
     public async Task<List<TrainingStatus>> RequiredTrainingStatusForMember(Guid memberId, DateTimeOffset asOf)
     {
-      if (!await _authz.AuthorizeAsync(_host.User, memberId, "Read:TrainingRecord@Member")) throw new AuthorizationException();
       using (var db = _dbFactory())
       {
         var memberQuery = db.Members.Where(f => f.Id == memberId);
@@ -63,7 +62,6 @@ namespace Sar.Database.Services
     /// <returns></returns>
     public async Task<Dictionary<Guid, List<TrainingStatus>>> RequiredTrainingStatusForUnit(Guid? unitId, DateTimeOffset asOf)
     {
-      if (!await _authz.AuthorizeAsync(_host.User, unitId, "Read:TrainingRecord@Unit")) throw new AuthorizationException();
       using (var db = _dbFactory())
       {
         var membershipQuery = db.UnitMemberships.Where(f => f.Status.IsActive && f.EndTime == null || f.EndTime > asOf);
@@ -187,8 +185,6 @@ namespace Sar.Database.Services
     /// <returns></returns>
     public async Task<List<ParsedKcsaraCsv>> ParseKcsaraCsv(Stream dataStream)
     {
-      if (!await _authz.AuthorizeAsync(_host.User, null, "Read:TrainingRecord")) throw new AuthorizationException();
-
       var result = new List<ParsedKcsaraCsv>();
 
       using (var db = _dbFactory())
@@ -280,7 +276,6 @@ namespace Sar.Database.Services
 
     public async Task<List<TrainingStatus>> RecordsForMember(Guid memberId, DateTimeOffset asOf)
     {
-      if (!await _authz.AuthorizeAsync(_host.User, memberId, "Read:TrainingRecord@Member")) throw new AuthorizationException();
       using (var db = _dbFactory())
       {
         var memberQuery = db.Members.Where(f => f.Id == memberId);
@@ -391,8 +386,8 @@ namespace Sar.Database.Services
 
         return new ListPermissionWrapper<TrainingRecord>
         {
-          C = 1,
-          Items = list.Select(f => PermissionWrapper.Create(f, 1, 1))
+          C = _authz.CanCreate<TrainingRecord>(),
+          Items = list.Select(f => _authz.Wrap(f))
         };
       }
     }

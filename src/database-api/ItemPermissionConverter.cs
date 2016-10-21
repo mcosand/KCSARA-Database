@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Sar.Database.Model;
@@ -25,8 +21,8 @@ namespace Kcsara.Database.Api
     {
       var item = value as IItemPermissionWrapper;
       JObject o = (JObject)JToken.FromObject(item.Item, serializer);
-      o.Add("_u", JToken.FromObject(item.U));
-      o.Add("_d", JToken.FromObject(item.D));
+      o.Add("_u", JToken.FromObject(item.U ? 1 : 0));
+      o.Add("_d", JToken.FromObject(item.D ? 1 : 0));
       o.WriteTo(writer);
     }
   }

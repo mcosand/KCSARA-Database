@@ -1,7 +1,4 @@
-﻿/*
- * Copyright 2013-2014 Matthew Cosand
- */
-namespace Kcsar.Database.Model
+﻿namespace Kcsar.Database.Model
 {
   using System;
   using System.Collections.Generic;
@@ -10,7 +7,7 @@ namespace Kcsar.Database.Model
   using System.Linq;
   using System.Threading.Tasks;
 
-  public interface IKcsarContext : IDisposable
+  public interface IKcsarContext : IDbContext, IDisposable
   {
     IDbSet<Animal> Animals { get; set; }
     IDbSet<AnimalMission> AnimalMissions { get; set; }

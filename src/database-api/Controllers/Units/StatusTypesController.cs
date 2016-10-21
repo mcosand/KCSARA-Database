@@ -28,7 +28,7 @@ namespace Kcsara.Database.Api.Controllers.Units
     [Route("units/statustypes")]
     public async Task<ListPermissionWrapper<UnitStatusType>> List()
     {
-      if (!await _authz.AuthorizeAsync(User as ClaimsPrincipal, null, "Read:UnitStatusType")) throw new AuthorizationException();
+      await _authz.AuthorizeAsync(null, "Read:UnitStatusType");
 
       return await _units.ListStatusTypes();
     }
@@ -37,7 +37,7 @@ namespace Kcsara.Database.Api.Controllers.Units
     [Route("units/{unitId}/statustypes")]
     public async Task<ListPermissionWrapper<UnitStatusType>> ListForUnit(Guid unitId)
     {
-      await _authz.EnsureAsync(User as ClaimsPrincipal, unitId, "Read:UnitStatusType");
+      await _authz.EnsureAsync(unitId, "Read:UnitStatusType");
 
       return await _units.ListStatusTypes(unitId);
     }
@@ -47,7 +47,7 @@ namespace Kcsara.Database.Api.Controllers.Units
     [Route("units/{unitId}/statusTypes")]
     public async Task<UnitStatusType> CreateNew(Guid unitId, [FromBody]UnitStatusType statusType)
     {
-      await _authz.EnsureAsync(User as ClaimsPrincipal, unitId, "Create:UnitStatusType@UnitId");
+      await _authz.EnsureAsync(unitId, "Create:UnitStatusType@UnitId");
 
       if (statusType.Id != Guid.Empty)
       {
@@ -68,7 +68,7 @@ namespace Kcsara.Database.Api.Controllers.Units
     [Route("units/{unitId}/statusTypes/{statusTypeId}")]
     public async Task<UnitStatusType> Save(Guid unitId, Guid statusTypeId, [FromBody]UnitStatusType statusType)
     {
-      await _authz.EnsureAsync(User as ClaimsPrincipal, statusTypeId, "Update:UnitStatusType");
+      await _authz.EnsureAsync(statusTypeId, "Update:UnitStatusType");
 
       if (statusType.Unit.Id != unitId) ModelState.AddModelError("unit.id", "Can not be changed");
       if (statusType.Id != statusTypeId) ModelState.AddModelError("id", "Can not be changed");
@@ -83,7 +83,7 @@ namespace Kcsara.Database.Api.Controllers.Units
     [Route("units/{unitId}/statusTypes/{statusTypeId}")]
     public async Task Delete(Guid unitId, Guid statusTypeId)
     {
-      await _authz.EnsureAsync(User as ClaimsPrincipal, statusTypeId, "Delete:UnitStatusType");
+      await _authz.EnsureAsync(statusTypeId, "Delete:UnitStatusType");
 
       await _units.DeleteStatusType(statusTypeId);
     }

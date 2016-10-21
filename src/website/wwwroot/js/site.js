@@ -271,5 +271,8 @@
         authService.startLogin();
       }
     });
+    authService.subscribe($scope, function (ev, msg) {
+      if (msg.action == 'expired') $state.go('home');
+    })
   }])
 ;

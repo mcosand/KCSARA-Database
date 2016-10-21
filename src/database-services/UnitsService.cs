@@ -2,6 +2,7 @@
 using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using log4net;
 using Sar.Database.Api.Extensions;
@@ -15,7 +16,7 @@ namespace Sar.Database.Services
   public interface IUnitsService
   {
     Task<ListPermissionWrapper<Unit>> List();
-    Task<ListPermissionWrapper<UnitMembership>> ListMemberships(Expression<Func<UnitMembership, bool>> predicate);
+    Task<ListPermissionWrapper<UnitMembership>> ListMemberships(Expression<Func<UnitMembership, bool>> predicate, bool canCreate);
     Task<UnitMembership> CreateMembership(UnitMembership membership);
     Task<ListPermissionWrapper<UnitStatusType>> ListStatusTypes(Guid? unitId = null);
     Task<ItemPermissionWrapper<Unit>> Get(Guid id);
@@ -33,12 +34,14 @@ namespace Sar.Database.Services
     private readonly ILog _log;
     private readonly IHost _host;
     private readonly IExtensionProvider _extensions;
+    private readonly IAuthorizationService _authz;
 
-    public UnitsService(Func<Data.IKcsarContext> dbFactory, IUsersService users, IExtensionProvider extensions, IHost host, ILog log)
+    public UnitsService(Func<Data.IKcsarContext> dbFactory, IUsersService users, IExtensionProvider extensions, IAuthorizationService authz, IHost host, ILog log)
     {
       _dbFactory = dbFactory;
       _users = users;
       _extensions = extensions;
+      _authz = authz;
       _log = log;
       _host = host;
     }
@@ -58,8 +61,8 @@ namespace Sar.Database.Services
 
         return new ListPermissionWrapper<Unit>
         {
-          C = 1,
-          Items = list.Select(f => PermissionWrapper.Create(f, 1, 1))
+          C = _authz.CanCreate<Unit>(),
+          Items = list.Select(f => _authz.Wrap(f))
         };
       }
     }
@@ -76,7 +79,7 @@ namespace Sar.Database.Services
           County = f.County
         }).SingleOrDefaultAsync(f => f.Id == id);
 
-        return PermissionWrapper.Create(result, 1, 1);
+        return _authz.Wrap(result);
       }
     }
 
@@ -118,7 +121,7 @@ namespace Sar.Database.Services
     }
     #endregion
 
-    public async Task<ListPermissionWrapper<UnitMembership>> ListMemberships(Expression<Func<UnitMembership, bool>> predicate)
+    public async Task<ListPermissionWrapper<UnitMembership>> ListMemberships(Expression<Func<UnitMembership, bool>> predicate, bool canCreate)
     {
       using (var db = _dbFactory())
       {
@@ -151,8 +154,8 @@ namespace Sar.Database.Services
         var list = await query.OrderBy(f => f.Member.Name).ThenBy(f => f.Unit.Name).ToListAsync();
         return new ListPermissionWrapper<UnitMembership>
         {
-          C = 1,
-          Items = list.Select(f => PermissionWrapper.Create(f, 1, 1))
+          C = canCreate,
+          Items = list.Select(f => _authz.Wrap(f))
         };
       }
     }
@@ -182,7 +185,7 @@ namespace Sar.Database.Services
         db.UnitMemberships.Add(membershipRow);
         await db.SaveChangesAsync();
 
-        return (await ListMemberships(f => f.Id == membershipRow.Id)).Items.Select(f => f.Item).Single();
+        return (await ListMemberships(f => f.Id == membershipRow.Id, false)).Items.Select(f => f.Item).Single();
       }
     }
 
@@ -196,7 +199,7 @@ namespace Sar.Database.Services
 
         return new ListPermissionWrapper<UnitStatusType>
         {
-          C = 1,
+          C = _authz.CanCreateStatusForUnit(unitId),
           Items = (await query.Select(f => new UnitStatusType
           {
             Id = f.Id,
@@ -205,7 +208,7 @@ namespace Sar.Database.Services
             GetsAccount = f.GetsAccount,
             Name = f.StatusName,
             WacLevel = (WacLevel)(int)f.WacLevel
-          }).ToListAsync()).Select(f => PermissionWrapper.Create(f, 1, 1))
+          }).ToListAsync()).Select(f => _authz.Wrap(f))
         };
       }
     }

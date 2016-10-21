@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Sar;
-using Sar.Database;
 using Sar.Database.Api.Extensions;
 using Sar.Database.Model;
 using Sar.Database.Model.Units;
@@ -27,7 +24,7 @@ namespace Kcsara.Database.Api.Controllers.Units
     [Route("units")]
     public async Task<ListPermissionWrapper<Unit>> List()
     {
-      await _authz.EnsureAsync(User as ClaimsPrincipal, null, "Read:Unit");
+      await _authz.EnsureAsync(null, "Read:Unit");
       return await _units.List();
     }
 
@@ -35,7 +32,7 @@ namespace Kcsara.Database.Api.Controllers.Units
     [Route("units/{id}")]
     public async Task<ItemPermissionWrapper<Unit>> Get(Guid id)
     {
-      await _authz.EnsureAsync(User as ClaimsPrincipal, id, "Read:Unit");
+      await _authz.EnsureAsync(id, "Read:Unit");
       return await _units.Get(id);
     }
 
@@ -44,7 +41,7 @@ namespace Kcsara.Database.Api.Controllers.Units
     [Route("units")]
     public async Task<Unit> CreateNew([FromBody]Unit unit)
     {
-      await _authz.EnsureAsync(User as ClaimsPrincipal, null, "Create:Unit");
+      await _authz.EnsureAsync(null, "Create:Unit");
 
       if (unit.Id != Guid.Empty)
       {
@@ -60,7 +57,7 @@ namespace Kcsara.Database.Api.Controllers.Units
     [Route("units/{unitId}")]
     public async Task<Unit> Save(Guid unitId, [FromBody]Unit unit)
     {
-      await _authz.EnsureAsync(User as ClaimsPrincipal, unitId, "Update:Unit");
+      await _authz.EnsureAsync(unitId, "Update:Unit");
 
       if (unit.Id != unitId) ModelState.AddModelError("id", "Can not be changed");
 
@@ -74,7 +71,7 @@ namespace Kcsara.Database.Api.Controllers.Units
     [Route("units/{unitId}")]
     public async Task Delete(Guid unitId)
     {
-      await _authz.EnsureAsync(User as ClaimsPrincipal, unitId, "Delete:Unit");
+      await _authz.EnsureAsync(unitId, "Delete:Unit");
 
       await _units.Delete(unitId);
     }
@@ -83,7 +80,7 @@ namespace Kcsara.Database.Api.Controllers.Units
     [Route("units/{unitId}/reports")]
     public async Task<UnitReportInfo[]> ListReports(Guid unitId)
     {
-      await _authz.EnsureAsync(User as ClaimsPrincipal, unitId, "Read:Unit");
+      await _authz.EnsureAsync(unitId, "Read:Unit");
       return await _units.ListReports(unitId);
     }
   }

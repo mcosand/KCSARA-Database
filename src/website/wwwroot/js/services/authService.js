@@ -101,8 +101,10 @@
       notifyChange({ action: 'expiring', remaining: remaining });
     })
     mgr.events.addAccessTokenExpired(function () {
-      currentUser.user = null;
-      notifyChange({ action: 'expired' });
+      mgr.removeUser().then(function () {
+        currentUser.user = null;
+        notifyChange({ action: 'expired' });
+      })
     });
     mgr.events.addUserSignedOut(function () {
       currentUser.user = null;

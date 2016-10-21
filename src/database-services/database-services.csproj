@@ -99,6 +99,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Auth\AuthorizationExtensions.cs" />
     <Compile Include="Auth\AuthorizationService.cs" />
     <Compile Include="Auth\User.cs" />
     <Compile Include="ClaimsPrincipalExtensions.cs" />

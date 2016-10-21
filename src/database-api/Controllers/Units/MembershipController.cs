@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Sar;
-using Sar.Database;
 using Sar.Database.Model;
 using Sar.Database.Model.Members;
 using Sar.Database.Model.Units;
@@ -28,30 +25,30 @@ namespace Kcsara.Database.Api.Controllers.Units
     [Route("members/{memberId}/memberships")]
     public async Task<ListPermissionWrapper<UnitMembership>> ListForMember(Guid memberId, bool history = false)
     {
-      if (!await _authz.AuthorizeAsync(User as ClaimsPrincipal, memberId, "Read:UnitMembership@MemberId")) throw new AuthorizationException();
+      await _authz.EnsureAsync(memberId, "Read:UnitMembership@MemberId");
 
       DateTimeOffset now = DateTimeOffset.UtcNow;
 
       Expression<Func<UnitMembership, bool>> predicate = history
         ? (Expression<Func<UnitMembership, bool>> )(f => f.Member.Id == memberId)
-        : (f => f.Member.Id == memberId &&f.IsActive && (f.End == null || f.End > now));
+        : (f => f.Member.Id == memberId && f.IsActive && (f.End == null || f.End > now));
 
-      return await _units.ListMemberships(predicate);
+      return await _units.ListMemberships(predicate, _authz.CanCreateMembershipForMember(memberId));
     }
 
     [HttpGet]
     [Route("units/{unitId}/memberships")]
     public async Task<ListPermissionWrapper<UnitMembership>> ListForUnit(Guid unitId, bool history = false)
     {
-      if (!await _authz.AuthorizeAsync(User as ClaimsPrincipal, unitId, "Read:UnitMembership@UnitId")) throw new AuthorizationException();
+      DateTimeOffset now = DateTimeOffset.UtcNow;
 
-      if (!await _authz.AuthorizeAsync(unitId, "Read:UnitMembership@UnitId")) throw new AuthorizationException();
+      await _authz.EnsureAsync(unitId, "Read:UnitMembership@UnitId");
 
       Expression<Func<UnitMembership, bool>> predicate = history
         ? (Expression<Func<UnitMembership, bool>>)(f => f.Unit.Id == unitId)
         : (f => f.Unit.Id == unitId && f.IsActive && (f.End == null || f.End > now));
 
-      return await _units.ListMemberships(predicate);
+      return await _units.ListMemberships(predicate, true);
     }
 
     [HttpPost]
@@ -59,8 +56,8 @@ namespace Kcsara.Database.Api.Controllers.Units
     public async Task<UnitMembership> CreateForMember(Guid memberId, [FromBody] UnitMembership membership)
     {
       if (membership.Unit == null) throw new ArgumentException("unit is required");
-      if (!await _authz.AuthorizeAsync(User as ClaimsPrincipal, membership.Unit.Id, "Create:UnitMembership@UnitId")) throw new AuthorizationException();
-      if (!await _authz.AuthorizeAsync(User as ClaimsPrincipal, memberId, "Create:UnitMembership@MemberId")) throw new AuthorizationException();
+      await _authz.AuthorizeAsync(membership.Unit.Id, "Create:UnitMembership@UnitId");
+      await _authz.AuthorizeAsync(memberId, "Create:UnitMembership@MemberId");
 
       if (membership.Member == null) membership.Member = new MemberSummary();
       membership.Member.Id = memberId;

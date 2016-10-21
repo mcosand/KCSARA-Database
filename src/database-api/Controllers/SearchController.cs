@@ -52,12 +52,12 @@ namespace Kcsara.Database.Api.Controllers.Units
         var now = DateTime.Now;
         var last12Months = now.AddMonths(-12);
         var list = new List<SearchResult>();
-        if (searchTypes.Any(f => f == SearchResultType.Member))
+        if (searchTypes.Any(f => f == SearchResultType.Member) &&  await _authz.AuthorizeAsync(null, "Read:Member"))
         {
           list.AddRange(await _members.SearchAsync(q));
         }
 
-        if (searchTypes.Any(f => f == SearchResultType.Mission) && await _authz.AuthorizeAsync(User as ClaimsPrincipal, null, "Read:Mission"))
+        if (searchTypes.Any(f => f == SearchResultType.Mission) && await _authz.AuthorizeAsync(null, "Read:Mission"))
         {
           list.AddRange(await _events.SearchMissionsAsync(q));
         }

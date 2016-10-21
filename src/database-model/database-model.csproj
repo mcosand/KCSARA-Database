@@ -101,6 +101,7 @@
   <ItemGroup>
     <Compile Include="Attributes.cs" />
     <Compile Include="AuditLog.cs" />
+    <Compile Include="IDbContext.cs" />
     <Compile Include="Migrations\201608122252464_UnitMembership_References.cs" />
     <Compile Include="Migrations\201608122252464_UnitMembership_References.Designer.cs">
       <DependentUpon>201608122252464_UnitMembership_References.cs</DependentUpon>
