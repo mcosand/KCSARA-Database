@@ -6,10 +6,11 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CsvHelper;
+using Sar.Database.Data;
 using Sar.Database.Model;
 using Sar.Database.Model.Training;
 using Sar.Database.Services.Training;
-using Data = Kcsar.Database.Model;
+using DB = Kcsar.Database.Model;
 
 namespace Sar.Database.Services
 {
@@ -25,12 +26,12 @@ namespace Sar.Database.Services
 
   public class TrainingRecordsService : ITrainingRecordsService
   {
-    private readonly Func<Data.IKcsarContext> _dbFactory;
+    private readonly Func<DB.IKcsarContext> _dbFactory;
     private readonly IAuthorizationService _authz;
     private readonly IHost _host;
 
     /// <summary></summary>
-    public TrainingRecordsService(Func<Data.IKcsarContext> dbFactory, IAuthorizationService authSvc, IHost host)
+    public TrainingRecordsService(Func<DB.IKcsarContext> dbFactory, IAuthorizationService authSvc, IHost host)
     {
       _dbFactory = dbFactory;
       _authz = authSvc;
@@ -78,7 +79,7 @@ namespace Sar.Database.Services
     /// <param name="db"></param>
     /// <param name="members"></param>
     /// <returns></returns>
-    private async Task<Dictionary<Guid, List<TrainingStatus>>> RequiredTrainingStatus(Data.IKcsarContext db, IQueryable<Data.Member> members, DateTimeOffset asOf)
+    private async Task<Dictionary<Guid, List<TrainingStatus>>> RequiredTrainingStatus(DB.IKcsarContext db, IQueryable<DB.Member> members, DateTimeOffset asOf)
     {
       // For all the specified members,
       // - Get their required training (if any)
@@ -176,7 +177,7 @@ namespace Sar.Database.Services
     {
       public TrainingStatus Status { get; set; }
       public DateTimeOffset WacDate { get; set; }
-      public Data.TrainingRequired Requirement { get; set; }
+      public DB.TrainingRequired Requirement { get; set; }
       public Guid MemberId { get; set; }
     }
 
@@ -303,10 +304,10 @@ namespace Sar.Database.Services
 
         list.ForEach(item =>
         {
-          Data.TrainingRequired required;
+          DB.TrainingRequired required;
           if (!requirements.TryGetValue(item.Status.Course.Id, out required))
           {
-            required = new Data.TrainingRequired { Course = courses[item.Status.Course.Id], CourseId = item.Status.Course.Id, GraceMonths = 0, JustOnce = false };
+            required = new DB.TrainingRequired { Course = courses[item.Status.Course.Id], CourseId = item.Status.Course.Id, GraceMonths = 0, JustOnce = false };
           }
           item.Requirement = required;
         });

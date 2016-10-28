@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Sar.Database.Model;
 using Sar.Database.Model.Search;
-using Data = Kcsar.Database.Model;
+using DB = Kcsar.Database.Model;
 
 namespace Sar.Database.Services
 {
@@ -16,7 +16,7 @@ namespace Sar.Database.Services
 
   public class EventsService : IEventsService
   {
-    private readonly Func<Data.IKcsarContext> _dbFactory;
+    private readonly Func<DB.IKcsarContext> _dbFactory;
     private readonly IAuthorizationService _authz;
     private readonly IHost _env;
 
@@ -24,7 +24,7 @@ namespace Sar.Database.Services
     /// <param name="dbFactory"></param>
     /// <param name="authSvc"></param>
     /// <param name="host"></param>
-    public EventsService(Func<Data.IKcsarContext> dbFactory, IAuthorizationService authSvc, IHost env)
+    public EventsService(Func<DB.IKcsarContext> dbFactory, IAuthorizationService authSvc, IHost env)
     {
       _dbFactory = dbFactory;
       _authz = authSvc;
@@ -51,7 +51,7 @@ namespace Sar.Database.Services
       }
     }
 
-    private async Task<IList<EventSummary>> MissionSummariesAsync(IQueryable<Data.Mission> queryable)
+    private async Task<IList<EventSummary>> MissionSummariesAsync(IQueryable<DB.Mission> queryable)
     {
       return await queryable
         .OrderByDescending(f => f.StartTime)

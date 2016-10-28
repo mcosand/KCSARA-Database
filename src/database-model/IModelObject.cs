@@ -1,17 +1,13 @@
-﻿/*
- * Copyright 2008-2014 Matthew Cosand
- */
-
-namespace Kcsar.Database.Model
+﻿namespace Kcsar.Database.Model
 {
   using System;
   using System.ComponentModel.DataAnnotations;
+  using Sar.Database.Data;
 
-  public interface IModelObject : IValidatableObject
+  public interface IModelObject : IRowWithId, IValidatableObject
   {
     DateTime LastChanged { get; set; }
     string ChangedBy { get; set; }
-    Guid Id { get; }
     string GetReportHtml();
   }
 }

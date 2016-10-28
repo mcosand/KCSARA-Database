@@ -6,6 +6,7 @@
   using System.Data.Entity.Infrastructure;
   using System.Linq;
   using System.Threading.Tasks;
+  using Sar.Database.Data;
 
   public interface IKcsarContext : IDbContext, IDisposable
   {
@@ -52,7 +53,6 @@
     Func<UnitMembership, bool> GetActiveMembershipFilter(Guid? unit, DateTime time);
     IQueryable<Member> GetActiveMembers(Guid? unit, DateTime time, params string[] includes);
     int SaveChanges();
-    Task<int> SaveChangesAsync();
 
     DbEntityEntry<TEntity> Entry<TEntity>(TEntity entity) where TEntity : class;
   }

@@ -139,6 +139,10 @@
       <Project>{1D3FBAA4-8CB4-45F1-8709-AF2FF1940EBB}</Project>
       <Name>web-api-common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\database-data-common\database-data-common.csproj">
+      <Project>{65c9556c-8be3-4450-b119-9fc43d2bef38}</Project>
+      <Name>database-data-common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\database-model\database-model.csproj">
       <Project>{EAE01EC9-F91D-4B72-A648-6AC96E688CCE}</Project>
       <Name>database-model</Name>

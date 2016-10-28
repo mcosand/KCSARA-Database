@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Sar.Database.Model;
 using Sar.Database.Model.Members;
 using Sar.Database.Model.Search;
-using Data = Kcsar.Database.Model;
+using DB = Kcsar.Database.Model;
 
 namespace Sar.Database.Services
 {
@@ -31,7 +31,7 @@ namespace Sar.Database.Services
 
   public class MembersService : IMembersService
   {
-    private readonly Func<Data.IKcsarContext> _dbFactory;
+    private readonly Func<DB.IKcsarContext> _dbFactory;
     private readonly IAuthorizationService _authz;
     private readonly IHost _host;
 
@@ -39,7 +39,7 @@ namespace Sar.Database.Services
     /// <param name="dbFactory"></param>
     /// <param name="authSvc"></param>
     /// <param name="host"></param>
-    public MembersService(Func<Data.IKcsarContext> dbFactory, IAuthorizationService authSvc, IHost host)
+    public MembersService(Func<DB.IKcsarContext> dbFactory, IAuthorizationService authSvc, IHost host)
     {
       _dbFactory = dbFactory;
       _authz = authSvc;
@@ -97,7 +97,7 @@ namespace Sar.Database.Services
     {
       using (var db = _dbFactory())
       {
-        var row = new Data.Member
+        var row = new DB.Member
         {
           FirstName = member.First,
           MiddleName = member.Middle,
@@ -165,7 +165,7 @@ namespace Sar.Database.Services
     /// <param name="query"></param>
     /// <param name="modify"></param>
     /// <returns></returns>
-    internal static async Task<IEnumerable<T>> SummariesWithMemberships<T>(IQueryable<Data.Member> query, Action<Data.Member, T> modify = null)
+    internal static async Task<IEnumerable<T>> SummariesWithMemberships<T>(IQueryable<DB.Member> query, Action<DB.Member, T> modify = null)
       where T : MemberSummary, new()
     {
       DateTime cutoff = DateTime.Now;
@@ -208,7 +208,7 @@ namespace Sar.Database.Services
     /// <summary></summary>
     /// <param name="memberId"></param>
     /// <returns></returns>
-    private async Task<IEnumerable<PersonContact>> _ListMemberContactsAsync(Guid memberId, Expression<Func<Data.PersonContact, bool>> predicate = null)
+    private async Task<IEnumerable<PersonContact>> _ListMemberContactsAsync(Guid memberId, Expression<Func<DB.PersonContact, bool>> predicate = null)
     {
       using (var db = _dbFactory())
       {
@@ -236,7 +236,7 @@ namespace Sar.Database.Services
       Guid newId;
       using (var db = _dbFactory())
       {
-        var row = new Data.PersonContact
+        var row = new DB.PersonContact
         {
           PersonId = id,
           // This next line is only here for the GetReportHtml logging call

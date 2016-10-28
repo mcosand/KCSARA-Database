@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Kcsar.Database.Model
+namespace Sar.Database.Data
 {
   /// <summary>
   /// An interface for the database context.

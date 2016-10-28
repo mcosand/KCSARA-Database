@@ -1,11 +1,10 @@
-﻿using System;
-using System.Configuration;
+﻿using System.Configuration;
 using System.Data.Entity;
-using System.Threading.Tasks;
+using Sar.Database.Data;
 
 namespace Sar.Auth.Data
 {
-  public interface IAuthDbContext : IDisposable
+  public interface IAuthDbContext : IDbContext
   {
     IDbSet<AccountRow> Accounts { get; set; }
     IDbSet<ExternalLoginRow> ExternalLogins { get; set; }
@@ -18,8 +17,6 @@ namespace Sar.Auth.Data
     IDbSet<LoginLogRow> Logins { get; set; }
 
     IDbSet<TokenRow> Tokens { get; set; }
-
-    Task<int> SaveChangesAsync();
   }
 
   public class AuthDbContext : DbContext, IAuthDbContext

@@ -1,27 +1,27 @@
-﻿using Data = Kcsar.Database.Model;
+﻿using DB = Kcsar.Database.Model;
 
 namespace Sar.Database.Model
 {
   public static class EnumConversionExtensions
   {
-    public static Gender ToModel(this Data.Gender dataGender)
+    public static Gender ToModel(this DB.Gender dataGender)
     {
       return (Gender)((int)dataGender);
     }
 
-    public static Data.Gender FromModel(this Gender gender)
+    public static DB.Gender FromModel(this Gender gender)
     {
-      return (Data.Gender)((int)gender);
+      return (DB.Gender)((int)gender);
     }
 
-    public static WacLevel ToModel(this Data.WacLevel dataGender)
+    public static WacLevel ToModel(this DB.WacLevel dataGender)
     {
       return (WacLevel)((int)dataGender);
     }
 
-    public static Data.WacLevel FromModel(this WacLevel gender)
+    public static DB.WacLevel FromModel(this WacLevel gender)
     {
-      return (Data.WacLevel)((int)gender);
+      return (DB.WacLevel)((int)gender);
     }
   }
 }

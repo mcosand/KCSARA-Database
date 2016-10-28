@@ -110,7 +110,6 @@
     <Compile Include="IUsersService.cs" />
     <Compile Include="Members\MembersService.cs" />
     <Compile Include="EnumConversions.cs" />
-    <Compile Include="ObjectUpdater.cs" />
     <Compile Include="SendMessageService.cs" />
     <Compile Include="Training\ParsedKcsaraCsv.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -139,6 +138,10 @@
     <ProjectReference Include="..\database-api-extensions\database-api-extensions.csproj">
       <Project>{f56a1669-1009-4203-8045-c890f9f93a2e}</Project>
       <Name>database-api-extensions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\database-data-common\database-data-common.csproj">
+      <Project>{65c9556c-8be3-4450-b119-9fc43d2bef38}</Project>
+      <Name>database-data-common</Name>
     </ProjectReference>
     <ProjectReference Include="..\database-model\database-model.csproj">
       <Project>{eae01ec9-f91d-4b72-a648-6ac96e688cce}</Project>

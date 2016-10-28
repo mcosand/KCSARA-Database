@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Sar.Database.Model;
 using Sar.Database.Model.Training;
 using Sar.Database.Model.Units;
-using Data = Kcsar.Database.Model;
+using DB = Kcsar.Database.Model;
 
 namespace Sar.Database.Services
 {
@@ -23,9 +23,9 @@ namespace Sar.Database.Services
   {
     private readonly IRolesService _rolesService;
     private readonly IHost _host;
-    private readonly Func<Data.IKcsarContext> _dbFactory;
+    private readonly Func<DB.IKcsarContext> _dbFactory;
 
-    public AuthorizationService(Func<Data.IKcsarContext> dbFactory, IHost host, IRolesService rolesService)
+    public AuthorizationService(Func<DB.IKcsarContext> dbFactory, IHost host, IRolesService rolesService)
     {
       _dbFactory = dbFactory;
       _host = host;
@@ -60,7 +60,7 @@ namespace Sar.Database.Services
       var memberId = string.IsNullOrWhiteSpace(memberIdString) ? (Guid?)null : new Guid(memberIdString);
 
       // Members can read their own records.
-      if ((Guid?)resource == memberId && policyName.StartsWith("Read:") && (policyName.EndsWith("@Member") || policyName.EndsWith(":Member")))
+      if (resource is Guid? && (Guid?)resource == memberId && policyName.StartsWith("Read:") && (policyName.EndsWith("@Member") || policyName.EndsWith(":Member")))
       {
         return true;
       }
@@ -68,7 +68,7 @@ namespace Sar.Database.Services
       Match m = Regex.Match(policyName, "^([a-zA-Z]+)(\\:([a-zA-Z]+)(@([a-zA-Z]+))?)?$");
       if (!m.Success) throw new InvalidOperationException("Unknown policy " + policyName);
 
-      var roles = _rolesService.RolesForAccount(new Guid(user.FindFirst("sub").Value));
+      var roles = _rolesService.ListAllRolesForAccount(new Guid(user.FindFirst("sub").Value));
       var scopes = user.FindAll("scope").Select(f => f.Value).ToList();
 
       if (roles.Any(f => Equals(f, "cdb.admins")) || scopes.Any(f => f.StartsWith("db-w-")))

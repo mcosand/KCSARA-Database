@@ -4,13 +4,12 @@ using System.Data.Entity;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
-using Kcsar.Database.Model;
 
-namespace Sar.Database.Services
+namespace Sar.Database.Data
 {
   public class ObjectUpdater
   {
-    public static async Task<ObjectUpdater<T>> CreateUpdater<T>(IDbSet<T> dbSet, Guid id, Action<T> initNew) where T : ModelObject, new()
+    public static async Task<ObjectUpdater<T>> CreateUpdater<T>(IDbSet<T> dbSet, Guid id, Action<T> initNew) where T : class, IRowWithId, new()
     {
       var existing = await dbSet.FirstOrDefaultAsync(f => f.Id == id);
       if (existing == null)
@@ -24,7 +23,7 @@ namespace Sar.Database.Services
     }
   }
 
-  public class ObjectUpdater<T> where T : ModelObject
+  public class ObjectUpdater<T>
   {
     private List<string> _changes = new List<string>();
 
@@ -51,7 +50,7 @@ namespace Sar.Database.Services
       }
     }
 
-    public async Task<bool> Persist(IKcsarContext db)
+    public async Task<bool> Persist(IDbContext db)
     {
       if (_changes.Count == 0) return false;
 

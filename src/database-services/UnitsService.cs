@@ -6,10 +6,11 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using log4net;
 using Sar.Database.Api.Extensions;
+using Sar.Database.Data;
 using Sar.Database.Model;
 using Sar.Database.Model.Members;
 using Sar.Database.Model.Units;
-using Data = Kcsar.Database.Model;
+using DB = Kcsar.Database.Model;
 
 namespace Sar.Database.Services
 {
@@ -29,14 +30,14 @@ namespace Sar.Database.Services
 
   public class UnitsService : IUnitsService
   {
-    private readonly Func<Data.IKcsarContext> _dbFactory;
+    private readonly Func<DB.IKcsarContext> _dbFactory;
     private readonly IUsersService _users;
     private readonly ILog _log;
     private readonly IHost _host;
     private readonly IExtensionProvider _extensions;
     private readonly IAuthorizationService _authz;
 
-    public UnitsService(Func<Data.IKcsarContext> dbFactory, IUsersService users, IExtensionProvider extensions, IAuthorizationService authz, IHost host, ILog log)
+    public UnitsService(Func<DB.IKcsarContext> dbFactory, IUsersService users, IExtensionProvider extensions, IAuthorizationService authz, IHost host, ILog log)
     {
       _dbFactory = dbFactory;
       _users = users;
@@ -170,7 +171,7 @@ namespace Sar.Database.Services
       {
         var status = await db.UnitStatusTypes.FirstOrDefaultAsync(f => f.Unit.Id == membership.Unit.Id && f.StatusName == membership.Status);
         if (status == null) throw new ArgumentException("status " + membership.Status + " is unknown");
-        var membershipRow = new Data.UnitMembership
+        var membershipRow = new DB.UnitMembership
         {
           UnitId = membership.Unit.Id,
           PersonId = membership.Member.Id,
@@ -194,7 +195,7 @@ namespace Sar.Database.Services
     {
       using (var db = _dbFactory())
       {
-        IQueryable<Data.UnitStatus> query = db.UnitStatusTypes;
+        IQueryable<DB.UnitStatus> query = db.UnitStatusTypes;
         if (unitId.HasValue) query = query.Where(f => f.Unit.Id == unitId.Value);
 
         return new ListPermissionWrapper<UnitStatusType>
