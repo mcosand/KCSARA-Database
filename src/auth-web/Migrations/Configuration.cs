@@ -29,11 +29,29 @@ namespace Sar.Auth.Migrations
           AddedScopes = "database-api database",
           RedirectUris = new List<ClientUriRow>
           {
-            new ClientUriRow { Uri = "http://localhost:4944" }
+            new ClientUriRow { Uri = "http://localhost:4944/" }
           },
           LogoutUris = new List<ClientLogoutUriRow>
           {
-            new ClientLogoutUriRow { Uri = "http://localhost:4944" }
+            new ClientLogoutUriRow { Uri = "http://localhost:4944/" }
+          }
+        });
+
+        context.Clients.Add(new ClientRow
+        {
+          DisplayName = "KCSARA Database",
+          ClientId = "spaweb",
+          Enabled = true,
+          Flow = Flows.Implicit,
+          AddedScopes = "database-api database",
+          RedirectUris = new List<ClientUriRow>
+          {
+            new ClientUriRow { Uri = "http://localhost:4944/loggedIn" },
+            new ClientUriRow { Uri = "http://localhost:4944/loginSilent" }
+          },
+          LogoutUris = new List<ClientLogoutUriRow>
+          {
+            new ClientLogoutUriRow { Uri = "http://localhost:4944/" }
           }
         });
 
