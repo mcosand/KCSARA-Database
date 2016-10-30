@@ -17,6 +17,8 @@ namespace Kcsara.Database.Web
 
     protected void Application_Start()
     {
+      SqlServerTypes.Utilities.LoadNativeAssemblies(Server.MapPath("~/bin"));
+
       GlobalConfiguration.Configure(config => WebApiConfig.Register(config, kernel));
       BundleConfig.RegisterBundles(BundleTable.Bundles);
       RouteConfig.RegisterRoutes(RouteTable.Routes);
