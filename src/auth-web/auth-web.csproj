@@ -273,6 +273,9 @@
     <EmbeddedResource Include="Migrations\201610042354590_TokenStore.resx">
       <DependentUpon>201610042354590_TokenStore.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610251619525_AccountResetTokens.resx">
+      <DependentUpon>201610251619525_AccountResetTokens.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
@@ -282,10 +285,15 @@
     <Compile Include="AppBuilderExtensions.cs" />
     <Compile Include="AuthConstants.cs" />
     <Compile Include="Controllers\RegisterController.cs" />
+    <Compile Include="Data\AccountResetTokenRow.cs" />
     <Compile Include="Data\TokenRow.cs" />
     <Compile Include="Migrations\201610042354590_TokenStore.cs" />
     <Compile Include="Migrations\201610042354590_TokenStore.Designer.cs">
       <DependentUpon>201610042354590_TokenStore.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201610251619525_AccountResetTokens.cs" />
+    <Compile Include="Migrations\201610251619525_AccountResetTokens.Designer.cs">
+      <DependentUpon>201610251619525_AccountResetTokens.cs</DependentUpon>
     </Compile>
     <Compile Include="Serialization\AsyncHelper.cs" />
     <Compile Include="Serialization\ClaimConverter.cs" />

@@ -1,0 +1,57 @@
+﻿<md-content layout-padding flex ng-controller="AccountsCtrl">
+  <md-card>
+    <md-toolbar class="md-table-toolbar md-default">
+      <div class="md-toolbar-tools">
+        <span>Account List</span>
+        <div flex></div>
+        <md-button class="md-icon-button md-primary" aria-label="Add Account" ng-if="accounts._c" ng-click="createNew($event)">
+          <md-icon>add_circle</md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-card-content>
+      <md-table-container>
+        <table md-table sortable-columns md-progress="loading">
+          <thead md-head md-order="query.order" md-on-reorder="getList">
+            <tr md-row>
+              <th md-column md-order-by="lastName">First Name</th>
+              <th md-column md-order-by="firstName">Last Name</th>
+              <th md-column md-order-by="username">Username</th>
+              <th md-column md-order-by="lastLogin">Last Active</th>
+              <th md-column md-order-by="lockDate"><md-icon>lock</md-icon></th>
+            </tr>
+          </thead>
+          <tbody md-body>
+            <tr md-row ng-repeat="account in accounts | orderBy: query.order" ng-click="gotoAccount(account)" class="clickable">
+              <td md-cell>{{account.lastName}}</td>
+              <td md-cell>{{account.firstName}}</td>
+              <td md-cell>{{account.username}}</td>
+              <td md-cell>{{account.lastLogin | simpleDate}}</td>
+              <td md-cell><md-icon ng-if="account.lockDate" aria-label="Account is locked">lock</md-icon></td>
+            </tr>
+          </tbody>
+        </table>
+      </md-table-container> 
+    </md-card-content>
+  </md-card>
+</md-content>
+<script type="text/ng-template" id="/wwwroot/partials/accounts/create.html">
+  <edit-dialog name="createNew">
+    <md-input-container class="md-block">
+      <label>First Name</label>
+      <input ng-model="item.firstName" name="firstName" md-auto-focus required>
+      <div ng-messages="editUnit.firstName.$error">
+        <div ng-message="required">First Name is required.</div>
+        <div ng-message="server">{{editUnit.firstName.$error.server}}</div>
+      </div>
+    </md-input-container>
+    <md-input-container class="md-block">
+      <label>Last Name</label>
+      <input ng-model="item.lastName" name="lastName" required>
+      <div ng-messages="editUnit.lastName.$error">
+        <div ng-message="required">Last Name is required.</div>
+        <div ng-message="server">{{editUnit.lastName.$error.server}}</div>
+      </div>
+    </md-input-container>
+  </edit-dialog>
+</script>

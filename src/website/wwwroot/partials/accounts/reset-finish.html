@@ -1,0 +1,33 @@
+﻿<md-content layout-padding flex ng-controller="AccountFinishResetCtrl" layout="row" layout-align="center start">
+  <form name="resetForm" flex flex-sm="60" flex-md="50">
+    <md-card>
+      <md-toolbar class="md-table-toolbar md-default">
+        <div class="md-toolbar-tools">
+          <span>Reset Account Password</span>
+          <div flex></div>
+        </div>
+      </md-toolbar>
+      <md-card-content>
+        <md-input-container class="md-block">
+          <label>New Password</label>
+          <input ng-model="password" name="password" required minlength="6" type="password">
+          <div ng-messages="resetForm.password.$error">
+            <div ng-message="required">Password is required.</div>
+            <div ng-message="minlength">Must be at least 6 characters.</div>
+          </div>
+        </md-input-container>
+        <md-input-container class="md-block">
+          <label>Confirm Password</label>
+          <input ng-model="confirmPassword" name="confirmPassword" compare-to="password" required type="password">
+          <div ng-messages="resetForm.confirmPassword.$error">
+            <div ng-message="required">Password is required.</div>
+            <div ng-message="compareTo">Does not match password.</div>
+          </div>
+        </md-input-container>
+      </md-card-content>
+      <md-card-actions layout="row" layout-align="end center">
+        <md-button ng-disabled="saving || resetForm.$invalid" ng-click="save()">Save</md-button>
+      </md-card-actions>
+    </md-card>
+  </form>
+</md-content>

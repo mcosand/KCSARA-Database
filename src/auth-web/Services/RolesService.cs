@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Sar.Auth.Data;
+using Sar.Database.Model.Accounts;
 using Sar.Database.Services;
 using Serilog;
 
@@ -12,7 +13,7 @@ namespace Sar.Database.Web.Auth.Services
     private readonly Func<IAuthDbContext> _dbFactory;
     private readonly ILogger _log;
     private readonly object cacheLock = new object();
-    private Dictionary<string, List<string>> childrenCache = null;
+    private Dictionary<string, Role> cache = null;
 
     public RolesService(Func<IAuthDbContext> dbFactory, ILogger log)
     {
@@ -20,7 +21,7 @@ namespace Sar.Database.Web.Auth.Services
       _log = log.ForContext<RolesService>();
     }
 
-    public List<string> RolesForAccount(Guid accountId)
+    public List<string> ListAllRolesForAccount(Guid accountId)
     {
       EnsureCache();
 
@@ -42,24 +43,42 @@ namespace Sar.Database.Web.Auth.Services
         {
           list.Add(item);
         }
-        BuildRoleList(list, childrenCache[item]);
+        BuildRoleList(list, cache[item].Includes.Select(f => f.Id));
+      }
+    }
+
+    public List<Role> ListRolesForAccount(Guid accountId)
+    {
+      EnsureCache();
+
+      using (var db = _dbFactory())
+      {
+        return db.Accounts.Where(f => f.Id == accountId)
+                 .SelectMany(f => f.Roles).Select(f => f.Id).ToList()
+                 .Select(f => cache[f])
+                 .ToList();
       }
     }
 
     private void EnsureCache()
     {
-      if (childrenCache == null)
+      if (cache == null)
       {
         lock (cacheLock)
         {
-          if (childrenCache == null)
+          if (cache == null)
           {
             using (var db = _dbFactory())
             {
-              childrenCache = db.Roles.ToDictionary(
+              cache = db.Roles.ToDictionary(
                 f => f.Id,
-                f => f.Children.Select(g => g.Id).ToList()
-                );
+                f => new Role { Id = f.Id, Name = f.Name, Description = f.Description}
+              );
+
+              foreach (var link in db.Roles.SelectMany(role => role.Children, (parent, child) => new { P = parent.Id, C = child.Id }))
+              {
+                cache[link.P].Includes.Add(cache[link.C]);
+              }
             }
           }
         }

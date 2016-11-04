@@ -38,22 +38,8 @@ namespace database_services_tests
     {
       var rolesService = new Mock<IRolesService>(MockBehavior.Strict);
       var subject = host.User.GetSubject();
-      rolesService.Setup(f => f.RolesForAccount(subject)).Returns(roles.ToList());
+      rolesService.Setup(f => f.ListAllRolesForAccount(subject)).Returns(roles.ToList());
       return rolesService.Object;
-    }
-
-    public void CreateTrainingRecord(string addRoles, bool canCreate)
-    {
-      ClaimsPrincipal user = GetNonMemberUser();
-      List<string> roles = (addRoles ?? string.Empty).Split(',').ToList();
-      roles.Add("cdb.users");
-
-      var db = new FakeKcsarContext();
-
-      var host = GetHost(user);
-      var authz = new AuthorizationService(() => db.Mock.Object, host, MockRoles(host, roles));
-
-      Assert.AreEqual(canCreate, authz.CanCreate)
     }
 
     [Test]

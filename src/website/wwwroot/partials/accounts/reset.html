@@ -1,0 +1,31 @@
+﻿<md-content layout-padding flex ng-controller="AccountResetCtrl" layout="row" layout-align="center start">
+  <form name="resetForm" ng-show="!done" flex flex-gt-xs="60" flex-gt-sm="50">
+    <md-card>
+      <md-toolbar class="md-table-toolbar md-default">
+        <div class="md-toolbar-tools">
+          <span>Reset Account Password</span>
+        </div>
+      </md-toolbar>
+      <md-card-content>
+        <md-input-container class="md-block">
+          <label>Username</label>
+          <input ng-model="username" name="username" required>
+          <div ng-messages="resetForm.username.$error">
+            <div ng-message="required">Username is required.</div>
+          </div>
+        </md-input-container>
+      </md-card-content>
+      <md-card-actions layout="row" layout-align="end center">
+        <md-button ng-disabled="working || resetForm.$invalid" ng-click="doReset()">Reset</md-button>
+      </md-card-actions>
+    </md-card>
+  </form>
+  <md-card ng-if="done" flex flex-gt-xs="60" flex-gt-sm="50">
+    <md-toolbar class="md-table-toolbar md-default">
+      <div class="md-toolbar-tools">
+        <span>Reset Account Password</span>
+      </div>
+    </md-toolbar>
+    <md-card-content>Password reset has been requested for {{username}}.</md-card-content>
+  </md-card>
+</md-content>

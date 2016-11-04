@@ -1,0 +1,77 @@
+﻿<md-content layout-padding flex ng-controller="AccountsDetailCtrl">
+  <md-card>
+    <md-card-header>
+      <md-card-header-text>
+        <span class="md-title">Account Details</span>
+      </md-card-header-text>
+    </md-card-header>
+    <md-card-content>
+      <div><b>{{account.firstName}} {{account.lastName}}</b></div>
+      <div>{{account.email}}</div>
+      <div>{{account.username}}<i ng-hide="account.username">No username</i></div>
+      <div ng-show="account.lockDate">
+        <br/>
+        Account was locked on {{account.lockDate | simpleDate}}: &quot;{{account.lockReason}}&quot;
+      </div>
+    </md-card-content>
+    <md-card-actions layout="row" layout-align="end center">
+      <md-button ng-show="account._u" ng-click="edit($event)">Edit</md-button>
+      <md-button ng-show="!account._u && account.__.pwd" ng-click="setPassword($event)">Set Password</md-button>
+      <md-menu ng-if="account._u">
+        <md-button aria-label="More Account Actions" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+          <md-icon md-menu-origin>more_horiz</md-icon>
+        </md-button>
+        <md-menu-content width="3" layout="column">
+          <md-menu-item ng-show="account.username">
+            <md-button ng-click="resetPassword($event)">Reset Password</md-button>
+          </md-menu-item>
+          <md-menu-item ng-show="account.__.pwd && account.username">
+            <md-button ng-click="setPassword($event)" md-menu-align-target>Set Password</md-button>
+          </md-menu-item>
+          <md-menu-item ng-show="account._u && !isMe()">
+            <md-button ng-click="account.lockDate ? unlock($event) : lock($event)">{{account.lockDate ? 'Unlock' : 'Lock'}}</md-button>
+          </md-menu-item>
+        </md-menu-content>
+      </md-menu>
+    </md-card-actions>
+  </md-card>
+</md-content>
+
+<script type="text/ng-template" id="/partials/accounts/set-password.html">
+  <form ng-cloak name="setPasswordForm">
+    <md-toolbar class="md-accent">
+      <div class="md-toolbar-tools">
+        <h2>{{::title}}</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon aria-label="Close dialog">close</md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div class="md-dialog-content">
+        <md-input-container class="md-block">
+          <label>New Password</label>
+          <input ng-model="password" name="password" required minlength="6" type="password">
+          <div ng-messages="setPasswordForm.password.$error">
+            <div ng-message="required">Password is required.</div>
+            <div ng-message="minlength">Must be at least 6 characters.</div>
+          </div>
+        </md-input-container>
+        <md-input-container class="md-block">
+          <label>Confirm Password</label>
+          <input ng-model="confirmPassword" name="confirmPassword" compare-to="password" required type="password">
+          <div ng-messages="setPasswordForm.confirmPassword.$error">
+            <div ng-message="required">Password is required.</div>
+            <div ng-message="compareTo">Does not match password.</div>
+          </div>
+        </md-input-container>
+      </div>
+      <md-progress-linear md-mode="indeterminate" class="md-accent" ng-disabled="!saving"></md-progress-linear>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button ng-disabled="saving || setPasswordForm.$invalid" ng-click="save()">Set Password</md-button>
+    </md-dialog-actions>
+  </form>
+</script>

@@ -70,8 +70,8 @@ namespace Sar.Auth.Migrations
           Email = "test@example.local",
           FirstName = "Admin",
           LastName = "User",
-          Created = DateTime.Now,
-          PasswordDate = DateTime.Now,
+          Created = DateTime.UtcNow,
+          PasswordDate = DateTime.UtcNow,
           PasswordHash = SarUserService.GetSaltedPassword("password"),
           Username = "admin"
         };

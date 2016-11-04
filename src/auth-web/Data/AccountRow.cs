@@ -2,16 +2,18 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Sar.Database.Data;
 
 namespace Sar.Auth.Data
 {
   [Table("Accounts")]
-  public class AccountRow
+  public class AccountRow : IRowWithId
   {
     public AccountRow()
     {
       Id = Guid.NewGuid();
       Logins = new List<LoginLogRow>();
+      ExternalLogins = new List<ExternalLoginRow>();
     }
 
     public Guid Id { get; set; }
@@ -40,6 +42,10 @@ namespace Sar.Auth.Data
     public virtual ICollection<RoleRow> Roles { get; set; }
 
     public virtual ICollection<LoginLogRow> Logins { get; set; }
+
+    public virtual ICollection<ExternalLoginRow> ExternalLogins { get; set; }
+
+    public virtual ICollection<AccountResetTokenRow> ResetTokens { get; set; }
 
     public DateTime? Created { get; set; }
     public DateTime? LastLogin { get; set; }

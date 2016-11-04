@@ -80,6 +80,11 @@
     return doc.label || doc.name;
   };
 })
+  .filter('simpleDate', function () {
+    return function (value) {
+      return value ? value.replace('T', ' ').substring(0,16) : '';
+    }
+  })
 
 .factory('httpRequestInterceptor', ['currentUser', '$q', function (currentUser, $q) {
   return {

@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Sar.Database.Model;
+using Sar.Database.Model.Accounts;
 using Sar.Database.Model.Training;
 using Sar.Database.Model.Units;
 using DB = Kcsar.Database.Model;
@@ -76,7 +77,9 @@ namespace Sar.Database.Services
         return true;
       }
 
-      if (m.Groups[5].Value == "UnitId" || (m.Groups[3].Value == "Unit" && m.Groups[1].Value != "Create"))
+      // If we are looking at something associated with a unit,
+      // or we are trying to update or delete a unit
+      if (m.Groups[5].Value == "UnitId" || (m.Groups[3].Value == "Unit" && m.Groups[1].Value != "Create" && m.Groups[1].Value != "Read"))
       {
         using (var db = _dbFactory())
         {
@@ -84,7 +87,22 @@ namespace Sar.Database.Services
           var unitName = db.Units.SingleOrDefault(f => f.Id == unitId)?.DisplayName;
           if (roles.Any(f => string.Equals(f, $"cdb.{NormalizeGroupName(unitName)}.admins", StringComparison.OrdinalIgnoreCase))) return true;
         }
+
       }
+      if (m.Groups[3].Value == "Account")
+      {
+        if (m.Groups[1].Value == "Read")
+        {
+          if (resource == null && roles.Any(f => f == "cdb.users")) return true;
+          if (user.GetSubject().Equals(resource)) return true;
+        }
+        return false;
+      }
+      if (m.Groups[1].Value == "Update" && m.Groups[3].Value == "AccountPassword")
+      {
+        return (user.GetSubject().Equals(resource));
+      }
+
 
       if (m.Groups[1].Value == "Read" && (
         roles.Any(f => f == "cdb.users")
@@ -136,6 +154,12 @@ namespace Sar.Database.Services
         canDelete |= Authorize(m.Member.Id, "Delete:UnitMembership@MemberId")
                      || Authorize(m.Unit.Id, "Delete:UnitMembership@UnitId");
         return PermissionWrapper.Create(item, canUpdate, canDelete);
+      }
+      else if (typeof(T) == typeof(Account))
+      {
+        var wrap = PermissionWrapper.Create(item, canUpdate, canDelete);
+        wrap.More.Add("pwd", Authorize(item.Id, "Update:AccountPassword"));
+        return wrap;
       }
 
       return PermissionWrapper.Create(item, canUpdate, canDelete);

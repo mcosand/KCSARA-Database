@@ -46,6 +46,12 @@ md-toolbar.md-table-toolbar .md-toolbar-tools > .md-button.md-icon-button:last-c
 table.md-table td.md-cell.td-actions-cell:last-child, table.md-table th.md-column.th-actions:last-child {
   padding-right: 0px;
 }
+
+table.md-table:not(.md-row-select) td.md-cell.icon-cell:nth-child(n+2):nth-last-child(n+2),
+table.md-table:not(.md-row-select) th.md-column.icon-column:nth-child(n+2):nth-last-child(n+2) {
+  padding-right:14px;
+}
+
 td.md-cell.td-actions-cell {
   width: 24px;
   white-space: nowrap;
@@ -60,4 +66,13 @@ md-dialog-actions {
 
 md-list-item md-chips .md-chips {
   box-shadow: none;
+}
+
+md-tooltip .md-content {
+    height: auto;
+}
+
+tr.clickable:hover {
+  background-color: #eee !important;
+  cursor: pointer;
 }

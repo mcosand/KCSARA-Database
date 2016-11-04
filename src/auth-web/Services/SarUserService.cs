@@ -291,7 +291,7 @@ namespace Sar.Database.Web.Auth.Services
           }
         }
 
-        var roles = _roles.RolesForAccount(account.Id);
+        var roles = _roles.ListAllRolesForAccount(account.Id);
         foreach (var role in roles)
         {
           claims.Add(new Claim(SarScopeStore.RolesClaim, role));

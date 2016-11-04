@@ -41,6 +41,11 @@
       getUser: function AuthService_getUser() {
         return mgr.getUser().then(function (user) {
           currentUser.user = user;
+          console.log('Got user')
+          if (user) {
+            console.log('user name: ' + user.profile.name)
+            console.log('remaining: ' + user.expires_in)
+          }
           return user;
         });
       },

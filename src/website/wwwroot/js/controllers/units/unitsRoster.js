@@ -1,4 +1,4 @@
-﻿angular.module('sar-database').controller("UnitsRosterCtrl", ['$stateParams', '$scope', '$rootScope', '$timeout', 'unitsService', 'Restangular', function ($stateParams, $scope, $rootScope, $timeout, Units, Restangular) {
+﻿angular.module('sar-database').controller("UnitsRosterCtrl", ['$stateParams', '$scope', 'unitsService', function ($stateParams, $scope, Units) {
   angular.extend($scope, {
     query: {
       order: 'name',

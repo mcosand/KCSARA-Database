@@ -101,7 +101,6 @@
   <ItemGroup>
     <Compile Include="Auth\AuthorizationExtensions.cs" />
     <Compile Include="Auth\AuthorizationService.cs" />
-    <Compile Include="Auth\User.cs" />
     <Compile Include="ClaimsPrincipalExtensions.cs" />
     <Compile Include="DIModule.cs" />
     <Compile Include="Auth\IRolesService.cs" />
