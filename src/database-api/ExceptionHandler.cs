@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -7,6 +8,8 @@ using System.Web.Http;
 using System.Web.Http.ExceptionHandling;
 using System.Web.Http.Results;
 using log4net;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Sar;
 
 namespace Kcsara.Database.Api
@@ -36,21 +39,43 @@ namespace Kcsara.Database.Api
     /// <returns>A task representing the asynchronous exception handling operation.</returns>
     public Task HandleAsync(ExceptionHandlerContext context, CancellationToken cancellationToken)
     {
+      var modelErrorException = context.Exception as ModelErrorException;
+      if (modelErrorException != null)
+      {
+        var jsonSettings = context.RequestContext.Configuration.Formatters.JsonFormatter.SerializerSettings;
+
+        var resolver = (DefaultContractResolver)jsonSettings.ContractResolver;
+
+        var jsonBody = JsonConvert.SerializeObject(
+          new
+          {
+            Errors = modelErrorException.PropertyErrors
+                        .ToDictionary(
+                            f => resolver.GetResolvedPropertyName(f.Key),
+                            f => f.Value.Distinct()
+                        )
+          },
+          jsonSettings);
+
+        context.Result = new ResponseMessageResult(context.Request.CreateErrorResponse(HttpStatusCode.BadRequest, jsonBody));
+        return Task.FromResult(0);
+      }
+
+
       // Determining the status code
       var userException = context.Exception as UserErrorException;
-      //var validationException = context.Exception as ModelValidationException;
-      
+
       // ServicesClient already logs the appropriate level of details here.
       //if (proxyException == null)
       //{
-        if (userException == null || userException.StatusCode >= HttpStatusCode.InternalServerError)
-        {
-          _log.Error($"Error at {context.Request.Method} {context.Request.RequestUri}", context.Exception);
-        }
-        else
-        {
-          _log.Info($"{userException.StatusCode} returned from {context.Request.Method} {context.Request.RequestUri}: {userException.Message}");
-        }
+      if (userException == null || userException.StatusCode >= HttpStatusCode.InternalServerError)
+      {
+        _log.Error($"Error at {context.Request.Method} {context.Request.RequestUri}", context.Exception);
+      }
+      else
+      {
+        _log.Info($"{userException.StatusCode} returned from {context.Request.Method} {context.Request.RequestUri}: {userException.Message}");
+      }
       //}
 
       HttpResponseMessage responseMessage = context.Request.CreateResponse(

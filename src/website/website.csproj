@@ -382,6 +382,7 @@
     <Content Include="wwwroot\js\services\accountsService.js" />
     <Content Include="wwwroot\js\services\unitsService.js" />
     <Content Include="wwwroot\js\site.js" />
+    <Content Include="wwwroot\partials\accounts\create.html" />
     <Content Include="wwwroot\partials\accounts\detail.html" />
     <Content Include="wwwroot\partials\accounts\list.html" />
     <Content Include="wwwroot\partials\accounts\reset.html" />

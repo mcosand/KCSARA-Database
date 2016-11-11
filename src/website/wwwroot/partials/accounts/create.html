@@ -1,0 +1,34 @@
+﻿<edit-dialog name="createNew">
+  <md-input-container class="md-block">
+    <label>First Name</label>
+    <input ng-model="item.firstName" name="firstName" md-auto-focus required>
+    <div ng-messages="createNew.firstName.$error">
+      <div ng-message="required">First Name is required.</div>
+      <div ng-message="server">{{createNew.firstName.$error.server}}</div>
+    </div>
+  </md-input-container>
+  <md-input-container class="md-block">
+    <label>Last Name</label>
+    <input ng-model="item.lastName" name="lastName" required>
+    <div ng-messages="createNew.lastName.$error">
+      <div ng-message="required">Last Name is required.</div>
+      <div ng-message="server">{{createNew.lastName.$error.server}}</div>
+    </div>
+  </md-input-container>
+  <md-input-container class="md-block">
+    <label>Email</label>
+    <input ng-model="item.email" name="email" required type="email">
+    <div ng-messages="createNew.firstName.$error">
+      <div ng-message="required">Email address is required.</div>
+      <div ng-message="server">{{createNew.email.$error.server}}</div>
+    </div>
+  </md-input-container>
+  <p>A user without a username can only be accessed with a linked external account.</p>
+  <md-input-container class="md-block" ng-hide="item.id">
+    <label>Username</label>
+    <input ng-model="item.username" name="username">
+    <div ng-messages="createNew.username.$error">
+      <div ng-message="server">{{createNew.username.$error.server}}</div>
+    </div>
+  </md-input-container>
+</edit-dialog>

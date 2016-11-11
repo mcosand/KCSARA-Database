@@ -114,19 +114,25 @@ namespace Sar.Database.Web.Auth.Services
           f.Id != account.Id &&
           f.Username == account.Username &&
           f.Username != null);
-        if (match != null) throw new DuplicateItemException("Account", account.Id.ToString());
+        if (match != null) throw new ModelErrorException("username", $"Account with name {account.Username} already exists");
 
         var updater = await ObjectUpdater.CreateUpdater(
           db.Accounts,
           account.Id,
           null);
+
         if (account.Id != Guid.Empty
           && updater.Instance.Username != account.Username
           && updater.Instance.Username != null)
         {
           throw new UserErrorException("Can't change username", "Tried to change username '" + updater.Instance.Username + "' to '" + account.Username);
         }
+        else
+        {
+          updater.Update(f => f.Username, account.Username);
+        }
 
+        updater.Update(f => f.Email, account.Email);
         updater.Update(f => f.FirstName, account.FirstName);
         updater.Update(f => f.LastName, account.LastName);
         if (account.LockReason != updater.Instance.LockReason)

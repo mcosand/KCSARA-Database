@@ -20,7 +20,9 @@
       var account = Accounts.create();
       Editors
         .doEditDialog(ev, '/wwwroot/partials/accounts/create.html', 'account', account)
-        .then(function () { $scope.gotoAccount(account); });
+        .then(function (newAccount) {
+          $scope.accounts.push(newAccount);
+        });
     }
   });
   $scope.getList();
