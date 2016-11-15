@@ -21,6 +21,11 @@ namespace Sar.Auth.Data
 
   public class AuthDbContext : DbContext, IAuthDbContext
   {
+    public static void SetInitializer()
+    {
+      System.Data.Entity.Database.SetInitializer(new MigrateDatabaseToLatestVersion<AuthDbContext, Migrations.Configuration>());
+    }
+
     public AuthDbContext() : base(ConfigurationManager.AppSettings["authStore"]) { }
 
     protected override void OnModelCreating(DbModelBuilder modelBuilder)

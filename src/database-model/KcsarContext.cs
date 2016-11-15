@@ -59,6 +59,11 @@ namespace Kcsar.Database.Model
 
     public IDbSet<ExternalLogin> ExternalLogins { get; set; }
 
+    public static void SetInitializer()
+    {
+      System.Data.Entity.Database.SetInitializer(new MigrateDatabaseToLatestVersion<KcsarContext, Migrations.Configuration>());
+    }
+
     public KcsarContext() : this(ConfigurationManager.AppSettings["dataStore"] ?? "DataStore") { }
 
     public KcsarContext(string connName)

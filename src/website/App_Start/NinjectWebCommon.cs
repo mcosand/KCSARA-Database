@@ -16,6 +16,7 @@ namespace Kcsara.Database.Web
   using Ninject;
   using Ninject.Web.Common;
   using Sar;
+  using Sar.Auth.Data;
   using Sar.Database.Web;
   using Sar.WebApi;
 
@@ -71,6 +72,9 @@ namespace Kcsara.Database.Web
     /// <param name="kernel">The kernel.</param>
     private static void RegisterServices(IKernel kernel)
     {
+      AuthDbContext.SetInitializer();
+      KcsarContext.SetInitializer();
+
       FileInfo logConfigPath = new FileInfo(Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "log4net.config"));
       log4net.Config.XmlConfigurator.ConfigureAndWatch(logConfigPath);
 
