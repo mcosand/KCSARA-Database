@@ -4,6 +4,7 @@
 namespace Kcsara.Database.Web
 {
   using System;
+  using System.Configuration;
   using System.IO;
   using System.Security.Principal;
   using System.Threading;
@@ -11,6 +12,7 @@ namespace Kcsara.Database.Web
   using Database.Web.Services;
   using Kcsar.Database.Model;
   using log4net;
+  using Microsoft.ApplicationInsights.Extensibility;
   using Microsoft.Web.Infrastructure.DynamicModuleHelper;
 
   using Ninject;
@@ -83,6 +85,12 @@ namespace Kcsara.Database.Web
       else
       {
         log4net.Config.XmlConfigurator.Configure();
+      }
+
+      var applicationInsightsKey = ConfigurationManager.AppSettings["applicationInsightsKey"];
+      if (!string.IsNullOrWhiteSpace(applicationInsightsKey))
+      {
+        TelemetryConfiguration.Active.InstrumentationKey = applicationInsightsKey;
       }
 
       kernel.Bind<IKcsarContext>().To<KcsarContext>();

@@ -2,6 +2,7 @@
   Layout = null;
   var groupName = (System.Configuration.ConfigurationManager.AppSettings["site:groupName"] ?? "King County Search and Rescue");
   var shortName = (System.Configuration.ConfigurationManager.AppSettings["site:shortName"] ?? "King County SAR");
+  var insightsKey = System.Configuration.ConfigurationManager.AppSettings["applicationInsightsKey"];
 }
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" ng-app="sar-database">
@@ -18,6 +19,20 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="@Url.Content("~/wwwroot/lib/font-awesome/css/font-awesome.min.css")" rel="stylesheet" />
   @Styles.Render("~/css/am.css")
+  @if (!string.IsNullOrWhiteSpace(insightsKey))
+  {
+    <script type='text/javascript'>
+      var appInsights = window.appInsights || function (config) {
+        function r(config) { t[config] = function () { var i = arguments; t.queue.push(function () { t[config].apply(t, i) }) } }
+        var t = { config: config }, u = document, e = window, o = 'script', s = u.createElement(o), i, f; for (s.src = config.url || '//az416426.vo.msecnd.net/scripts/a/ai.0.js', u.getElementsByTagName(o)[0].parentNode.appendChild(s), t.cookie = u.cookie, t.queue = [], i = ['Event', 'Exception', 'Metric', 'PageView', 'Trace', 'Ajax']; i.length;) r('track' + i.pop()); return r('setAuthenticatedUserContext'), r('clearAuthenticatedUserContext'), config.disableExceptionTracking || (i = 'onerror', r('_' + i), f = e[i], e[i] = function (config, r, u, e, o) { var s = f && f(config, r, u, e, o); return s !== !0 && t['_' + i](config, r, u, e, o), s }), t
+      }({
+        instrumentationKey: '@insightsKey'
+      });
+
+      window.appInsights = appInsights;
+      appInsights.trackPageView();
+    </script>
+  }
 </head>
 <body layout="column" flex ng-controller="FrameCtrl">
   <md-toolbar class="md-accent">
