@@ -46,7 +46,14 @@ namespace Kcsara.Database.Api.Controllers
     {
       await _authz.EnsureAsync(memberId, "Read:Member");
       var member = await _members.GetMember(memberId);
-      Stream imageStream = _host.OpenFile(string.IsNullOrWhiteSpace(member?.Photo) ? "content\\images\\nophoto.jpg" : ("content\\auth\\members\\" + member.Photo));
+
+      string filename = "content\\images\\nophoto.jpg";
+      if (!string.IsNullOrWhiteSpace(member?.Photo) && _host.FileExists("content\\auth\\members\\" + member.Photo))
+      {
+        filename = "content\\auth\\members\\" + member.Photo;
+      }
+
+      Stream imageStream = _host.OpenFile(filename);
       var response = new HttpResponseMessage
       {
         Content = new StreamContent(imageStream)

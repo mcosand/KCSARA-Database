@@ -26,6 +26,14 @@ namespace Sar.Database.Web
       get { return (ClaimsPrincipal)HttpContext.Current.User; }
     }
 
+    public bool FileExists(string relativePath)
+    {
+      var basePath = AppDomain.CurrentDomain.BaseDirectory;
+      var path = Path.Combine(basePath, relativePath);
+      if (!path.StartsWith(basePath, StringComparison.OrdinalIgnoreCase)) throw new ArgumentException("can't navigate to parent directory");
+      return File.Exists(path);
+    }
+
     public string GetConfig(string key)
     {
       return ConfigurationManager.AppSettings[key];
