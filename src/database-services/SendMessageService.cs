@@ -62,7 +62,7 @@ namespace Sar.Database.Services
       string username = _host.GetConfig("email:username");
       string password = _host.GetConfig("email:password");
 
-      if (!(string.IsNullOrWhiteSpace(server) || string.IsNullOrWhiteSpace(portText) || string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password)))
+      if (!(string.IsNullOrWhiteSpace(server) || string.IsNullOrWhiteSpace(portText)))
       {
         int port;
         if (!int.TryParse(portText, out port))
@@ -71,14 +71,20 @@ namespace Sar.Database.Services
           return null;
         }
 
-        return new SmtpClient
+        var client = new SmtpClient
         {
           Host = server,
           Port = port,
-          Credentials = new NetworkCredential(username, password),
-          EnableSsl = true,
           DeliveryMethod = SmtpDeliveryMethod.Network
         };
+
+        if (!string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(password))
+        {
+          client.Credentials = new NetworkCredential(username, password);
+          client.EnableSsl = true;
+        }
+
+        return client;
       }
 
       string dropPath = _host.GetConfig("email:dropPath");
