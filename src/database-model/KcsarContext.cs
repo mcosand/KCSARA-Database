@@ -488,7 +488,7 @@ namespace Kcsar.Database.Model
       IEnumerable<string> results = newAwardsString.Split('+');
       bool awarded = false;
 
-      if (completed < (rule.OfferedFrom ?? DateTime.MinValue) || completed > (rule.OfferedUntil ?? DateTime.MaxValue))
+      if (completed < (rule.OfferedFrom ?? DateTimeOffset.MinValue) || completed > (rule.OfferedUntil ?? DateTimeOffset.MaxValue))
       {
         return false;
       }
