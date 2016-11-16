@@ -857,7 +857,6 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
     <Content Include="Views\Home\Error.cshtml" />
-    <Content Include="Views\Training\UploadKcsara.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Views\Account\Consent.cshtml" />
     <Content Include="Views\Account\LoggedOut.cshtml" />

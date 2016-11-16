@@ -1055,7 +1055,7 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
     [Authorize(Roles = "cdb.trainingeditors")]
     public ActionResult UploadKcsara()
     {
-      return View();
+      return RedirectPermanent(Url.Content("~/training/uploadrecords"));
     }
   }
 
