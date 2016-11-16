@@ -75,8 +75,15 @@ namespace Kcsara.Database.Web
       AuthDbContext.SetInitializer();
       KcsarContext.SetInitializer();
 
-      FileInfo logConfigPath = new FileInfo(Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "log4net.config"));
-      log4net.Config.XmlConfigurator.ConfigureAndWatch(logConfigPath);
+      var logConfigPath = new FileInfo(Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "log4net.config"));
+      if (File.Exists(logConfigPath.FullName))
+      {
+        log4net.Config.XmlConfigurator.ConfigureAndWatch(logConfigPath);
+      }
+      else
+      {
+        log4net.Config.XmlConfigurator.Configure();
+      }
 
       kernel.Bind<IKcsarContext>().To<KcsarContext>();
       kernel.Bind<ILog>().ToMethod(context => LogManager.GetLogger("Default"));
