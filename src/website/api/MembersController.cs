@@ -230,7 +230,7 @@
         {
           if (showSensitive)
           {
-            var contact = JsonConvert.DeserializeObject<Kcsar.Database.Model.EmergencyContactData>(EncryptionService.Unprotect(EncryptionService.MEMBER_SENSITIVE, f.EncryptedData));
+            var contact = JsonConvert.DeserializeObject<Kcsar.Database.Model.EmergencyContactData>(Sar.EncryptionService.Decrypt(f.EncryptedData, ConfigurationManager.AppSettings["encryptKey"]));
             return new EmergencyContact
             {
               IsSensitive = true,
@@ -257,7 +257,7 @@
     private string HiddenOrDecrypted(bool decrypt, string value)
     {
       return decrypt
-          ? ((value == null) ? null : EncryptionService.Unprotect(EncryptionService.MEMBER_SENSITIVE, value))
+          ? ((value == null) ? null : Sar.EncryptionService.Decrypt(value, ConfigurationManager.AppSettings["encryptKey"]))
           : Strings.SensitiveText;
     }
 
@@ -279,9 +279,9 @@
         member.MedicalInfo = medical;
       }
 
-      medical.EncryptedAllergies = string.IsNullOrWhiteSpace(data.Allergies) ? null : EncryptionService.Protect(EncryptionService.MEMBER_SENSITIVE, data.Allergies);
-      medical.EncryptedMedications = string.IsNullOrWhiteSpace(data.Medications) ? null : EncryptionService.Protect(EncryptionService.MEMBER_SENSITIVE, data.Medications);
-      medical.EncryptedDisclosures = string.IsNullOrWhiteSpace(data.Disclosure) ? null : EncryptionService.Protect(EncryptionService.MEMBER_SENSITIVE, data.Disclosure);
+      medical.EncryptedAllergies = string.IsNullOrWhiteSpace(data.Allergies) ? null : Sar.EncryptionService.Encrypt(data.Allergies, ConfigurationManager.AppSettings["encryptKey"]);
+      medical.EncryptedMedications = string.IsNullOrWhiteSpace(data.Medications) ? null : Sar.EncryptionService.Encrypt(data.Medications, ConfigurationManager.AppSettings["encryptKey"]);
+      medical.EncryptedDisclosures = string.IsNullOrWhiteSpace(data.Disclosure) ? null : Sar.EncryptionService.Encrypt(data.Disclosure, ConfigurationManager.AppSettings["encryptKey"]);
 
       var existingContacts = db.Members.Where(f => f.Id == data.Member.Id).SelectMany(f => f.EmergencyContacts).ToDictionary(f => f.Id, f => f);
 
@@ -321,7 +321,7 @@
           member.EmergencyContacts.Add(memberContact);
         }
 
-        memberContact.EncryptedData = EncryptionService.Protect(EncryptionService.MEMBER_SENSITIVE, JsonConvert.SerializeObject(cData));
+        memberContact.EncryptedData = Sar.EncryptionService.Encrypt(JsonConvert.SerializeObject(cData), ConfigurationManager.AppSettings["encryptKey"]);
       }
 
       foreach (var leftover in existingContacts.Values)
