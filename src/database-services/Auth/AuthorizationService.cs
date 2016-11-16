@@ -56,6 +56,7 @@ namespace Sar.Database.Services
     private bool AuthorizeImpl(ClaimsPrincipal user, object resource, string policyName)
     {
       if (policyName == null) throw new ArgumentNullException(nameof(policyName));
+      if (user.Identities.All(f => !f.IsAuthenticated)) return false;
 
       var memberIdString = user.FindFirst("memberId")?.Value;
       var memberId = string.IsNullOrWhiteSpace(memberIdString) ? (Guid?)null : new Guid(memberIdString);
