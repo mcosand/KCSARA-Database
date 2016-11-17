@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
@@ -70,7 +71,8 @@ namespace Sar.Database.Services
       Match m = Regex.Match(policyName, "^([a-zA-Z]+)(\\:([a-zA-Z]+)(@([a-zA-Z]+))?)?$");
       if (!m.Success) throw new InvalidOperationException("Unknown policy " + policyName);
 
-      var roles = _rolesService.ListAllRolesForAccount(new Guid(user.FindFirst("sub").Value));
+      var sub = user.FindFirst("sub")?.Value;
+      var roles = string.IsNullOrWhiteSpace(sub) ? new List<string>() : _rolesService.ListAllRolesForAccount(new Guid(sub));
       var scopes = user.FindAll("scope").Select(f => f.Value).ToList();
 
       if (roles.Any(f => Equals(f, "cdb.admins")) || scopes.Any(f => f.StartsWith("db-w-")))
