@@ -201,7 +201,7 @@
 
       string filename = string.Format("roster-{0:yyMMdd}.xls", DateTime.Now);
       IQueryable<UnitMembership> memberships = this.db.UnitMemberships.Include("Person").Include("Person.Addresses").Include("Person.ContactNumbers").Include("Status");
-      string unitShort = ConfigurationManager.AppSettings["dbNameShort"];
+      string unitShort = ConfigurationManager.AppSettings["site:groupAcronym"] ?? "KCSARA";
       string unitLong = Strings.GroupName;
       if (id.HasValue)
       {

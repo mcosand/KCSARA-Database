@@ -300,7 +300,7 @@ namespace Kcsara.Database.Web.Controllers
     public ActionResult CoreCompReport(Guid? id)
     {
       IQueryable<UnitMembership> memberships = this.db.UnitMemberships.Include("Person.ComputedAwards.Course").Include("Status");
-      string unitShort = ConfigurationManager.AppSettings["dbNameShort"];
+      string unitShort = ConfigurationManager.AppSettings["site:groupAcronym"] ?? "KCSARA";
       string unitLong = Strings.GroupName;
       if (id.HasValue)
       {

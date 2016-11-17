@@ -13,12 +13,12 @@ namespace Kcsara.Database
   {
     public string GroupName
     {
-      get { return ConfigurationManager.AppSettings["dbNameShort"] ?? "KCSARA"; }
+      get { return ConfigurationManager.AppSettings["site:groupAcronym"] ?? "KCSARA"; }
     }
 
     public string GroupFullName
     {
-      get { return ConfigurationManager.AppSettings["dbName"] ?? "King County Search and Rescue"; }
+      get { return ConfigurationManager.AppSettings["site:groupName"] ?? "King County Search and Rescue"; }
     }
   }
 }
