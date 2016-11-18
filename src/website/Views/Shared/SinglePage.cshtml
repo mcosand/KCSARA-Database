@@ -92,7 +92,7 @@
                 md-whiteframe="4">
       <md-content layout="column" layout-align="start stretch">
         <md-list-item class="md-2-line" ng-click="null" ng-show="$currentUser.user">
-          <img ng-src="{{'/api2/members/' + $currentUser.user.profile.memberId + '/photo?access_token='+ ($currentUser.user || {}).access_token}}" class="md-avatar" alt="{{$currentUser.user.profile.name}}" />
+          <img ng-src="{{myPhotoUrl()}}" class="md-avatar" alt="{{$currentUser.user.profile.name}}" />
           <div class="md-list-item-text" layout="column">
             <h3>{{ $currentUser.user.profile.name }}</h3>
             <p>{{ $currentUser.user.profile.email }}</p>

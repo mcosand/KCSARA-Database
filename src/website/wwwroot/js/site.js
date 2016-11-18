@@ -232,6 +232,12 @@
     };
 
     angular.extend($scope, {
+      myPhotoUrl: function () {
+        var user = $rootScope.$currentUser.user;
+        if (user && user.profile.memberId && user.access_token)
+          return '/api2/members/' + user.profile.memberId + '/photo?access_token='+ user.access_token
+        return '/content/images/nophoto.jpg'
+      },
       mainNavOpen: false,
       showMainMenu: function () { $mdSidenav('mainMenu').open(); $scope.mainNavOpen = true; },
       closeMainMenu: function () { $timeout(function () { $mdSidenav('mainMenu').close(); $scope.mainNavOpen = false; }); },
