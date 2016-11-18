@@ -521,7 +521,6 @@
     <Compile Include="Services\IReportsService.cs" />
     <Compile Include="Services\ReportsService.cs" />
     <Compile Include="Services\SheetAutoFitWrapper.cs" />
-    <Compile Include="SqlServerTypes\Loader.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="SystemWebHost.cs" />
     <Compile Include="Utils.cs" />
