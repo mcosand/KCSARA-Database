@@ -8,6 +8,6 @@ namespace Sar.Database.Web.Auth
 {
   public static class AuthConstants
   {
-    public static readonly int TokenLifetime = 10 * 60;
+    public static readonly int TokenLifetime = 30 * 60;
   }
 }

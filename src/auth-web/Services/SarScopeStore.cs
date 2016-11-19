@@ -35,8 +35,8 @@ namespace Sar.Database.Web.Auth.Services
 
         scopes.AddRange(new[] {
             StandardScopes.OpenId,
-            StandardScopes.Profile,
-            StandardScopes.Email,
+            StandardScopes.ProfileAlwaysInclude,
+            StandardScopes.EmailAlwaysInclude,
             new Scope { Name = "kcsara-profile", Type = ScopeType.Identity, Claims = new List<ScopeClaim>
             {
               new ScopeClaim(UnitsClaim),
