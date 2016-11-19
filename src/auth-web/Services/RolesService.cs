@@ -14,6 +14,8 @@ namespace Sar.Database.Web.Auth.Services
     private readonly ILogger _log;
     private readonly object cacheLock = new object();
     private Dictionary<string, Role> cache = null;
+    private Dictionary<Guid, string[]> accountToRolesCache = null;
+    DateTime cacheTime = DateTime.MinValue;
 
     public RolesService(Func<IAuthDbContext> dbFactory, ILogger log)
     {
@@ -23,16 +25,21 @@ namespace Sar.Database.Web.Auth.Services
 
     public List<string> ListAllRolesForAccount(Guid accountId)
     {
+      List<string> roles = null;
+      string[] directRoleList = new string[0];
+
       EnsureCache();
 
-      using (var db = _dbFactory())
+      lock (cacheLock)
       {
-        var roles = new List<string>();
+        accountToRolesCache.TryGetValue(accountId, out directRoleList);
+
+        roles = new List<string>();
         BuildRoleList(
           roles,
-          db.Accounts.Where(f => f.Id == accountId).SelectMany(f => f.Roles).Select(f => f.Id));
-        return roles;
+          directRoleList);
       }
+      return roles;
     }
 
     private void BuildRoleList(List<string> list, IEnumerable<string> newRoles)
@@ -53,33 +60,40 @@ namespace Sar.Database.Web.Auth.Services
 
       using (var db = _dbFactory())
       {
-        return db.Accounts.Where(f => f.Id == accountId)
-                 .SelectMany(f => f.Roles).Select(f => f.Id).ToList()
+        var part = db.Accounts.Where(f => f.Id == accountId)
+                 .SelectMany(f => f.Roles).Select(f => f.Id).ToList();
+        lock (cacheLock)
+        {
+          return part
                  .Select(f => cache[f])
                  .ToList();
+        }
       }
     }
 
     private void EnsureCache()
     {
-      if (cache == null)
+      if (cacheTime < DateTime.UtcNow)
       {
         lock (cacheLock)
         {
-          if (cache == null)
+          if (cacheTime < DateTime.UtcNow)
           {
             using (var db = _dbFactory())
             {
               cache = db.Roles.ToDictionary(
                 f => f.Id,
-                f => new Role { Id = f.Id, Name = f.Name, Description = f.Description}
+                f => new Role { Id = f.Id, Name = f.Name, Description = f.Description }
               );
 
               foreach (var link in db.Roles.SelectMany(role => role.Children, (parent, child) => new { P = parent.Id, C = child.Id }))
               {
                 cache[link.P].Includes.Add(cache[link.C]);
               }
+
+              accountToRolesCache = db.Accounts.ToDictionary(f => f.Id, f => f.Roles.Select(g => g.Id).ToArray());
             }
+            cacheTime = DateTime.UtcNow.AddMinutes(5);
           }
         }
       }
