@@ -18,8 +18,11 @@ namespace SMR.Extensions
       var memberships = me.db.Value.Units
         .Where(f => f.DisplayName == "SMR")
         .SelectMany(f => f.Memberships.Where(g => (g.EndTime == null || g.EndTime > DateTime.Now) && g.Status.IsActive && g.Status.WacLevel != WacLevel.None));
+
       var members = memberships
         .Select(f => f.Person);
+
+      var memberHistory = members.ToDictionary(f => f.Id, f => f.Memberships.Where(g => g.Status.IsActive && g.Unit.DisplayName == "SMR").OrderByDescending(g => g.Activated).ToList());
 
       var currentTraining = members.SelectMany(f => f.ComputedAwards)
         .GroupBy(f => f.Member.Id)
@@ -78,14 +81,29 @@ namespace SMR.Extensions
         var memberId = roster[i].Id;
         var col = 1;
         var row = i + 4;
+
+        var joinDate = (DateTime?)null;
+        var joinHistory = memberHistory[memberId];
+        for (int j = 0; j < joinHistory.Count; j++)
+        {
+          if (j == 0 || joinDate.Value.Date == joinHistory[j].EndTime.Value.Date)
+          {
+            joinDate = joinHistory[j].Activated;
+          }
+          else
+          {
+            break;
+          }
+        }
+
         sheet.Cells[row, col++].Value = roster[i].DEM;
         sheet.Cells[row, col++].Value = roster[i].ReverseName;
-        sheet.Cells[row, col++].Value = status[memberId].Activated > oldDate ? status[memberId].Activated : (DateTime?)null;
+        sheet.Cells[row, col++].Value = joinDate > oldDate ? joinDate : (DateTime?)null;
         sheet.Cells[row, col++].Value = roster[i].WacLevel == WacLevel.None ? null : roster[i].WacLevel.ToString();
         sheet.Cells[row, col++].Value = status[memberId].StatusName;
         col++; // MRA
 
-        if (currentTraining[memberId] != null)
+        if (currentTraining.ContainsKey(memberId) && currentTraining[memberId] != null)
         {
           sheet.Cells[row, col++].Value = currentTraining[memberId].Any(f => f.DisplayName == "Avalanche III") ? "Avy III"
                                         : currentTraining[memberId].Any(f => f.DisplayName == "Avalanche II") ? "Avy II"
