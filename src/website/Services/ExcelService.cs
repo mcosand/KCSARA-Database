@@ -530,7 +530,7 @@ namespace Kcsara.Database.Web
     /// <param name="value">The new string value.</param>
     public abstract void SetValue(string value);
 
-    public abstract void SetValue(DateTimeOffset? value);
+    public abstract void SetValue(DateTime? value);
 
     /// <summary>Gets the numeric value of the cell.</summary>
     public abstract double? NumericValue { get; }
@@ -579,7 +579,7 @@ namespace Kcsara.Database.Web
       _cell = cell;
     }
 
-    public override void SetValue(DateTimeOffset? value)
+    public override void SetValue(DateTime? value)
     {
       if (value.HasValue) { this._cell.Value = value.Value;  }
       else { this._cell.Value = ""; }
@@ -684,7 +684,7 @@ namespace Kcsara.Database.Web
       _cell = cell;
     }
 
-    public override void SetValue(DateTimeOffset? value)
+    public override void SetValue(DateTime? value)
     {
       throw new NotImplementedException();
     }

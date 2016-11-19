@@ -361,7 +361,7 @@ namespace Kcsara.Database.Web.Controllers
             if (match.Expiry.HasValue)
             {
               if (match.Expiry < goodUntil) goodUntil = match.Expiry.Value;
-              sheet.CellAt(row, col + i).SetValue(match.Expiry.Value);
+              sheet.CellAt(row, col + i).SetValue(match.Expiry.Value.LocalDateTime);
 
             }
             else
@@ -371,7 +371,7 @@ namespace Kcsara.Database.Web.Controllers
             coursesCount++;
           }
         }
-        sheet.CellAt(row, goodColumn).SetValue(courses.Count == coursesCount ? goodUntil : (DateTimeOffset?)null);
+        sheet.CellAt(row, goodColumn).SetValue(courses.Count == coursesCount ? goodUntil.LocalDateTime : (DateTime?)null);
         row++;
       }
       sheet.AutoFitAll();
