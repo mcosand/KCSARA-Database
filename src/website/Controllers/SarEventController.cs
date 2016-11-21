@@ -21,13 +21,13 @@ namespace Kcsara.Database.Web.Controllers
   {
     public SarEventController(IKcsarContext db, IAppSettings settings) : base(db, settings) { }
 
-    [Authorize]
+    [AuthorizeWithLog]
     public virtual ActionResult Index()
     {
       return View("Index");
     }
 
-    [Authorize(Roles = "cdb.users")]
+    [AuthorizeWithLog(Roles = "cdb.users")]
     public virtual ActionResult List(string id)
     {
       IEnumerable<E> list = (from e in GetEventSource() orderby e.StartTime descending select e);
@@ -42,7 +42,7 @@ namespace Kcsara.Database.Web.Controllers
 
     #region Event CRUD
     [AcceptVerbs("GET")]
-    [Authorize(Roles = "cdb.users")]
+    [AuthorizeWithLog(Roles = "cdb.users")]
     public ActionResult Create()
     {
       if (!this.CanDoAction(SarEventActions.CreateEvent, null))
@@ -60,7 +60,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs(HttpVerbs.Post)]
-    [Authorize(Roles = "cdb.users")]
+    [AuthorizeWithLog(Roles = "cdb.users")]
     public ActionResult Create(FormCollection fields)
     {
       if (!this.CanDoAction(SarEventActions.CreateEvent, null))
@@ -83,7 +83,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs("GET")]
-    [Authorize(Roles = "cdb.users")]
+    [AuthorizeWithLog(Roles = "cdb.users")]
     public ActionResult Edit(Guid id)
     {
       if (!this.CanDoAction(SarEventActions.UpdateEvent, null))
@@ -97,7 +97,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs("POST")]
-    [Authorize(Roles = "cdb.users")]
+    [AuthorizeWithLog(Roles = "cdb.users")]
     public ActionResult Edit(Guid id, FormCollection fields)
     {
       if (!this.CanDoAction(SarEventActions.UpdateEvent, null))
@@ -219,7 +219,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs(HttpVerbs.Get)]
-    [Authorize(Roles = "cdb.users")]
+    [AuthorizeWithLog(Roles = "cdb.users")]
     public ActionResult Delete(Guid id)
     {
       E evt = this.GetEvent(id);
@@ -233,7 +233,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs(HttpVerbs.Post)]
-    [Authorize(Roles = "cdb.users")]
+    [AuthorizeWithLog(Roles = "cdb.users")]
     public ActionResult Delete(Guid id, FormCollection fields)
     {
       E evt = this.GetEvent(id);
@@ -269,7 +269,7 @@ namespace Kcsara.Database.Web.Controllers
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    [Authorize(Roles = "cdb.users")]
+    [AuthorizeWithLog(Roles = "cdb.users")]
     [AcceptVerbs(HttpVerbs.Get)]
     public ActionResult Roster(Guid id)
     {
@@ -292,7 +292,7 @@ namespace Kcsara.Database.Web.Controllers
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    [Authorize(Roles = "cdb.users")]
+    [AuthorizeWithLog(Roles = "cdb.users")]
     [AcceptVerbs(HttpVerbs.Get)]
     public ActionResult EditRoster(Guid id)
     {
@@ -331,7 +331,7 @@ namespace Kcsara.Database.Web.Controllers
 
     //     protected abstract ObjectQuery<R> RostersQuery { get; }
 
-    [Authorize(Roles = "cdb.users")]
+    [AuthorizeWithLog(Roles = "cdb.users")]
     [AcceptVerbs(HttpVerbs.Post)]
     public ActionResult EditRoster(Guid id, FormCollection fields)
     {

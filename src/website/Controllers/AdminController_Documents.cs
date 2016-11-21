@@ -15,7 +15,7 @@ namespace Kcsara.Database.Web.Controllers
     /// </summary>
     /// <param name="fields"></param>
     /// <returns></returns>
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult SubmitDocument()
     {
       return View();
@@ -26,7 +26,7 @@ namespace Kcsara.Database.Web.Controllers
     /// </summary>
     /// <param name="fields"></param>
     /// <returns></returns>
-    [Authorize(Roles = "cdb.submitdocuments")]
+    [AuthorizeWithLog(Roles = "cdb.submitdocuments")]
     [HttpPost]
     public ActionResult SubmitDocument(FormCollection fields)
     {

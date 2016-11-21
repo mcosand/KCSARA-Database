@@ -21,7 +21,7 @@ namespace Kcsara.Database.Web.Controllers
   {
     public MissionsController(IKcsarContext db, IAppSettings settings) : base(db, settings) { }
 
-    [Authorize]
+    [AuthorizeWithLog]
     public override ActionResult Index()
     {
       return List(null);
@@ -34,7 +34,7 @@ namespace Kcsara.Database.Web.Controllers
     /// <param name="id">Mission Id</param>
     /// <returns></returns>
     [AcceptVerbs(HttpVerbs.Get)]
-    [Authorize(Roles = "cdb.users")]
+    [AuthorizeWithLog(Roles = "cdb.users")]
     public ActionResult Subjects(Guid id)
     {
       ViewData["missionId"] = id;
@@ -46,14 +46,14 @@ namespace Kcsara.Database.Web.Controllers
     /// </summary>
     /// <param name="id">Group ID</param>
     /// <returns></returns>
-    [Authorize(Roles = "cdb.missioneditors")]
+    [AuthorizeWithLog(Roles = "cdb.missioneditors")]
     [AcceptVerbs(HttpVerbs.Get)]
     public ActionResult SubjectsGroup(Guid id)
     {
       return View("SubjectGroup", (from b in this.db.SubjectGroups where b.Id == id select b).First());
     }
 
-    //[Authorize(Roles="cdb.missioneditors")]
+    //[AuthorizeWithLog(Roles="cdb.missioneditors")]
     //[AcceptVerbs(HttpVerbs.Get)]
     //public ActionResult AddSubject(Guid id)
     //{
@@ -70,7 +70,7 @@ namespace Kcsara.Database.Web.Controllers
     /// <param name="id">Group ID</param>
     /// <returns></returns>
     [AcceptVerbs("GET")]
-    [Authorize(Roles = "cdb.missioneditors")]
+    [AuthorizeWithLog(Roles = "cdb.missioneditors")]
     public ActionResult CreateSubject(Guid? id, Guid? missionId)
     {
       return _CreateSubject(id, missionId);
@@ -112,7 +112,7 @@ namespace Kcsara.Database.Web.Controllers
     /// <param name="fields"></param>
     /// <returns></returns>
     [AcceptVerbs(HttpVerbs.Post)]
-    [Authorize(Roles = "cdb.missioneditors")]
+    [AuthorizeWithLog(Roles = "cdb.missioneditors")]
     public ActionResult CreateSubject(Guid? id, FormCollection fields)
     {
       if (Session["NewSubjectGuid"] != null && Session["NewSubjectGuid"].ToString() != fields["NewSubjectGuid"])
@@ -164,7 +164,7 @@ namespace Kcsara.Database.Web.Controllers
     /// <param name="id">subject id</param>
     /// <returns></returns>
     [AcceptVerbs("GET")]
-    [Authorize(Roles = "cdb.missioneditors")]
+    [AuthorizeWithLog(Roles = "cdb.missioneditors")]
     public ActionResult EditSubject(Guid id)
     {
       // MissionLog log = (from a in this.db.MissionLog.Include("Mission") where a.Id == id select a).First();
@@ -180,7 +180,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs("POST")]
-    [Authorize(Roles = "cdb.missioneditors")]
+    [AuthorizeWithLog(Roles = "cdb.missioneditors")]
     public ActionResult EditSubject(Guid id, FormCollection fields)
     {
       //  MissionLog log = (from a in this.db.MissionLog.Include("Mission") where a.Id == id select a).First();
@@ -190,7 +190,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
 
-    [Authorize(Roles = "cdb.users")]
+    [AuthorizeWithLog(Roles = "cdb.users")]
     [AcceptVerbs(HttpVerbs.Get)]
     public ActionResult Details(Guid id)
     {
@@ -206,7 +206,7 @@ namespace Kcsara.Database.Web.Controllers
       return View(details);
     }
 
-    [Authorize(Roles = "cdb.missioneditors")]
+    [AuthorizeWithLog(Roles = "cdb.missioneditors")]
     [AcceptVerbs(HttpVerbs.Get)]
     public ActionResult EditDetails(Guid id)
     {
@@ -223,7 +223,7 @@ namespace Kcsara.Database.Web.Controllers
       return View(details);
     }
 
-    [Authorize(Roles = "cdb.missioneditors")]
+    [AuthorizeWithLog(Roles = "cdb.missioneditors")]
     [AcceptVerbs(HttpVerbs.Post)]
     public ActionResult EditDetails(Guid id, FormCollection fields)
     {
@@ -257,7 +257,7 @@ namespace Kcsara.Database.Web.Controllers
       return details;
     }
 
-    [Authorize(Roles = "cdb.missioneditors")]
+    [AuthorizeWithLog(Roles = "cdb.missioneditors")]
     [AcceptVerbs(HttpVerbs.Get)]
     public ActionResult EditSubjectGroup(Guid id)
     {
@@ -275,7 +275,7 @@ namespace Kcsara.Database.Web.Controllers
       return View(group);
     }
 
-    [Authorize(Roles = "cdb.missioneditors")]
+    [AuthorizeWithLog(Roles = "cdb.missioneditors")]
     [AcceptVerbs(HttpVerbs.Post)]
     public ActionResult EditSubjectGroup(Guid id, FormCollection fields)
     {
@@ -343,7 +343,7 @@ namespace Kcsara.Database.Web.Controllers
       ViewData[viewDataPrefix + "Other"] = string.Join(", ", others.ToArray());
     }
 
-    //[Authorize(Roles = "cdb.missioneditors")]
+    //[AuthorizeWithLog(Roles = "cdb.missioneditors")]
     //[AcceptVerbs(HttpVerbs.Get)]
     //public ActionResult EditSubjectGroup(SubjectGroup group)
     //{
@@ -396,7 +396,7 @@ namespace Kcsara.Database.Web.Controllers
     /// <param name="id">subjectgrouplink id</param>
     /// <returns></returns>
     [AcceptVerbs(HttpVerbs.Get)]
-    [Authorize(Roles = "cdb.missioneditors")]
+    [AuthorizeWithLog(Roles = "cdb.missioneditors")]
     public ActionResult DeleteSubject(Guid id)
     {
       SubjectGroupLink link = (from l in this.db.SubjectGroupLinks.Include(f => f.Group.Mission).Include(f => f.Subject) where l.Id == id select l).First();
@@ -409,9 +409,9 @@ namespace Kcsara.Database.Web.Controllers
     /// <param name="id">subjectgrouplink id</param>
     /// <param name="fields"></param>
     /// <returns></returns>
-    [Authorize]
+    [AuthorizeWithLog]
     [AcceptVerbs(HttpVerbs.Post)]
-    [Authorize(Roles = "cdb.missioneditors")]
+    [AuthorizeWithLog(Roles = "cdb.missioneditors")]
     public ActionResult DeleteSubject(Guid id, FormCollection fields)
     {
       SubjectGroupLink link = (from l in this.db.SubjectGroupLinks.Include(f => f.Group.Mission).Include(f => f.Group.SubjectLinks).Include(f => f.Subject.GroupLinks) where l.Id == id select l).First();
@@ -442,7 +442,7 @@ namespace Kcsara.Database.Web.Controllers
       return RedirectToAction("ClosePopup");
     }
 
-    [Authorize(Roles = "cdb.missioneditors")]
+    [AuthorizeWithLog(Roles = "cdb.missioneditors")]
     [AcceptVerbs(HttpVerbs.Get)]
     public ActionResult MoveSubjectOrder(Guid id, int direction)
     {
@@ -467,7 +467,7 @@ namespace Kcsara.Database.Web.Controllers
     /// <param name="id">link id</param>
     /// <param name="newGroup"></param>
     /// <returns></returns>
-    [Authorize(Roles = "cdb.missioneditors")]
+    [AuthorizeWithLog(Roles = "cdb.missioneditors")]
     [AcceptVerbs(HttpVerbs.Get)]
     public ActionResult MoveSubjectToGroup(Guid id, int newGroup)
     {
@@ -524,7 +524,7 @@ namespace Kcsara.Database.Web.Controllers
     #endregion
 
     #region Logs
-    [Authorize(Roles = "cdb.missioneditors")]
+    [AuthorizeWithLog(Roles = "cdb.missioneditors")]
     [AcceptVerbs(HttpVerbs.Get)]
     public ActionResult EditSummary(Guid id)
     {
@@ -534,7 +534,7 @@ namespace Kcsara.Database.Web.Controllers
       return View(details);
     }
 
-    [Authorize(Roles = "cdb.missioneditors")]
+    [AuthorizeWithLog(Roles = "cdb.missioneditors")]
     [AcceptVerbs(HttpVerbs.Post)]
     public ActionResult EditSummary(Guid id, FormCollection fields)
     {
@@ -559,7 +559,7 @@ namespace Kcsara.Database.Web.Controllers
       return EditDetails(details.Mission.Id);
     }
 
-    [Authorize(Roles = "cdb.missioneditors")]
+    [AuthorizeWithLog(Roles = "cdb.missioneditors")]
     [AcceptVerbs(HttpVerbs.Get)]
     public ActionResult EditExpenses(Guid id)
     {
@@ -569,7 +569,7 @@ namespace Kcsara.Database.Web.Controllers
       return View(details);
     }
 
-    [Authorize(Roles = "cdb.missioneditors")]
+    [AuthorizeWithLog(Roles = "cdb.missioneditors")]
     [AcceptVerbs(HttpVerbs.Post)]
     public ActionResult EditExpenses(Guid id, FormCollection fields)
     {
@@ -595,7 +595,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
 
-    [Authorize(Roles = "cdb.users")]
+    [AuthorizeWithLog(Roles = "cdb.users")]
     [AcceptVerbs(HttpVerbs.Get)]
     public ActionResult ResponderEmails(Guid id, Guid? unitId)
     {
@@ -608,7 +608,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
 
-    [Authorize(Roles = "cdb.users")]
+    [AuthorizeWithLog(Roles = "cdb.users")]
     [AcceptVerbs(HttpVerbs.Get)]
     public ActionResult Log(Guid id)
     {
@@ -619,7 +619,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs(HttpVerbs.Post)]
-    [Authorize(Roles = "cdb.missioneditors")]
+    [AuthorizeWithLog(Roles = "cdb.missioneditors")]
     public JsonDataContractResult SubmitLog(LogSubmission log)
     {
       List<SubmitError> errors = new List<SubmitError>();
@@ -683,7 +683,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs("GET")]
-    [Authorize(Roles = "cdb.missioneditors")]
+    [AuthorizeWithLog(Roles = "cdb.missioneditors")]
     public ActionResult CreateLog(Guid missionId)
     {
       ViewData["PageTitle"] = "New Log";
@@ -698,7 +698,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs(HttpVerbs.Post)]
-    [Authorize(Roles = "cdb.missioneditors")]
+    [AuthorizeWithLog(Roles = "cdb.missioneditors")]
     public ActionResult CreateLog(Guid missionId, FormCollection fields)
     {
       if (Session["NewLogGuid"] != null && Session["NewLogGuid"].ToString() != fields["NewLogGuid"])
@@ -716,7 +716,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs("GET")]
-    [Authorize(Roles = "cdb.missioneditors")]
+    [AuthorizeWithLog(Roles = "cdb.missioneditors")]
     public ActionResult EditLog(Guid id)
     {
       MissionLog log = (from a in this.db.MissionLog.Include(f => f.Person).Include(f => f.Mission) where a.Id == id select a).First();
@@ -729,7 +729,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs("POST")]
-    [Authorize(Roles = "cdb.missioneditors")]
+    [AuthorizeWithLog(Roles = "cdb.missioneditors")]
     public ActionResult EditLog(Guid id, FormCollection fields)
     {
       MissionLog log = (from a in this.db.MissionLog.Include(f => f.Mission) where a.Id == id select a).First();
@@ -767,18 +767,18 @@ namespace Kcsara.Database.Web.Controllers
       return InternalEditLog(log);
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     [AcceptVerbs(HttpVerbs.Get)]
-    [Authorize(Roles = "cdb.missioneditors")]
+    [AuthorizeWithLog(Roles = "cdb.missioneditors")]
     public ActionResult DeleteLog(Guid id)
     {
       ViewData["HideFrame"] = true;
       return View((from a in this.db.MissionLog.Include(f => f.Person) where a.Id == id select a).First());
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     [AcceptVerbs(HttpVerbs.Post)]
-    [Authorize(Roles = "cdb.missioneditors")]
+    [AuthorizeWithLog(Roles = "cdb.missioneditors")]
     public ActionResult DeleteLog(Guid id, FormCollection fields)
     {
       MissionLog log = (from a in this.db.MissionLog where a.Id == id select a).First();
@@ -850,7 +850,7 @@ namespace Kcsara.Database.Web.Controllers
       return base.InternalEdit(evt);
     }
 
-    [Authorize(Roles = "cdb.users")]
+    [AuthorizeWithLog(Roles = "cdb.users")]
     public override ActionResult List(string id)
     {
       int year;
@@ -926,7 +926,7 @@ namespace Kcsara.Database.Web.Controllers
     /// </summary>
     /// <param name="id">Filter to unit id</param>
     /// <returns></returns>
-    [Authorize(Roles = "cdb.users")]
+    [AuthorizeWithLog(Roles = "cdb.users")]
     public ActionResult ReportStatus(string id)
     {
       Guid? unit = null;
@@ -1196,7 +1196,7 @@ namespace Kcsara.Database.Web.Controllers
       this.db.MissionRosters.Remove(row);
     }
 
-    [Authorize(Roles = "cdb.users")]
+    [AuthorizeWithLog(Roles = "cdb.users")]
     public ActionResult TopResponders(string unit, string start, string end)
     {
       DateTime startTime = new DateTime(DateTime.Now.Year, 1, 1);
@@ -1466,7 +1466,7 @@ select new { P = g.Key, Hours = g.Sum(f => f.Hours), Miles = g.Sum(f => f.Miles)
       return View();
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     public ViewResult RespondersWithExpiredTraining(DateTime? start, DateTime? stop)
     {
       stop = stop ?? DateTime.Now;
@@ -1477,7 +1477,7 @@ select new { P = g.Key, Hours = g.Sum(f => f.Hours), Miles = g.Sum(f => f.Miles)
       return View((MissionRosterWithExpiredTrainingView[])GetMissionRostersWithExpiredTraining(start, stop).Data);
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     public DataActionResult GetMissionRostersWithExpiredTraining(DateTime? start, DateTime? stop)
     {
       stop = stop ?? DateTime.Now;

@@ -33,7 +33,7 @@ namespace Kcsara.Database.Web.Controllers
     public const string PhotosStoreRelativePath = "~/Content/auth/members/";
     public const string StandInPhotoFile = "none.jpg";
 
-    [Authorize]
+    [AuthorizeWithLog]
     //        [FilterTypes(FilterTypes.ActiveOnly | FilterTypes.Time | FilterTypes.Unit)]
     public ActionResult Index()
     {
@@ -57,7 +57,7 @@ namespace Kcsara.Database.Web.Controllers
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult Detail(Guid id)
     {
       if (!(Permissions.IsUser || Permissions.IsSelf(id))) return this.CreateLoginRedirect();
@@ -92,7 +92,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
 
-    [Authorize]
+    [AuthorizeWithLog]
     [AcceptVerbs(HttpVerbs.Get)]
     public ActionResult Awards(Guid id)
     {
@@ -102,14 +102,14 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs(HttpVerbs.Get)]
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult Delete(Guid id)
     {
       return View(GetMember(id));
     }
 
     [AcceptVerbs(HttpVerbs.Post)]
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult Delete(Guid id, FormCollection fields)
     {
       Member m = GetMember(id);
@@ -119,7 +119,7 @@ namespace Kcsara.Database.Web.Controllers
       return RedirectToAction("Index");
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult CardDatabaseDifferences(bool? commit, Guid[] except)
     {
       var cardMembers = CardDatabaseService.GetEmergencyWorkers();
@@ -265,7 +265,7 @@ namespace Kcsara.Database.Web.Controllers
       return Content(builder.ToString());
     }
 
-    [Authorize(Roles = "cdb.badges")]
+    [AuthorizeWithLog(Roles = "cdb.badges")]
     public ActionResult Badges(string id)
     {
       if (string.IsNullOrEmpty(id))
@@ -286,7 +286,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs(HttpVerbs.Get)]
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult Create()
     {
       if (!Permissions.IsAdmin) return this.CreateLoginRedirect();
@@ -301,7 +301,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs(HttpVerbs.Post)]
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult Create(FormCollection fields)
     {
       if (!Permissions.IsAdmin) return this.CreateLoginRedirect();
@@ -320,7 +320,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs("GET")]
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult Edit(Guid id)
     {
       if (!(Permissions.IsAdmin || Permissions.IsMembershipForPerson(id))) return this.CreateLoginRedirect();
@@ -341,7 +341,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs("POST")]
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult Edit(Guid id, FormCollection fields)
     {
       if (!(Permissions.IsAdmin || Permissions.IsMembershipForPerson(id))) return this.CreateLoginRedirect();
@@ -377,7 +377,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     #region Photos
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult PhotoUpload(string id)
     {
       string[] split = id.Split(',');
@@ -402,7 +402,7 @@ namespace Kcsara.Database.Web.Controllers
       return View(x);
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     [AcceptVerbs(HttpVerbs.Post)]
     public ActionResult PhotoPreview()
     {
@@ -456,7 +456,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs(HttpVerbs.Post)]
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult PhotoCommit(FormCollection fields)
     {
       List<string> errors = new List<string>();
@@ -504,7 +504,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs(HttpVerbs.Get)]
-    [Authorize]
+    [AuthorizeWithLog]
     public StreamResult PhotoData(Guid id)
     {
       if (Session["photoPreview"] == null)
@@ -538,7 +538,7 @@ namespace Kcsara.Database.Web.Controllers
     }
     #endregion
 
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult Suggest(string q)
     {
       if (!Permissions.IsUser) return this.CreateLoginRedirect();
@@ -555,7 +555,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
 
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult SuggestDem()
     {
       int suggestion = ((DateTime.Now.Year) % 10) * 1000 + 1;
@@ -584,7 +584,7 @@ namespace Kcsara.Database.Web.Controllers
       return new ContentResult { Content = suggestion.ToString().PadLeft(4, '0') };
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult GetMembersActiveUnits(Guid id)
     {
       if (!Permissions.IsUser) return this.CreateLoginRedirect();
@@ -595,7 +595,7 @@ namespace Kcsara.Database.Web.Controllers
       return new JsonResult { Data = ums.Select(f => new { Id = f.Unit.Id }).ToArray(), JsonRequestBehavior = JsonRequestBehavior.AllowGet };
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult GetMembersAnimals(Guid id)
     {
       if (!Permissions.IsUser) return this.CreateLoginRedirect();
@@ -616,7 +616,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs(HttpVerbs.Get)]
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult CardData()
     {
       if (!Permissions.IsUser) return this.CreateLoginRedirect();
@@ -625,7 +625,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs(HttpVerbs.Post)]
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult CardData(FormCollection columns)
     {
       if (!Permissions.IsUser) return this.CreateLoginRedirect();
@@ -781,7 +781,7 @@ namespace Kcsara.Database.Web.Controllers
       return members[0];
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     public DataActionResult GetMemberData(Guid id)
     {
       Member m = GetMember(id);
@@ -791,7 +791,7 @@ namespace Kcsara.Database.Web.Controllers
 
     #region Unit Memberships
     [AcceptVerbs("GET")]
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult CreateMembership(Guid personId)
     {
       ViewData["PageTitle"] = "New Unit Membership";
@@ -807,7 +807,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs(HttpVerbs.Post)]
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult CreateMembership(Guid personId, FormCollection fields)
     {
       if (Session["NewMembershipGuid"] != null && Session["NewMembershipGuid"].ToString() != fields["NewMembershipGuid"])
@@ -826,7 +826,7 @@ namespace Kcsara.Database.Web.Controllers
 
 
     [AcceptVerbs("GET")]
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult EditMembership(Guid id)
     {
       UnitMembership m = GetUnitMembership(id);
@@ -858,7 +858,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs("POST")]
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult EditMembership(Guid id, FormCollection fields)
     {
       UnitMembership um = GetUnitMembership(id);
@@ -923,17 +923,17 @@ namespace Kcsara.Database.Web.Controllers
       this.db.SaveChanges();
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     [AcceptVerbs(HttpVerbs.Get)]
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult DeleteMembership(Guid id)
     {
       return View(GetUnitMembership(id));
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     [AcceptVerbs(HttpVerbs.Post)]
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult DeleteMembership(Guid id, FormCollection fields)
     {
       UnitMembership um = GetUnitMembership(id);
@@ -967,7 +967,7 @@ namespace Kcsara.Database.Web.Controllers
 
     #region Addresses
     [AcceptVerbs("GET")]
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult CreateAddress(Guid personId)
     {
       if (!Permissions.IsAdmin && !Permissions.IsSelf(personId)) return this.CreateLoginRedirect();
@@ -984,7 +984,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs(HttpVerbs.Post)]
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult CreateAddress(Guid personId, FormCollection fields)
     {
       if (!Permissions.IsAdmin && !Permissions.IsSelf(personId)) return this.CreateLoginRedirect();
@@ -1005,7 +1005,7 @@ namespace Kcsara.Database.Web.Controllers
 
 
     [AcceptVerbs("GET")]
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult EditAddress(Guid id)
     {
       PersonAddress address = (from a in this.db.PersonAddress.Include("Person") where a.Id == id select a).First();
@@ -1025,7 +1025,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs("POST")]
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult EditAddress(Guid id, FormCollection fields)
     {
       PersonAddress address = (from a in this.db.PersonAddress.Include("Person") where a.Id == id select a).First();
@@ -1055,9 +1055,9 @@ namespace Kcsara.Database.Web.Controllers
       return InternalEditAddress(address);
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     [AcceptVerbs(HttpVerbs.Get)]
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult DeleteAddress(Guid id)
     {
       ViewData["HideFrame"] = true;
@@ -1068,9 +1068,9 @@ namespace Kcsara.Database.Web.Controllers
       return View(address);
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     [AcceptVerbs(HttpVerbs.Post)]
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult DeleteAddress(Guid id, FormCollection fields)
     {
       PersonAddress address = (from a in this.db.PersonAddress.Include("Person") where a.Id == id select a).First();
@@ -1285,13 +1285,13 @@ namespace Kcsara.Database.Web.Controllers
       return MembersController.PhotosStoreRelativePath + (photoFile ?? MembersController.StandInPhotoFile);
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult Promotions()
     {
       return View();
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult PromotionsResult(List<Guid> m, bool? relative)
     {
       List<string> names;
@@ -1370,7 +1370,7 @@ namespace Kcsara.Database.Web.Controllers
       return View();
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult ReconcileMemberStatus(string id)
     {
       Guid unitId = new Guid("c2f99bb4-3056-4097-9345-4b8797f40e10");
@@ -1523,7 +1523,7 @@ namespace Kcsara.Database.Web.Controllers
 
 
     [HttpGet]
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult ReconcileEmergencyWorkers()
     {
       if (IO.File.Exists(this.ReconcileEmergencyWorkersCache))
@@ -1536,7 +1536,7 @@ namespace Kcsara.Database.Web.Controllers
     private string ReconcileEmergencyWorkersCache { get { return Server.MapPath("~/Content/auth/reconcile-dem.xlsx"); } }
 
     [HttpPost]
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult ReconcileEmergencyWorkers(bool? saveFile)
     {
       if (Request.Files.Count > 1)
@@ -1705,7 +1705,7 @@ namespace Kcsara.Database.Web.Controllers
       model.MembersByUnit[unit].Add(row);
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult PromoteNovices(bool? commit)
     {
       if (!User.IsInRole("cdb.admins")) return GetLoginError();

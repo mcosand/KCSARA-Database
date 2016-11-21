@@ -7,7 +7,7 @@ namespace Kcsara.Database.Web.Controllers
 {
   public class SinglePageController : Controller
   {
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult AuthRequired(string page)
     {
       return View("SinglePage");
@@ -33,7 +33,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [HttpGet]
-    [Authorize]
+    [AuthorizeWithLog]
     [Route("login")]
     public RedirectResult Login(string returnUrl = null)
     {

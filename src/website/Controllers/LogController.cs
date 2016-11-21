@@ -14,7 +14,7 @@ namespace Kcsara.Database.Web.Controllers
   {
     public LogController(IKcsarContext db, IAppSettings settings) : base(db, settings) { }
 
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ViewResult Index()
     {
       return View(this.db.GetLog(DateTime.Now.AddDays(-14)));

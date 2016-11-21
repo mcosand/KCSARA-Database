@@ -20,7 +20,7 @@ namespace Kcsara.Database.Web.Controllers
 
   public partial class TrainingController
   {
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult Documents(string id)
     {
       Guid mid;
@@ -55,14 +55,14 @@ namespace Kcsara.Database.Web.Controllers
       return Data(model);
     }
 
-    [Authorize(Roles = "cdb.trainingeditors")]
+    [AuthorizeWithLog(Roles = "cdb.trainingeditors")]
     [HttpGet]
     public ActionResult UploadDocument(Guid id)
     {
       return View(this.db.Trainings.First(f => f.Id == id));
     }
 
-    [Authorize(Roles = "cdb.trainingeditors")]
+    [AuthorizeWithLog(Roles = "cdb.trainingeditors")]
     [HttpPost]
     public ActionResult UploadDocument(Guid id, FormCollection fields)
     {

@@ -24,7 +24,7 @@ namespace Kcsara.Database.Web.Controllers
     public const string PhotosStoreRelativePath = "~/Content/auth/animals/";
     public const string StandInPhotoFile = "none.jpg";
 
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult Index()
     {
       var animals = (from a in this.db.Animals.Include("Owners").Include("Owners.Owner")
@@ -42,7 +42,7 @@ namespace Kcsara.Database.Web.Controllers
       return View(animals);
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     [AcceptVerbs(HttpVerbs.Get)]
     public ActionResult Detail(Guid id)
     {
@@ -55,7 +55,7 @@ namespace Kcsara.Database.Web.Controllers
 
     #region Create/Edit/Delete
     [AcceptVerbs(HttpVerbs.Get)]
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult Create()
     {
       ViewData["PageTitle"] = "New Animal";
@@ -69,7 +69,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs(HttpVerbs.Post)]
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult Create(FormCollection fields)
     {
       if (Session["NewAnimalGuid"] != null && Session["NewAnimalGuid"].ToString() != fields["NewAnimalGuid"])
@@ -87,7 +87,7 @@ namespace Kcsara.Database.Web.Controllers
 
 
     [AcceptVerbs("GET")]
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult Edit(Guid id)
     {
       Animal animal = (from a in this.db.Animals where a.Id == id select a).First();
@@ -95,7 +95,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs("POST")]
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult Edit(Guid id, FormCollection fields)
     {
       Animal animal = (from a in this.db.Animals where a.Id == id select a).First();
@@ -121,17 +121,17 @@ namespace Kcsara.Database.Web.Controllers
       return InternalEdit(a);
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     [AcceptVerbs(HttpVerbs.Get)]
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult Delete(Guid id)
     {
       return View((from a in this.db.Animals where a.Id == id select a).First());
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     [AcceptVerbs(HttpVerbs.Post)]
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult Delete(Guid id, FormCollection fields)
     {
       Animal animal = (from a in this.db.Animals where a.Id == id select a).First();
@@ -144,7 +144,7 @@ namespace Kcsara.Database.Web.Controllers
 
     #region Owners
     [AcceptVerbs("GET")]
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult CreateOwner(Guid id)
     {
       ViewData["PageTitle"] = "New Owner";
@@ -162,7 +162,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs(HttpVerbs.Post)]
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult CreateOwner(Guid id, FormCollection fields)
     {
       if (Session["NewOwnerGuid"] != null && Session["NewOwnerGuid"].ToString() != fields["NewOwnerGuid"])
@@ -182,7 +182,7 @@ namespace Kcsara.Database.Web.Controllers
 
 
     [AcceptVerbs("GET")]
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult EditOwner(Guid id)
     {
       AnimalOwner o = (from ao in this.db.AnimalOwners.Include("Animal").Include("Owner") where ao.Id == id select ao).First();
@@ -190,7 +190,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs("POST")]
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult EditOwner(Guid id, FormCollection fields)
     {
       AnimalOwner o = (from ao in this.db.AnimalOwners.Include("Animal").Include("Owner") where ao.Id == id select ao).First();
@@ -228,17 +228,17 @@ namespace Kcsara.Database.Web.Controllers
       return InternalEditOwner(o);
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     [AcceptVerbs(HttpVerbs.Get)]
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult DeleteOwner(Guid id)
     {
       return View((from ao in this.db.AnimalOwners.Include("Owner").Include("Animal") where ao.Id == id select ao).First());
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     [AcceptVerbs(HttpVerbs.Post)]
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult DeleteOwner(Guid id, FormCollection fields)
     {
       AnimalOwner o = (from ao in this.db.AnimalOwners where ao.Id == id select ao).First();
@@ -251,7 +251,7 @@ namespace Kcsara.Database.Web.Controllers
 
 
     #region Photos
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult PhotoUpload(string id)
     {
       string[] split = id.Split(',');
@@ -270,7 +270,7 @@ namespace Kcsara.Database.Web.Controllers
       return View(x);
     }
 
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     [AcceptVerbs(HttpVerbs.Post)]
     public ActionResult PhotoPreview()
     {
@@ -322,7 +322,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs(HttpVerbs.Post)]
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult PhotoCommit(FormCollection fields)
     {
       List<string> errors = new List<string>();

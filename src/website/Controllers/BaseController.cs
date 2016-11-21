@@ -20,6 +20,8 @@ namespace Kcsara.Database.Web.Controllers
   using Kcsara.Database.Web.Services;
   using Kcsara.Database.Web.Model;
   using MvcContrib.UI;
+  using log4net;
+  using System.Security.Claims;
 
   public class BaseController : Controller
   {
@@ -103,7 +105,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
 
-    [Authorize]
+    [AuthorizeWithLog]
     [HttpGet]
     public ActionResult SupportingDoc(Guid id, int? notify)
     {
@@ -117,7 +119,7 @@ namespace Kcsara.Database.Web.Controllers
       return View("SupportingDoc", view);
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     [HttpGet]
     public ActionResult UploadSupportingDoc(string type, Guid? target, int refId)
     {
@@ -126,7 +128,7 @@ namespace Kcsara.Database.Web.Controllers
       return View(new string[] { refId.ToString(), Request.Url.AbsoluteUri, string.Format("{0}", target) });
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     [HttpPost]
     public ActionResult UploadSupportingDoc(string type, int refId, FormCollection fields)
     {
@@ -163,7 +165,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [HttpGet]
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult DownloadDoc(Guid id)
     {
       byte[] buffer;
@@ -184,7 +186,7 @@ namespace Kcsara.Database.Web.Controllers
       return File(buffer, mime);
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     public FileContentResult DocumentThumb(Guid id)
     {
       var thumb = (from d in this.db.Documents where d.Id == id select new { store = d.StorePath, type = d.MimeType }).First();
@@ -309,7 +311,12 @@ namespace Kcsara.Database.Web.Controllers
 
     public ActionResult CreateLoginRedirect()
     {
-      return new HttpUnauthorizedResult();
+      var user = User as ClaimsPrincipal;
+      LogManager.GetLogger(this.GetType()).DebugFormat("Creating Login Redirect: {0}\n{1}",
+        Request.RawUrl,
+        user == null ? "No user" : string.Join("][", user.Claims.Select(f => f.Type + ": " + f.Value)));
+
+      return user == null ? new HttpUnauthorizedResult() : new HttpStatusCodeResult(403, "Not enough permission");
     }
   }
 }

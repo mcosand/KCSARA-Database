@@ -19,13 +19,13 @@ namespace Kcsara.Database.Web.Controllers
   {
     public AdminController(IKcsarContext db, IAppSettings settings) : base(db, settings) { }
 
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult Index()
     {
       return View();
     }
 
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     [AcceptVerbs(HttpVerbs.Get)]
     public ActionResult DisconnectedPhotos()
     {
@@ -51,7 +51,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     [AcceptVerbs(HttpVerbs.Get)]
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult FixUnitMemberships()
     {
       Kcsar.Database.Model.UnitMembership lastUm = null;
@@ -109,13 +109,13 @@ namespace Kcsara.Database.Web.Controllers
 
     #region TestMethods
     private static int counter = 0;
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public DataActionResult TestExceptionHandling()
     {
       throw new InvalidCastException("Test exception " + (counter++).ToString());
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     public ContentResult TestMail()
     {
       string email = Membership.GetUser().Email;

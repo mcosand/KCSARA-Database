@@ -10,7 +10,7 @@ using log4net;
 
 namespace Kcsara.Database.Web.Controllers
 {
-  [Authorize]
+  [AuthorizeWithLog]
   public class TrackController : BaseController
   {
     private readonly ILog log;

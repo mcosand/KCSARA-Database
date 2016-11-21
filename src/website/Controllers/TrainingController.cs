@@ -28,7 +28,7 @@ namespace Kcsara.Database.Web.Controllers
       return base.Index();
     }
 
-    [Authorize(Roles = "cdb.users")]
+    [AuthorizeWithLog(Roles = "cdb.users")]
     public ActionResult ReportStatus()
     {
       IEnumerable<EventReportStatusView> model;
@@ -73,7 +73,7 @@ namespace Kcsara.Database.Web.Controllers
     }
 
     #region Training Awards
-    [Authorize]
+    [AuthorizeWithLog]
     [HttpGet]
     public ActionResult AwardDetails(Guid? id)
     {
@@ -120,7 +120,7 @@ namespace Kcsara.Database.Web.Controllers
     }
     #endregion
 
-    [Authorize(Roles = "cdb.users")]
+    [AuthorizeWithLog(Roles = "cdb.users")]
     public ActionResult Rules()
     {
       Dictionary<Guid, TrainingCourse> courses = (from c in this.db.TrainingCourses select c).ToDictionary(x => x.Id);
@@ -187,7 +187,7 @@ namespace Kcsara.Database.Web.Controllers
       return new ContentResult { Content = text + string.Join("\n\n", lines.OrderBy(f => f).ToArray()), ContentType = "text/plain" };
     }
 
-    [Authorize(Roles = "cdb.users")]
+    [AuthorizeWithLog(Roles = "cdb.users")]
     public ActionResult CourseList(Guid? unit, int? recent, int? upcoming, bool? filter)
     {
       ViewData["PageTitle"] = "KCSARA :: Course List";
@@ -216,7 +216,7 @@ namespace Kcsara.Database.Web.Controllers
       return View(model);
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult CourseHours(Guid id, DateTime? begin, DateTime? end)
     {
       DateTime e = end ?? DateTime.Now;
@@ -296,7 +296,7 @@ namespace Kcsara.Database.Web.Controllers
       return Data(memberHours.Values.OrderByDescending(f => f.Hours).ThenBy(f => f.Person.Name));
     }
 
-    [Authorize(Roles = "cdb.users")]
+    [AuthorizeWithLog(Roles = "cdb.users")]
     public ActionResult CoreCompReport(Guid? id)
     {
       IQueryable<UnitMembership> memberships = this.db.UnitMemberships.Include("Person.ComputedAwards.Course").Include("Status");
@@ -416,7 +416,7 @@ namespace Kcsara.Database.Web.Controllers
       return Data(model);
     }
 
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult RecalculateAwards(Guid? id)
     {
       if (id.HasValue)
@@ -431,7 +431,7 @@ namespace Kcsara.Database.Web.Controllers
       return new ContentResult { Content = "Done" };
     }
 
-    [Authorize(Roles = "cdb.users")]
+    [AuthorizeWithLog(Roles = "cdb.users")]
     public ActionResult Current(Guid id, Guid? unit, bool? expired)
     {
       ViewData["PageTitle"] = "KCSARA :: Training Course";
@@ -644,7 +644,7 @@ namespace Kcsara.Database.Web.Controllers
 
     }
 
-    [Authorize(Roles = "cdb.users")]
+    [AuthorizeWithLog(Roles = "cdb.users")]
     public ContentResult EligibleEmails(Guid? unit, Guid eligibleFor, Guid[] haveFinished)
     {
       List<Guid> allCourses = new List<Guid>(haveFinished);
@@ -664,7 +664,7 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
 
     #region Course
     [AcceptVerbs("GET")]
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult CreateCourse()
     {
       ViewData["PageTitle"] = "New Training Course";
@@ -681,7 +681,7 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
     }
 
     [AcceptVerbs(HttpVerbs.Post)]
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult CreateCourse(FormCollection fields)
     {
       //if (Session["NewMembershipGuid"] != null && Session["NewMembershipGuid"].ToString() != fields["NewMembershipGuid"])
@@ -701,7 +701,7 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
 
 
     [AcceptVerbs("GET")]
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult EditCourse(Guid id)
     {
       TrainingCourse c = GetCourse(id);
@@ -734,7 +734,7 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
     }
 
     [AcceptVerbs("POST")]
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult EditCourse(Guid id, FormCollection fields)
     {
       ViewData["HideFrame"] = true;
@@ -757,14 +757,14 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
     }
 
     [AcceptVerbs(HttpVerbs.Get)]
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult DeleteCourse(Guid id)
     {
       return View(GetCourse(id));
     }
 
     [AcceptVerbs(HttpVerbs.Post)]
-    [Authorize(Roles = "cdb.admins")]
+    [AuthorizeWithLog(Roles = "cdb.admins")]
     public ActionResult DeleteCourse(Guid id, FormCollection fields)
     {
       TrainingCourse c = GetCourse(id);
@@ -793,7 +793,7 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
 
     #endregion
 
-    [Authorize(Roles = "cdb.users")]
+    [AuthorizeWithLog(Roles = "cdb.users")]
     public FileStreamResult IstTrainingReport(Guid? id, DateTime? date)
     {
       id = id ?? new Guid("c118ce30-cd28-4635-ba3d-adf7c21358e2");
@@ -864,7 +864,7 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
       return this.File(ms, "application/vnd.ms-excel", filename);
     }
 
-    [Authorize(Roles = "cdb.users")]
+    [AuthorizeWithLog(Roles = "cdb.users")]
     public FileStreamResult SpartTrainingReport(Guid? id, DateTime? date)
     {
       id = id ?? new Guid("574cb2fe-1acc-4e04-919c-030546b0e7bd");
@@ -943,7 +943,7 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
     }
 
 
-    [Authorize(Roles = "cdb.users")]
+    [AuthorizeWithLog(Roles = "cdb.users")]
     public FileStreamResult EsarTrainingReport()
     {
       DateTime today = DateTime.Today;
@@ -1052,7 +1052,7 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
       return this.db.Trainings.Include("OfferedCourses").Include("HostUnits").Include("Roster.TrainingAwards");
     }
 
-    [Authorize(Roles = "cdb.trainingeditors")]
+    [AuthorizeWithLog(Roles = "cdb.trainingeditors")]
     public ActionResult UploadKcsara()
     {
       return RedirectPermanent(Url.Content("~/training/uploadrecords"));

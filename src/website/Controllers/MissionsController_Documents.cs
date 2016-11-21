@@ -22,7 +22,7 @@ namespace Kcsara.Database.Web.Controllers
 
   public partial class MissionsController
   {
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult Documents(string id)
     {
       Guid mid;
@@ -221,14 +221,14 @@ namespace Kcsara.Database.Web.Controllers
       return Data(model);
     }
 
-    [Authorize(Roles = "cdb.missioneditors")]
+    [AuthorizeWithLog(Roles = "cdb.missioneditors")]
     [HttpGet]
     public ActionResult UploadDocument(Guid id)
     {
       return View(this.db.Missions.First(f => f.Id == id));
     }
 
-    [Authorize(Roles = "cdb.missioneditors")]
+    [AuthorizeWithLog(Roles = "cdb.missioneditors")]
     [HttpPost]
     public ActionResult UploadDocument(Guid id, FormCollection fields)
     {

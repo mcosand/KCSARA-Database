@@ -45,7 +45,7 @@ namespace Kcsara.Database.Web.Controllers
       return View();
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult Login(string returnUrl = null)
     {
       return Redirect(returnUrl ?? Url.Content("~/"));
@@ -172,7 +172,7 @@ namespace Kcsara.Database.Web.Controllers
 
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult MeshStatus()
     {
       MeshNodeStatus[] model;
@@ -183,7 +183,7 @@ namespace Kcsara.Database.Web.Controllers
       return View(model);
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult MeshGraphs(string id, string type)
     {
       MeshNodeStatus model;
@@ -195,7 +195,7 @@ namespace Kcsara.Database.Web.Controllers
       return View(model);
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult MeshNodeTrack(string id, DateTime? start, DateTime? stop)
     {
       if (string.IsNullOrWhiteSpace(id))

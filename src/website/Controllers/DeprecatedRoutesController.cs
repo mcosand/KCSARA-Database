@@ -5,7 +5,7 @@ namespace Kcsara.Database.Web.Controllers
   public class DeprecatedRoutesController : Controller
   {
     [Route("Account/Login")]
-    [Authorize]
+    [AuthorizeWithLog]
     public RedirectResult ToLogin(string returnUrl)
     {
       returnUrl = returnUrl ?? "/";

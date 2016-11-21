@@ -22,14 +22,14 @@ namespace Kcsara.Database.Web.Controllers
 
   public partial class MissionsController
   {
-    [Authorize(Roles = "cdb.missioneditors")]
+    [AuthorizeWithLog(Roles = "cdb.missioneditors")]
     [HttpGet]
     public ActionResult UploadGpx(Guid id)
     {
       return View(this.db.Missions.First(f => f.Id == id));
     }
 
-    [Authorize(Roles = "cdb.missioneditors")]
+    [AuthorizeWithLog(Roles = "cdb.missioneditors")]
     [HttpPost]
     public ActionResult UploadGpx(Guid id, FormCollection fields)
     {
@@ -438,7 +438,7 @@ namespace Kcsara.Database.Web.Controllers
       return Data(model);
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     public FileContentResult MissionsKML(DateTime? begin, DateTime? end)
     {
       List<GeographyView> items = ((MapDataView)GetGeographies(begin, end, false).Data).Items;
@@ -468,7 +468,7 @@ namespace Kcsara.Database.Web.Controllers
       return new FileContentResult(Encoding.UTF8.GetBytes(kml.ToString()), "application/vnd.google-earth.kml+xml") { FileDownloadName = "kcsara-missions.kml" };
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     public FileContentResult MissionKML(Guid id)
     {
       MapDataView data = (MapDataView)GetGeography(id, false).Data;
@@ -548,7 +548,7 @@ namespace Kcsara.Database.Web.Controllers
       return Data(new SubmitResult<Dictionary<Guid, string>> { Result = result });
     }
 
-    [Authorize(Roles = "cdb.users")]
+    [AuthorizeWithLog(Roles = "cdb.users")]
     public ActionResult Geography(Guid id)
     {
       MapDataView model = new MapDataView();

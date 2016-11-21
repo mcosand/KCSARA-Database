@@ -30,7 +30,7 @@
     /// </summary>
     /// <param name="id">unit id</param>
     /// <returns></returns>
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult Applicants(Guid id)
     {
       var unit = this.db.Units.Single(f => f.Id == id);
@@ -80,7 +80,7 @@
       return this.File(result, "application/vnd.ms-excel", string.Format("{0}-missionready-{1:yyMMdd}.xls", unit.DisplayName, DateTime.Now));
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult DownloadGpx(Guid? id)
     {
       XmlDocument doc = new XmlDocument();
@@ -187,7 +187,7 @@
       //return new ContentResult { Content = doc.OuterXml.Replace(newline, "\n"), ContentType = "text/xml" };
     }
 
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult DownloadRoster(Guid? id, bool? includeHidden)
     {
       // The method almost supports id=null as downloading the KCSARA roster
@@ -260,7 +260,7 @@
       return this.File(ms, "application/vnd.ms-excel", filename);
     }
 
-    //[Authorize]
+    //[AuthorizeWithLog]
     //[AcceptVerbs(HttpVerbs.Get)]
     //public ActionResult Detail(Guid id)
     //{
@@ -286,7 +286,7 @@
     //  return View(unit);
     //}
 
-    [Authorize]
+    [AuthorizeWithLog]
     public ActionResult DownloadReport(Guid? id, string reportName)
     {
       SarUnit unit = (from u in this.db.Units.Include("StatusTypes") where u.Id == id select u).First();

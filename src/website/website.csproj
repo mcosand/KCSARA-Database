@@ -359,6 +359,7 @@
     <Compile Include="App_Start\NinjectWebCommon.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="AuthorizeWithLogAttribute.cs" />
     <Compile Include="BlockRenderer.cs" />
     <Compile Include="CapturingResponseFilter.cs" />
     <Content Include="..\..\..\packages\Microsoft.SqlServer.Types.11.0.2\nativeBinaries\x64\msvcr100.dll">

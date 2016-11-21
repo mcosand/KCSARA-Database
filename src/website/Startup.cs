@@ -76,29 +76,32 @@ namespace Kcsara.Database.Web
             var tokenResponse = await tokenClient.RequestAuthorizationCodeAsync(
                 n.Code, n.RedirectUri);
 
-            // use the access token to retrieve claims from userinfo
-            var userInfoClient = new UserInfoClient(
-            new Uri(configStrings["auth:authority"].Trim('/') + "/connect/userinfo"),
-            tokenResponse.AccessToken);
-
-            var userInfoResponse = await userInfoClient.GetAsync();
-
-            // create new identity
-            var id = new ClaimsIdentity(n.AuthenticationTicket.Identity.AuthenticationType);
-            id.AddClaims(userInfoResponse.GetClaimsIdentity().Claims);
-
-            id.AddClaim(new Claim("access_token", tokenResponse.AccessToken));
-            id.AddClaim(new Claim("expires_at", DateTime.Now.AddSeconds(tokenResponse.ExpiresIn).ToLocalTime().ToString()));
-            if (!string.IsNullOrWhiteSpace(tokenResponse.RefreshToken))
+            if (!string.IsNullOrWhiteSpace(tokenResponse.AccessToken))
             {
-              id.AddClaim(new Claim("refresh_token", tokenResponse.RefreshToken));
-            }
-            id.AddClaim(new Claim("id_token", n.ProtocolMessage.IdToken));
-            id.AddClaim(new Claim("sid", n.AuthenticationTicket.Identity.FindFirst("sid").Value));
+              // use the access token to retrieve claims from userinfo
+              var userInfoClient = new UserInfoClient(
+              new Uri(configStrings["auth:authority"].Trim('/') + "/connect/userinfo"),
+              tokenResponse.AccessToken);
 
-            n.AuthenticationTicket = new AuthenticationTicket(
-                new ClaimsIdentity(id.Claims, n.AuthenticationTicket.Identity.AuthenticationType, "name", "role"),
-                n.AuthenticationTicket.Properties);
+              var userInfoResponse = await userInfoClient.GetAsync();
+
+              // create new identity
+              var id = new ClaimsIdentity(n.AuthenticationTicket.Identity.AuthenticationType);
+              id.AddClaims(userInfoResponse.GetClaimsIdentity().Claims);
+
+              id.AddClaim(new Claim("access_token", tokenResponse.AccessToken));
+              id.AddClaim(new Claim("expires_at", DateTime.Now.AddSeconds(tokenResponse.ExpiresIn).ToLocalTime().ToString()));
+              if (!string.IsNullOrWhiteSpace(tokenResponse.RefreshToken))
+              {
+                id.AddClaim(new Claim("refresh_token", tokenResponse.RefreshToken));
+              }
+              id.AddClaim(new Claim("id_token", n.ProtocolMessage.IdToken));
+              id.AddClaim(new Claim("sid", n.AuthenticationTicket.Identity.FindFirst("sid").Value));
+
+              n.AuthenticationTicket = new AuthenticationTicket(
+                  new ClaimsIdentity(id.Claims, n.AuthenticationTicket.Identity.AuthenticationType, "name", "role"),
+                  n.AuthenticationTicket.Properties);
+            }
           },
 
           AuthenticationFailed = n =>
