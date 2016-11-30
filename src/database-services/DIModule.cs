@@ -11,6 +11,7 @@ namespace Sar.Database.Services
       Bind<IAuthorizationService>().To<AuthorizationService>().InSingletonScope();
 
       Bind<ITrainingRecordsService>().To<TrainingRecordsService>();
+      Bind<ITrainingCoursesService>().To<TrainingCoursesService>();
       Bind<IMembersService>().To<MembersService>();
       Bind<IUnitsService>().To<UnitsService>();
       Bind<IEventsService>().To<EventsService>();

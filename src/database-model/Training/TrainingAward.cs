@@ -13,8 +13,13 @@
     public DateTimeOffset? Expiry { get; set; }
     public string DocPath { get; set; }
     public string metadata { get; set; }
-    [Required]
+    
+    [ForeignKey("MemberId")]
     public virtual Member Member { get; set; }
+
+    [Column("Member_Id")]
+    public Guid MemberId { get; set; }
+
     [Required]
     public virtual TrainingCourse Course { get; set; }
     public virtual TrainingRoster Roster { get; set; }

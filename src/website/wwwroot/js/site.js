@@ -159,7 +159,7 @@
       }
 
       var matchPage = function (section, page) {
-        if (path.indexOf(page.url) !== -1) {
+        if (path.indexOf(page.url) !== -1 && (!menu.currentPage || menu.currentPage.url.indexOf(page.url) === -1 || page.url.length > menu.currentPage.url.length)) {
           menu.selectSection(section);
           menu.selectPage(section, page);
         }
@@ -204,6 +204,7 @@
           name: 'Training', type: 'toggle', icon: 'school', pages:
             [
               { name: "Rosters", type: "link", url: window.appRoot + "training/list" },
+              { name: "Courses", type: "link", url: window.appRoot + "training/courses" },
               { name: "Reports", type: "link", url: window.appRoot + "training" }
             ]
         },

@@ -1,0 +1,33 @@
+﻿<edit-dialog name="editCourse">
+  <md-input-container class="md-block">
+    <label>Short Name</label>
+    <input ng-model="item.name" name="name" md-auto-focus required>
+    <div ng-messages="editCourse.name.$error">
+      <div ng-message="required">Short Name is required.</div>
+      <div ng-message="server">{{editCourse.name.$error.server}}</div>
+    </div>
+  </md-input-container>
+  <md-input-container class="md-block">
+    <label>Full Name</label>
+    <input ng-model="item.fullName" name="fullName" required>
+    <div ng-messages="editCourse.fullName.$error">
+      <div ng-message="required">Full Name is required.</div>
+      <div ng-message="server">{{editCourse.fullName.$error.server}}</div>
+    </div>
+  </md-input-container>
+  <md-input-container class="md-block">
+    <label>Category</label>
+    <input ng-model="item.category" name="category">
+    <div ng-messages="editCourse.category.$error">
+      <div ng-message="server">{{editCourse.category.$error.server}}</div>
+    </div>
+  </md-input-container>
+  <md-input-container class="md-block">
+    <label>Expiration Period (in months)</label>
+    <input ng-model="item.validMonths" name="validMonths" >
+    <div class="hint" ng-hide="editCourse.validMonths.$error">Enter 0 for courses that don't expire</div>
+    <div ng-messages="editCourse.validMonths.$error">
+      <div ng-message="server">{{editCourse.validMonths.$error.server}}</div>
+    </div>
+  </md-input-container>
+</edit-dialog>

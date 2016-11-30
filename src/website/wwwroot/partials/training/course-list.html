@@ -1,0 +1,24 @@
+﻿<md-content layout-padding flex ng-controller="TrainingCoursesCtrl">
+  <md-card>
+    <md-toolbar class="md-table-toolbar md-default">
+      <div class="md-toolbar-tools">
+        <span>Course List</span>
+        <div flex></div>
+        <md-button class="md-icon-button md-primary" aria-label="Add Course" ng-if="courses._c" ng-click="createCourse($event)">
+          <md-icon>add_circle</md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-card-content>
+      <md-list flex>
+        <md-list-item class="md-2-line" ng-repeat="course in courses" ng-href="/training/courses/{{course.id}}">
+          <div class="md-list-item-text">
+            <h3>{{course.name}}</h3>
+            <p>{{course.fullName}}</p>
+          </div>
+        </md-list-item>
+      </md-list>
+      <md-progress-linear md-mode="indeterminate" class="md-accent" ng-disabled="!courses.loading"></md-progress-linear>
+    </md-card-content>
+  </md-card>
+</md-content>

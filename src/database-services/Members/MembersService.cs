@@ -262,5 +262,12 @@ namespace Sar.Database.Services
         return await db.Members.Where(f => f.Id == memberId).Select(f => f.EmergencyContacts.Count).SingleOrDefaultAsync();
       }
     }
+
+    internal static IQueryable<DB.Member> GetActiveMemberQuery(DB.IKcsarContext db, DateTimeOffset? when = null)
+    {
+      when = when ?? DateTimeOffset.UtcNow;
+      DateTimeOffset dbWhen = when.Value;
+      return db.Members.Where(f => f.Memberships.Any(g => g.Status.IsActive && (g.EndTime == null || g.EndTime > dbWhen)));
+    }
   }
 }

@@ -388,6 +388,8 @@
     <Content Include="wwwroot\js\controllers\accounts\accountsReset.js" />
     <Content Include="wwwroot\js\controllers\accounts\accountsFinishReset.js" />
     <Content Include="wwwroot\js\controllers\editDialogController.js" />
+    <Content Include="wwwroot\js\controllers\training\training-courses.js" />
+    <Content Include="wwwroot\js\controllers\training\course-detail.js" />
     <Content Include="wwwroot\js\controllers\training\uploadRecords.js" />
     <Content Include="wwwroot\js\controllers\units\unitsRoster.js" />
     <Content Include="wwwroot\js\controllers\units\unitsDetail.js" />
@@ -401,6 +403,7 @@
     <Content Include="wwwroot\js\services\authService.js" />
     <Content Include="wwwroot\js\services\editorsService.js" />
     <Content Include="wwwroot\js\services\accountsService.js" />
+    <Content Include="wwwroot\js\services\training-service.js" />
     <Content Include="wwwroot\js\services\unitsService.js" />
     <Content Include="wwwroot\js\site.js" />
     <Content Include="wwwroot\partials\accounts\create.html" />
@@ -532,6 +535,9 @@
     <Content Include="wwwroot\js\auth\page\registerlogin.js" />
     <Content Include="wwwroot\js\auth\sar-common.js" />
     <Content Include="wwwroot\js\auth\site.js" />
+    <Content Include="wwwroot\partials\training\course-list.html" />
+    <Content Include="wwwroot\partials\training\course-detail.html" />
+    <Content Include="wwwroot\partials\training\edit-course.html" />
     <Content Include="wwwroot\partials\training\upload-records.html" />
     <Content Include="wwwroot\partials\units\edit.html" />
     <Content Include="wwwroot\partials\units\editStatus.html" />

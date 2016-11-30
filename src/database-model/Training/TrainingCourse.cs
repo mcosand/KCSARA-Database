@@ -1,14 +1,12 @@
-﻿/*
- * Copyright 2009-2014 Matthew Cosand
- */
-
-namespace Kcsar.Database.Model
+﻿namespace Kcsar.Database.Model
 {
   using System;
   using System.Collections.Generic;
   using System.ComponentModel.DataAnnotations;
+  using System.ComponentModel.DataAnnotations.Schema;
   using System.Linq;
 
+  [Table("TrainingCourses")]
   public class TrainingCourse : ModelObject
   {
     [Required]
@@ -22,7 +20,13 @@ namespace Kcsar.Database.Model
     public DateTime? OfferedUntil { get; set; }
     public string Metadata { get; set; }
     public virtual ICollection<TrainingAward> TrainingAward { get; set; }
+
+    [ForeignKey("UnitId")]
     public virtual SarUnit Unit { get; set; }
+
+    [Column("Unit_Id")]
+    public Guid? UnitId { get; set; }
+
     public virtual ICollection<ComputedTrainingAward> ComputedAwards { get; set; }
     public virtual ICollection<Training> Trainings { get; set; }
     public virtual ICollection<TrainingRequired> RequiredBy { get; set; }
