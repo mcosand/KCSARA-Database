@@ -187,33 +187,9 @@ namespace Kcsara.Database.Web.Controllers
       return new ContentResult { Content = text + string.Join("\n\n", lines.OrderBy(f => f).ToArray()), ContentType = "text/plain" };
     }
 
-    [AuthorizeWithLog(Roles = "cdb.users")]
     public ActionResult CourseList(Guid? unit, int? recent, int? upcoming, bool? filter)
     {
-      ViewData["PageTitle"] = "KCSARA :: Course List";
-      ViewData["Message"] = "Training Courses";
-
-      ViewData["recent"] = recent = recent ?? 3;
-      ViewData["upcoming"] = upcoming = upcoming ?? 3;
-
-      ViewData["filter"] = (filter = filter ?? true);
-
-      ViewData["unit"] = UnitsController.GetUnitSelectList(this.db, unit);
-      ViewData["unitFilter"] = unit;
-
-      var courses = (from c in this.db.TrainingCourses select c).ToDictionary(x => x.Id);
-
-      //var model = from s in this.db.GetTrainingExpirationsSummary(recent, upcoming, unit)
-      //            select new TrainingCourseSummary { Course = courses[s.CourseId], CurrentCount = s.Good, RecentCount = s.Recent, UpcomingCount = s.Almost, FarExpiredCount = s.Expired };
-      var model = from s in this.db.TrainingCourses select new TrainingCourseSummary { Course = s, CurrentCount = 0, RecentCount = 0, UpcomingCount = 0, FarExpiredCount = 0 };
-
-
-      if ((bool)ViewData["filter"])
-      {
-        model = model.Where(f => f.Course.WacRequired > 0 || f.Course.ShowOnCard);
-      }
-
-      return View(model);
+      return RedirectPermanent(Url.Content("~/training/courses"));
     }
 
     [AuthorizeWithLog]
@@ -431,40 +407,9 @@ namespace Kcsara.Database.Web.Controllers
       return new ContentResult { Content = "Done" };
     }
 
-    [AuthorizeWithLog(Roles = "cdb.users")]
     public ActionResult Current(Guid id, Guid? unit, bool? expired)
     {
-      ViewData["PageTitle"] = "KCSARA :: Training Course";
-      ViewData["Course"] = (from c in this.db.TrainingCourses where c.Id == id select c).First();
-
-      ViewData["unit"] = UnitsController.GetUnitSelectList(this.db, unit);
-      ViewData["expired"] = (expired = expired ?? false);
-
-      // I'm sure there's a better way to do this, but I'll have to come back to it when I become more of a Linq/Entities/SQL guru.
-      // What's here now...
-      // SELECT everyone that's taken this course, sorted by name and date. This set will have multiple rows for a person
-      // that has taken the course more than once. They should be sorted so that the most recent of these rows comes first.
-      // Run through the list, and pull out the earlier records for this person and course.
-
-      Guid lastId = Guid.Empty;
-      IQueryable<ComputedTrainingAward> src = this.db.ComputedTrainingAwards.Include("Member").Include("Course").Include("Member.Memberships.Unit").Include("Member.Memberships.Status");
-
-      var model = (from ta in src where ta.Course.Id == id select ta);
-      if (!(bool)ViewData["expired"])
-      {
-        model = model.Where(ta => (ta.Expiry == null || ta.Expiry >= DateTime.Today));
-      }
-      List<ComputedTrainingAward> awards = model.OrderBy(ta => ta.Member.LastName).ThenBy(f => f.Member.FirstName).ThenBy(f => f.Member.Id).ThenByDescending(f => f.Expiry).ToList();
-
-      if (unit.HasValue)
-      {
-        awards = awards.Where(f => f.Member.GetActiveUnits().Where(g => g.Unit.Id == unit.Value).Count() > 0).ToList();
-      }
-      else
-      {
-        awards = awards.Where(f => f.Member.GetActiveUnits().Count() > 0).ToList();
-      }
-      return View(awards);
+      return RedirectPermanent(Url.Content("~/training/courses/" + id.ToString() + "/roster"));
     }
 
     #region SarEventController base class
@@ -662,118 +607,6 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
       return new ContentResult { Content = string.Join("; ", mails), ContentType = "text/plain" };
     }
 
-    #region Course
-    [AcceptVerbs("GET")]
-    [AuthorizeWithLog(Roles = "cdb.admins")]
-    public ActionResult CreateCourse()
-    {
-      ViewData["PageTitle"] = "New Training Course";
-
-      TrainingCourse c = new TrainingCourse();
-      //UnitMembership s = new UnitMembership();
-      //s.Person = (from p in this.db.Members where p.Id == personId select p).First();
-      //s.Activated = DateTime.Today;
-
-      //Session.Add("NewMembershipGuid", s.Id);
-      //ViewData["NewMembershipGuid"] = Session["NewMembershipGuid"];
-
-      return InternalEditCourse(c);
-    }
-
-    [AcceptVerbs(HttpVerbs.Post)]
-    [AuthorizeWithLog(Roles = "cdb.admins")]
-    public ActionResult CreateCourse(FormCollection fields)
-    {
-      //if (Session["NewMembershipGuid"] != null && Session["NewMembershipGuid"].ToString() != fields["NewMembershipGuid"])
-      //{
-      //    throw new InvalidOperationException("Invalid operation. Are you trying to re-create a status change?");
-      //}
-      //Session.Remove("NewMembershipGuid");
-
-      //ViewData["PageTitle"] = "New Unit Membership";
-
-      //UnitMembership um = new UnitMembership();
-      //um.Person = (from p in this.db.Members where p.Id == personId select p).First();
-      //this.db.AddToUnitMemberships(um);
-      //return InternalSaveMembership(um, fields);
-      return null;
-    }
-
-
-    [AcceptVerbs("GET")]
-    [AuthorizeWithLog(Roles = "cdb.admins")]
-    public ActionResult EditCourse(Guid id)
-    {
-      TrainingCourse c = GetCourse(id);
-      ViewData["HideFrame"] = true;
-
-      return InternalEditCourse(c);
-    }
-
-    private ActionResult InternalEditCourse(TrainingCourse um)
-    {
-      //SarUnit[] units = (from u in this.db.Units orderby u.DisplayName select u).ToArray();
-
-      //Guid selectedUnit = (um.Unit != null) ? um.Unit.Id : Guid.Empty;
-
-      //// MVC RC BUG - Have to store list in a unique key in order for SelectedItem to work
-      //ViewData["Unit"] = new SelectList(units, "Id", "DisplayName", selectedUnit);
-
-      //if (selectedUnit == Guid.Empty && units.Length > 0)
-      //{
-      //    selectedUnit = units.First().Id;
-      //}
-
-      //ViewData["Status"] = new SelectList(
-      //        (from s in this.db.UnitStatusTypes.Include("Unit") where s.Unit.Id == selectedUnit orderby s.StatusName select s).ToArray(),
-      //        "Id",
-      //        "StatusName",
-      //        (um.Status != null) ? (Guid?)um.Status.Id : null);
-
-      return View("EditCourse", um);
-    }
-
-    [AcceptVerbs("POST")]
-    [AuthorizeWithLog(Roles = "cdb.admins")]
-    public ActionResult EditCourse(Guid id, FormCollection fields)
-    {
-      ViewData["HideFrame"] = true;
-      TrainingCourse c = GetCourse(id);
-      return InternalSaveCourse(c, fields);
-    }
-
-
-    private ActionResult InternalSaveCourse(TrainingCourse c, FormCollection fields)
-    {
-      TryUpdateModel(c, new string[] { "DisplayName", "FullName", "OfferedFrom", "OfferedTo", "ValidMonths", "ShowOnCard", "WacRequired" });
-
-      if (ModelState.IsValid)
-      {
-        this.db.SaveChanges();
-        TempData["message"] = "Saved";
-        return RedirectToAction("ClosePopup");
-      }
-      return InternalEditCourse(c);
-    }
-
-    [AcceptVerbs(HttpVerbs.Get)]
-    [AuthorizeWithLog(Roles = "cdb.admins")]
-    public ActionResult DeleteCourse(Guid id)
-    {
-      return View(GetCourse(id));
-    }
-
-    [AcceptVerbs(HttpVerbs.Post)]
-    [AuthorizeWithLog(Roles = "cdb.admins")]
-    public ActionResult DeleteCourse(Guid id, FormCollection fields)
-    {
-      TrainingCourse c = GetCourse(id);
-      this.db.TrainingCourses.Remove(c);
-      this.db.SaveChanges();
-
-      return RedirectToAction("ClosePopup");
-    }
-
     private TrainingCourse GetCourse(Guid id)
     {
       return GetCourse(this.db.TrainingCourses, id);
@@ -790,8 +623,6 @@ ORDER BY lastname,firstname", eligibleFor, string.Join("','", haveFinished.Selec
       TrainingCourse course = courses[0];
       return course;
     }
-
-    #endregion
 
     [AuthorizeWithLog(Roles = "cdb.users")]
     public FileStreamResult IstTrainingReport(Guid? id, DateTime? date)

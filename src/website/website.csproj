@@ -821,12 +821,9 @@
     <Content Include="Views\Shared\UploadSupportingDoc.aspx" />
     <Content Include="Views\Training\AwardDetails.aspx" />
     <Content Include="Views\Training\CourseHours.aspx" />
-    <Content Include="Views\Training\CourseList.aspx" />
-    <Content Include="Views\Training\Current.aspx" />
     <Content Include="Views\Training\Delete.aspx" />
     <Content Include="Views\Training\Documents.aspx" />
     <Content Include="Views\Training\Edit.aspx" />
-    <Content Include="Views\Training\EditCourse.aspx" />
     <Content Include="Views\Training\Eligible.aspx" />
     <Content Include="Views\Training\Index.aspx" />
     <Content Include="Views\Training\List.aspx" />
