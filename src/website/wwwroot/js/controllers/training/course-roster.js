@@ -5,7 +5,10 @@
       limit: 5,
       page: 1
     },
-
+    showExpired: false,
+    doFilter: function (item) {
+      return $scope.showExpired || new Date(item.expires) >= new Date()
+    },
     getRoster: function () {
       $scope.loading = Training.courses.one($stateParams.id).all('roster').getList().then(function (data) {
         $scope.roster = data;
