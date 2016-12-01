@@ -21,6 +21,7 @@ namespace Sar.Database.Services
     Task DeleteAsync(Guid courseId);
     Task<ItemPermissionWrapper<TrainingCourse>> GetAsync(Guid courseId);
     Task<object> GetCourseStats(Guid courseId);
+    Task<List<TrainingRecord>> ListRoster(Guid courseId);
   }
 
   public class TrainingCoursesService : ITrainingCoursesService
@@ -119,6 +120,19 @@ namespace Sar.Database.Services
         };
 
         return _authz.Wrap(result);
+      }
+    }
+
+    public async Task<List<TrainingRecord>> ListRoster(Guid courseId)
+    {
+      using (var db = _dbFactory())
+      {
+        var membersQuery = MembersService.GetActiveMemberQuery(db);
+        var awards = db.TrainingAward.Where(f => f.Course.Id == courseId);
+        var records = membersQuery.Join(awards, f => f.Id, f => f.MemberId, (member, record) => record );
+
+        return await TrainingRecordsService.ProjectTrainingRecordRows(db, records)
+          .ToListAsync();
       }
     }
 

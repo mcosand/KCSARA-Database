@@ -368,21 +368,8 @@ namespace Sar.Database.Services
     {
       using (var db = _dbFactory())
       {
-        var list = await db.TrainingAward
-          .Select(f => new TrainingRecord
-        {
-          Id = f.Id,
-          Member = new NameIdPair { Id = f.Member.Id, Name = f.Member.FirstName + " " + f.Member.LastName },
-          Course = new NameIdPair { Id = f.Course.Id, Name = f.Course.DisplayName },
-          Completed = f.Completed,
-          Expires = f.Expiry,
-          Comments = f.metadata,
-          Source = (f.Roster != null) ? "roster" : "direct",
-          ReferenceId = (from roster in db.TrainingRosters where roster.Id == f.Roster.Id select (Guid?)roster.Training.Id).FirstOrDefault() ?? f.Id,
-        })
+        var list = await ProjectTrainingRecordRows(db, db.TrainingAward)
         .Where(filter)
-        .OrderByDescending(f => f.Completed)
-        .ThenBy(f => f.Source)
         .ToListAsync();
 
         return new ListPermissionWrapper<TrainingRecord>
@@ -391,6 +378,23 @@ namespace Sar.Database.Services
           Items = list.Select(f => _authz.Wrap(f))
         };
       }
+    }
+
+    internal static IQueryable<TrainingRecord> ProjectTrainingRecordRows(DB.IKcsarContext db, IQueryable<DB.TrainingAward> query)
+    {
+      return query.Select(f => new TrainingRecord
+      {
+        Id = f.Id,
+        Member = new NameIdPair { Id = f.Member.Id, Name = f.Member.FirstName + " " + f.Member.LastName },
+        Course = new NameIdPair { Id = f.Course.Id, Name = f.Course.DisplayName },
+        Completed = f.Completed,
+        Expires = f.Expiry,
+        Comments = f.metadata,
+        Source = (f.Roster != null) ? "roster" : "direct",
+        ReferenceId = (from roster in db.TrainingRosters where roster.Id == f.Roster.Id select (Guid?)roster.Training.Id).FirstOrDefault() ?? f.Id,
+      })
+      .OrderByDescending(f => f.Completed)
+      .ThenBy(f => f.Source);
     }
   }
 }

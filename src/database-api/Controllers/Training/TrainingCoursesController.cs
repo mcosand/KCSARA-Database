@@ -39,6 +39,16 @@ namespace Kcsara.Database.Api.Controllers.Training
     }
 
     [HttpGet]
+    [Route("training/courses/{courseId}/roster")]
+    public async Task<List<TrainingRecord>> ListCourseRoster(Guid courseId)
+    {
+      await _authz.EnsureAsync(courseId, "Read:TrainingCourse");
+      await _authz.EnsureAsync(null, "Read:Member");
+
+      return await _courses.ListRoster(courseId);
+    }
+
+    [HttpGet]
     [Route("training/courses")]
     public async Task<ListPermissionWrapper<TrainingCourse>> List()
     {

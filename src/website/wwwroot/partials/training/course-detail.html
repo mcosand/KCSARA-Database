@@ -10,10 +10,12 @@
       <div>Category: {{course.category}}</div>
       <div ng-show="course.unit">Unit: {{course.unit.name}}</div>
       <div>Expires: {{course.validMonths ? course.validMonths + ' months' : 'never'}}</div>
-      <div>Prerequisites:<span ng-hide="course.prerequisites && course.prerequisites.length"> none</span>
-      <ul>
-        <li ng-repeat="p in course.prerequisites">{{p.name}}</li>
-      </ul></div>
+      <div>
+        Prerequisites:<span ng-hide="course.prerequisites && course.prerequisites.length"> none</span>
+        <ul>
+          <li ng-repeat="p in course.prerequisites">{{p.name}}</li>
+        </ul>
+      </div>
     </md-card-content>
     <md-card-actions layout="row" layout-align="end center">
       <md-button class="md-icon-button md-secondary md-hue-3" aria-label="Edit Course" ng-if="course._u" ng-click="editCourse($event, course)">
@@ -40,6 +42,11 @@
           <div>Expiring<br />Soon</div>
         </div>
       </md-card-content>
+      <md-card-actions layout="row" layout-align="end center">
+        <md-button class="md-secondary" aria-label="Course Roster" ng-href="{{'/training/courses/' + course.id + '/roster'}}">
+          Roster
+        </md-button>
+      </md-card-actions>
     </md-card>
   </div>
 </md-content>

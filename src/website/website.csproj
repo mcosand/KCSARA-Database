@@ -390,6 +390,7 @@
     <Content Include="wwwroot\js\controllers\editDialogController.js" />
     <Content Include="wwwroot\js\controllers\training\training-courses.js" />
     <Content Include="wwwroot\js\controllers\training\course-detail.js" />
+    <Content Include="wwwroot\js\controllers\training\course-roster.js" />
     <Content Include="wwwroot\js\controllers\training\uploadRecords.js" />
     <Content Include="wwwroot\js\controllers\units\unitsRoster.js" />
     <Content Include="wwwroot\js\controllers\units\unitsDetail.js" />
@@ -538,6 +539,7 @@
     <Content Include="wwwroot\partials\training\course-list.html" />
     <Content Include="wwwroot\partials\training\course-detail.html" />
     <Content Include="wwwroot\partials\training\edit-course.html" />
+    <Content Include="wwwroot\partials\training\course-roster.html" />
     <Content Include="wwwroot\partials\training\upload-records.html" />
     <Content Include="wwwroot\partials\units\edit.html" />
     <Content Include="wwwroot\partials\units\editStatus.html" />

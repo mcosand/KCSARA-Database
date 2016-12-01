@@ -80,7 +80,7 @@
     return doc.label || doc.name;
   };
 })
-  .filter('simpleDate', function () {
+  .filter('simpleDateTime', function () {
     return function (value) {
       return value ? value.replace('T', ' ').substring(0,16) : '';
     }

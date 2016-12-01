@@ -23,6 +23,7 @@
     'unitsRoster': { url: '/units/roster/:id', templateUrl: '/wwwroot/partials/units/roster.html', resolve: resolveUnitTitle },
     'training_courselist': { url: '/training/courses', templateUrl: '/wwwroot/partials/training/course-list.html', resolve: { $title: function () { return 'Course List' } } },
     'training_coursedetail': { url: '/training/courses/:id', templateUrl: '/wwwroot/partials/training/course-detail.html', resolve: { $title: function () { return 'Course Detail' } } },
+    'training_courseroster': { url: '/training/courses/:id/roster', templateUrl: '/wwwroot/partials/training/course-roster.html', resolve: { $title: function () { return 'Course Detail' } } },
     'trainingBatchUpload': { url: '/training/uploadrecords', templateUrl: '/wwwroot/partials/training/upload-records.html', resolve: { $title: function () { return 'Upload Training Records' } } },
     'accounts': { url: '/accounts', templateUrl: '/wwwroot/partials/accounts/list.html', resolve: { $title: function () { return 'Accounts'; } } },
     'account_reset': { url: '/accounts/reset', templateUrl: '/wwwroot/partials/accounts/reset.html', data: { allowAnonymous: true }, resolve: { $title: function () { return 'Account Reset' } } },
