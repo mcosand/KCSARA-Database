@@ -41,6 +41,9 @@
       <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="EPPlus">
+      <HintPath>..\..\packages\EPPlus.4.0.4\lib\net20\EPPlus.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -53,8 +56,14 @@
   <ItemGroup>
     <Compile Include="MissionReadyExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="EsarReports.cs" />
+    <Compile Include="EsarReports_Training.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\src\database-data-common\database-data-common.csproj">
+      <Project>{65c9556c-8be3-4450-b119-9fc43d2bef38}</Project>
+      <Name>database-data-common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\src\database-model\database-model.csproj">
       <Project>{EAE01EC9-F91D-4B72-A648-6AC96E688CCE}</Project>
       <Name>database-model</Name>
@@ -67,10 +76,11 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <EmbeddedResource Include="templates\trainingReport.xlsx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy /y "$(TargetPath)" "$(SolutionDir)full-database\src\website\bin"</PostBuildEvent>
+    <PostBuildEvent>copy /y "$(TargetDir)$(TargetName).???" "$(SolutionDir)full-database\src\website\bin"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
