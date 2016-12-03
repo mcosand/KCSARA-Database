@@ -6,6 +6,7 @@
   using System.IO;
   using System.Linq;
   using System.Reflection;
+  using System.Text.RegularExpressions;
   using Api.Extensions;
   using Kcsar.Database.Model;
   using log4net;
@@ -43,7 +44,7 @@
 
       foreach (var unit in units)
       {
-        string assemblyName = string.Format("{0}.Extensions", unit.DisplayName);
+        string assemblyName = string.Format("{0}.Extensions", Regex.Replace(unit.DisplayName, "[^a-zA-Z0-9]", "-"));
         if (!File.Exists(Path.Combine(Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath), assemblyName + ".dll")))
         {
           log.InfoFormat("Unit {0} has no extension DLL", unit.DisplayName);
