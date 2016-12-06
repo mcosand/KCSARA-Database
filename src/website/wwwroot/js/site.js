@@ -205,7 +205,7 @@
             [
               { name: "Rosters", type: "link", url: window.appRoot + "training/list" },
               { name: "Courses", type: "link", url: window.appRoot + "training/courses" },
-              { name: "Reports", type: "link", url: window.appRoot + "training" }
+              { name: "More", type: "link", url: window.appRoot + "training" }
             ]
         },
         { name: "Units", type: 'link', icon: 'group', url: window.appRoot + 'units' },

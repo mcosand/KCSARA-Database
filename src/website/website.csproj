@@ -540,6 +540,7 @@
     <Content Include="wwwroot\partials\training\course-detail.html" />
     <Content Include="wwwroot\partials\training\edit-course.html" />
     <Content Include="wwwroot\partials\training\course-roster.html" />
+    <Content Include="wwwroot\partials\training\index.html" />
     <Content Include="wwwroot\partials\training\upload-records.html" />
     <Content Include="wwwroot\partials\units\edit.html" />
     <Content Include="wwwroot\partials\units\editStatus.html" />
@@ -660,7 +661,6 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\auth\Web.config" />
-    <Content Include="Content\esartraining-template.xls" />
     <Content Include="Content\roster-template.xls" />
     <Content Include="fonts\fontawesome-webfont.eot" />
     <Content Include="fonts\fontawesome-webfont.ttf" />

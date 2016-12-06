@@ -21,6 +21,7 @@
     'units': { url: '/units', templateUrl: '/wwwroot/partials/units/list.html', resolve: { $title: function () { return 'Units' } } },
     'unitsDetail': { url: '/units/detail/:id', templateUrl: '/wwwroot/partials/units/detail.html', resolve: resolveUnitTitle },
     'unitsRoster': { url: '/units/roster/:id', templateUrl: '/wwwroot/partials/units/roster.html', resolve: resolveUnitTitle },
+    'training': { url: '/training', templateUrl: '/wwwroot/partials/training/index.html', resolve: { $title: function() { return 'Training' }}},
     'training_courselist': { url: '/training/courses', templateUrl: '/wwwroot/partials/training/course-list.html', resolve: { $title: function () { return 'Course List' } } },
     'training_coursedetail': { url: '/training/courses/:id', templateUrl: '/wwwroot/partials/training/course-detail.html', resolve: { $title: function () { return 'Course Detail' } } },
     'training_courseroster': { url: '/training/courses/:id/roster', templateUrl: '/wwwroot/partials/training/course-roster.html', resolve: { $title: function () { return 'Course Detail' } } },
