@@ -1,7 +1,4 @@
-﻿/*
- * Copyright 2008-2014 Matthew Cosand
- */
-namespace Kcsara.Database.Web.Controllers
+﻿namespace Kcsara.Database.Web.Controllers
 {
   using System;
   using System.Collections.Generic;
@@ -12,16 +9,15 @@ namespace Kcsara.Database.Web.Controllers
   using System.Linq.Expressions;
   using System.Net.Mail;
   using System.Runtime.Serialization;
+  using System.Security.Claims;
   using System.Text.RegularExpressions;
   using System.Web;
   using System.Web.Mvc;
-  using System.Web.Security;
   using Kcsar.Database.Model;
-  using Kcsara.Database.Web.Services;
   using Kcsara.Database.Web.Model;
-  using MvcContrib.UI;
+  using Kcsara.Database.Web.Services;
   using log4net;
-  using System.Security.Claims;
+  using MvcContrib.UI;
 
   public class BaseController : Controller
   {
@@ -71,9 +67,9 @@ namespace Kcsara.Database.Web.Controllers
     {
       var o = Expression.Parameter(typeof(T), "o");
       var body = ids
-        // t.Id == id
+          // t.Id == id
           .Select(id => Expression.Equal(Expression.Property(o, "Id"), Expression.Constant(id)))
-        // t.Id == id1 OR t.ID == id2 Or ...
+          // t.Id == id1 OR t.ID == id2 Or ...
           .Aggregate((accum, clause) => Expression.Or(accum, clause));
       return Expression.Lambda<Func<T, bool>>(body, o);
     }
@@ -312,11 +308,15 @@ namespace Kcsara.Database.Web.Controllers
     public ActionResult CreateLoginRedirect()
     {
       var user = User as ClaimsPrincipal;
-      LogManager.GetLogger(this.GetType()).DebugFormat("Creating Login Redirect: {0}\n{1}",
+      var authed = user != null && user.Claims.Any();
+      LogManager.GetLogger(this.GetType()).DebugFormat("Creating Login Redirect: {0} {1} {2} {3} {4}",
         Request.RawUrl,
-        user == null ? "No user" : string.Join("][", user.Claims.Select(f => f.Type + ": " + f.Value)));
+        authed ? string.Join("][", user.Claims.Select(f => f.Type + ": " + f.Value)) : "No user",
+        user.Identity.IsAuthenticated,
+        user.Identity.Name,
+        user.Identities.Count());
 
-      return user == null ? new HttpUnauthorizedResult() : new HttpStatusCodeResult(403, "Not enough permission");
+      return authed ? new HttpStatusCodeResult(403, "Not enough permission") : new HttpUnauthorizedResult();
     }
   }
 }

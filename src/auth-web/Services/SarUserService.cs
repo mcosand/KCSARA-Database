@@ -62,7 +62,8 @@ namespace Sar.Database.Web.Auth.Services
       if (string.IsNullOrWhiteSpace(info.Email)) throw new ArgumentException("email is required");
 
       var existing = await GetUserAsync(info.Username);
-      if (existing != null) {
+      if (existing != null)
+      {
         _log.Warning("Tried to create user " + info.Username + " but it already exists");
         throw new HttpException(400, "Username already exists");
       }
@@ -292,18 +293,19 @@ namespace Sar.Database.Web.Auth.Services
         }
 
         var roles = _roles.ListAllRolesForAccount(account.Id);
+        if (roles.Count == 0) _log.Information("Account with zero roles: {accountId}", account.Id);
         foreach (var role in roles)
         {
           claims.Add(new Claim(SarScopeStore.RolesClaim, role));
         }
-      
+
         claims.Add(new Claim(Constants.ClaimTypes.Subject, account.Id.ToString()));
         claims.Add(new Claim(Constants.ClaimTypes.Email, account.Email));
         claims.Add(new Claim(Constants.ClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean));
         claims.Add(new Claim(Constants.ClaimTypes.GivenName, account.FirstName));
         claims.Add(new Claim(Constants.ClaimTypes.FamilyName, account.LastName));
         claims.Add(new Claim(Constants.ClaimTypes.Name, account.FirstName + " " + account.LastName));
-        
+
 
         context.IssuedClaims = context.AllClaimsRequested ? claims : claims.Where(f => context.RequestedClaimTypes.Contains(f.Type));
       }

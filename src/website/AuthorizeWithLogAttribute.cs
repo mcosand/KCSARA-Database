@@ -20,11 +20,12 @@ namespace Kcsara.Database.Web
       }
       else
       {
-        logger.DebugFormat(
-          "Unauthorized: {0}\n[{1}]",
+        logger.DebugFormat("Unauthorized: {0} {1} {2} {3} {4}",
           filterContext.HttpContext.Request.RawUrl,
-          string.Join("][", user.Claims.Select(f => f.Type + ": " + f.Value))
-          );
+          string.Join("][", user.Claims.Select(f => f.Type + ": " + f.Value)),
+          user.Identity.IsAuthenticated,
+          user.Identity.Name,
+          user.Identities.Count());
       }
       base.HandleUnauthorizedRequest(filterContext);
     }

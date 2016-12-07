@@ -4,7 +4,6 @@ using System.Configuration;
 using System.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using System.Web;
 using IdentityModel.Client;
 using Kcsara.Database.Api;
 using log4net;
@@ -76,32 +75,39 @@ namespace Kcsara.Database.Web
             var tokenResponse = await tokenClient.RequestAuthorizationCodeAsync(
                 n.Code, n.RedirectUri);
 
-            if (!string.IsNullOrWhiteSpace(tokenResponse.AccessToken))
+            if (string.IsNullOrWhiteSpace(tokenResponse.AccessToken))
             {
-              // use the access token to retrieve claims from userinfo
-              var userInfoClient = new UserInfoClient(
-              new Uri(configStrings["auth:authority"].Trim('/') + "/connect/userinfo"),
-              tokenResponse.AccessToken);
-
-              var userInfoResponse = await userInfoClient.GetAsync();
-
-              // create new identity
-              var id = new ClaimsIdentity(n.AuthenticationTicket.Identity.AuthenticationType);
-              id.AddClaims(userInfoResponse.GetClaimsIdentity().Claims);
-
-              id.AddClaim(new Claim("access_token", tokenResponse.AccessToken));
-              id.AddClaim(new Claim("expires_at", DateTime.Now.AddSeconds(tokenResponse.ExpiresIn).ToLocalTime().ToString()));
-              if (!string.IsNullOrWhiteSpace(tokenResponse.RefreshToken))
-              {
-                id.AddClaim(new Claim("refresh_token", tokenResponse.RefreshToken));
-              }
-              id.AddClaim(new Claim("id_token", n.ProtocolMessage.IdToken));
-              id.AddClaim(new Claim("sid", n.AuthenticationTicket.Identity.FindFirst("sid").Value));
-
-              n.AuthenticationTicket = new AuthenticationTicket(
-                  new ClaimsIdentity(id.Claims, n.AuthenticationTicket.Identity.AuthenticationType, "name", "role"),
-                  n.AuthenticationTicket.Properties);
+              // For some reason the auth grant was invalid. Send the user to the destination page
+              // so they can re-generate the grant.
+              LogManager.GetLogger("Startup").ErrorFormat("No access token returned for grant {0}", n.Code);
+              n.Response.Redirect(n.RedirectUri);
+              n.HandleResponse();
+              return;
             }
+
+            // use the access token to retrieve claims from userinfo
+            var userInfoClient = new UserInfoClient(
+            new Uri(configStrings["auth:authority"].Trim('/') + "/connect/userinfo"),
+            tokenResponse.AccessToken);
+
+            var userInfoResponse = await userInfoClient.GetAsync();
+
+            // create new identity
+            var id = new ClaimsIdentity(n.AuthenticationTicket.Identity.AuthenticationType);
+            id.AddClaims(userInfoResponse.GetClaimsIdentity().Claims);
+
+            id.AddClaim(new Claim("access_token", tokenResponse.AccessToken));
+            id.AddClaim(new Claim("expires_at", DateTime.Now.AddSeconds(tokenResponse.ExpiresIn).ToLocalTime().ToString()));
+            if (!string.IsNullOrWhiteSpace(tokenResponse.RefreshToken))
+            {
+              id.AddClaim(new Claim("refresh_token", tokenResponse.RefreshToken));
+            }
+            id.AddClaim(new Claim("id_token", n.ProtocolMessage.IdToken));
+
+            n.AuthenticationTicket = new AuthenticationTicket(
+                new ClaimsIdentity(id.Claims, n.AuthenticationTicket.Identity.AuthenticationType, "name", "role"),
+                n.AuthenticationTicket.Properties);
+
           },
 
           AuthenticationFailed = n =>
@@ -127,13 +133,6 @@ namespace Kcsara.Database.Web
           }
         }
       });
-
-      //app.Map("/api", apiApp =>
-      //{
-      //  var config = new HttpConfiguration();
-      //  WebApiConfig.Register(config, kernel);
-      //  app.UseWebApi(config);
-      //});
     }
   }
 }
