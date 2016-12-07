@@ -46,6 +46,7 @@
   .config(['$locationProvider', '$stateProvider', '$urlRouterProvider', '$urlMatcherFactoryProvider',
     function ($locationProvider, $stateProvider, $urlRouterProvider, $urlMatcherFactoryProvider) {
       $urlMatcherFactoryProvider.strictMode(false);
+      $urlMatcherFactoryProvider.caseInsensitive(true);
       $locationProvider.html5Mode(true)
       for (var r in routes) {
         var opts = routes[r];
