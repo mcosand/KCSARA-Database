@@ -8,6 +8,7 @@ using IdentityServer3.Core.Configuration;
 using IdentityServer3.Core.Models;
 using IdentityServer3.Core.Services;
 using IdentityServer3.Core.Services.Default;
+using IdentityServer3.EntityFramework;
 using Microsoft.Owin.Security.Facebook;
 using Microsoft.Owin.Security.Google;
 using Microsoft.Owin.Security.OpenIdConnect;
@@ -37,6 +38,12 @@ namespace Owin
       var clientStore = kernel.Get<IClientStore>();
       var corsService = new DefaultCorsPolicyService { AllowAll = true };
 
+      var efConfig = new EntityFrameworkServiceOptions
+      {
+        ConnectionString = config.GetConfig("authStore"),
+        Schema = "auth"
+      };
+
       var factory = new IdentityServerServiceFactory
       {
         UserService = new Registration<IUserService>(resolver => userService),
@@ -45,8 +52,8 @@ namespace Owin
         CorsPolicyService = new Registration<ICorsPolicyService>(resolver => corsService),
         ViewService = new Registration<IViewService, MvcViewService<AccountController>>(),
         TokenSigningService = new Registration<ITokenSigningService, MyTokenSigningService>(),
-        TokenHandleStore = new Registration<ITokenHandleStore>(resolver => kernel.Get<EntityFrameworkTokenHandleStore>())
       };
+      factory.RegisterOperationalServices(efConfig);
 
       // These registrations are also needed since these are dealt with using non-standard construction
       factory.Register(new Registration<HttpContext>(resolver => HttpContext.Current));

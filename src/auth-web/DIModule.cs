@@ -14,6 +14,8 @@ namespace Sar.Database.Web.Auth
   {
     public override void Load()
     {
+      AuthDbContext.SetInitializer();
+
       var logConfig = new LoggerConfiguration()
         .MinimumLevel.Information()
         .WriteTo.RollingFile(AppDomain.CurrentDomain.BaseDirectory + "\\logs\\auth-log-{Date}.txt");
@@ -29,7 +31,6 @@ namespace Sar.Database.Web.Auth
       Bind<ISendEmailService>().To<DefaultSendMessageService>().InSingletonScope();
       Bind<IRolesService>().To<RolesService>().InSingletonScope();
       Bind<IUsersService>().To<ApiUsersService>().InSingletonScope();
-      Bind<EntityFrameworkTokenHandleStore>().ToSelf();
 
       var config = Kernel.Get<IHost>();
 

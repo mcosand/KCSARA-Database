@@ -1,5 +1,6 @@
 ﻿using System.Configuration;
 using System.Data.Entity;
+using IdentityServer3.EntityFramework;
 using Sar.Database.Data;
 
 namespace Sar.Auth.Data
@@ -15,11 +16,9 @@ namespace Sar.Auth.Data
     IDbSet<RoleRow> Roles { get; set; }
 
     IDbSet<LoginLogRow> Logins { get; set; }
-
-    IDbSet<TokenRow> Tokens { get; set; }
   }
 
-  public class AuthDbContext : DbContext, IAuthDbContext
+  public class AuthDbContext : OperationalDbContext, IAuthDbContext
   {
     public static void SetInitializer()
     {
@@ -43,7 +42,6 @@ namespace Sar.Auth.Data
     public IDbSet<VerificationRow> Verifications { get; set; }
     public IDbSet<ClientRow> Clients { get; set; }
     public IDbSet<LoginLogRow> Logins { get; set; }
-    public IDbSet<TokenRow> Tokens { get; set; }
 
     public IDbSet<RoleRow> Roles { get; set; }
   }
