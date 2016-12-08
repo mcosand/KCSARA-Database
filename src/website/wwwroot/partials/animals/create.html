@@ -1,0 +1,20 @@
+﻿<edit-dialog name="createNew">
+  <md-input-container class="md-block">
+    <label>Name</label>
+    <input ng-model="item.name" name="name" md-auto-focus required>
+    <div ng-messages="createNew.name.$error">
+      <div ng-message="required">Name is required.</div>
+      <div ng-message="server">{{createNew.name.$error.server}}</div>
+    </div>
+  </md-input-container>
+  <md-input-container class="md-block">
+    <label>Type</label>
+    <md-select name="type" ng-model="item.type" required>
+      <md-option ng-repeat="t in more.types" ng-value="t">{{t}}</md-option>
+    </md-select>
+    <div ng-messages="createNew.type.$error">
+      <div ng-message="required">Type is required.</div>
+      <div ng-message="server">{{createNew.type.$error.server}}</div>
+    </div>
+  </md-input-container>
+</edit-dialog>

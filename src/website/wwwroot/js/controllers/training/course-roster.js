@@ -5,9 +5,9 @@
       limit: 5,
       page: 1
     },
-    showExpired: false,
+    currentOnly: true,
     doFilter: function (item) {
-      return $scope.showExpired || (!item.expires || (new Date(item.expires) >= new Date()))
+      return !$scope.currentOnly || (!item.expires || (new Date(item.expires) >= new Date()))
     },
     getRoster: function () {
       $scope.loading = Training.courses.one($stateParams.id).all('roster').getList().then(function (data) {

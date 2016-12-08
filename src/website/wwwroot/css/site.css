@@ -76,3 +76,12 @@ tr.clickable:hover {
   background-color: #eee !important;
   cursor: pointer;
 }
+
+.filter-row md-switch {
+  margin: 0 0 0 2em;
+}
+.filter-row label {
+  margin-right:.4em;
+  margin-left:1em;
+}
+.filter-row md-select { margin: 5px 5px; }

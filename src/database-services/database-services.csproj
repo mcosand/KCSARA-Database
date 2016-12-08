@@ -120,6 +120,7 @@
     </Compile>
     <Compile Include="Training\TrainingCoursesService.cs" />
     <Compile Include="Training\TrainingRecordsService.cs" />
+    <Compile Include="AnimalsService.cs" />
     <Compile Include="UnitsService.cs" />
   </ItemGroup>
   <ItemGroup>

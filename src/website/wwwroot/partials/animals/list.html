@@ -1,0 +1,44 @@
+﻿<md-content layout-padding flex ng-controller="AnimalsCtrl">
+  <md-card>
+    <md-card-header>
+      <md-card-header-text layout="row">
+        <div class="md-title">Animal Roster</div>
+        <div flex></div>
+        <md-button class="md-icon-button md-primary" aria-label="Add Account" ng-if="animals._c" ng-click="createNew($event)">
+          <md-icon>add_circle</md-icon>
+        </md-button>
+      </md-card-header-text>
+    </md-card-header>
+    <md-card-content>
+      <div layout="row" class="filter-row" layout-align="end center">
+        <label>Type:</label>
+        <md-select ng-model="showTypes" class="md-accent" aria-label="Show types">
+          <md-option value="any" class="md-accent">any</md-option>
+          <md-option class="md-accent" ng-repeat="t in types" ng-value="t">{{ t }}</md-option>
+        </md-select>
+
+        <md-switch ng-model="activeOnly" aria-label="Show inactive">Active</md-switch>
+      </div>
+      <md-table-container>
+        <table md-table sortable-columns md-progress="loading">
+          <thead md-head md-order="query.order" md-on-reorder="getRoster">
+            <tr md-row>
+              <th md-column md-order-by="name">Name</th>
+              <th md-column md-order-by="type"><span>Type</span></th>
+              <th md-column md-order-by="owner.name">Owner</th>
+              <th md-column md-order-by="status">Status</th>
+            </tr>
+          </thead>
+          <tbody md-body>
+            <tr md-row md-auto-select ng-repeat="animal in animals | filter:doFilter | orderBy: query.order" ng-click="gotoAnimal(animal)" class="clickable">
+              <td md-cell><strong>{{animal.name}}</strong></td>
+              <td md-cell>{{animal.type}}</td>
+              <td md-cell><a href="#" target="_self" ng-href="/members/detail/{{animal.owner.id}}" md-colors="{color:'primary'}">{{animal.owner.name}}</a></td>
+              <td md-cell>{{animal.status}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </md-table-container>
+    </md-card-content>
+  </md-card>
+</md-content>
