@@ -16,6 +16,7 @@ namespace Kcsara.Database.Web.Controllers
     [Route("")]
     [Route("accounts/{*page}")]
     [Route("animals")]
+    [Route("animals/{id}")]
     [Route("loggedIn")]
     [Route("units")]
     [Route("units/detail/{*page}")]

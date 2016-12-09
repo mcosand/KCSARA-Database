@@ -14,7 +14,8 @@
         <label>Type:</label>
         <md-select ng-model="showTypes" class="md-accent" aria-label="Show types">
           <md-option value="any" class="md-accent">any</md-option>
-          <md-option class="md-accent" ng-repeat="t in types" ng-value="t">{{ t }}</md-option>
+          <md-option value="dog" class="md-accent">dog</md-option>
+          <md-option value="horse" class="md-accent">horse</md-option>
         </md-select>
 
         <md-switch ng-model="activeOnly" aria-label="Show inactive">Active</md-switch>

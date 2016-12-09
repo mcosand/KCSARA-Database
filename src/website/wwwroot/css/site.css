@@ -85,3 +85,11 @@ tr.clickable:hover {
   margin-left:1em;
 }
 .filter-row md-select { margin: 5px 5px; }
+
+
+.badge-photo {
+  width: 6em;
+  height: 8em;
+  border: 1px solid #444;
+  margin-right: 1em;
+}

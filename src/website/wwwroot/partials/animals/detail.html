@@ -1,0 +1,23 @@
+﻿<md-content layout-padding flex ng-controller="AnimalsDetailCtrl">
+  <md-card flex-md="60" flex-gt-md="40">
+    <md-card-title>
+      <md-card-title-media>
+        <img ng-if="animal.id" class="md-media-lg-card-media badge-photo" ng-src="{{'/api2/animals/' + animal.id  + '/photo?access_token='+ ($currentUser.user || {}).access_token}}"></img>
+      </md-card-title-media>
+      <md-card-title-text>
+        <div class="md-headline">{{animal.name}}</div>
+        <div>Type: {{animal.type}}</div>
+        <div>ID Suffix: {{animal.idSuffix}}</div>
+        <div layout="row" ng-if="animal.comments">
+          <div>Comments:</div>
+          <div flex>{{animal.comments}}</div>
+        </div>
+      </md-card-title-text>
+    </md-card-title>
+  </md-card>
+  <md-nav-bar md-selected-nav-item="currentPage" nav-bar-aria-label="page links">
+    <md-nav-item md-nav-sref="animals_detail.ad_owners" name="ad_owners">Owner(s)</md-nav-item>
+    <md-nav-item md-nav-sref="animals_detail.ad_missions" name="ad_missions">Missions</md-nav-item>
+  </md-nav-bar>
+  <ui-view></ui-view>
+</md-content>

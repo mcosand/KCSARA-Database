@@ -21,7 +21,7 @@ namespace Sar.Database.Services
     //Task<ListPermissionWrapper<UnitMembership>> ListMemberships(Expression<Func<UnitMembership, bool>> predicate, bool canCreate);
     //Task<UnitMembership> CreateMembership(UnitMembership membership);
     //Task<ListPermissionWrapper<UnitStatusType>> ListStatusTypes(Guid? unitId = null);
-    //Task<ItemPermissionWrapper<Unit>> Get(Guid id);
+    Task<ItemPermissionWrapper<Animal>> GetAsync(Guid id);
     //Task DeleteStatusType(Guid statusTypeId);
     //Task<UnitStatusType> SaveStatusType(UnitStatusType statusType);
     //Task<UnitReportInfo[]> ListReports(Guid unitId);
@@ -70,17 +70,26 @@ namespace Sar.Database.Services
         };
       }
     }
-    /*
-    public async Task<ItemPermissionWrapper<Unit>> Get(Guid id)
+    
+    public async Task<ItemPermissionWrapper<Animal>> GetAsync(Guid id)
     {
       using (var db = _dbFactory())
       {
-        var result = await db.Units.Select(f => new Unit
+        var result = await db.Animals.Select(f => new Animal
         {
           Id = f.Id,
-          Name = f.DisplayName,
-          FullName = f.LongName,
-          County = f.County
+          Name = f.Name,
+          Type = f.Type,
+          Status = f.Owners.Any(g => !g.Ending.HasValue) ? "active" : "inactive",
+          Owner = f.Owners.Where(g => g.IsPrimary).Select(g => new MemberSummary
+          {
+            Id = g.Owner.Id,
+            Name = g.Owner.LastName + ", " + g.Owner.FirstName,
+            WorkerNumber = g.Owner.DEM
+          }).FirstOrDefault(),
+          Comments = f.Comments,
+          IdSuffix = f.DemSuffix,
+          Photo = f.PhotoFile
         }).SingleOrDefaultAsync(f => f.Id == id);
 
         return _authz.Wrap(result);
@@ -88,7 +97,7 @@ namespace Sar.Database.Services
     }
 
 
-    public async Task<Unit> Save(Unit unit)
+    /*public async Task<Unit> Save(Unit unit)
     {
       using (var db = _dbFactory())
       {

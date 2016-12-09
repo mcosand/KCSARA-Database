@@ -10,7 +10,8 @@
   <md-input-container class="md-block">
     <label>Type</label>
     <md-select name="type" ng-model="item.type" required>
-      <md-option ng-repeat="t in more.types" ng-value="t">{{t}}</md-option>
+      <md-option value="dog" class="md-accent">dog</md-option>
+      <md-option value="horse" class="md-accent">horse</md-option>
     </md-select>
     <div ng-messages="createNew.type.$error">
       <div ng-message="required">Type is required.</div>
