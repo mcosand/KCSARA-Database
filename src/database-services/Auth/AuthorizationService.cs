@@ -63,7 +63,7 @@ namespace Sar.Database.Services
       var memberId = string.IsNullOrWhiteSpace(memberIdString) ? (Guid?)null : new Guid(memberIdString);
 
       // Members can read their own records.
-      if (resource is Guid? && (Guid?)resource == memberId && policyName.StartsWith("Read:") && (policyName.EndsWith("@Member") || policyName.EndsWith(":Member")))
+      if (resource is Guid? && (Guid?)resource == memberId && policyName.StartsWith("Read:") && (policyName.EndsWith("@MemberId") || policyName.EndsWith(":Member")))
       {
         return true;
       }

@@ -39,11 +39,19 @@ namespace Sar.Database.Web.Auth.Services
             StandardScopes.EmailAlwaysInclude,
             new Scope { Name = "kcsara-profile", Type = ScopeType.Identity, Claims = new List<ScopeClaim>
             {
-              new ScopeClaim(UnitsClaim),
-              new ScopeClaim(MemberIdClaim),
-              new ScopeClaim(RolesClaim)
+              new ScopeClaim(UnitsClaim, true),
+              new ScopeClaim(MemberIdClaim, true),
+              new ScopeClaim(RolesClaim, true)
             } }
         });
+
+        var dbApiScope = scopes.FirstOrDefault(f => f.Name == "database-api") ?? new Scope { Name = "database-api", Type = ScopeType.Resource };
+        dbApiScope.Claims = new List<ScopeClaim>
+        {
+          new ScopeClaim(UnitsClaim),
+          new ScopeClaim(MemberIdClaim),
+          new ScopeClaim(RolesClaim)
+        };
 
         return new SarScopeStore(scopes);
       }
