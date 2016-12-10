@@ -45,7 +45,13 @@ namespace Sar.Database.Web.Auth.Services
             } }
         });
 
-        var dbApiScope = scopes.FirstOrDefault(f => f.Name == "database-api") ?? new Scope { Name = "database-api", Type = ScopeType.Resource };
+        var dbApiScope = scopes.FirstOrDefault(f => f.Name == "database-api");
+        if (dbApiScope == null)
+        {
+          dbApiScope = new Scope { Name = "database-api", Type = ScopeType.Resource };
+          scopes.Add(dbApiScope);
+        }
+
         dbApiScope.Claims = new List<ScopeClaim>
         {
           new ScopeClaim(UnitsClaim),
