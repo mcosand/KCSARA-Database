@@ -30,7 +30,7 @@
       </ul>
       <% } %>
     </div>
-    <div class="logo"><a href="<%= Url.Action("Index", "Home") %>"><%= Strings.GroupName %></a></div>
+    <div class="logo"><a href="<%= Url.Action("Index", "Home") %>"><%= ConfigurationManager.AppSettings["site:groupName"] %></a></div>
     <div class="clear"></div>
   </div>
   <div class="poster-container-no-image">
