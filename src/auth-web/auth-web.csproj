@@ -287,6 +287,9 @@
     <EmbeddedResource Include="Migrations\201612062101294_IdSrvEF.resx">
       <DependentUpon>201612062101294_IdSrvEF.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201612102342314_ClientLogoutUri.resx">
+      <DependentUpon>201612102342314_ClientLogoutUri.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
@@ -312,6 +315,10 @@
     <Compile Include="Migrations\201612062101294_IdSrvEF.cs" />
     <Compile Include="Migrations\201612062101294_IdSrvEF.Designer.cs">
       <DependentUpon>201612062101294_IdSrvEF.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201612102342314_ClientLogoutUri.cs" />
+    <Compile Include="Migrations\201612102342314_ClientLogoutUri.Designer.cs">
+      <DependentUpon>201612102342314_ClientLogoutUri.cs</DependentUpon>
     </Compile>
     <Compile Include="Services\ApiUsersService.cs" />
     <Compile Include="Services\LocalMemberInfoService.cs" />

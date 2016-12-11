@@ -36,7 +36,7 @@ namespace Kcsara.Database.Api.Controllers.Members
     [AnyHostCorsPolicy]
     public async Task<PersonContact> CreateContact(Guid memberId, [FromBody] PersonContact contact)
     {
-      await _authz.EnsureAsync(memberId, "Create:MemberContact@Member");
+      await _authz.EnsureAsync(memberId, "Create:MemberContact@MemberId");
       return await _members.AddContact(memberId, contact);
     }
   }

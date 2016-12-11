@@ -38,7 +38,7 @@ namespace Kcsara.Database.Web.Services.Training
     /// <returns></returns>
     public async Task<List<TrainingStatus>> RequiredTrainingStatusForMember(Guid memberId, DateTime asOf)
     {
-      if (!await _authz.AuthorizeAsync(_host.User, memberId, "Read:TrainingRecord@Member")) throw new AuthorizationException();
+      if (!await _authz.AuthorizeAsync(_host.User, memberId, "Read:TrainingRecord@MemberId")) throw new AuthorizationException();
       using (var db = _dbFactory())
       {
         var memberQuery = db.Members.Where(f => f.Id == memberId);

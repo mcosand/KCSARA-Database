@@ -2,6 +2,7 @@
 using System.Collections.Specialized;
 using System.Configuration;
 using System.IdentityModel.Tokens;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityModel.Client;
@@ -42,11 +43,7 @@ namespace Kcsara.Database.Web
         ExpireTimeSpan = TimeSpan.FromSeconds(AuthConstants.TokenLifetime)
       });
 
-      app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
-
       NameValueCollection configStrings = ConfigurationManager.AppSettings;
-      var addScopes = new[] { "database-api" };
-
 
       app.Use<NonceCleanupOpenIdConnectAuthenticationMiddleware>(app, new OpenIdConnectAuthenticationOptions
       {
@@ -54,7 +51,7 @@ namespace Kcsara.Database.Web
         ClientId = configStrings["auth:clientId"],
         RedirectUri = configStrings["auth:redirect"].Trim('/') + "/",
         ResponseType = "code id_token token",
-        Scope = "openid email profile kcsara-profile" + (addScopes.Length > 0 ? " " + string.Join(" ", addScopes) : string.Empty),
+        Scope = "openid email profile database-api kcsara-profile",
         PostLogoutRedirectUri = configStrings["auth:redirect"].Trim('/') + "/",
         TokenValidationParameters = new TokenValidationParameters
         {
@@ -103,6 +100,8 @@ namespace Kcsara.Database.Web
               id.AddClaim(new Claim("refresh_token", tokenResponse.RefreshToken));
             }
             id.AddClaim(new Claim("id_token", n.ProtocolMessage.IdToken));
+
+            id.AddClaim(new Claim("sid", n.JwtSecurityToken.Claims.First(f => f.Type == "sid").Value));
 
             n.AuthenticationTicket = new AuthenticationTicket(
                 new ClaimsIdentity(id.Claims, n.AuthenticationTicket.Identity.AuthenticationType, "name", "role"),

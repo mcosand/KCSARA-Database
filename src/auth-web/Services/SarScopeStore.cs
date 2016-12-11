@@ -40,10 +40,24 @@ namespace Sar.Database.Web.Auth.Services
             new Scope { Name = "kcsara-profile", Type = ScopeType.Identity, Claims = new List<ScopeClaim>
             {
               new ScopeClaim(UnitsClaim),
-              new ScopeClaim(MemberIdClaim),
+              new ScopeClaim(MemberIdClaim, true),
               new ScopeClaim(RolesClaim)
             } }
         });
+
+        var dbApiScope = scopes.FirstOrDefault(f => f.Name == "database-api");
+        if (dbApiScope == null)
+        {
+          dbApiScope = new Scope { Name = "database-api", Type = ScopeType.Resource };
+          scopes.Add(dbApiScope);
+        }
+
+        dbApiScope.Claims = new List<ScopeClaim>
+        {
+          new ScopeClaim(UnitsClaim),
+          new ScopeClaim(MemberIdClaim),
+          new ScopeClaim(RolesClaim)
+        };
 
         return new SarScopeStore(scopes);
       }

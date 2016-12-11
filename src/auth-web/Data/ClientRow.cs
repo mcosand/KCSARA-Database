@@ -33,5 +33,7 @@ namespace Sar.Auth.Data
     public virtual ICollection<RoleRow> Roles { get; set; }
 
     public Flows Flow { get; set; }
+
+    public string LogoutUri { get; set; }
   }
 }

@@ -13,6 +13,9 @@ namespace Kcsara.Database.Web.Controllers
   using Kcsara.Database.Geo;
   using Kcsara.Database.Web.Services;
   using Kcsara.Database.Web.Model;
+  using Microsoft.Owin;
+  using System.Web;
+  using System.Security.Claims;
 
   public class HomeController : BaseController
   {
@@ -53,7 +56,19 @@ namespace Kcsara.Database.Web.Controllers
 
     public ActionResult Logout()
     {
-      return Content("This should log out the user");
+      Request.GetOwinContext().Authentication.SignOut();
+      return Redirect(Url.Content("~/"));
+    }
+
+    [Route("signoutcleanup")]
+    public void SignoutCleanup(string sid)
+    {
+      var cp = (ClaimsPrincipal)User;
+      var sidClaim = cp.FindFirst("sid");
+      if (sidClaim?.Value == sid)
+      {
+        Request.GetOwinContext().Authentication.SignOut("Cookies");
+      }
     }
 
     public ActionResult Error(string message)
