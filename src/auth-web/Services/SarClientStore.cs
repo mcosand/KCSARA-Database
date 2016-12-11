@@ -41,6 +41,11 @@ namespace Sar.Database.Web.Auth.Services
           AccessTokenLifetime = AuthConstants.TokenLifetime
         };
 
+        if (!string.IsNullOrWhiteSpace(row.LogoutUri))
+        {
+          client.LogoutUri = row.LogoutUri;
+        }
+
         switch (row.Flow)
         {
           case Flows.ClientCredentials:

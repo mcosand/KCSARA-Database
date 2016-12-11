@@ -39,9 +39,9 @@ namespace Sar.Database.Web.Auth.Services
             StandardScopes.EmailAlwaysInclude,
             new Scope { Name = "kcsara-profile", Type = ScopeType.Identity, Claims = new List<ScopeClaim>
             {
-              new ScopeClaim(UnitsClaim, true),
+              new ScopeClaim(UnitsClaim),
               new ScopeClaim(MemberIdClaim, true),
-              new ScopeClaim(RolesClaim, true)
+              new ScopeClaim(RolesClaim)
             } }
         });
 

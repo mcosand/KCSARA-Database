@@ -306,7 +306,6 @@ namespace Sar.Database.Web.Auth.Services
         claims.Add(new Claim(Constants.ClaimTypes.FamilyName, account.LastName));
         claims.Add(new Claim(Constants.ClaimTypes.Name, account.FirstName + " " + account.LastName));
 
-
         context.IssuedClaims = context.AllClaimsRequested ? claims : claims.Where(f => context.RequestedClaimTypes.Contains(f.Type));
       }
 
