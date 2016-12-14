@@ -1,11 +1,9 @@
-﻿/*
- * Copyright 2009-2014 Matthew Cosand
- */
-namespace Kcsar.Database.Model
+﻿namespace Kcsar.Database.Model
 {
   using System;
   using System.Collections.Generic;
   using System.ComponentModel.DataAnnotations;
+  using System.ComponentModel.DataAnnotations.Schema;
 
   public class AnimalOwner : ModelObject
   {
@@ -14,8 +12,18 @@ namespace Kcsar.Database.Model
     public bool IsPrimary { get; set; }
     public DateTime Starting { get; set; }
     public DateTime? Ending { get; set; }
-    public virtual Animal Animal { get; set; }
+
+    [Column("Owner_Id")]
+    public Guid OwnerId { get; set; }
+
+    [ForeignKey("OwnerId")]
     public virtual Member Owner { get; set; }
+
+    [Column("Animal_Id")]
+    public Guid AnimalId { get; set; }
+
+    [ForeignKey("AnimalId")]
+    public virtual Animal Animal { get; set; }
 
     public override string GetReportHtml()
     {

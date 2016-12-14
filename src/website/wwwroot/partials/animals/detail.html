@@ -15,9 +15,11 @@
       </md-card-title-text>
     </md-card-title>
   </md-card>
-  <md-nav-bar md-selected-nav-item="currentPage" nav-bar-aria-label="page links">
-    <md-nav-item md-nav-sref="animals_detail.ad_owners" name="ad_owners">Owner(s)</md-nav-item>
-    <md-nav-item md-nav-sref="animals_detail.ad_missions" name="ad_missions">Missions</md-nav-item>
-  </md-nav-bar>
-  <ui-view></ui-view>
+  <div class="tabs">
+    <md-nav-bar md-selected-nav-item="currentPage" nav-bar-aria-label="page links">
+      <md-nav-item md-nav-sref="animals_detail.ad_owners" name="ad_owners">Owner(s)</md-nav-item>
+      <md-nav-item md-nav-sref="animals_detail.ad_missions" name="ad_missions">Missions</md-nav-item>
+    </md-nav-bar>
+    <ui-view></ui-view>
+  </div>
 </md-content>

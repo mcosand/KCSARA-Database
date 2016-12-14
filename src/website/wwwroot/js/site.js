@@ -1,7 +1,7 @@
 ﻿angular.module('sar-database', ['ngMaterial', 'ngMessages', 'ui.router.title', 'ui.router', 'md.data.table', 'restangular', 'ngFileUpload'])
 
 
-.config(['$mdThemingProvider', 'RestangularProvider', function ($mdThemingProvider, RestangularProvider) {
+.config(['$mdThemingProvider', '$mdDateLocaleProvider', 'RestangularProvider', function ($mdThemingProvider, $mdDateLocaleProvider, RestangularProvider) {
   //http://mcg.mbitson.com/
   $mdThemingProvider.definePalette('sar-yellow', {
     '50': '#ffffff',
@@ -45,6 +45,13 @@
   .accentPalette('sar-yellow')
   .backgroundPalette('grey');
 
+  $mdDateLocaleProvider.formatDate = function (date) {
+    return date ? moment(date).format('YYYY-MM-DD') : '';
+  }
+  $mdDateLocaleProvider.parseDate = function (input) {
+    return new Date(input);
+  }
+
   RestangularProvider.setBaseUrl('/api2');
   RestangularProvider.addResponseInterceptor(function (data, operation, what, url, response, deferred) {
     var extractedData;
@@ -56,7 +63,13 @@
       extractedData = data.item || data;
     }
     return extractedData;
-  });
+  })
+  .addElementTransformer('owners', function(element) {
+    console.log('transforming owner');
+    if (element.starting) element.starting = new Date(element.starting);
+    if (element.ending) element.ending = new Date(element.ending);
+    return element;
+  })
 }])
 
   .filter('nospace', function () {
@@ -66,7 +79,7 @@
   })
   .filter('simpleDate', function () {
     return function (value) {
-      return (!value) ? '' : value.substring(0, 10);
+      return (!value) ? '' : (value instanceof Date) ? moment(value).format('YYYY-MM-DD') : value.substring(0, 10);
     }
   })
 .filter('humanizeDoc', function () {

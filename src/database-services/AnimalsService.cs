@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Data.Entity;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using log4net;
-using Sar.Database.Api.Extensions;
 using Sar.Database.Data;
 using Sar.Database.Model;
 using Sar.Database.Model.Animals;
 using Sar.Database.Model.Members;
-using Sar.Database.Model.Units;
 using DB = Kcsar.Database.Model;
 
 namespace Sar.Database.Services
@@ -22,8 +18,11 @@ namespace Sar.Database.Services
     //Task<UnitMembership> CreateMembership(UnitMembership membership);
     //Task<ListPermissionWrapper<UnitStatusType>> ListStatusTypes(Guid? unitId = null);
     Task<ItemPermissionWrapper<Animal>> GetAsync(Guid id);
+    Task<ListPermissionWrapper<AnimalOwner>> ListOwners(Guid animalId);
     //Task DeleteStatusType(Guid statusTypeId);
-    //Task<UnitStatusType> SaveStatusType(UnitStatusType statusType);
+    Task<AnimalOwner> SaveOwnership(AnimalOwner owner);
+    Task DeleteOwnership(Guid ownershipId);
+
     //Task<UnitReportInfo[]> ListReports(Guid unitId);
     //Task<Unit> Save(Unit unit);
     //Task Delete(Guid unitId);
@@ -32,10 +31,7 @@ namespace Sar.Database.Services
   public class AnimalsService : IAnimalsService
   {
     private readonly Func<DB.IKcsarContext> _dbFactory;
-    private readonly IUsersService _users;
     private readonly ILog _log;
-    private readonly IHost _host;
-    private readonly IExtensionProvider _extensions;
     private readonly IAuthorizationService _authz;
 
     public AnimalsService(Func<DB.IKcsarContext> dbFactory, IAuthorizationService authz, ILog log)
@@ -97,188 +93,93 @@ namespace Sar.Database.Services
     }
 
 
-    /*public async Task<Unit> Save(Unit unit)
+    public async Task<ListPermissionWrapper<AnimalOwner>> ListOwners(Guid animalId)
     {
       using (var db = _dbFactory())
       {
-        var match = await db.Units.FirstOrDefaultAsync(
-          f => f.Id != unit.Id &&
-          f.DisplayName == unit.Name);
-        if (match != null) throw new DuplicateItemException("Unit", unit.Id.ToString());
+        var list = new ListPermissionWrapper<AnimalOwner>
+        {
+          C = _authz.CanCreateStatusForUnit(animalId),
+          Items = (await db.AnimalOwners.Where(f => f.Animal.Id == animalId)
+                  .OrderByDescending(f => f.IsPrimary)
+                  .ThenBy(f => f.Owner.LastName)
+                  .ThenBy(f => f.Owner.FirstName)
+                  .Select(f => new AnimalOwner
+                  {
+                    Id = f.Id,
+                    Member = new MemberSummary
+                    {
+                      Id = f.Owner.Id,
+                      Name = f.Owner.LastName + ", " + f.Owner.FirstName,
+                      WorkerNumber = f.Owner.DEM
+                    },
+                    Animal = new NameIdPair
+                    {
+                      Id = f.Animal.Id,
+                      Name = f.Animal.Name
+                    },
+                    Starting = f.Starting,
+                    Ending = f.Ending
+                  })
+                  .ToListAsync())
+                  .Select(f => _authz.Wrap(f))
+                  .ToList()
+        };
+
+        return list;
+      }
+    }
+
+    public async Task<AnimalOwner> SaveOwnership(AnimalOwner owner)
+    {
+      using (var db = _dbFactory())
+      {
+        var match = await db.AnimalOwners.FirstOrDefaultAsync(
+          f => f.Id != owner.Id &&
+          f.Owner.Id == owner.Member.Id &&
+          f.Animal.Id == owner.Animal.Id &&
+          f.Starting == owner.Starting);
+        if (match != null) throw new DuplicateItemException("AnimalOwner", owner.Id.ToString());
 
         var updater = await ObjectUpdater.CreateUpdater(
-          db.Units,
-          unit.Id,
-          null);
-
-        updater.Update(f => f.DisplayName, unit.Name);
-        updater.Update(f => f.LongName, unit.FullName);
-        updater.Update(f => f.County, unit.County);
-
-        await updater.Persist(db);
-
-        return (await List()).Items.Single(f => f.Item.Id == updater.Instance.Id).Item;
-      }
-    }
-
-    public async Task Delete(Guid unitId)
-    {
-      using (var db = _dbFactory())
-      {
-        var unit = await db.Units.FirstOrDefaultAsync(f => f.Id == unitId);
-
-        if (unit == null) throw new NotFoundException("not found", "Unit", unitId.ToString());
-        db.Units.Remove(unit);
-        await db.SaveChangesAsync();
-      }
-    }
-    #endregion
-
-    public async Task<ListPermissionWrapper<UnitMembership>> ListMemberships(Expression<Func<UnitMembership, bool>> predicate, bool canCreate)
-    {
-      using (var db = _dbFactory())
-      {
-        var query = db.UnitMemberships.Select(f => new UnitMembership
-        {
-          Id = f.Id,
-          Unit = new NameIdPair
-          {
-            Id = f.Unit.Id,
-            Name = f.Unit.DisplayName
-          },
-          Member = new MemberSummary
-          {
-            Id = f.Person.Id,
-            Name = f.Person.FirstName + " " + f.Person.LastName,
-            WorkerNumber = f.Person.DEM,
-            Photo = f.Person.PhotoFile
-          },
-          IsActive = f.Status.IsActive,
-          Status = f.Status.StatusName,
-          Start = f.Activated,
-          End = f.EndTime
-        });
-
-        if (predicate != null)
-        {
-          query = query.Where(predicate);
-        }
-
-        var list = await query.OrderBy(f => f.Member.Name).ThenBy(f => f.Unit.Name).ToListAsync();
-        return new ListPermissionWrapper<UnitMembership>
-        {
-          C = canCreate,
-          Items = list.Select(f => _authz.Wrap(f))
-        };
-      }
-    }
-
-    public async Task<UnitMembership> CreateMembership(UnitMembership membership)
-    {
-      if (membership == null) throw new ArgumentNullException(nameof(membership));
-      if (membership.Unit == null || membership.Unit.Id == Guid.Empty) throw new ArgumentException("unit.id is required");
-      if (membership.Member == null || membership.Member.Id == Guid.Empty) throw new ArgumentException("unit.id is required");
-
-      using (var db = _dbFactory())
-      {
-        var status = await db.UnitStatusTypes.FirstOrDefaultAsync(f => f.Unit.Id == membership.Unit.Id && f.StatusName == membership.Status);
-        if (status == null) throw new ArgumentException("status " + membership.Status + " is unknown");
-        var membershipRow = new DB.UnitMembership
-        {
-          UnitId = membership.Unit.Id,
-          PersonId = membership.Member.Id,
-          StatusId = status.Id,
-          Activated = membership.Start,
-          EndTime = membership.End,
-          // For logging because lazy-load isn't loading
-          Unit = db.Units.Single(f => f.Id == membership.Unit.Id),
-          Person = db.Members.Single(f => f.Id == membership.Member.Id),
-          Status = status
-        };
-        db.UnitMemberships.Add(membershipRow);
-        await db.SaveChangesAsync();
-
-        return (await ListMemberships(f => f.Id == membershipRow.Id, false)).Items.Select(f => f.Item).Single();
-      }
-    }
-
-    #region Status Types
-    public async Task<ListPermissionWrapper<UnitStatusType>> ListStatusTypes(Guid? unitId = null)
-    {
-      using (var db = _dbFactory())
-      {
-        IQueryable<DB.UnitStatus> query = db.UnitStatusTypes;
-        if (unitId.HasValue) query = query.Where(f => f.Unit.Id == unitId.Value);
-
-        return new ListPermissionWrapper<UnitStatusType>
-        {
-          C = _authz.CanCreateStatusForUnit(unitId),
-          Items = (await query.Select(f => new UnitStatusType
-          {
-            Id = f.Id,
-            Unit = new NameIdPair { Id = f.Unit.Id, Name = f.Unit.DisplayName },
-            IsActive = f.IsActive,
-            GetsAccount = f.GetsAccount,
-            Name = f.StatusName,
-            WacLevel = (WacLevel)(int)f.WacLevel
-          }).ToListAsync()).Select(f => _authz.Wrap(f))
-        };
-      }
-    }
-
-    public async Task<UnitStatusType> SaveStatusType(UnitStatusType statusType)
-    {
-      using (var db = _dbFactory())
-      {
-        var match = await db.UnitStatusTypes.FirstOrDefaultAsync(
-          f => f.Id != statusType.Id &&
-          f.UnitId == statusType.Unit.Id &&
-          f.StatusName == statusType.Name);
-        if (match != null) throw new DuplicateItemException("UnitStatusType", statusType.Id.ToString());
-
-        var updater = await ObjectUpdater.CreateUpdater(
-          db.UnitStatusTypes,
-          statusType.Id,
+          db.AnimalOwners,
+          owner.Id,
           f => {
-            f.UnitId = statusType.Unit.Id;
-            f.Unit = db.Units.Single(g => g.Id == f.UnitId);
+            f.OwnerId = owner.Member.Id;
+            f.Owner = db.Members.Single(g => g.Id == owner.Member.Id);
+            f.AnimalId = owner.Animal.Id;
+            f.Animal = db.Animals.Single(g => g.Id == owner.Animal.Id);
           });
 
-        updater.Update(f => f.StatusName, statusType.Name);
-        updater.Update(f => f.WacLevel, statusType.WacLevel.FromModel());
-        updater.Update(f => f.IsActive, statusType.IsActive);
-        updater.Update(f => f.GetsAccount, statusType.GetsAccount);
+        updater.Update(f => f.Starting, owner.Starting.UtcDateTime);
+        updater.Update(f => f.Ending, owner.Ending?.UtcDateTime);
+        updater.Update(f => f.IsPrimary, owner.IsPrimary);
+        if (owner.IsPrimary)
+        {
+          foreach (var secondary in db.AnimalOwners.Where(f => f.Id != owner.Id && f.AnimalId == owner.Animal.Id))
+          {
+            secondary.IsPrimary = false;
+          }
+        }
+        updater.Update(f => f.AnimalId, owner.Animal.Id);
+        updater.Update(f => f.OwnerId, owner.Member.Id);
 
         await updater.Persist(db);
 
-        return (await ListStatusTypes()).Items.Single(f => f.Item.Id == updater.Instance.Id).Item;
+        return (await ListOwners(owner.Animal.Id)).Items.Single(f => f.Item.Id == updater.Instance.Id).Item;
       }
     }
 
-    public async Task DeleteStatusType(Guid statusTypeId)
+    public async Task DeleteOwnership(Guid ownershipId)
     {
       using (var db = _dbFactory())
       {
-        var status = await db.UnitStatusTypes.FirstOrDefaultAsync(f => f.Id == statusTypeId);
+        var ownership = await db.AnimalOwners.FirstOrDefaultAsync(f => f.Id == ownershipId);
 
-        if (status == null) throw new NotFoundException("not found", "UnitStatusType", statusTypeId.ToString());
-        db.UnitStatusTypes.Remove(status);
+        if (ownership == null) throw new NotFoundException("not found", "AnimalOwner", ownershipId.ToString());
+        db.AnimalOwners.Remove(ownership);
         await db.SaveChangesAsync();
       }
     }
-    #endregion
-
-    public async Task<UnitReportInfo[]> ListReports(Guid unitId)
-    {
-      using (var db = _dbFactory())
-      {
-        var unit = await db.Units.FirstOrDefaultAsync(f => f.Id == unitId);
-        if (unit == null) throw new NotFoundException("Not found", "Unit", unitId.ToString());
-
-        var reportProvider = _extensions.For<IUnitReports>(unit);
-        return reportProvider != null ? reportProvider.ListReports() : new UnitReportInfo[0];
-      }
-    }
-    */
   }
 }

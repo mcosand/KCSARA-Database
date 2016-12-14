@@ -53,7 +53,7 @@ namespace Sar.Database.Services
     {
       using (var db = _dbFactory())
       {
-        var list = (await SummariesWithMemberships<MemberInfo>(db.Members.Where(f => f.Id == id), (row, member) =>
+        var list = (await SummariesWithMemberships<MemberInfo>(db.Members.Where(f => f.Id == id), true, (row, member) =>
         {
           member.First = row.FirstName;
           member.Last = row.LastName;
@@ -81,7 +81,7 @@ namespace Sar.Database.Services
           .ThenBy(f => f.LastName)
           .ThenBy(f => f.FirstName)
           .ThenBy(f => f.Id)
-          );
+          , false);
 
         var list = summaries.Select((m, i) => new MemberSearchResult
         {
@@ -165,12 +165,12 @@ namespace Sar.Database.Services
     /// <param name="query"></param>
     /// <param name="modify"></param>
     /// <returns></returns>
-    internal static async Task<IEnumerable<T>> SummariesWithMemberships<T>(IQueryable<DB.Member> query, Action<DB.Member, T> modify = null)
+    internal static async Task<IEnumerable<T>> SummariesWithMemberships<T>(IQueryable<DB.Member> query, bool doSort = true, Action<DB.Member, T> modify = null)
       where T : MemberSummary, new()
     {
       DateTime cutoff = DateTime.Now;
 
-      var list = (await query
+      var query2 = query
         .Select(f => new
         {
           Member = f,
@@ -181,9 +181,10 @@ namespace Sar.Database.Services
                      Unit = new NameIdPair { Id = g.Unit.Id, Name = g.Unit.DisplayName },
                      Status = g.Status.StatusName
                    }).Distinct()
-        })
-        .OrderBy(f => f.Member.LastName).ThenBy(f => f.Member.FirstName)
-        .ToListAsync());
+        });
+      if (doSort) query2 = query2.OrderBy(f => f.Member.LastName).ThenBy(f => f.Member.FirstName);
+
+      var list = await query2.ToListAsync();
 
       return list.Select(f =>
       {

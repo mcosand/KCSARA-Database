@@ -387,6 +387,7 @@
     <Content Include="wwwroot\js\controllers\accounts\accountsDetail.js" />
     <Content Include="wwwroot\js\controllers\accounts\accountsReset.js" />
     <Content Include="wwwroot\js\controllers\accounts\accountsFinishReset.js" />
+    <Content Include="wwwroot\js\controllers\animals\animals-owners.js" />
     <Content Include="wwwroot\js\controllers\animals\animals.js" />
     <Content Include="wwwroot\js\controllers\animals\animals-detail.js" />
     <Content Include="wwwroot\js\controllers\editDialogController.js" />
@@ -418,7 +419,10 @@
     <Content Include="wwwroot\partials\accounts\me.html" />
     <Content Include="wwwroot\partials\animals\create.html" />
     <Content Include="wwwroot\partials\animals\detail.html" />
+    <Content Include="wwwroot\partials\animals\edit-owner.html" />
     <Content Include="wwwroot\partials\animals\list.html" />
+    <Content Include="wwwroot\partials\animals\missions.html" />
+    <Content Include="wwwroot\partials\animals\owners.html" />
     <Content Include="wwwroot\partials\editDialog.html" />
     <Content Include="wwwroot\partials\home.html" />
     <Content Include="Content\AdminLTE.css" />

@@ -59,25 +59,63 @@ namespace Kcsara.Database.Api.Controllers.Animals
 
       return response;
     }
-    /*
-    [HttpGet]
-    [Route("training/courses/{courseId}/stats")]
-    public async Task<object> GetCourseStats(Guid courseId)
-    {
-      await _authz.EnsureAsync(courseId, "Read:TrainingCourse");
-      return await _animals.GetCourseStats(courseId);
-    }
 
     [HttpGet]
-    [Route("training/courses/{courseId}/roster")]
-    public async Task<List<TrainingRecord>> ListCourseRoster(Guid courseId)
+    [Route("animals/{animalId}/owners")]
+    public async Task<ListPermissionWrapper<AnimalOwner>> ListOwners(Guid animalId)
     {
-      await _authz.EnsureAsync(courseId, "Read:TrainingCourse");
-      await _authz.EnsureAsync(null, "Read:Member");
+      await _authz.EnsureAsync(animalId, "Read:Animal");
 
-      return await _animals.ListRoster(courseId);
+      return await _animals.ListOwners(animalId);
     }
-    */
+
+    [HttpPut]
+    [ValidateModelState]
+    [Route("animals/{animalId}/owners/{ownershipId}")]
+    public async Task<AnimalOwner> SaveOwner(Guid animalId, Guid ownershipId, [FromBody]AnimalOwner ownership)
+    {
+      await _authz.EnsureAsync(ownershipId, "Update:AnimalOwner");
+
+      if (ownership.Animal.Id != animalId) ModelState.AddModelError("animal.id", "Can not be changed");
+      if (ownership.Id != ownershipId) ModelState.AddModelError("id", "Can not be changed");
+
+      if (!ModelState.IsValid) throw new UserErrorException("Invalid parameters");
+
+      ownership = await _animals.SaveOwnership(ownership);
+      return ownership;
+    }
+
+    [HttpPost]
+    [ValidateModelState]
+    [Route("animals/{animalId}/owners")]
+    public async Task<AnimalOwner> CreateNewOwner(Guid animalId, [FromBody]AnimalOwner ownership)
+    {
+      await _authz.EnsureAsync(animalId, "Create:AnimalOwner@AnimalId");
+      await _authz.EnsureAsync(ownership?.Member?.Id, "Create:AnimalOwner@MemberId");
+
+      if (ownership.Id != Guid.Empty)
+      {
+        throw new UserErrorException("New animal ownership shouldn't include an id");
+      }
+
+      if (ownership.Animal != null && ownership.Animal.Id != animalId)
+      {
+        throw new UserErrorException("Animal ids do not match", string.Format("Tried to save animal owner with animal id {0} under animal {1}", ownership.Animal.Id, animalId));
+      }
+
+      ownership = await _animals.SaveOwnership(ownership);
+      return ownership;
+    }
+
+    [HttpDelete]
+    [Route("animals/{animalId}/owners/{ownershipId}")]
+    public async Task DeleteOwner(Guid animalId, Guid ownershipId)
+    {
+      await _authz.EnsureAsync(animalId, "Delete:AnimalOwner");
+
+      await _animals.DeleteOwnership(ownershipId);
+    }
+
     [HttpGet]
     [Route("animals")]
     public async Task<ListPermissionWrapper<Animal>> List()
@@ -85,48 +123,6 @@ namespace Kcsara.Database.Api.Controllers.Animals
       await _authz.EnsureAsync(null, "Read:Animal");
       return await _animals.List();
     }
-    /*
-    [HttpPost]
-    [ValidateModelState]
-    [Route("training/courses")]
-    public async Task<TrainingCourse> CreateNew([FromBody]TrainingCourse course)
-    {
-      await _authz.EnsureAsync(null, "Create:TrainingCourse");
 
-      if (course.Id != Guid.Empty)
-      {
-        throw new UserErrorException("New units shouldn't include an id");
-      }
-
-      course = await _animals.SaveAsync(course);
-      return course;
-    }
-
-    [HttpPut]
-    [ValidateModelState]
-    [Route("training/courses/{courseId}")]
-    public async Task<TrainingCourse> Save(Guid courseId, [FromBody]TrainingCourse course)
-    {
-      await _authz.EnsureAsync(courseId, "Update:TrainingCourse");
-
-      if (course.Id != courseId) ModelState.AddModelError("id", "Can not be changed");
-
-      if (!ModelState.IsValid) throw new UserErrorException("Invalid parameters");
-
-      course = await _animals.SaveAsync(course);
-      return course;
-    }
-
-
-
-    [HttpDelete]
-    [Route("training/courses/{courseId}")]
-    public async Task Delete(Guid courseId)
-    {
-      await _authz.EnsureAsync(courseId, "Delete:Unit");
-
-      await _animals.DeleteAsync(courseId);
-    }
-    */
   }
 }

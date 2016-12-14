@@ -23,11 +23,11 @@ md-list-item .md-no-style.md-button p {
   word-break: break-all;
 }
 
-md-autocomplete-wrap {
+md-sidenav md-autocomplete-wrap {
   border-bottom: solid 1px orange;
 }
 
-md-autocomplete-wrap.md-menu-showing {
+md-sidenav md-autocomplete-wrap.md-menu-showing {
   border-bottom-width: 0px;
 }
 
@@ -92,4 +92,25 @@ tr.clickable:hover {
   height: 8em;
   border: 1px solid #444;
   margin-right: 1em;
+}
+
+.tabs > ui-view > * {
+  margin-top: 15px;
+
+}
+.tabs > ui-view > md-content > *:first-child
+{
+  margin-top: 0px;
+}
+
+.auto-complete-input-container {
+  position: relative;
+  margin-top:1em;
+}
+.auto-complete-input-container > label{
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: auto;
+  transform: translate3d(-14px, 0px, 0) scale(0.75);
 }

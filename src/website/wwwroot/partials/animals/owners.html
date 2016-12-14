@@ -1,0 +1,41 @@
+﻿<md-content layout-padding ng-controller="AnimalsOwnersCtrl">
+
+  <md-card>
+    <md-toolbar class="md-table-toolbar md-default" ng-if="owners.list._c">
+      <div class="md-toolbar-tools">
+        <div flex></div>
+        <md-button class="md-icon-button md-primary" aria-label="Add Owner" ng-click="createOwner($event)">
+          <md-icon>add_circle</md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+      <md-card-content>
+        <p>Owners are those that might be responsible for the animal's handling on a mission. These members may sign the animal into the roster. The animal will inherit the DEM# of the current primary owner, followed by the animals "ID Suffix".</p>
+      </md-card-content>
+      <md-table-container>
+        <table md-table sortable-columns md-progress="loading">
+          <thead md-head md-order="owners.query.order">
+            <tr md-row>
+              <th md-column md-order-by="member.name">Owner</th>
+              <th md-column md-order-by="isPrimary">Primary?</th>
+              <th md-column md-order-by="starting">Starting</th>
+              <th md-column md-order-by="ending">Ending</th>
+              <th md-column class="th-actions"></th>
+            </tr>
+          </thead>
+          <tbody md-body>
+            <tr md-row md-auto-select ng-repeat="s in owners.list | orderBy: owners.query.order">
+              <td md-cell><strong><a href="#" target="_self" ng-href="/members/detail/{{s.member.id}}" md-colors="{color:'primary'}">{{s.member.name}}</a></strong></a></td>
+              <td md-cell>{{s.isPrimary ? 'yes' : 'no'}}</td>
+              <td md-cell>{{s.starting | simpleDate }}</td>
+              <td md-cell>{{s.ending | simpleDate }}</td>
+              <td md-cell class="td-actions-cell">
+                <md-button class="md-icon-button md-primary" aria-label="Edit Owner" ng-if="s._u" ng-click="editOwner($event, s)"><md-icon>edit</md-icon></md-button>
+                <md-button class="md-icon-button md-warn" aria-label="Remove Owner" ng-if="s._d" ng-click="deleteOwner($event, s)"><md-icon>delete</md-icon></md-button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </md-table-container>
+  </md-card>
+</md-content>

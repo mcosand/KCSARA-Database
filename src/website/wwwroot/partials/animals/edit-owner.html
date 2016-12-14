@@ -1,0 +1,46 @@
+﻿<edit-dialog name="editOwner">
+  <md-autocomplete md-selected-item="item.member"
+                   md-search-text-change="more.search.searchTextChange(searchText)"
+                   md-search-text="more.search.searchText"
+                   md-selected-item-change="more.search.selectedItemChange(autoItem)"
+                   md-items="autoItem in more.search.querySearch(more.search.searchText)"
+                   md-item-text="autoItem.name"
+                   md-min-length="0"
+                   md-menu-class="autocomplete-custom-template"
+                   md-autofocus="true"
+                   md-delay="300"
+                   md-floating-label="Member Owner"
+                   md-input-name="owner"
+                   required>
+    <md-item-template>
+      <div layout="row" layout-align="start center" style="padding-top:5px; padding-bottom:5px;" flex>
+        <div class="search-img" ng-style="{'background-image': 'url(&quot;' + more.getPhotoUrl(autoItem) + '&quot;)', opacity: autoItem.units.length ? 1.0 : 0.7 }"></div>
+        <div style="line-height:1em" flex>
+          <strong>{{autoItem.name}}</strong>
+          <div>DEM# {{autoItem.workerNumber}}</div>
+        </div>
+      </div>
+    </md-item-template>
+    <div ng-messages="editOwner.owner.$error">
+      <div ng-message="required">Owner is required</div>
+    </div>
+  </md-autocomplete>
+  <md-input-container class="md-block">
+    <md-checkbox ng-disabled="item.wasPrimary" ng-model="item.isPrimary" class="md-accent">Make Primary Owner</md-checkbox>
+  </md-input-container>
+  <md-input-container class="md-block">
+    <label>Start date</label>
+    <md-datepicker ng-model="item.starting" name="starting" required></md-datepicker>
+    <div ng-messages="editOwner.starting.$error">
+      <div ng-message="valid">The entered value is not a date!</div>
+      <div ng-message="required">This date is required!</div>
+    </div>
+  </md-input-container>
+  <md-input-container class="md-block">
+    <label>End date</label>
+    <md-datepicker ng-model="item.ending" name="ending"></md-datepicker>
+    <div ng-messages="editOwner.ending.$error">
+      <div ng-message="valid">The entered value is not a date!</div>
+    </div>
+  </md-input-container>
+</edit-dialog>

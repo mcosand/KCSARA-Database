@@ -33,8 +33,8 @@
     , 'accounts_detail': { url: '/accounts/:id', templateUrl: '/wwwroot/partials/accounts/detail.html', resolve: { $title: function () { return 'Account Detail'; } } }
     , 'animals': { url: '/animals', templateUrl: '/wwwroot/partials/animals/list.html', resolve: { $title: function () { return "Animals"; } } }
     , 'animals_detail': { abstract:true, url: '/animals/:id', templateUrl: '/wwwroot/partials/animals/detail.html', resolve: { $title: function() { return 'Animal Detail' }}}
-    , 'animals_detail.ad_owners': { template: 'Owners', url: '' }
-    , 'animals_detail.ad_missions': { template: 'Missions', url: '' }
+    , 'animals_detail.ad_owners': { templateUrl: '/wwwroot/partials/animals/owners.html', url: '' }
+    , 'animals_detail.ad_missions': { templateUrl: '/wwwroot/partials/animals/missions.html', url: '' }
   };
 
   angular.module('sar-database')
