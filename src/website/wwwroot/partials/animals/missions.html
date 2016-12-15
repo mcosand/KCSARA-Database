@@ -37,7 +37,8 @@
       <div layout="row" class="filter-row" layout-align="end center">
         <label>Year:</label>
         <md-select ng-model="missions.showYear" class="md-accent" aria-label="Show year">
-          <md-option ng-repeat="y in missions.years" ng-value="{{y}}" class="md-accent">{{y}}</md-option>
+          <md-option ng-if="missions.years.length > 1" ng-value="'all'" class="md-accent">Show All</md-option>
+          <md-option ng-repeat="y in missions.years" ng-value="y" class="md-accent">{{y}}</md-option>
         </md-select>
       </div>
       <md-table-container hide-xs>

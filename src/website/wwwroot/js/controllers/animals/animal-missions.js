@@ -24,12 +24,15 @@
               $scope.missions.yearlyStats[y] = $scope.missions.yearlyStats[y] || { count: 0, hours: 0 };
               $scope.missions.yearlyStats[y].count++;
               $scope.missions.yearlyStats[y].hours += data[i].hours;
+              $scope.missions.yearlyStats['all'] = $scope.missions.yearlyStats['all'] || { count: 0, hours: 0 };
+              $scope.missions.yearlyStats['all'].count++;
+              $scope.missions.yearlyStats['all'].hours += data[i].hours;
             }
           })
         },
         filterList: function (value) {
           var start = value.event.start;
-          return start.substring(0, 4) == $scope.missions.showYear;
+          return $scope.missions.showYear == "all" || start.substring(0, 4) == $scope.missions.showYear;
         }
       },
       gotoMission: function (mission) {
