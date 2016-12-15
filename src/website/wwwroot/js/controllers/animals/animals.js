@@ -18,9 +18,14 @@
     createNew: function (ev) {
       var animal = Animals.create();
       Editors
-        .doEditDialog(ev, '/wwwroot/partials/animals/create.html', 'animal', animal)
-        .then(function (newAccount) {
-          $scope.animals.push(newAccount);
+        .doEditDialog(ev, '/wwwroot/partials/animals/edit.html', 'animal', animal)
+        .then(function (newAnimal) {
+          var owner = Animals.createOwner(newAnimal);
+          owner.isPrimary = true;
+          return Animals.editOwnerDialog(ev, owner);
+        })
+        .then(function (newOwnership) {
+          refreshAnimals();
         });
     }
   })

@@ -36,6 +36,46 @@ namespace Kcsara.Database.Api.Controllers.Animals
       return await _animals.GetAsync(animalId);
     }
 
+    [HttpPost]
+    [ValidateModelState]
+    [Route("animals")]
+    public async Task<Animal> CreateNew([FromBody]Animal animal)
+    {
+      await _authz.EnsureAsync(null, "Create:Animal");
+
+      if (animal.Id != Guid.Empty)
+      {
+        throw new UserErrorException("New animals shouldn't include an id");
+      }
+
+      animal = await _animals.Save(animal);
+      return animal;
+    }
+
+    [HttpPut]
+    [ValidateModelState]
+    [Route("animals/{animalId}")]
+    public async Task<Animal> Save(Guid animalId, [FromBody]Animal animal)
+    {
+      await _authz.EnsureAsync(animalId, "Update:Animal");
+
+      if (animal.Id != animalId) ModelState.AddModelError("id", "Can not be changed");
+
+      if (!ModelState.IsValid) throw new UserErrorException("Invalid parameters");
+
+      animal = await _animals.Save(animal);
+      return animal;
+    }
+
+    [HttpDelete]
+    [Route("animals/{animalId}")]
+    public async Task Delete(Guid animalId)
+    {
+      await _authz.EnsureAsync(animalId, "Delete:Animal");
+
+      await _animals.Delete(animalId);
+    }
+
     [HttpGet]
     [AllowAnonymous]
     [Route("animals/{animalId}/photo")]

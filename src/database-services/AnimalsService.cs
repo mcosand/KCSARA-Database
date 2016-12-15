@@ -17,6 +17,8 @@ namespace Sar.Database.Services
   {
     Task<ListPermissionWrapper<Animal>> List();
     Task<ItemPermissionWrapper<Animal>> GetAsync(Guid id);
+    Task<Animal> Save(Animal animal);
+    Task Delete(Guid animalId);
 
     Task<ListPermissionWrapper<AnimalOwner>> ListOwners(Guid animalId);
     Task<AnimalOwner> SaveOwnership(AnimalOwner owner);
@@ -87,6 +89,39 @@ namespace Sar.Database.Services
         }).SingleOrDefaultAsync(f => f.Id == id);
 
         return _authz.Wrap(result);
+      }
+    }
+
+    public async Task<Animal> Save(Animal animal)
+    {
+      using (var db = _dbFactory())
+      {
+        var updater = await ObjectUpdater.CreateUpdater(
+          db.Animals,
+          animal.Id,
+          null);
+
+        updater.Update(f => f.Name, animal.Name);
+        updater.Update(f => f.Type, animal.Type);
+        updater.Update(f => f.Comments, animal.Comments);
+        updater.Update(f => f.DemSuffix, animal.IdSuffix);
+        updater.Update(f => f.PhotoFile, animal.Photo);
+
+        await updater.Persist(db);
+
+        return (await List()).Items.Single(f => f.Item.Id == updater.Instance.Id).Item;
+      }
+    }
+
+    public async Task Delete(Guid animalId)
+    {
+      using (var db = _dbFactory())
+      {
+        var animal = await db.Animals.FirstOrDefaultAsync(f => f.Id == animalId);
+
+        if (animal == null) throw new NotFoundException("not found", "Animal", animalId.ToString());
+        db.Animals.Remove(animal);
+        await db.SaveChangesAsync();
       }
     }
 

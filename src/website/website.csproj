@@ -418,9 +418,9 @@
     <Content Include="wwwroot\partials\accounts\reset.html" />
     <Content Include="wwwroot\partials\accounts\reset-finish.html" />
     <Content Include="wwwroot\partials\accounts\me.html" />
-    <Content Include="wwwroot\partials\animals\create.html" />
-    <Content Include="wwwroot\partials\animals\detail.html" />
     <Content Include="wwwroot\partials\animals\edit-owner.html" />
+    <Content Include="wwwroot\partials\animals\edit.html" />
+    <Content Include="wwwroot\partials\animals\detail.html" />
     <Content Include="wwwroot\partials\animals\list.html" />
     <Content Include="wwwroot\partials\animals\missions.html" />
     <Content Include="wwwroot\partials\animals\owners.html" />

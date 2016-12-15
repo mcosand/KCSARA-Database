@@ -29,7 +29,10 @@
       </div>
     </md-card-content>
   </md-card>
-  <md-card>
+  <md-card flex-gt-md="50" ng-hide="missions.list.length">
+    <md-card-content>No Mission History</md-card-content>
+  </md-card>
+  <md-card ng-if="missions.list.length">
     <md-card-content>
       <div layout="row" class="filter-row" layout-align="end center">
         <label>Year:</label>

@@ -1,0 +1,30 @@
+﻿<edit-dialog name="editAnimal">
+  <md-input-container class="md-block">
+    <label>Name</label>
+    <input ng-model="item.name" name="name" md-auto-focus required>
+    <div ng-messages="editAnimal.name.$error">
+      <div ng-message="required">Name is required.</div>
+      <div ng-message="server">{{editAnimal.name.$error.server}}</div>
+    </div>
+  </md-input-container>
+  <md-input-container class="md-block">
+    <label>Type</label>
+    <md-select name="type" ng-model="item.type" required>
+      <md-option value="dog" class="md-accent">dog</md-option>
+      <md-option value="horse" class="md-accent">horse</md-option>
+    </md-select>
+    <div ng-messages="editAnimal.type.$error">
+      <div ng-message="required">Type is required.</div>
+      <div ng-message="server">{{editAnimal.type.$error.server}}</div>
+    </div>
+  </md-input-container>
+  <md-input-container class="md-block">
+    <label>DEM Suffix</label>
+    <input ng-model="item.idSuffix" name="idSuffix" required>
+    <div class="hint">Added after owner's DEM number</div>
+    <div ng-messages="editAnimal.idSuffix.$error">
+      <div ng-message="required">DEM Suffix is required.</div>
+      <div ng-message="server">{{editAnimal.idSuffix.$error.server}}</div>
+    </div>
+  </md-input-container>
+</edit-dialog>
