@@ -16,10 +16,9 @@
     </md-card-title>
   </md-card>
   <div class="tabs">
-    <md-nav-bar md-selected-nav-item="currentPage" nav-bar-aria-label="page links">
-      <md-nav-item md-nav-sref="animals_detail.ad_owners" name="ad_owners">Owner(s)</md-nav-item>
-      <md-nav-item md-nav-sref="animals_detail.ad_missions" name="ad_missions">Missions</md-nav-item>
-    </md-nav-bar>
+    <md-tabs class="md-accent" md-selected="selectedTab">
+      <md-tab ng-repeat="tab in tabs">{{tab.name}}</md-tab>
+    </md-tabs>
     <ui-view></ui-view>
   </div>
 </md-content>

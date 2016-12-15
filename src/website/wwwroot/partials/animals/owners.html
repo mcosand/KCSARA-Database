@@ -1,5 +1,4 @@
-﻿<md-content layout-padding ng-controller="AnimalsOwnersCtrl">
-
+﻿<md-content ng-controller="AnimalsOwnersCtrl">
   <md-card>
     <md-toolbar class="md-table-toolbar md-default" ng-if="owners.list._c">
       <div class="md-toolbar-tools">
@@ -9,9 +8,8 @@
         </md-button>
       </div>
     </md-toolbar>
-      <md-card-content>
-        <p>Owners are those that might be responsible for the animal's handling on a mission. These members may sign the animal into the roster. The animal will inherit the DEM# of the current primary owner, followed by the animals "ID Suffix".</p>
-      </md-card-content>
+    <md-card-content>
+      <p>Owners are those that might be responsible for the animal's handling on a mission. These members may sign the animal into the roster. The animal will inherit the DEM# of the current primary owner, followed by the animals "ID Suffix".</p>
       <md-table-container>
         <table md-table sortable-columns md-progress="loading">
           <thead md-head md-order="owners.query.order">
@@ -37,5 +35,6 @@
           </tbody>
         </table>
       </md-table-container>
+    </md-card-content>
   </md-card>
 </md-content>

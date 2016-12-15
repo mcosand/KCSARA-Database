@@ -117,6 +117,25 @@ namespace Kcsara.Database.Api.Controllers.Animals
     }
 
     [HttpGet]
+    [Route("animals/{animalId}/missions/stats")]
+    public async Task<AttendanceStatistics<NameIdPair>> GetMissionStatistics(Guid animalId)
+    {
+      await _authz.EnsureAsync(animalId, "Read:Animal");
+
+      return await _animals.GetMissionStatistics(animalId);
+    }
+
+    [HttpGet]
+    [Route("animals/{animalId}/missions")]
+    public async Task<List<EventAttendance>> ListMissions(Guid animalId)
+    {
+      await _authz.EnsureAsync(animalId, "Read:Animal");
+      await _authz.EnsureAsync(null, "Read:Mission");
+
+      return await _animals.GetMissionList(animalId);
+    }
+
+    [HttpGet]
     [Route("animals")]
     public async Task<ListPermissionWrapper<Animal>> List()
     {

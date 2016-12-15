@@ -387,6 +387,7 @@
     <Content Include="wwwroot\js\controllers\accounts\accountsDetail.js" />
     <Content Include="wwwroot\js\controllers\accounts\accountsReset.js" />
     <Content Include="wwwroot\js\controllers\accounts\accountsFinishReset.js" />
+    <Content Include="wwwroot\js\controllers\animals\animal-missions.js" />
     <Content Include="wwwroot\js\controllers\animals\animals-owners.js" />
     <Content Include="wwwroot\js\controllers\animals\animals.js" />
     <Content Include="wwwroot\js\controllers\animals\animals-detail.js" />

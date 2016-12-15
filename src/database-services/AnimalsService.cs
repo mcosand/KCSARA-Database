@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Threading.Tasks;
 using log4net;
@@ -14,18 +16,14 @@ namespace Sar.Database.Services
   public interface IAnimalsService
   {
     Task<ListPermissionWrapper<Animal>> List();
-    //Task<ListPermissionWrapper<UnitMembership>> ListMemberships(Expression<Func<UnitMembership, bool>> predicate, bool canCreate);
-    //Task<UnitMembership> CreateMembership(UnitMembership membership);
-    //Task<ListPermissionWrapper<UnitStatusType>> ListStatusTypes(Guid? unitId = null);
     Task<ItemPermissionWrapper<Animal>> GetAsync(Guid id);
+
     Task<ListPermissionWrapper<AnimalOwner>> ListOwners(Guid animalId);
-    //Task DeleteStatusType(Guid statusTypeId);
     Task<AnimalOwner> SaveOwnership(AnimalOwner owner);
     Task DeleteOwnership(Guid ownershipId);
 
-    //Task<UnitReportInfo[]> ListReports(Guid unitId);
-    //Task<Unit> Save(Unit unit);
-    //Task Delete(Guid unitId);
+    Task<List<EventAttendance>> GetMissionList(Guid animalId);
+    Task<AttendanceStatistics<NameIdPair>> GetMissionStatistics(Guid animalId);
   }
 
   public class AnimalsService : IAnimalsService
@@ -89,6 +87,64 @@ namespace Sar.Database.Services
         }).SingleOrDefaultAsync(f => f.Id == id);
 
         return _authz.Wrap(result);
+      }
+    }
+
+    public async Task<AttendanceStatistics<NameIdPair>> GetMissionStatistics(Guid animalId)
+    {
+      using (var db = _dbFactory())
+      {
+        var recent = DateTime.UtcNow.AddMonths(-12);
+        var stats = await db.Animals
+          .Where(f => f.Id == animalId)
+           .Select(f => new AttendanceStatistics<NameIdPair>
+           {
+             Total = new AttendanceStatisticsPart
+             {
+               Hours = f.MissionRosters.Sum(g => SqlFunctions.DateDiff("minute", g.MissionRoster.TimeIn, g.MissionRoster.TimeOut) / 60.0) ?? 0.0,
+               Count = f.MissionRosters.Select(g => g.MissionRoster.MissionId).Distinct().Count()
+             },
+             Recent = new AttendanceStatisticsPart
+             {
+               Hours = f.MissionRosters.Where(g => g.MissionRoster.Mission.StartTime > recent).Sum(g => SqlFunctions.DateDiff("minute", g.MissionRoster.TimeIn, g.MissionRoster.TimeOut) / 60.0) ?? 0.0,
+               Count = f.MissionRosters.Where(g => g.MissionRoster.Mission.StartTime > recent).Select(g => g.MissionRoster.MissionId).Distinct().Count()
+             },
+             Earliest = f.MissionRosters.Min(g => g.MissionRoster.TimeIn),
+             Responder = new MemberSummary
+             {
+               Id = f.Id,
+               Name = f.Name
+             }
+           })
+           .FirstOrDefaultAsync();
+
+        return stats;
+      }
+    }
+
+    public async Task<List<EventAttendance>> GetMissionList(Guid animalId)
+    {
+      using (var db = _dbFactory())
+      {
+        var list = await db.AnimalMissions
+          .Where(f => f.AnimalId == animalId)
+          .GroupBy(f => f.MissionRoster.Mission)
+          .Select(f => new EventAttendance
+          {
+            Event = new EventSummary
+            {
+              Id = f.Key.Id,
+              Name = f.Key.Title,
+              Location = f.Key.Location,
+              Start = f.Key.StartTime,
+              StateNumber = f.Key.StateNumber,
+              Stop = f.Key.StopTime
+            },
+            Hours = f.Sum(g => SqlFunctions.DateDiff("minute", g.MissionRoster.TimeIn, g.MissionRoster.TimeOut) / 60.0) ?? 0.0
+          })
+          .OrderByDescending(f => f.Event.Start)
+          .ToListAsync();
+        return list;
       }
     }
 

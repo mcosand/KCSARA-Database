@@ -113,6 +113,10 @@
     <Compile Include="Migrations\201610041514024_AwardsDateTimeOffsets.Designer.cs">
       <DependentUpon>201610041514024_AwardsDateTimeOffsets.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201612141632443_AnimalMissions_NotNUllable.cs" />
+    <Compile Include="Migrations\201612141632443_AnimalMissions_NotNUllable.Designer.cs">
+      <DependentUpon>201612141632443_AnimalMissions_NotNUllable.cs</DependentUpon>
+    </Compile>
     <Compile Include="SqlServerTypes\Loader.cs" />
     <Compile Include="Training\ComputedTrainingAward.cs" />
     <Compile Include="ContactInfoSubType.cs" />
@@ -310,6 +314,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201610041514024_AwardsDateTimeOffsets.resx">
       <DependentUpon>201610041514024_AwardsDateTimeOffsets.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201612141632443_AnimalMissions_NotNUllable.resx">
+      <DependentUpon>201612141632443_AnimalMissions_NotNUllable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

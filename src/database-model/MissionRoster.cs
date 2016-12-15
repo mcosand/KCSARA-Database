@@ -8,6 +8,7 @@ namespace Kcsar.Database.Model
   using System.Linq;
   using System.Collections.Generic;
   using System.ComponentModel.DataAnnotations;
+  using System.ComponentModel.DataAnnotations.Schema;
 
   public class MissionRoster : ModelObject, IRosterEntry<Mission, MissionRoster>, IRosterEntry, IModelObject
   {
@@ -24,8 +25,12 @@ namespace Kcsar.Database.Model
     public int? Miles { get; set; }
     public string Comments { get; set; }
 
-    [Required]
+    [Column("Mission_Id")]
+    public Guid MissionId { get; set; }
+
+    [ForeignKey("MissionId")]
     public virtual Mission Mission { get; set; }
+
     [Required]
     public virtual Member Person { get; set; }
     [Required]

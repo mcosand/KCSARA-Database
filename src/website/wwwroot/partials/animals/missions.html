@@ -1,3 +1,83 @@
-﻿<md-content>
-  foo foo
+﻿<md-content ng-controller="AnimalsMissionsCtrl">
+  <md-card flex-gt-md="50">
+    <md-card-content layout="row" layout-align="center stretch" ng-cloak layout-wrap>
+      <div layout="column" flex="50" flex-xs="100" class="left-separator-gt-xs">
+        <div style="text-align:center" class="caption">Career Total</div>
+        <div layout="row" layout-align="space-around">
+          <div layout="column" layout-align="start center" style="padding:5px; text-align:center">
+            <div style="font-size:24pt">{{stats.total.count}}</div>
+            <div>Missions</div>
+          </div>
+          <div layout="column" layout-align="start center" style="padding:5px; text-align:center">
+            <div style="font-size:24pt">{{stats.total.hours}}</div>
+            <div>Hours</div>
+          </div>
+        </div>
+      </div>
+      <div layout="column" flex="50" flex-xs="100" class="left-separator-gt-xs">
+        <div style="text-align:center" class="caption">Last 12 Months</div>
+        <div layout="row" layout-align="space-around">
+          <div layout="column" layout-align="start center" style="padding:5px; text-align:center">
+            <div style="font-size:24pt">{{stats.recent.count}}</div>
+            <div>Missions</div>
+          </div>
+          <div layout="column" layout-align="start center" style="padding:5px; text-align:center">
+            <div style="font-size:24pt">{{stats.recent.hours}}</div>
+            <div>Hours</div>
+          </div>
+        </div>
+      </div>
+    </md-card-content>
+  </md-card>
+  <md-card>
+    <md-card-content>
+      <div layout="row" class="filter-row" layout-align="end center">
+        <label>Year:</label>
+        <md-select ng-model="missions.showYear" class="md-accent" aria-label="Show year">
+          <md-option ng-repeat="y in missions.years" ng-value="{{y}}" class="md-accent">{{y}}</md-option>
+        </md-select>
+      </div>
+      <md-table-container hide-xs>
+        <table md-table sortable-columns md-progress="loading">
+          <thead md-head md-order="missions.query.order">
+            <tr md-row>
+              <th md-column md-order-by="event.stateNumber">Mission #</th>
+              <th md-column md-order-by="event.start">Date</th>
+              <th md-column md-order-by="event.name">Title</th>
+              <th md-column md-numeric md-order-by="hours">Hours</th>
+            </tr>
+          </thead>
+          <tbody md-body>
+            <tr md-row md-auto-select ng-repeat="s in missions.list | filter: missions.filterList | orderBy: missions.query.order" ng-click="gotoMission(s)" class="clickable">
+              <td md-cell style="white-space:nowrap">{{s.event.stateNumber}}</td>
+              <td md-cell style="white-space:nowrap">{{s.event.start | simpleDate}}</td>
+              <td md-cell><strong md-colors="{color:'primary'}">{{s.event.name}}</strong></a></td>
+              <td md-cell>{{s.hours.toFixed(2)}}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr md-row>
+              <th colspan="3">{{missions.yearlyStats[missions.showYear].count}} Mission<span ng-if="missions.yearlyStats[missions.showYear].count != 1">s</span></th>
+              <th class="r">{{missions.yearlyStats[missions.showYear].hours.toFixed(2)}}</th>
+            </tr>
+          </tfoot>
+        </table>
+      </md-table-container>
+      <md-list flex hide-gt-xs>
+        <md-list-item class="md-3-line" ng-repeat="s in missions.list | filter: missions.filterList" ng-click="gotoMission(s)">
+          <div class="md-list-item-text">
+            <p>{{s.event.start | simpleDate}} {{s.event.stateNumber}}</p>
+            <h3 md-colors="{color:'primary'}">{{s.event.name}}</h3>
+            <p>{{s.hours.toFixed(2)}} hrs</p>
+          </div>
+        </md-list-item>
+        <md-list-item class="md-2-line">
+          <div class="md-list-item-text">
+            <p>{{missions.yearlyStats[missions.showYear].count}} Mission<span ng-if="missions.yearlyStats[missions.showYear].count != 1">s</span></p>
+            <p>{{missions.yearlyStats[missions.showYear].hours.toFixed(2)}} Hour<span ng-if="missions.yearlyStats[missions.showYear].hours != 1">s</span></p>
+          </div>
+        </md-list-item>
+      </md-list>
+    </md-card-content>
+  </md-card>
 </md-content>

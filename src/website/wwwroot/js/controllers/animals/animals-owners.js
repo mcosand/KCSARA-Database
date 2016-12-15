@@ -3,7 +3,7 @@
   angular.extend($scope, {    
     owners: {
       query: {
-        order: 'member.name'
+        order: '-isPrimary'
       },
       list: [],
       getList: function () {

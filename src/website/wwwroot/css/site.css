@@ -43,6 +43,16 @@ md-toolbar.md-table-toolbar .md-toolbar-tools > .md-button.md-icon-button:last-c
   margin-right: 0px;
 }
 
+.caption {
+  color: rgba(0, 0, 0, 0.54);
+  font-size: 12px;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align:middle;
+  text-align: left;
+  text-transform: uppercase;
+}
+
 table.md-table td.md-cell.td-actions-cell:last-child, table.md-table th.md-column.th-actions:last-child {
   padding-right: 0px;
 }
@@ -50,6 +60,28 @@ table.md-table td.md-cell.td-actions-cell:last-child, table.md-table th.md-colum
 table.md-table:not(.md-row-select) td.md-cell.icon-cell:nth-child(n+2):nth-last-child(n+2),
 table.md-table:not(.md-row-select) th.md-column.icon-column:nth-child(n+2):nth-last-child(n+2) {
   padding-right:14px;
+}
+
+table.md-table tfoot th {
+  color: rgba(0, 0, 0, 0.54);
+  font-size: 12px;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align:middle;
+  text-align: left;
+  height:48px;
+  border-top: double 3px #a0a0a0;
+}
+
+table.md-table:not(.md-row-select) tfoot th:first-child {
+  padding: 0px 24px;
+}
+table.md-table tfoot th:last-child {
+  padding: 0px 24px 0 0;
+}
+
+table.md-table tfoot th.r {
+  text-align: right;
 }
 
 td.md-cell.td-actions-cell {
@@ -100,7 +132,12 @@ tr.clickable:hover {
 }
 .tabs > ui-view > md-content > *:first-child
 {
-  margin-top: 0px;
+  margin-top: 1px;
+}
+
+.tabs md-card {
+  margin-left: 1px;
+  margin-right:1px;
 }
 
 .auto-complete-input-container {
@@ -114,3 +151,50 @@ tr.clickable:hover {
   right: auto;
   transform: translate3d(-14px, 0px, 0) scale(0.75);
 }
+
+@media(max-width:599px) {
+  .left-separator-gt-xs {
+    border-top: solid 1px #aaa;
+    padding-top:1em;
+  }
+    .left-separator-gt-xs:first-child {
+      padding-top:0px;
+      border-top: none;
+    }
+}
+
+@media(min-width:600px) {
+  .left-separator-gt-xs {
+    border-left: solid 1px #aaa;
+  }
+    .left-separator-gt-xs:first-child {
+      border-left: none;
+    }
+}
+
+
+/* md-tabs styles like md-nav-bar */
+.md-button.md-default-theme.md-accent, .md-button.md-accent {
+  color: #f39c12;
+}
+md-tabs.md-default-theme.md-accent > md-tabs-wrapper, md-tabs.md-accent > md-tabs-wrapper {
+  background-color: transparent;
+}
+
+md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]) {
+  color: rgba(0,0,0,0.54);
+}
+
+md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-active {
+  color: #f39c12;
+}
+
+md-tabs.md-default-theme.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-ink-bar, md-tabs.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-ink-bar {
+  color: #f39c12;
+  background: #f39c12;
+}
+
+md-tabs {
+  border-bottom: solid 1px rgba(0,0,0,0.12);
+}
+/* END md-tabs styles like md-nav-bar */
