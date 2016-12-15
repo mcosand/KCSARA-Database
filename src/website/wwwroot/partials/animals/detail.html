@@ -15,6 +15,9 @@
       </md-card-title-text>
     </md-card-title>
     <md-card-actions layout="row" layout-align="end center">
+      <md-button class="md-icon-button md-secondary md-hue-3" aria-label="Edit Photo" ng-if="animal._u" ng-click="pickPhoto($event, animal)">
+        <md-icon>photo_camera</md-icon>
+      </md-button>
       <md-button class="md-icon-button md-secondary md-hue-3" aria-label="Edit Animal" ng-if="animal._u" ng-click="editAnimal($event, animal)">
         <md-icon>edit</md-icon>
       </md-button>

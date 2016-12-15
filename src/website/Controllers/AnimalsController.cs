@@ -1,8 +1,4 @@
-﻿/*
- * Copyright 2009-2014 Matthew Cosand
- */
-
-namespace Kcsara.Database.Web.Controllers
+﻿namespace Kcsara.Database.Web.Controllers
 {
   using System;
   using System.Collections.Generic;
@@ -13,7 +9,6 @@ namespace Kcsara.Database.Web.Controllers
   using System.Web;
   using System.Web.Mvc;
   using Kcsar.Database.Model;
-  using Kcsara.Database.Web.Model;
   using IO = System.IO;
 
   public class AnimalsController : BaseController
@@ -23,232 +18,6 @@ namespace Kcsara.Database.Web.Controllers
     /// <summary>Vdir-relative directory to the meber's photo store. Includes trailing-slash.</summary>
     public const string PhotosStoreRelativePath = "~/Content/auth/animals/";
     public const string StandInPhotoFile = "none.jpg";
-
-    [AuthorizeWithLog]
-    public ActionResult Index()
-    {
-      var animals = (from a in this.db.Animals.Include("Owners").Include("Owners.Owner")
-                     orderby a.Name
-                     select
-                       new AnimalListRow { Animal = a }).ToList();
-
-      for (int i = 0; i < animals.Count; i++)
-      {
-        animals[i].PrimaryOwner = animals[i].Animal.GetPrimaryOwner();
-        animals[i].PrimaryOwnerName = (animals[i].PrimaryOwner == null) ? "" : animals[i].PrimaryOwner.ReverseName;
-        animals[i].ActiveUntil = (animals[i].Animal.Owners.Count(f => !f.Ending.HasValue) > 0) ? null : animals[i].Animal.Owners.Max(f => f.Ending);
-      }
-
-      return View(animals);
-    }
-
-    [AuthorizeWithLog]
-    [AcceptVerbs(HttpVerbs.Get)]
-    public ActionResult Detail(Guid id)
-    {
-      Animal animal = (from a in this.db.Animals.Include("Owners").Include("Owners.Owner").Include("MissionRosters").Include("MissionRosters.MissionRoster").Include("MissionRosters.MissionRoster.Mission") where a.Id == id select a).First();
-
-      ViewData["PageTitle"] = "Animal Detail: " + animal.Name;
-
-      return View(animal);
-    }
-
-    #region Create/Edit/Delete
-    [AcceptVerbs(HttpVerbs.Get)]
-    [AuthorizeWithLog(Roles = "cdb.admins")]
-    public ActionResult Create()
-    {
-      ViewData["PageTitle"] = "New Animal";
-
-      Animal a = new Animal();
-
-      Session.Add("NewAnimalGuid", a.Id);
-      ViewData["NewAnimalGuid"] = Session["NewAnimalGuid"];
-
-      return InternalEdit(a);
-    }
-
-    [AcceptVerbs(HttpVerbs.Post)]
-    [AuthorizeWithLog(Roles = "cdb.admins")]
-    public ActionResult Create(FormCollection fields)
-    {
-      if (Session["NewAnimalGuid"] != null && Session["NewAnimalGuid"].ToString() != fields["NewAnimalGuid"])
-      {
-        throw new InvalidOperationException("Invalid operation. Are you trying to re-create an animal?");
-      }
-      Session.Remove("NewAnimalGuid");
-
-      ViewData["PageTitle"] = "New Animal";
-
-      Animal a = new Animal();
-      this.db.Animals.Add(a);
-      return InternalSave(a, fields);
-    }
-
-
-    [AcceptVerbs("GET")]
-    [AuthorizeWithLog(Roles = "cdb.admins")]
-    public ActionResult Edit(Guid id)
-    {
-      Animal animal = (from a in this.db.Animals where a.Id == id select a).First();
-      return InternalEdit(animal);
-    }
-
-    [AcceptVerbs("POST")]
-    [AuthorizeWithLog(Roles = "cdb.admins")]
-    public ActionResult Edit(Guid id, FormCollection fields)
-    {
-      Animal animal = (from a in this.db.Animals where a.Id == id select a).First();
-      return InternalSave(animal, fields);
-    }
-
-    private ActionResult InternalEdit(Animal a)
-    {
-      ViewData["TypeList"] = new SelectList(Animal.AllowedTypes, a.Type);
-
-      return View("Edit", a);
-    }
-
-    private ActionResult InternalSave(Animal a, FormCollection fields)
-    {
-      TryUpdateModel(a, new string[] { "Name", "DemSuffix", "Comments", "Type" });
-      if (ModelState.IsValid)
-      {
-        this.db.SaveChanges();
-        TempData["message"] = "Saved";
-        return RedirectToAction("ClosePopup");
-      }
-      return InternalEdit(a);
-    }
-
-    [AuthorizeWithLog]
-    [AcceptVerbs(HttpVerbs.Get)]
-    [AuthorizeWithLog(Roles = "cdb.admins")]
-    public ActionResult Delete(Guid id)
-    {
-      return View((from a in this.db.Animals where a.Id == id select a).First());
-    }
-
-    [AuthorizeWithLog]
-    [AcceptVerbs(HttpVerbs.Post)]
-    [AuthorizeWithLog(Roles = "cdb.admins")]
-    public ActionResult Delete(Guid id, FormCollection fields)
-    {
-      Animal animal = (from a in this.db.Animals where a.Id == id select a).First();
-      this.db.Animals.Remove(animal);
-      this.db.SaveChanges();
-
-      return RedirectToAction("ClosePopup");
-    }
-    #endregion
-
-    #region Owners
-    [AcceptVerbs("GET")]
-    [AuthorizeWithLog(Roles = "cdb.admins")]
-    public ActionResult CreateOwner(Guid id)
-    {
-      ViewData["PageTitle"] = "New Owner";
-
-      AnimalOwner o = new AnimalOwner();
-      o.Animal = (from a in this.db.Animals where a.Id == id select a).First();
-      o.Starting = DateTime.Today;
-      //s.Person = (from p in this.db.Members where p.Id == personId select p).First();
-      //s.Activated = DateTime.Today;
-
-      Session.Add("NewOwnerGuid", o.Id);
-      ViewData["NewOwnerGuid"] = Session["NewOwnerGuid"];
-
-      return InternalEditOwner(o);
-    }
-
-    [AcceptVerbs(HttpVerbs.Post)]
-    [AuthorizeWithLog(Roles = "cdb.admins")]
-    public ActionResult CreateOwner(Guid id, FormCollection fields)
-    {
-      if (Session["NewOwnerGuid"] != null && Session["NewOwnerGuid"].ToString() != fields["NewOwnerGuid"])
-      {
-        throw new InvalidOperationException("Invalid operation. Are you trying to re-create an ownership?");
-      }
-      Session.Remove("NewOwnerGuid");
-
-      ViewData["PageTitle"] = "New Owner";
-
-      AnimalOwner o = new AnimalOwner();
-      o.Animal = (from a in this.db.Animals where a.Id == id select a).First();
-      //    um.Person = (from p in this.db.Members where p.Id == personId select p).First();
-      this.db.AnimalOwners.Add(o);
-      return InternalSaveOwner(o, fields);
-    }
-
-
-    [AcceptVerbs("GET")]
-    [AuthorizeWithLog(Roles = "cdb.admins")]
-    public ActionResult EditOwner(Guid id)
-    {
-      AnimalOwner o = (from ao in this.db.AnimalOwners.Include("Animal").Include("Owner") where ao.Id == id select ao).First();
-      return InternalEditOwner(o);
-    }
-
-    [AcceptVerbs("POST")]
-    [AuthorizeWithLog(Roles = "cdb.admins")]
-    public ActionResult EditOwner(Guid id, FormCollection fields)
-    {
-      AnimalOwner o = (from ao in this.db.AnimalOwners.Include("Animal").Include("Owner") where ao.Id == id select ao).First();
-      return InternalSaveOwner(o, fields);
-    }
-
-    private ActionResult InternalEditOwner(AnimalOwner o)
-    {
-      return View("EditOwner", o);
-    }
-
-    private ActionResult InternalSaveOwner(AnimalOwner o, FormCollection fields)
-    {
-      TryUpdateModel(o, new string[] { "IsPrimary", "Starting", "Ending" });
-
-      if (string.IsNullOrEmpty(fields["pid_a"]))
-      {
-        ModelState.AddModelError("Owner", "Required. Please pick from list.");
-
-      }
-      else
-      {
-        Guid personId = new Guid(fields["pid_a"]);
-        Member member = (from m in this.db.Members where m.Id == personId select m).First();
-        o.Owner = member;
-      }
-
-      if (ModelState.IsValid)
-      {
-        this.db.SaveChanges();
-        TempData["message"] = "Saved";
-        return RedirectToAction("ClosePopup");
-      }
-
-      return InternalEditOwner(o);
-    }
-
-    [AuthorizeWithLog]
-    [AcceptVerbs(HttpVerbs.Get)]
-    [AuthorizeWithLog(Roles = "cdb.admins")]
-    public ActionResult DeleteOwner(Guid id)
-    {
-      return View((from ao in this.db.AnimalOwners.Include("Owner").Include("Animal") where ao.Id == id select ao).First());
-    }
-
-    [AuthorizeWithLog]
-    [AcceptVerbs(HttpVerbs.Post)]
-    [AuthorizeWithLog(Roles = "cdb.admins")]
-    public ActionResult DeleteOwner(Guid id, FormCollection fields)
-    {
-      AnimalOwner o = (from ao in this.db.AnimalOwners where ao.Id == id select ao).First();
-      this.db.AnimalOwners.Remove(o);
-      this.db.SaveChanges();
-
-      return RedirectToAction("ClosePopup");
-    }
-    #endregion
-
 
     #region Photos
     [AuthorizeWithLog(Roles = "cdb.admins")]
@@ -272,6 +41,7 @@ namespace Kcsara.Database.Web.Controllers
 
     [AuthorizeWithLog(Roles = "cdb.admins")]
     [AcceptVerbs(HttpVerbs.Post)]
+    [Route("animals/photopreview/go")]
     public ActionResult PhotoPreview()
     {
       Dictionary<Guid, Bitmap> images = new Dictionary<Guid, Bitmap>();
@@ -323,10 +93,11 @@ namespace Kcsara.Database.Web.Controllers
 
     [AcceptVerbs(HttpVerbs.Post)]
     [AuthorizeWithLog(Roles = "cdb.admins")]
+    [Route("animals/photocommit/go")]
     public ActionResult PhotoCommit(FormCollection fields)
     {
       List<string> errors = new List<string>();
-
+      string redirect = "/animals";
       if (Session["photoPreview"] == null)
       {
         errors.Add("Temporary data not found.");
@@ -352,6 +123,10 @@ namespace Kcsara.Database.Web.Controllers
             m.PhotoFile = newFileName;
           }
         }
+        if (Animals.Count() == 1)
+        {
+          redirect = "/animals/" + Animals.First().Id.ToString();
+        }
 
         this.db.SaveChanges();
       }
@@ -363,7 +138,7 @@ namespace Kcsara.Database.Web.Controllers
         return View("Error");
       }
 
-      return RedirectToAction("ClosePopup");
+      return Redirect(redirect);
     }
 
     [AcceptVerbs(HttpVerbs.Get)]

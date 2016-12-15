@@ -1,4 +1,5 @@
-﻿angular.module('sar-database').controller("AnimalsDetailCtrl", ['$stateParams', '$state', '$scope', 'editorsService', 'animalsService', function ($stateParams, $state, $scope, Editors, Animals) {
+﻿angular.module('sar-database').controller("AnimalsDetailCtrl", ['$stateParams', '$state', '$scope', '$window', 'editorsService', 'animalsService',
+  function ($stateParams, $state, $scope, $window, Editors, Animals) {
   angular.extend($scope, {
     tabs: [{state: 'ad_owners', name:'Owner(s)'}, {state: 'ad_missions', name:'Missions'}],
     animal: Animals.animals.one($stateParams.id).get().$object,
@@ -13,6 +14,9 @@
       Editors
         .doDelete(ev, 'animal', animal)
         .then(function () { $state.go('animals'); });
+    },
+    pickPhoto: function (ev, animal) {
+      $window.location.href = '/animals/photoupload/' + animal.id;
     }
   });
 

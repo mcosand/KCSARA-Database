@@ -750,12 +750,6 @@
     <Content Include="Views\Admin\Index.aspx" />
     <Content Include="Views\Admin\PendingDocuments.aspx" />
     <Content Include="Views\Admin\SubmitDocument.aspx" />
-    <Content Include="Views\Animals\Delete.aspx" />
-    <Content Include="Views\Animals\DeleteOwner.aspx" />
-    <Content Include="Views\Animals\Detail.aspx" />
-    <Content Include="Views\Animals\Edit.aspx" />
-    <Content Include="Views\Animals\EditOwner.aspx" />
-    <Content Include="Views\Animals\Index.aspx" />
     <Content Include="Views\Animals\PhotoPreview.aspx" />
     <Content Include="Views\Animals\PhotoUpload.aspx" />
     <Content Include="Views\Home\Index.aspx" />
