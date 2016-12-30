@@ -74,7 +74,7 @@
 
             <li><%= Html.ActionLink<MapController>(x => x.Index(null), "Map") %></li>
             <li><a href="<%= Url.Content("~/units")%>">Units</a></li>
-            <li><%= Html.ActionLink<AnimalsController>(x => x.Index(), "Animals")%></li>
+            <li><a href="<%= Url.Content("~/animals")%>">Animals</a></li>
             <li><%= Html.ActionLink<AdminController>(f => f.Index(), "Admin")%></li>
             <% if (Page.User.IsInRole("cdb.admins"))
               { %>
