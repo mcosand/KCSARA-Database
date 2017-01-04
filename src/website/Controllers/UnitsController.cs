@@ -25,6 +25,14 @@
       this.extensions = extensions;
     }
 
+    [Authorize]
+    public DataActionResult GetStatusTypes(Guid id)
+    {
+      var result = (from s in this.db.UnitStatusTypes where s.Unit.Id == id orderby s.StatusName select new NameIdViewModel { Name = s.StatusName, Id = s.Id });
+
+      return Data(result);
+    }
+
     /// <summary>
     /// 
     /// </summary>
