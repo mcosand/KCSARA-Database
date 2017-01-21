@@ -53,7 +53,8 @@ namespace Kcsara.Database.Web
         "~/wwwroot/lib/angular-material-data-table/dist/md-data-table.css",
         "~/wwwroot/css/site.css",
         "~/wwwroot/css/main-nav.css",
-        "~/wwwroot/css/vertical-stepper.css"
+        "~/wwwroot/css/vertical-stepper.css",
+        "~/wwwroot/css/messages.css"
         ));
 
       bundles.Add(new ScriptBundle("~/scripts/ng-core").Include(

@@ -382,6 +382,7 @@
     <Content Include="Content\images\nophoto.jpg" />
     <Content Include="SqlServerTypes\readme.htm" />
     <Content Include="wwwroot\css\main-nav.css" />
+    <Content Include="wwwroot\css\messages.css" />
     <Content Include="wwwroot\css\site.css" />
     <Content Include="wwwroot\js\controllers\accounts\accounts.js" />
     <Content Include="wwwroot\js\controllers\accounts\accountsDetail.js" />
@@ -392,7 +393,7 @@
     <Content Include="wwwroot\js\controllers\animals\animals.js" />
     <Content Include="wwwroot\js\controllers\animals\animals-detail.js" />
     <Content Include="wwwroot\js\controllers\editDialogController.js" />
-    <Content Include="wwwroot\js\controllers\members\members-trainings.js" />
+    <Content Include="wwwroot\js\controllers\members\members-training.js" />
     <Content Include="wwwroot\js\controllers\members\members-missions.js" />
     <Content Include="wwwroot\js\controllers\members\members-detail.js" />
     <Content Include="wwwroot\js\controllers\training\training-courses.js" />
@@ -403,6 +404,7 @@
     <Content Include="wwwroot\js\controllers\units\unitsDetail.js" />
     <Content Include="wwwroot\js\directives\compareTo.js" />
     <Content Include="wwwroot\js\directives\editDialog.js" />
+    <Content Include="wwwroot\js\directives\required-training.js" />
     <Content Include="wwwroot\js\directives\row-href.js" />
     <Content Include="wwwroot\js\directives\menuLink.js" />
     <Content Include="wwwroot\js\directives\menuToggle.js" />
@@ -558,6 +560,7 @@
     <Content Include="wwwroot\partials\members\missions.html" />
     <Content Include="wwwroot\partials\training\course-list.html" />
     <Content Include="wwwroot\partials\training\course-detail.html" />
+    <Content Include="wwwroot\partials\training\show-record.html" />
     <Content Include="wwwroot\partials\training\edit-course.html" />
     <Content Include="wwwroot\partials\training\course-roster.html" />
     <Content Include="wwwroot\partials\training\index.html" />

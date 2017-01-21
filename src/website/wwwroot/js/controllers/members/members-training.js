@@ -1,6 +1,7 @@
-﻿angular.module('sar-database').controller("MembersTrainingsCtrl", ['$stateParams', '$window', '$scope', '$rootScope', 'membersService',
+﻿angular.module('sar-database').controller("MembersTrainingCtrl", ['$stateParams', '$window', '$scope', '$rootScope', 'membersService',
   function ($stateParams, $window, $scope, $rootScope, Members) {
     angular.extend($scope, {
+      memberId: $stateParams.id,
       stats: Members.members.one($stateParams.id).all('trainings').one('stats').get().$object,
       trainings: {
         query: {
@@ -36,8 +37,36 @@
           var start = value.event.start;
           return $scope.trainings.showYear == "all" || start.substring(0, 4) == $scope.trainings.showYear;
         }
+      },
+      required: {
+        list: {},
+        getList: function () {
+          $scope.required.loading = Members.members.one($stateParams.id).all('requiredtraining').getList().then(function (data) {
+            $scope.required.list = data.reduce(function (accum, item) {
+              accum[item.course.name] = item; return accum;
+            }, {});
+            console.log('LOADED', $scope.required.list)
+          })
+        }
+      },
+      recent: {
+        list: [],
+        limit: 15,
+        query: {
+          order: '-completed'
+        },
+        getList: function () {
+          $scope.recent.loading = Members.members.one($stateParams.id).all('trainingrecords').getList().then(function (data) {
+            $scope.recent.list = data;
+          })
+        },
+        showAll: function () {
+          delete $scope.recent.limit;
+        }
       }
     })
 
     $scope.trainings.getList();
+    $scope.required.getList();
+    $scope.recent.getList();
   }]);

@@ -19,7 +19,7 @@ namespace Sar.Database.Services
     Task<List<TrainingStatus>> RequiredTrainingStatusForMember(Guid memberId, DateTimeOffset asOf);
     Task<Dictionary<Guid, List<TrainingStatus>>> RequiredTrainingStatusForUnit(Guid? unitId, DateTimeOffset asOf);
     Task<List<ParsedKcsaraCsv>> ParseKcsaraCsv(Stream dataStream);
-    Task<List<TrainingStatus>> RecordsForMember(Guid memberId, DateTimeOffset now);
+    Task<ListPermissionWrapper<TrainingStatus>> RecordsForMember(Guid memberId, DateTimeOffset now);
     Task<ListPermissionWrapper<TrainingRecord>> List(Expression<Func<TrainingRecord, bool>> filter);
     Task<TrainingRecord> SaveAsync(TrainingRecord record);
   }
@@ -100,7 +100,7 @@ namespace Sar.Database.Services
                      {
                        Course = required == null ? null : new NameIdPair { Id = required.CourseId, Name = required.Course.DisplayName },
                        Completed = completed.Completed,
-                       Expires = completed.Expiry
+                       Expires = completed.Expiry,
                      },
                      WacDate = m.WacLevelDate,
                      Requirement = required,
@@ -275,7 +275,7 @@ namespace Sar.Database.Services
       return result;
     }
 
-    public async Task<List<TrainingStatus>> RecordsForMember(Guid memberId, DateTimeOffset asOf)
+    public async Task<ListPermissionWrapper<TrainingStatus>> RecordsForMember(Guid memberId, DateTimeOffset asOf)
     {
       using (var db = _dbFactory())
       {
@@ -294,13 +294,17 @@ namespace Sar.Database.Services
         {
           Status = new TrainingStatus
           {
+            Id = f.Id,
             Course = new NameIdPair { Id = f.Course.Id, Name = f.Course.DisplayName },
             Completed = f.Completed,
-            Expires = f.Expiry
+            Expires = f.Expiry,
+            EventId = f.Roster.Training.Id,
+            FromRule = f.Rule != null
           },
           WacDate = wacDate,
-          MemberId = f.Member.Id
-        }).ToListAsync();
+          MemberId = f.Member.Id,
+        })
+        .ToListAsync();
 
         list.ForEach(item =>
         {
@@ -310,13 +314,33 @@ namespace Sar.Database.Services
             required = new DB.TrainingRequired { Course = courses[item.Status.Course.Id], CourseId = item.Status.Course.Id, GraceMonths = 0, JustOnce = false };
           }
           item.Requirement = required;
+          item.Status.EventType = item.Status.EventId.HasValue ? "training" : null;
         });
 
-        return list.Any() ? ComputeTrainingStatus(list.GroupBy(f => f.MemberId).ToList(), asOf)[memberId] : new List<TrainingStatus>();
+        var items = list.Any()
+          ? ComputeTrainingStatus(list.GroupBy(f => f.MemberId).ToList(), asOf)[memberId].Select(f => WrapStatusForMember(memberId, f))
+          : new List<ItemPermissionWrapper<TrainingStatus>>();
+
+        return new ListPermissionWrapper<TrainingStatus>
+        {
+          C = _authz.Authorize(memberId, "Create:TrainingRecord@MemberId"),
+          Items = items
+        };
       }
     }
 
-
+    private ItemPermissionWrapper<TrainingStatus> WrapStatusForMember(Guid memberId, TrainingStatus status)
+    {
+      var canUpdate = false;
+      if (!canUpdate && status.EventId.HasValue && status.EventType == "trainings" && _authz.Authorize(status.EventId, "Update:TrainingRoster@TrainingId")) canUpdate = true;
+      if (!canUpdate && !status.FromRule && _authz.Authorize(memberId, "Update:TrainingRecord@MemberId")) canUpdate = true;
+      return new ItemPermissionWrapper<TrainingStatus>
+      {
+        U = _authz.Authorize(memberId, "Update:TrainingRecord@MemberId"),
+        D = _authz.Authorize(memberId, "Delete:TrainingRecord@MemberId"),
+        Item = status
+      };
+    }
 
     public async Task<TrainingRecord> SaveAsync(TrainingRecord record)
     {

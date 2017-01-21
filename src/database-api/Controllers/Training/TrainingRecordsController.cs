@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Sar.Database.Model;
 using Sar.Database.Model.Training;
 using Sar.Database.Services;
 using Sar.Database.Services.Training;
@@ -44,7 +45,7 @@ namespace Kcsara.Database.Api.Controllers
 
     [HttpGet]
     [Route("members/{memberId}/trainingrecords")]
-    public async Task<List<TrainingStatus>> MemberRecords(Guid memberId)
+    public async Task<ListPermissionWrapper<TrainingStatus>> MemberRecords(Guid memberId)
     {
       await _authz.EnsureAsync(memberId, "Read:TrainingRecord@MemberId");
       return await _records.RecordsForMember(memberId, DateTime.Now);

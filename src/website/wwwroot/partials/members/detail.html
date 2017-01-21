@@ -3,6 +3,7 @@
     <md-card-title>
       <md-card-title-media>
         <img ng-if="member.id" class="md-media-lg-card-media badge-photo" ng-src="{{'/api2/members/' + member.id  + '/photo?access_token='+ ($currentUser.user || {}).access_token}}"></img>
+        <div class="badge-caption" ng-class="'card-type-' + member.wacLevel">{{member.wacLevel}}</div>
       </md-card-title-media>
       <md-card-title-text>
         <div class="md-headline">{{member.name}}</div>
@@ -21,6 +22,9 @@
       </md-button>
     </md-card-actions>
   </md-card>
+  <p class="noprint">
+    <md-button class="md-raised" ng-click="usePrevious($event)">Use previous version of this page</md-button>
+  </p>
   <div class="tabs">
     <md-tabs class="md-accent" md-selected="selectedTab">
       <md-tab ng-repeat="tab in tabs">{{tab.name}}</md-tab>

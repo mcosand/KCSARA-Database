@@ -36,9 +36,9 @@
     , 'animals_detail.ad_owners': { templateUrl: '/wwwroot/partials/animals/owners.html', url: '' }
     , 'animals_detail.ad_missions': { templateUrl: '/wwwroot/partials/animals/missions.html', url: '' }
     , 'members': { url: '/members', template: 'Add some charts, etc', resolve: { $title: function () { return 'Members' } } }
-    , 'members_detail': { abstract: true, url: '/members/:id', templateUrl: '/wwwroot/partials/members/detail.html', resolve: { $title: function () { return 'Member Detail' } } }
-    , 'members_detail.md_missions': { templateUrl: '/wwwroot/partials/members/missions.html', url: '' }
-    , 'members_detail.md_training': { templateUrl: '/wwwroot/partials/members/training.html', url: '' }
+    , 'members_detail': { url: '/members/:id', templateUrl: '/wwwroot/partials/members/detail.html', resolve: { $title: function () { return 'Member Detail' } } }
+    , 'members_detail.md_missions': { templateUrl: '/wwwroot/partials/members/missions.html', url: '/missions' }
+    , 'members_detail.md_training': { templateUrl: '/wwwroot/partials/members/training.html', url: '/training' }
   };
 
   angular.module('sar-database')
