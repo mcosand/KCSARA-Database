@@ -278,7 +278,7 @@
         },
         selectedItemChange: function (item) {
           if (item.type == 'Member') {
-            window.location.href = window.appRoot + 'Members/Detail/' + item.summary.id;
+            window.location.href = window.appRoot + 'Members/' + item.summary.id;
           }
           else if (item.type == "Mission") {
             window.location.href = window.appRoot + 'Missions/Roster/' + item.summary.id;

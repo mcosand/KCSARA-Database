@@ -117,6 +117,10 @@
     <Compile Include="Migrations\201612141632443_AnimalMissions_NotNUllable.Designer.cs">
       <DependentUpon>201612141632443_AnimalMissions_NotNUllable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201701041543513_TrainingRosterKeys.cs" />
+    <Compile Include="Migrations\201701041543513_TrainingRosterKeys.Designer.cs">
+      <DependentUpon>201701041543513_TrainingRosterKeys.cs</DependentUpon>
+    </Compile>
     <Compile Include="SqlServerTypes\Loader.cs" />
     <Compile Include="Training\ComputedTrainingAward.cs" />
     <Compile Include="ContactInfoSubType.cs" />
@@ -317,6 +321,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201612141632443_AnimalMissions_NotNUllable.resx">
       <DependentUpon>201612141632443_AnimalMissions_NotNUllable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701041543513_TrainingRosterKeys.resx">
+      <DependentUpon>201701041543513_TrainingRosterKeys.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

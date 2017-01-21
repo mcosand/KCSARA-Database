@@ -27,6 +27,11 @@ namespace Sar.Database.Services
     Task AddMembership(Guid id, Guid statusId);
     Task<PersonContact> AddContact(Guid id, PersonContact emailContact);
     Task<int> GetEmergencyContactCountAsync(Guid memberId);
+    Task<List<EventAttendance>> GetMissionList(Guid animalId);
+    Task<AttendanceStatistics<NameIdPair>> GetMissionStatistics(Guid animalId);
+    Task<List<EventAttendance>> GetTrainingList(Guid animalId);
+    Task<AttendanceStatistics<NameIdPair>> GetTrainingStatistics(Guid animalId);
+
   }
 
   public class MembersService : IMembersService
@@ -261,6 +266,128 @@ namespace Sar.Database.Services
       using (var db = _dbFactory())
       {
         return await db.Members.Where(f => f.Id == memberId).Select(f => f.EmergencyContacts.Count).SingleOrDefaultAsync();
+      }
+    }
+
+    public async Task<AttendanceStatistics<NameIdPair>> GetMissionStatistics(Guid memberId)
+    {
+      using (var db = _dbFactory())
+      {
+        var recent = DateTime.UtcNow.AddMonths(-12);
+        var stats = await db.Members
+          .Where(f => f.Id == memberId)
+           .Select(f => new AttendanceStatistics<NameIdPair>
+           {
+             Total = new AttendanceStatisticsPart
+             {
+               Hours = f.MissionRosters.Sum(g => SqlFunctions.DateDiff("minute", g.TimeIn, g.TimeOut) / 60.0) ?? 0.0,
+               Miles = f.MissionRosters.Sum(g => g.Miles) ?? 0,
+               Count = f.MissionRosters.Select(g => g.MissionId).Distinct().Count()
+             },
+             Recent = new AttendanceStatisticsPart
+             {
+               Hours = f.MissionRosters.Where(g => g.Mission.StartTime > recent).Sum(g => SqlFunctions.DateDiff("minute", g.TimeIn, g.TimeOut) / 60.0) ?? 0.0,
+               Miles = f.MissionRosters.Sum(g => g.Miles) ?? 0,
+               Count = f.MissionRosters.Where(g => g.Mission.StartTime > recent).Select(g => g.MissionId).Distinct().Count()
+             },
+             Earliest = f.MissionRosters.Min(g => g.TimeIn),
+             Responder = new NameIdPair
+             {
+               Id = f.Id,
+               Name = f.FirstName + " " + f.LastName
+             }
+           })
+           .FirstOrDefaultAsync();
+
+        return stats;
+      }
+    }
+
+    public async Task<List<EventAttendance>> GetMissionList(Guid memberId)
+    {
+      using (var db = _dbFactory())
+      {
+        var list = await db.MissionRosters
+          .Where(f => f.PersonId == memberId)
+          .GroupBy(f => f.Mission)
+          .Select(f => new EventAttendance
+          {
+            Event = new EventSummary
+            {
+              Id = f.Key.Id,
+              Name = f.Key.Title,
+              Location = f.Key.Location,
+              Start = f.Key.StartTime,
+              StateNumber = f.Key.StateNumber,
+              Stop = f.Key.StopTime
+            },
+            Hours = f.Sum(g => SqlFunctions.DateDiff("minute", g.TimeIn, g.TimeOut) / 60.0) ?? 0.0,
+            Miles = f.Sum(g => g.Miles) ?? 0
+          })
+          .OrderByDescending(f => f.Event.Start)
+          .ToListAsync();
+        return list;
+      }
+    }
+
+    public async Task<AttendanceStatistics<NameIdPair>> GetTrainingStatistics(Guid memberId)
+    {
+      using (var db = _dbFactory())
+      {
+        var recent = DateTime.UtcNow.AddMonths(-12);
+        var stats = await db.Members
+          .Where(f => f.Id == memberId)
+           .Select(f => new AttendanceStatistics<NameIdPair>
+           {
+             Total = new AttendanceStatisticsPart
+             {
+               Hours = f.TrainingRosters.Sum(g => SqlFunctions.DateDiff("minute", g.TimeIn, g.TimeOut) / 60.0) ?? 0.0,
+               Miles = f.TrainingRosters.Sum(g => g.Miles) ?? 0,
+               Count = f.TrainingRosters.Select(g => g.TrainingId).Distinct().Count()
+             },
+             Recent = new AttendanceStatisticsPart
+             {
+               Hours = f.TrainingRosters.Where(g => g.Training.StartTime > recent).Sum(g => SqlFunctions.DateDiff("minute", g.TimeIn, g.TimeOut) / 60.0) ?? 0.0,
+               Miles = f.TrainingRosters.Sum(g => g.Miles) ?? 0,
+               Count = f.TrainingRosters.Where(g => g.Training.StartTime > recent).Select(g => g.TrainingId).Distinct().Count()
+             },
+             Earliest = f.TrainingRosters.Min(g => g.TimeIn),
+             Responder = new NameIdPair
+             {
+               Id = f.Id,
+               Name = f.FirstName + " " + f.LastName
+             }
+           })
+           .FirstOrDefaultAsync();
+
+        return stats;
+      }
+    }
+
+    public async Task<List<EventAttendance>> GetTrainingList(Guid memberId)
+    {
+      using (var db = _dbFactory())
+      {
+        var list = await db.TrainingRosters
+          .Where(f => f.PersonId == memberId)
+          .GroupBy(f => f.Training)
+          .Select(f => new EventAttendance
+          {
+            Event = new EventSummary
+            {
+              Id = f.Key.Id,
+              Name = f.Key.Title,
+              Location = f.Key.Location,
+              Start = f.Key.StartTime,
+              StateNumber = f.Key.StateNumber,
+              Stop = f.Key.StopTime
+            },
+            Hours = f.Sum(g => SqlFunctions.DateDiff("minute", g.TimeIn, g.TimeOut) / 60.0) ?? 0.0,
+            Miles = f.Sum(g => g.Miles) ?? 0
+          })
+          .OrderByDescending(f => f.Event.Start)
+          .ToListAsync();
+        return list;
       }
     }
 

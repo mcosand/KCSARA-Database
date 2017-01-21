@@ -31,8 +31,12 @@ namespace Kcsar.Database.Model
     [ForeignKey("MissionId")]
     public virtual Mission Mission { get; set; }
 
-    [Required]
+    [Column("Person_Id")]
+    public Guid PersonId { get; set; }
+
+    [ForeignKey("PersonId")]
     public virtual Member Person { get; set; }
+
     [Required]
     public virtual SarUnit Unit { get; set; }
     public virtual ICollection<AnimalMission> Animals { get; set; }
