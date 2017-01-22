@@ -81,6 +81,7 @@ namespace Sar.Database.Services
         if (!string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(password))
         {
           client.Credentials = new NetworkCredential(username, password);
+          client.UseDefaultCredentials = false;
           client.EnableSsl = true;
         }
 
