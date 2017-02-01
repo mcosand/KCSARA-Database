@@ -24,10 +24,9 @@ namespace Kcsara.Database.Web.Controllers
     [Route("training")]
     [Route("training/uploadrecords")]
     [Route("training/courses/{*page}")]
+    [Route("training/records/{*page}")]
     [Route("members")]
-    [Route("members/{id}")]
-    [Route("members/{id}/missions")]
-    [Route("members/{id}/training")]
+    [Route("members/{id:guid}/{*page}")]
     public ActionResult Public(string page)
     {
       return View("SinglePage");

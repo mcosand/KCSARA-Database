@@ -39,6 +39,7 @@
     , 'members_detail': { url: '/members/:id', templateUrl: '/wwwroot/partials/members/detail.html', resolve: { $title: function () { return 'Member Detail' } } }
     , 'members_detail.md_missions': { templateUrl: '/wwwroot/partials/members/missions.html', url: '/missions' }
     , 'members_detail.md_training': { templateUrl: '/wwwroot/partials/members/training.html', url: '/training' }
+    , 'training_record': { templateUrl: '/wwwroot/partials/training/record.html', url: '/training/records/:recordId' }
   };
 
   angular.module('sar-database')

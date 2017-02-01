@@ -3,11 +3,11 @@
     <md-card-title>
       <md-card-title-media>
         <img ng-if="member.id" class="md-media-lg-card-media badge-photo" ng-src="{{'/api2/members/' + member.id  + '/photo?access_token='+ ($currentUser.user || {}).access_token}}"></img>
-        <div class="badge-caption" ng-class="'card-type-' + member.wacLevel">{{member.wacLevel}}</div>
       </md-card-title-media>
-      <md-card-title-text>
+      <md-card-title-text style="margin-top:-8px">
         <div class="md-headline">{{member.name}}</div>
         <div>ID Number: {{member.workerNumber}}</div>
+        <div ng-if="member.wacLevel != 'None'">Card Type: {{member.wacLevel}}</div>
       </md-card-title-text>
     </md-card-title>
     <md-card-actions layout="row" layout-align="end center">
@@ -22,8 +22,8 @@
       </md-button>
     </md-card-actions>
   </md-card>
-  <p class="noprint">
-    <md-button class="md-raised" ng-click="usePrevious($event)">Use previous version of this page</md-button>
+  <p class="noprint" ng-if="member.id">
+    <md-button class="md-raised" ng-href="{{'/members/detail/' + member.id}}" target="_self">Use previous version of this page</md-button>
   </p>
   <div class="tabs">
     <md-tabs class="md-accent" md-selected="selectedTab">

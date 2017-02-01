@@ -168,17 +168,6 @@ tr.clickable:hover {
   height: 8em;
   border: 1px solid #444;
   margin-right: 1em;
-  margin-left:20px;
-}
-
-.badge-caption {
-  /*margin-right: 1em;*/
-  width: 8em;
-  height:20px;
-  transform: rotate(-90deg); /*translate(0, -20px);*/
-  transform-origin: left top 0;
-  text-align: center;
-  letter-spacing: .5px;
 }
 
 .vard-type-Novice

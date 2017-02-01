@@ -560,6 +560,7 @@
     <Content Include="wwwroot\partials\members\missions.html" />
     <Content Include="wwwroot\partials\training\course-list.html" />
     <Content Include="wwwroot\partials\training\course-detail.html" />
+    <Content Include="wwwroot\partials\training\record.html" />
     <Content Include="wwwroot\partials\training\show-record.html" />
     <Content Include="wwwroot\partials\training\edit-course.html" />
     <Content Include="wwwroot\partials\training\course-roster.html" />

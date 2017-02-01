@@ -18,17 +18,6 @@
       },
       pickPhoto: function (ev, member) {
         $window.location.href = '/members/photoupload/' + member.id;
-      },
-      usePrevious: function ($event) {
-        return $mdDialog.show($mdDialog.prompt()
-          .title('Use Previous Version')
-          .textContent("We're trying to work on most important things first. What is on the old page that you can't do on the new one?")
-          .targetEvent($event)
-          .placeholder('missing feature')
-          .ok('Go'))
-        .then(function (reason) {
-          $window.location.href = '/members/detail/' + $stateParams.id + '?reason=' + encodeURIComponent(reason || '');
-        })
       }
     });
 

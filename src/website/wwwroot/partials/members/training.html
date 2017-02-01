@@ -1,4 +1,5 @@
 ﻿<md-content ng-controller="MembersTrainingCtrl">
+  <ui-view></ui-view>
   <div layout="row" class="inside-padding" layout-wrap flex>
     <div flex="50" flex-xs="100">
       <md-card flex>
@@ -20,8 +21,9 @@
                 <td md-cell>{{r.completed | simpleDate}}</td>
                 <td md-cell>{{r.expires | simpleDate}}</td>
                 <td md-cell class="td-actions-cell">
-                  <md-button ng-if="r.eventId" class="md-icon-button md-primary" aria-label="View Roster" target="_blank" ng-href="{{'/' + r.eventType + '/roster/' + r.eventId}}"><md-icon>assignment</md-icon></md-button>
-                  <md-button ng-if="!r.eventId && !r.fromRule" class="md-icon-button md-primary" aria-label="View Details" target="_blank" ng-href="{{'/members/' + memberId + '/trainingrecords/' + r.id}}"><md-icon>description</md-icon></md-button>
+                  <md-button ng-if="r.eventId" class="md-icon-button md-primary" aria-label="View Roster" target="_self" ng-href="{{'/' + r.eventType + '/roster/' + r.eventId}}"><md-icon>assignment</md-icon></md-button>
+                  <md-button ng-if="!r.eventId && !r.fromRule" class="md-icon-button md-primary" aria-label="View Details"
+                             ng-href="{{'/training/records/' + r.id}}" ng-click="showRecord($event, r.id)"><md-icon>description</md-icon></md-button>
                 </td>
               </tr>
               <tr ng-if="recent.limit && recent.list.length > recent.limit">

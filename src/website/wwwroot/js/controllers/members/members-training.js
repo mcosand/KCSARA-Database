@@ -1,5 +1,6 @@
-﻿angular.module('sar-database').controller("MembersTrainingCtrl", ['$stateParams', '$window', '$scope', '$rootScope', 'membersService',
-  function ($stateParams, $window, $scope, $rootScope, Members) {
+﻿angular.module('sar-database').controller("MembersTrainingCtrl", ['$stateParams', '$window', '$scope', '$rootScope', 'editorsService', 'membersService',
+  function ($stateParams, $window, $scope, $rootScope, Editors, Members) {
+    console.log($stateParams)
     angular.extend($scope, {
       memberId: $stateParams.id,
       stats: Members.members.one($stateParams.id).all('trainings').one('stats').get().$object,
@@ -63,6 +64,10 @@
         showAll: function () {
           delete $scope.recent.limit;
         }
+      },
+      showRecord: function showRecord($event, recordId) {
+        $event.preventDefault();
+        Editors.doPopup($event, 'Training Details', '/wwwroot/partials/training/record.html', { memberId: $scope.memberId, recordId: recordId })
       }
     })
 
