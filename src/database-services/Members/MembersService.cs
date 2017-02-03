@@ -23,6 +23,7 @@ namespace Sar.Database.Services
     Task<IList<MemberSearchResult>> SearchAsync(string query);
 
     Task<IEnumerable<PersonContact>> ListMemberContactsAsync(Guid memberId);
+    Task<IEnumerable<MemberAddress>> ListMemberAddressesAsync(Guid memberId);
     Task<MemberInfo> CreateMember(MemberInfo body);
     Task AddMembership(Guid id, Guid statusId);
     Task<PersonContact> AddContact(Guid id, PersonContact emailContact);
@@ -231,6 +232,28 @@ namespace Sar.Database.Services
         }).OrderBy(f => f.Type).ThenBy(f => f.Priority).ThenBy(f => f.SubType).ToListAsync();
       }
     }
+
+    /// <summary></summary>
+    /// <param name="memberId"></param>
+    /// <returns></returns>
+    public async Task<IEnumerable<MemberAddress>> ListMemberAddressesAsync(Guid memberId)
+    {
+      using (var db = _dbFactory())
+      {
+        var query = db.Members.Where(f => f.Id == memberId).SelectMany(f => f.Addresses);
+
+        return await query.Select(f => new MemberAddress
+        {
+          Id = f.Id,
+          Street = f.Street,
+          City = f.City,
+          State = f.State,
+          Zip = f.Zip,
+          Type = (MemberAddressType)(int)f.Type
+        }).OrderByDescending(f => f.Type).ToListAsync();
+      }
+    }
+
 
     public Task AddMembership(Guid id, Guid statusId)
     {

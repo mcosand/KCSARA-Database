@@ -72,16 +72,27 @@
   })
 }])
 
-  .filter('nospace', function () {
-    return function (value) {
-      return (!value) ? '' : value.replace(/ /g, '');
-    };
-  })
-  .filter('simpleDate', function () {
-    return function (value) {
-      return (!value) ? '' : (value instanceof Date) ? moment(value).format('YYYY-MM-DD') : value.substring(0, 10);
+.filter('escape', function () {
+  return function (input) {
+    if (input) {
+      return window.encodeURIComponent(input);
     }
-  })
+    return "";
+  }
+})
+
+.filter('nospace', function () {
+  return function (value) {
+    return (!value) ? '' : value.replace(/ /g, '');
+  };
+})
+
+.filter('simpleDate', function () {
+  return function (value) {
+    return (!value) ? '' : (value instanceof Date) ? moment(value).format('YYYY-MM-DD') : value.substring(0, 10);
+  }
+})
+
 .filter('humanizeDoc', function () {
   return function (doc) {
     if (!doc) return;
@@ -124,7 +135,9 @@
 .config(function ($httpProvider) {
   $httpProvider.interceptors.push('httpRequestInterceptor');
 })
-
+.config(['$compileProvider', function($compileProvider) {
+  $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|file|tel|sms|mailto):/);
+}])
 
 .controller('FrameCtrl', ['authService', '$scope', '$mdSidenav', '$http', '$state', '$location', '$window', '$timeout', '$rootScope',
   function (authService, $scope, $mdSidenav, $http, $state, $location, $window, $timeout, $rootScope) {
@@ -172,7 +185,8 @@
       }
 
       var matchPage = function (section, page) {
-        if (path.indexOf(page.url) !== -1 && (!menu.currentPage || menu.currentPage.url.indexOf(page.url) === -1 || page.url.length > menu.currentPage.url.length)) {
+        if (path.indexOf(page.url) === 0 && (!menu.currentPage || menu.currentPage.url.indexOf(page.url) === -1 || page.url.length > menu.currentPage.url.length)) {
+          console.log(!menu.currentPage, !menu.currentPage || menu.currentPage.url.indexOf(page.url) === -1, !menu.currentPage || menu.currentPage.url.indexOf(page.url) === -1 || page.url.length > menu.currentPage.url.length)
           menu.selectSection(section);
           menu.selectPage(section, page);
         }

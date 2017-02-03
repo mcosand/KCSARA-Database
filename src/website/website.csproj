@@ -393,6 +393,7 @@
     <Content Include="wwwroot\js\controllers\animals\animals.js" />
     <Content Include="wwwroot\js\controllers\animals\animals-detail.js" />
     <Content Include="wwwroot\js\controllers\editDialogController.js" />
+    <Content Include="wwwroot\js\controllers\members\members-contacts.js" />
     <Content Include="wwwroot\js\controllers\members\members-training.js" />
     <Content Include="wwwroot\js\controllers\members\members-missions.js" />
     <Content Include="wwwroot\js\controllers\members\members-detail.js" />
@@ -411,6 +412,7 @@
     <Content Include="wwwroot\js\directives\title.js" />
     <Content Include="wwwroot\js\controllers\units\units.js" />
     <Content Include="wwwroot\js\routes.js" />
+    <Content Include="wwwroot\js\services\list-service.js" />
     <Content Include="wwwroot\js\services\members-service.js" />
     <Content Include="wwwroot\js\services\animals-service.js" />
     <Content Include="wwwroot\js\services\authService.js" />
@@ -555,6 +557,7 @@
     <Content Include="wwwroot\js\auth\sar-common.js" />
     <Content Include="wwwroot\js\auth\site.js" />
     <Content Include="wwwroot\partials\members\detail.html" />
+    <Content Include="wwwroot\partials\members\contacts.html" />
     <Content Include="wwwroot\partials\members\training.html" />
     <Content Include="wwwroot\partials\members\trainings.html" />
     <Content Include="wwwroot\partials\members\missions.html" />

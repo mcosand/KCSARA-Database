@@ -3,7 +3,6 @@
   angular.extend($scope, {
     tabs: [{state: 'ad_owners', name:'Owner(s)'}, {state: 'ad_missions', name:'Missions'}],
     animal: Animals.animals.one($stateParams.id).get().$object,
-    currentPage: "ad_owners",
     selectedTab: 0,
     editAnimal: function (ev, animal) {
       Editors

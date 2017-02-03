@@ -6,6 +6,7 @@ using System.Web.Http;
 using Sar;
 using Sar.Database;
 using Sar.Database.Model;
+using Sar.Database.Model.Members;
 using Sar.Database.Services;
 
 namespace Kcsara.Database.Api.Controllers.Members
@@ -39,5 +40,16 @@ namespace Kcsara.Database.Api.Controllers.Members
       await _authz.EnsureAsync(memberId, "Create:MemberContact@MemberId");
       return await _members.AddContact(memberId, contact);
     }
+
+    [HttpGet]
+    [Route("members/{memberId}/addresses")]
+    [AnyHostCorsPolicy]
+    public async Task<IEnumerable<MemberAddress>> ListAddresses(Guid memberId)
+    {
+      await _authz.EnsureAsync(memberId, "Read:Member");
+
+      return await _members.ListMemberAddressesAsync(memberId);
+    }
+
   }
 }

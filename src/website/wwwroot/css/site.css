@@ -36,6 +36,13 @@ md-list-item .md-no-style.md-button p {
   word-break: break-all;
 }
 
+md-list md-list-item md-icon.md-avatar-icon, md-list-item .md-list-item-inner md-icon.md-avatar-icon {
+ margin-left: -16px;
+ margin-right: 8px;
+ padding: 5px;
+ opacity: 0.5
+}
+
 md-sidenav md-autocomplete-wrap {
   border-bottom: solid 1px orange;
 }
@@ -48,6 +55,10 @@ md-card-header-text button.md-button.md-icon-button {
   padding-top:0px;
   padding-bottom:0px;
   height:24px;
+}
+
+md-card md-card-content {
+  padding-top:0px
 }
 
 md-toolbar.md-table-toolbar .md-toolbar-tools > .md-button.md-icon-button:last-child

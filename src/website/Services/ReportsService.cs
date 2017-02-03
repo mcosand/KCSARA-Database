@@ -86,7 +86,7 @@
         dataSheet.CellAt(row, col++).SetValue(m.FirstName);
         dataSheet.CellAt(row, col++).SetValue(m.WacLevel.ToString());
 
-        var address = m.Addresses.OrderBy(f => f.InternalType).FirstOrDefault();
+        var address = m.Addresses.OrderByDescending(f => f.Type).FirstOrDefault();
         if (address != null)
         {
           dataSheet.CellAt(row, col++).SetValue(address.Street);
