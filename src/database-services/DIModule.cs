@@ -10,7 +10,8 @@ namespace Sar.Database.Services
     {
       Bind<IAuthorizationService>().To<AuthorizationService>().InSingletonScope();
 
-      Bind<IAnimalsService>().To<AnimalsService>().InSingletonScope();
+      Bind<IAnimalsService>().To<AnimalsService>();
+      Bind<ITrainingsService>().To<TrainingsService>();
       Bind<ITrainingRecordsService>().To<TrainingRecordsService>();
       Bind<ITrainingCoursesService>().To<TrainingCoursesService>();
       Bind<IMembersService>().To<MembersService>();

@@ -180,6 +180,7 @@
     <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Controllers\Training\TrainingCoursesController.cs" />
     <Compile Include="Controllers\Training\TrainingRecordsController.cs" />
+    <Compile Include="Controllers\Training\TrainingsController.cs" />
     <Compile Include="Controllers\Units\StatusTypesController.cs" />
     <Compile Include="Controllers\Units\MembershipController.cs" />
     <Compile Include="Controllers\Units\UnitsController.cs" />

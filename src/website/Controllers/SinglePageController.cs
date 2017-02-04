@@ -22,6 +22,7 @@ namespace Kcsara.Database.Web.Controllers
     [Route("units/detail/{*page}")]
     [Route("units/roster/{*page}")]
     [Route("training")]
+    [Route("trainings/{*page}")]
     [Route("training/uploadrecords")]
     [Route("training/courses/{*page}")]
     [Route("training/records/{*page}")]

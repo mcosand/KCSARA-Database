@@ -17,14 +17,16 @@
   }];
 
   var routes = {
-      'home': { url: '/', templateUrl: '/embedded/partials/home.html', data: { allowAnonymous: true }, resolve: { $title: function () { return 'Home'; } } }
+    'home': { url: '/', templateUrl: '/embedded/partials/home.html', data: { allowAnonymous: true }, resolve: { $title: function () { return 'Home'; } } }
     , 'units': { url: '/units', templateUrl: '/wwwroot/partials/units/list.html', resolve: { $title: function () { return 'Units' } } }
     , 'unitsDetail': { url: '/units/detail/:id', templateUrl: '/wwwroot/partials/units/detail.html', resolve: resolveUnitTitle }
     , 'unitsRoster': { url: '/units/roster/:id', templateUrl: '/wwwroot/partials/units/roster.html', resolve: resolveUnitTitle }
     , 'training': { url: '/training', templateUrl: '/wwwroot/partials/training/index.html', resolve: { $title: function() { return 'Training' }}}
+    , 'trainings': { url: '/trainings', templateUrl: '/wwwroot/partials/training/list.html', resolve: { $title: function() { return 'Trainings '}}}
     , 'training_courselist': { url: '/training/courses', templateUrl: '/wwwroot/partials/training/course-list.html', resolve: { $title: function () { return 'Course List' } } }
     , 'training_coursedetail': { url: '/training/courses/:id', templateUrl: '/wwwroot/partials/training/course-detail.html', resolve: { $title: function () { return 'Course Detail' } } }
     , 'training_courseroster': { url: '/training/courses/:id/roster', templateUrl: '/wwwroot/partials/training/course-roster.html', resolve: { $title: function () { return 'Course Detail' } } }
+    , 'training_record': { url: '/training/records/:recordId', templateUrl: '/wwwroot/partials/training/record.html' }
     , 'trainingBatchUpload': { url: '/training/uploadrecords', templateUrl: '/wwwroot/partials/training/upload-records.html', resolve: { $title: function () { return 'Upload Training Records' } } }
     , 'accounts': { url: '/accounts', templateUrl: '/wwwroot/partials/accounts/list.html', resolve: { $title: function () { return 'Accounts'; } } }
     , 'account_reset': { url: '/accounts/reset', templateUrl: '/wwwroot/partials/accounts/reset.html', data: { allowAnonymous: true }, resolve: { $title: function () { return 'Account Reset' } } }
@@ -40,7 +42,6 @@
     , 'members_detail.md_missions': { templateUrl: '/wwwroot/partials/members/missions.html', url: '/missions' }
     , 'members_detail.md_training': { templateUrl: '/wwwroot/partials/members/training.html', url: '/training' }
     , 'members_detail.md_contacts': { templateUrl: '/wwwroot/partials/members/contacts.html', url: '/contacts' }
-    , 'training_record': { templateUrl: '/wwwroot/partials/training/record.html', url: '/training/records/:recordId' }
   };
 
   angular.module('sar-database')

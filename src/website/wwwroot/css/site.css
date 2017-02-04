@@ -57,7 +57,7 @@ md-card-header-text button.md-button.md-icon-button {
   height:24px;
 }
 
-md-card md-card-content {
+md-card md-card-header + md-card-content {
   padding-top:0px
 }
 

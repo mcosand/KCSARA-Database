@@ -112,6 +112,7 @@
       })
     });
     mgr.events.addUserSignedOut(function () {
+      $window.sessionStorage.setItem('oidc:returnState', JSON.stringify({ name: $state.next.name, p: $state.toParams }));
       currentUser.user = null;
     });
 

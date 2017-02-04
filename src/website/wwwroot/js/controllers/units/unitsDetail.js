@@ -1,27 +1,8 @@
-﻿angular.module('sar-database').controller("UnitsDetailCtrl", ['$stateParams', '$scope', 'editorsService', 'unitsService', function ($stateParams, $scope, Editors, Units) {
+﻿angular.module('sar-database').controller("UnitsDetailCtrl", ['$stateParams', '$scope', 'editorsService', 'listService', 'unitsService', function ($stateParams, $scope, Editors, Lists, Units) {
   angular.extend($scope, {
     unit: Units.units.one($stateParams.id).get().$object,
-    statusTypes: {
-      query: {
-        order: 'name'
-      },
-      list: [],
-      getList: function () {
-        $scope.statusTypes.loading = Units.units.one($stateParams.id).all('statusTypes').getList().then(function (data) {
-          $scope.statusTypes.list = data;
-        })
-      },
-    },
-    reports: {
-      list: [],
-      loading: true,
-      getList: function() {
-        Units.units.one($stateParams.id).all('reports').getList().then(function(data) {
-          $scope.reports.list = data;
-          delete $scope.reports.loading;
-        })
-      }
-    },
+    statusTypes: Lists.loader(Units.units.one($stateParams.id).all('statusTypes'), { order: 'name' }),
+    reports: Lists.loader(Units.units.one($stateParams.id).all('reports')),
     createNew: function(ev) {
       var status = Units.createStatusType($scope.unit);
       $scope.editStatus(ev, status);
@@ -37,6 +18,4 @@
         .then(function () { $scope.statusTypes.getList(); });
     }
   });
-  $scope.statusTypes.getList();
-  $scope.reports.getList();
 }]);

@@ -14,16 +14,6 @@ using DB = Kcsar.Database.Model;
 
 namespace Sar.Database.Services
 {
-  public interface ITrainingCoursesService
-  {
-    Task<ListPermissionWrapper<TrainingCourse>> List(Expression<Func<TrainingCourse, bool>> filter = null);
-    Task<TrainingCourse> SaveAsync(TrainingCourse course);
-    Task DeleteAsync(Guid courseId);
-    Task<ItemPermissionWrapper<TrainingCourse>> GetAsync(Guid courseId);
-    Task<object> GetCourseStats(Guid courseId);
-    Task<List<TrainingRecord>> ListRoster(Guid courseId);
-  }
-
   public class TrainingCoursesService : ITrainingCoursesService
   {
     private readonly Func<DB.IKcsarContext> _dbFactory;
@@ -196,5 +186,15 @@ namespace Sar.Database.Services
         await db.SaveChangesAsync();
       }
     }
+  }
+
+  public interface ITrainingCoursesService
+  {
+    Task<ListPermissionWrapper<TrainingCourse>> List(Expression<Func<TrainingCourse, bool>> filter = null);
+    Task<TrainingCourse> SaveAsync(TrainingCourse course);
+    Task DeleteAsync(Guid courseId);
+    Task<ItemPermissionWrapper<TrainingCourse>> GetAsync(Guid courseId);
+    Task<object> GetCourseStats(Guid courseId);
+    Task<List<TrainingRecord>> ListRoster(Guid courseId);
   }
 }

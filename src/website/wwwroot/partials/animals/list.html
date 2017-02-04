@@ -34,7 +34,7 @@
             <tr md-row md-auto-select ng-repeat="animal in animals | filter:doFilter | orderBy: query.order" ng-click="gotoAnimal(animal)" class="clickable">
               <td md-cell><strong>{{animal.name}}</strong></td>
               <td md-cell>{{animal.type}}</td>
-              <td md-cell><a href="#" target="_self" ng-href="/members/detail/{{animal.owner.id}}" md-colors="{color:'primary'}">{{animal.owner.name}}</a></td>
+              <td md-cell><a href="#" target="_self" ng-href="/members/{{animal.owner.id}}" md-colors="{color:'primary'}">{{animal.owner.name}}</a></td>
               <td md-cell>{{animal.status}}</td>
             </tr>
           </tbody>

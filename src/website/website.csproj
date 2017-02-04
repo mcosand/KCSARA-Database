@@ -400,11 +400,13 @@
     <Content Include="wwwroot\js\controllers\training\training-courses.js" />
     <Content Include="wwwroot\js\controllers\training\course-detail.js" />
     <Content Include="wwwroot\js\controllers\training\course-roster.js" />
+    <Content Include="wwwroot\js\controllers\training\trainings.js" />
     <Content Include="wwwroot\js\controllers\training\uploadRecords.js" />
     <Content Include="wwwroot\js\controllers\units\unitsRoster.js" />
     <Content Include="wwwroot\js\controllers\units\unitsDetail.js" />
     <Content Include="wwwroot\js\directives\compareTo.js" />
     <Content Include="wwwroot\js\directives\editDialog.js" />
+    <Content Include="wwwroot\js\directives\event-list.js" />
     <Content Include="wwwroot\js\directives\required-training.js" />
     <Content Include="wwwroot\js\directives\row-href.js" />
     <Content Include="wwwroot\js\directives\menuLink.js" />
@@ -559,10 +561,11 @@
     <Content Include="wwwroot\partials\members\detail.html" />
     <Content Include="wwwroot\partials\members\contacts.html" />
     <Content Include="wwwroot\partials\members\training.html" />
-    <Content Include="wwwroot\partials\members\trainings.html" />
     <Content Include="wwwroot\partials\members\missions.html" />
+    <Content Include="wwwroot\partials\event-list.html" />
     <Content Include="wwwroot\partials\training\course-list.html" />
     <Content Include="wwwroot\partials\training\course-detail.html" />
+    <Content Include="wwwroot\partials\training\list.html" />
     <Content Include="wwwroot\partials\training\record.html" />
     <Content Include="wwwroot\partials\training\show-record.html" />
     <Content Include="wwwroot\partials\training\edit-course.html" />

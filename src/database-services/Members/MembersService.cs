@@ -13,28 +13,6 @@ using DB = Kcsar.Database.Model;
 
 namespace Sar.Database.Services
 {
-  public interface IMembersService
-  {
-    Task<MemberInfo> GetMember(Guid id);
-    Task<IEnumerable<MemberSummary>> ByPhoneNumber(string id);
-    Task<IEnumerable<MemberSummary>> ByWorkerNumber(string id);
-    Task<IEnumerable<MemberSummary>> ByEmail(string id);
-
-    Task<IList<MemberSearchResult>> SearchAsync(string query);
-
-    Task<IEnumerable<PersonContact>> ListMemberContactsAsync(Guid memberId);
-    Task<IEnumerable<MemberAddress>> ListMemberAddressesAsync(Guid memberId);
-    Task<MemberInfo> CreateMember(MemberInfo body);
-    Task AddMembership(Guid id, Guid statusId);
-    Task<PersonContact> AddContact(Guid id, PersonContact emailContact);
-    Task<int> GetEmergencyContactCountAsync(Guid memberId);
-    Task<List<EventAttendance>> GetMissionList(Guid animalId);
-    Task<AttendanceStatistics<NameIdPair>> GetMissionStatistics(Guid animalId);
-    Task<List<EventAttendance>> GetTrainingList(Guid animalId);
-    Task<AttendanceStatistics<NameIdPair>> GetTrainingStatistics(Guid animalId);
-
-  }
-
   public class MembersService : IMembersService
   {
     private readonly Func<DB.IKcsarContext> _dbFactory;
@@ -421,4 +399,27 @@ namespace Sar.Database.Services
       return db.Members.Where(f => f.Memberships.Any(g => g.Status.IsActive && (g.EndTime == null || g.EndTime > dbWhen)));
     }
   }
+
+  public interface IMembersService
+  {
+    Task<MemberInfo> GetMember(Guid id);
+    Task<IEnumerable<MemberSummary>> ByPhoneNumber(string id);
+    Task<IEnumerable<MemberSummary>> ByWorkerNumber(string id);
+    Task<IEnumerable<MemberSummary>> ByEmail(string id);
+
+    Task<IList<MemberSearchResult>> SearchAsync(string query);
+
+    Task<IEnumerable<PersonContact>> ListMemberContactsAsync(Guid memberId);
+    Task<IEnumerable<MemberAddress>> ListMemberAddressesAsync(Guid memberId);
+    Task<MemberInfo> CreateMember(MemberInfo body);
+    Task AddMembership(Guid id, Guid statusId);
+    Task<PersonContact> AddContact(Guid id, PersonContact emailContact);
+    Task<int> GetEmergencyContactCountAsync(Guid memberId);
+    Task<List<EventAttendance>> GetMissionList(Guid animalId);
+    Task<AttendanceStatistics<NameIdPair>> GetMissionStatistics(Guid animalId);
+    Task<List<EventAttendance>> GetTrainingList(Guid animalId);
+    Task<AttendanceStatistics<NameIdPair>> GetTrainingStatistics(Guid animalId);
+
+  }
+
 }

@@ -106,6 +106,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ServiceStrings.resx</DependentUpon>
     </Compile>
+    <Compile Include="Training\TrainingsService.cs" />
     <Compile Include="Training\TrainingCoursesService.cs" />
     <Compile Include="Training\TrainingRecordsService.cs" />
     <Compile Include="AnimalsService.cs" />
