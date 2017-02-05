@@ -29,7 +29,7 @@
       },
       eventsLoader: function eventsLoader(restangularList, opts) {
         opts = opts || {}
-        opts.order = opts.order || '-event.startTime'
+        opts.order = opts.order || '-event.start'
 
         opts.transform = function (data, loader) {
           loader.list = data;
@@ -59,6 +59,7 @@
         }
         var list = service.loader(restangularList, opts)
         if (opts.miles) list.showMiles = true
+        if (opts.persons) list.showPersons = true
 
         list.filterList = function (item) {
           var start = item.event.start;
