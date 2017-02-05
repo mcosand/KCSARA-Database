@@ -116,7 +116,7 @@
       if (currentUser.loggingIn) {
         return $q.reject();
       }
-      if (config.url.indexOf('/api') == 0 && currentUser.user && currentUser.user.access_token) {
+      if (config.url.indexOf('/api') === 0 && currentUser.user && currentUser.user.access_token) {
         config.headers['Authorization'] = 'Bearer ' + currentUser.user.access_token;
       }
       return config;
@@ -223,14 +223,14 @@
         {
           name: "Missions", type: 'toggle', icon: 'terrain', pages:
           [
-            { name: "Rosters", type: 'link', url: window.appRoot + "missions/list" },
+            { name: "Rosters", type: 'link', url: window.appRoot + "missions" },
             { name: "Reports", type: "link", url: window.appRoot + "missions/yearly" }
           ]
         },
         {
           name: 'Training', type: 'toggle', icon: 'school', pages:
             [
-              { name: "Rosters", type: "link", url: window.appRoot + "training/list" },
+              { name: "Rosters", type: "link", url: window.appRoot + "trainings" },
               { name: "Courses", type: "link", url: window.appRoot + "training/courses" },
               { name: "More", type: "link", url: window.appRoot + "training" }
             ]

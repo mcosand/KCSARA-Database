@@ -1,7 +1,7 @@
-﻿<md-card flex-gt-md="50" ng-hide="list.list.length">
+﻿<md-card flex-gt-md="50" ng-hide="list.list.length || list.loading">
   <md-card-content>No {{::eventType}} History</md-card-content>
 </md-card>
-<md-card ng-if="list.list.length">
+<md-card ng-if="list.list.length || list.loading">
   <md-card-content>
     <div layout="row" class="filter-row" layout-align="end center">
       <label>Year:</label>
@@ -11,7 +11,7 @@
       </md-select>
     </div>
     <md-table-container hide-xs>
-      <table md-table sortable-columns md-progress="loading">
+      <table md-table sortable-columns md-progress="list.loading">
         <thead md-head md-order="list.query.order">
           <tr md-row>
             <th md-column md-order-by="event.stateNumber">{{::eventType}} #</th>

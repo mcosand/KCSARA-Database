@@ -94,6 +94,7 @@
     <Compile Include="DIModule.cs" />
     <Compile Include="Auth\IRolesService.cs" />
     <Compile Include="Events\EventsService.cs" />
+    <Compile Include="Events\MissionsService.cs" />
     <Compile Include="ExtensionProvider.cs" />
     <Compile Include="IUsersService.cs" />
     <Compile Include="Members\MembersService.cs" />

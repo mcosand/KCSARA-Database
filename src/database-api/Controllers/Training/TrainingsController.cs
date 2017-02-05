@@ -5,23 +5,11 @@ using Sar.Database.Services;
 
 namespace Kcsara.Database.Api.Controllers
 {
-  [AnyHostCorsPolicy]
-  public class TrainingsController : ApiController
+  [Route("trainings")]
+  public class TrainingsController : EventsController
   {
-    private readonly ITrainingsService _trainings;
-    private readonly IAuthorizationService _authz;
-
-    public TrainingsController(ITrainingsService trainings, IAuthorizationService authz)
+    public TrainingsController(ITrainingsService trainings, IAuthorizationService authz) : base(trainings, authz)
     {
-      _trainings = trainings;
-      _authz = authz;
-    }
-
-    [HttpGet]
-    [Route("trainings")]
-    public Task<ListPermissionWrapper<GroupEventAttendance>> List()
-    {
-      return _trainings.List(null);
     }
   }
 }

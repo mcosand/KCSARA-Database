@@ -28,6 +28,7 @@
     , 'training_courseroster': { url: '/training/courses/:id/roster', templateUrl: '/wwwroot/partials/training/course-roster.html', resolve: { $title: function () { return 'Course Detail' } } }
     , 'training_record': { url: '/training/records/:recordId', templateUrl: '/wwwroot/partials/training/record.html' }
     , 'trainingBatchUpload': { url: '/training/uploadrecords', templateUrl: '/wwwroot/partials/training/upload-records.html', resolve: { $title: function () { return 'Upload Training Records' } } }
+    , 'missions': { url: '/missions', templateUrl: '/wwwroot/partials/missions/list.html', resolve: { $title: function() { return 'Missions' }}}
     , 'accounts': { url: '/accounts', templateUrl: '/wwwroot/partials/accounts/list.html', resolve: { $title: function () { return 'Accounts'; } } }
     , 'account_reset': { url: '/accounts/reset', templateUrl: '/wwwroot/partials/accounts/reset.html', data: { allowAnonymous: true }, resolve: { $title: function () { return 'Account Reset' } } }
     , 'account_reset_finish': { url: '/accounts/reset/:code', templateUrl: '/wwwroot/partials/accounts/reset-finish.html', data: { allowAnonymous: true }, resolve: { $title: function () { return 'Account Reset' } } }

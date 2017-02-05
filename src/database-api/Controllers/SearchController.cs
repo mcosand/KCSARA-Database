@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
-using Sar;
-using Sar.Database;
 using Sar.Database.Model;
-using Sar.Database.Model.Members;
 using Sar.Database.Model.Search;
-using Sar.Database.Model.Units;
 using Sar.Database.Services;
 
 namespace Kcsara.Database.Api.Controllers.Units
@@ -21,12 +15,12 @@ namespace Kcsara.Database.Api.Controllers.Units
     public class RootController : ApiController
     {
       private readonly ILog _log;
-      private readonly IEventsService _events;
+      private readonly IMissionsService _missions;
       private readonly IMembersService _members;
 
-      public RootController(IEventsService events, IMembersService members, IAuthorizationService authz, ILog log)
+      public RootController(IMissionsService missions, IMembersService members, IAuthorizationService authz, ILog log)
       {
-        _events = events;
+        _missions = missions;
         _members = members;
         _authz = authz;
         _log = log;
@@ -59,7 +53,7 @@ namespace Kcsara.Database.Api.Controllers.Units
 
         if (searchTypes.Any(f => f == SearchResultType.Mission) && await _authz.AuthorizeAsync(null, "Read:Mission"))
         {
-          list.AddRange(await _events.SearchMissionsAsync(q));
+          list.AddRange(await _missions.SearchMissionsAsync(q));
         }
 
         return list.OrderByDescending(f => f.Score).Take(limit).ToArray();

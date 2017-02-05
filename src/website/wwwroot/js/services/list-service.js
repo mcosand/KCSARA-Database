@@ -18,6 +18,7 @@
               loader.list = opts.transform ? opts.transform(data, loader) : data;
               loader.loading = false
             })
+            return loader.loading
           },
           showAll: function () {
             delete loader.limit;
@@ -39,7 +40,7 @@
           if (opts.miles) statsTemplate.miles = 0
           for (var i = 0; i < data.length; i++) {
             var y = data[i].event.start.substring(0, 4);
-            if (y != year) loader.years.push(y);
+            if (y !== year) loader.years.push(y);
             if (!loader.showYear) loader.showYear = y;
             year = y;
             loader.yearlyStats[y] = loader.yearlyStats[y] || JSON.parse(JSON.stringify(statsTemplate))
@@ -61,7 +62,7 @@
 
         list.filterList = function (item) {
           var start = item.event.start;
-          return list.showYear == "all" || start.substring(0, 4) == list.showYear;
+          return list.showYear === "all" || start.substring(0, 4) === list.showYear;
         }
 
         return list
