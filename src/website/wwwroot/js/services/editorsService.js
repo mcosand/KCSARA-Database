@@ -5,6 +5,23 @@
 
   this.$get = ['$mdDialog', '$mdToast', '$q', function EditorsServiceFactory($mdDialog, $mdToast, $q) {
     return {
+      doPopup: function doPopup(ev, title, url, locals) {
+        return $mdDialog.show({
+          controller: 'EditDialogCtrl',
+          template: '<md-dialog><md-toolbar class="md-accent">' +
+                      '<div class="md-toolbar-tools"><h2>' + title + '</h2>' +
+                      '<span flex></span><md-button class="md-icon-button" ng-click="cancel()"><md-icon aria-label="Close dialog">close</md-icon>' +
+                    '</md-button></div></md-toolbar>' +
+                    '<md-dialog-content><ng-include src="\'' + url + '\'" /></md-dialog-content>' +
+                    '<md-dialog-actions layout="row">' +
+                      '<span flex></span><md-button ng-disabled="saving" ng-click="cancel()">Close</md-button>' +
+                    '</md-dialog-actions></md-dialog>',
+          locals: locals,
+          targetEvent: ev,
+          clickOutsideToClose: true,
+          fullscreen: true // Only for -xs, -sm breakpoints.
+        })
+      },
       doDelete: function doDelete(ev, itemType, item, more) {
         var namer = (more || {}).nameResolver || defaultNameResolver;
 

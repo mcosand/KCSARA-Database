@@ -1,0 +1,75 @@
+﻿<md-content ng-controller="MembersTrainingCtrl">
+  <ui-view></ui-view>
+  <div layout="row" class="inside-padding" layout-wrap flex>
+    <div flex="50" flex-xs="100">
+      <md-card flex>
+        <md-card-header>
+          <md-card-header-text>Recent Training</md-card-header-text>
+        </md-card-header>
+        <md-table-container>
+          <table md-table md-progress="recent.loading">
+            <thead md-head md-order="recent.query.order">
+              <tr md-row>
+                <th md-column md-order-by="course.name">Course</th>
+                <th md-column class="tight" md-order-by="completed">Completed</th>
+                <th md-column class="tight" md-order-by="expires">Expires</th>
+                <th md-column class="th-actions"></th>
+            </thead>
+            <tbody md-body>
+              <tr md-row ng-repeat="r in recent.list | orderBy:recent.query.order | limitTo: recent.limit">
+                <td md-cell>{{r.course.name}}</td>
+                <td md-cell>{{r.completed | simpleDate}}</td>
+                <td md-cell>{{r.expires | simpleDate}}</td>
+                <td md-cell class="td-actions-cell">
+                  <md-button ng-if="r.eventId" class="md-icon-button md-primary" aria-label="View Roster" target="_self" ng-href="{{'/' + r.eventType + '/roster/' + r.eventId}}"><md-icon>assignment</md-icon></md-button>
+                  <md-button ng-if="!r.eventId && !r.fromRule" class="md-icon-button md-primary" aria-label="View Details"
+                             ng-href="{{'/training/records/' + r.id}}" ng-click="showRecord($event, r.id)"><md-icon>description</md-icon></md-button>
+                </td>
+              </tr>
+              <tr ng-if="recent.limit && recent.list.length > recent.limit">
+                <th colspan="4" class="c">
+                  <md-button class="md-accent" ng-click="recent.showAll()">Show all</md-button>
+                </th>
+              </tr>
+            </tbody>
+          </table>
+        </md-table-container>
+        <md-card-actions layout="row" layout-align="end center">
+          <md-button class="md-icon-button" aria-label="View All Records" ng-click="showHistory()"><md-icon>history</md-icon></md-button>
+        </md-card-actions>
+      </md-card>
+    </div>
+    <div flex="50" flex-xs="100">
+      <md-card flex>
+        <md-card-header>
+          <md-card-header-text>Required Training</md-card-header-text>
+        </md-card-header>
+        <md-table-container>
+          <table md-table md-progress="required.loading" class="centered-cells">
+            <thead md-head><tr md-row><th md-column>Competency</th><th md-column class="c">Classroom</th><th md-column class="c">Written</th><th md-column class="c">Performance</th></tr></thead>
+            <tbody md-body>
+              <tr md-row><th md-row-header>ICS-100</th><td md-cell></td><td md-cell required-training="required.list['ICS-100']" /><td md-cell></td></tr>
+              <tr md-row><th md-row-header>ICS-700</th><td md-cell></td><td md-cell required-training="required.list['ICS-700']" /><td md-cell></td></tr>
+              <tr md-row><th md-row-header>Core/Clues</th><td md-cell></td><td md-cell required-training="required.list['Core/Clues.WE']" /><td md-cell></td></tr>
+              <tr md-row><th md-row-header>Core/CPR</th><td md-cell colspan="3" required-training="required.list['Core/CPR']" /></tr>
+              <tr md-row><th md-row-header>Core/Crime</th><td md-cell required-training="required.list['Core/Crime.C']" /><td md-cell required-training="required.list['Core/Crime.WE']" /><td md-cell></td></tr>
+              <tr md-row><th md-row-header>Core/FirstAid</th><td md-cell colspan="3" required-training="required.list['Core/FirstAid']" /></tr>
+              <tr md-row><th md-row-header>Core/Fitness</th><td md-cell></td><td md-cell required-training="required.list['Core/Fitness.WE']" /><td md-cell></td></tr>
+              <tr md-row><th md-row-header>Core/GPS</th><td md-cell></td><td md-cell required-training="required.list['Core/GPS.WE']" /><td md-cell required-training="required.list['Core/GPS.PE']" /></tr>
+              <tr md-row><th md-row-header>Core/Helo</th><td md-cell required-training="required.list['Core/Helo.C']" /><td md-cell required-training="required.list['Core/Helo.WE']" /><td md-cell></td></tr>
+              <tr md-row><th md-row-header>Core/Legal</th><td md-cell required-training="required.list['Core/Legal.C']" /><td md-cell required-training="required.list['Core/Legal.WE']" /><td md-cell></td></tr>
+              <tr md-row><th md-row-header>Core/Management</th><td md-cell></td><td md-cell required-training="required.list['Core/Management.WE']" /><td md-cell></td></tr>
+              <tr md-row><th md-row-header>Core/Nav</th><td md-cell></td><td md-cell required-training="required.list['Core/Nav.WE']" /><td md-cell required-training="required.list['Core/Nav.PE']" /></tr>
+              <tr md-row><th md-row-header>Core/Radio</th><td md-cell></td><td md-cell required-training="required.list['Core/Radio.WE']" /><td md-cell required-training="required.list['Core/Radio.PE']" /></tr>
+              <tr md-row><th md-row-header>Core/Rescue</th><td md-cell></td><td md-cell required-training="required.list['Core/Rescue.WE']" /><td md-cell required-training="required.list['Core/Rescue.PE']" /></tr>
+              <tr md-row><th md-row-header>Core/Safety</th><td md-cell></td><td md-cell required-training="required.list['Core/Safety.WE']" /><td md-cell required-training="required.list['Core/Safety.PE']" /></tr>
+              <tr md-row><th md-row-header>Core/SearchTech</th><td md-cell></td><td md-cell required-training="required.list['Core/SearchTech.WE']" /><td md-cell required-training="required.list['Core/SearchTech.PE']" /></tr>
+              <tr md-row><th md-row-header>Core/Survival</th><td md-cell></td><td md-cell required-training="required.list['Core/Survival.WE']" /><td md-cell required-training="required.list['Core/Survival.PE']" /></tr>
+            </tbody>
+          </table>
+        </md-table-container>
+      </md-card>
+    </div>
+  </div>
+  <ng-include src="'/wwwroot/partials/members/trainings.html'" />
+</md-content>

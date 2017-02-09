@@ -11,6 +11,19 @@
   margin: 0px 6px 0px -6px;
 }
 
+.c, table.md-table th.md-column.c {
+  text-align: center;
+}
+.r {
+  text-align: right;
+}
+
+@media print {
+  .noprint {
+    display:none;
+  }
+}
+
 .main-footer {
   background: #fff;
   padding: 15px;
@@ -21,6 +34,13 @@
 
 md-list-item .md-no-style.md-button p {
   word-break: break-all;
+}
+
+md-list md-list-item md-icon.md-avatar-icon, md-list-item .md-list-item-inner md-icon.md-avatar-icon {
+ margin-left: -16px;
+ margin-right: 8px;
+ padding: 5px;
+ opacity: 0.5
 }
 
 md-sidenav md-autocomplete-wrap {
@@ -35,6 +55,10 @@ md-card-header-text button.md-button.md-icon-button {
   padding-top:0px;
   padding-bottom:0px;
   height:24px;
+}
+
+md-card md-card-content {
+  padding-top:0px
 }
 
 md-toolbar.md-table-toolbar .md-toolbar-tools > .md-button.md-icon-button:last-child
@@ -71,6 +95,37 @@ table.md-table tfoot th {
   text-align: left;
   height:48px;
   border-top: double 3px #a0a0a0;
+}
+
+table.md-table tbody >tr >th {
+  font-size:14px;
+  border-top: 1px rgba(0, 0, 0, 0.12) solid;
+}
+
+table.md-table.centered-cells tbody >tr >td {
+  text-align:center;
+}
+
+tr[row-href] td > a {
+  text-decoration: none;
+  color: inherit;
+  display:inline-block;
+  width:100%;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+table.md-table td.md-cell > *, table.md-table th.md-column > * {
+  padding-right: 56px;
+}
+
+table.md-table:not(.md-row-select) td.md-cell:nth-child(n+2):nth-last-child(n+2), table.md-table:not(.md-row-select) th.md-column:nth-child(n+2):nth-last-child(n+2) {
+  padding-right: 0px;
+}
+
+table.md-table th.md-column.tight > *
+{
+  padding-right:0px;
 }
 
 table.md-table:not(.md-row-select) tfoot th:first-child {
@@ -125,6 +180,27 @@ tr.clickable:hover {
   border: 1px solid #444;
   margin-right: 1em;
 }
+
+.vard-type-Novice
+{
+  background-color: #d01616;
+  color: #eeeeee;
+}
+.card-type-Support
+{
+  background-color: #FFA500;
+  color: black;
+}
+.card-type-Field
+{
+  background-color: #008800;
+  color: #eeeeee;
+}
+.card-type-None {
+    background-color: #ddd;
+    color: black;
+}
+
 
 .tabs > ui-view > * {
   margin-top: 15px;
@@ -204,4 +280,17 @@ md-tabs {
   font-size: 12px;
   line-height: 16px;
   color: grey;
+}
+
+@media(min-width:600px) {
+  .inside-padding > * {
+    padding-left: .5em;
+    padding-right:.5em;
+  }
+}
+.inside-padding > *:first-child {
+  padding-left: 0;
+}
+.inside-padding > *:last-child {
+  padding-right: 0;
 }

@@ -1,12 +1,9 @@
-﻿/*
- * Copyright 2009-2014 Matthew Cosand
- */
-
-namespace Kcsar.Database.Model
+﻿namespace Kcsar.Database.Model
 {
   using System;
   using System.Collections.Generic;
   using System.ComponentModel.DataAnnotations;
+  using System.ComponentModel.DataAnnotations.Schema;
 
   public class TrainingRoster : ModelObject, IRosterEntry<Training, TrainingRoster>
   {
@@ -14,8 +11,17 @@ namespace Kcsar.Database.Model
     public DateTime? TimeOut { get; set; }
     public int? Miles { get; set; }
     public string Comments { get; set; }
+
+    [Column("Person_Id")]
+    public Guid PersonId { get; set; }
+    [ForeignKey("PersonId")]
     public virtual Member Person { get; set; }
+
+    [Column("Training_Id")]
+    public Guid TrainingId { get; set; }
+    [ForeignKey("TrainingId")]
     public virtual Training Training { get; set; }
+
     public virtual ICollection<TrainingAward> TrainingAwards { get; set; }
     public virtual ICollection<ComputedTrainingAward> ComputedAwards { get; set; }
     public int? OvertimeHours { get; set; }

@@ -113,17 +113,16 @@ namespace Kcsar.Database.Model
     Continuing
   }
 
-
   public enum PersonAddressType
   {
-    /// <summary>The address at which the person receives their mail, other than their residence.</summary>
-    Mailing,
-
-    /// <summary>The location of the person's residence (where they might get picked up for a mission).</summary>
-    Residence,
-
     /// <summary>Other Address.</summary>
-    Other
+    Other = 0,
+    /// <summary>Work Address.</summary>
+    Work = 10,
+    /// <summary>The address at which the person receives their mail, other than their residence.</summary>
+    Mailing = 20,
+    /// <summary>The location of the person's residence (where they might get picked up for a mission).</summary>
+    Residence = 30
   }
 
   [Flags]

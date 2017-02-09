@@ -1,0 +1,46 @@
+﻿<md-content ng-controller="MembersContactsCtrl">
+  <div layout="row" class="inside-padding" layout-wrap flex>
+    <div flex="50" flex-xs="100">
+      <md-card flex>
+        <md-card-header>
+          <md-card-header-text>Contact Numbers</md-card-header-text>
+        </md-card-header>
+        <md-card-content>
+          <md-progress-circular md-mode="indeterminate" md-diameter="40" class="md-accent" ng-if="contacts.loading"></md-progress-circular>
+          <md-list flex>
+            <md-list-item class="md-1-line" ng-repeat="c in contacts.list">
+              <md-icon class="md-avatar-icon">{{c.type === 'im' ? 'chat' : c.type === 'hamcall' ? 'wifi_tethering' : c.type === 'email' ? 'email' : c.subType === 'cell' ? 'phone_android' : 'call'}}</md-icon>
+              <div class="md-list-item-text" flex>
+                <p>{{c.value}}</p>
+              </div>
+              <md-button ng-if="c.type === 'email'" class="md-icon-button md-secondary md-primary" aria-label="Send Email" target="_self" ng-href="{{'mailto:' + c.value}}"><md-icon>email</md-icon></md-button>
+              <md-button ng-if="c.type === 'phone' && c.subType === 'cell'" class="md-icon-button md-secondary md-primary" aria-label="Send Text" target="_self" ng-href="{{'sms:' + c.value}}"><md-icon>sms</md-icon></md-button>
+              <md-button ng-if="c.type === 'phone'" class="md-icon-button md-secondary md-primary" aria-label="Call" target="_self" ng-href="{{'tel:' + c.value}}"><md-icon>call</md-icon></md-button>
+            </md-list-item>
+          </md-list>
+        </md-card-content>
+      </md-card>
+    </div>
+    <div flex="50" flex-xs="100">
+      <md-card flex>
+        <md-card-header>
+          <md-card-header-text>Addresses</md-card-header-text>
+        </md-card-header>
+        <md-card-content>
+          <md-progress-circular md-mode="indeterminate" md-diameter="40" class="md-accent" ng-if="addresses.loading"></md-progress-circular>
+          <md-list flex>
+            <md-list-item class="md-2-line" ng-repeat="a in addresses.list">
+              <md-icon class="md-avatar-icon">{{a.type === 'Mailing' ? 'email' : a.type === 'Residence' ? 'home' : a.type === 'Work' ? 'domain' : 'label'}}</md-icon>
+              <div class="md-list-item-text">
+                <h3>{{a.street}}</h3>
+                <p>{{a.city}}, {{a.state}} {{a.zip}}</p>
+              </div>
+              <md-button ng-if="a.type !== 'Mailing'" class="md-icon-button md-secondary md-primary" aria-label="Get Directions" target="_blank" ng-href="https://www.google.com/maps/dir/Current+Location/{{a.street + ' ' + a.city + ', ' + a.state + ' ' + a.zip | escape}}"><md-icon>directions</md-icon></md-button>
+            </md-list-item>
+          </md-list>
+        </md-card-content>
+      </md-card>
+    </div>
+  </div>
+
+</md-content>
