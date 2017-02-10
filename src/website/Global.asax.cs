@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading;
@@ -7,6 +8,7 @@ using System.Web.Http;
 using System.Web.Optimization;
 using System.Web.Routing;
 using Kcsara.Database.Web.api;
+using Microsoft.IdentityModel.Protocols;
 using Ninject;
 
 namespace Kcsara.Database.Web
@@ -31,6 +33,20 @@ namespace Kcsara.Database.Web
         Context.User = new ClaimsPrincipal(new ClaimsIdentity());
         Thread.CurrentPrincipal = Context.User;
       }
+    }
+
+    protected void Application_Error(Object sender, EventArgs e)
+    {
+      var ex = Server.GetLastError();
+      if (ex is OpenIdConnectProtocolInvalidNonceException || ex is SecurityTokenExpiredException)
+      {
+        Response.Redirect("~/");
+      }
+    }
+
+    void Session_Start(object sender, EventArgs e)
+    {
+      // place holder to solve endless loop issue
     }
   }
 }
