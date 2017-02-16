@@ -77,10 +77,6 @@ md-toolbar.md-table-toolbar .md-toolbar-tools > .md-button.md-icon-button:last-c
   text-transform: uppercase;
 }
 
-table.md-table td.md-cell.td-actions-cell:last-child, table.md-table th.md-column.th-actions:last-child {
-  padding-right: 0px;
-}
-
 table.md-table:not(.md-row-select) td.md-cell.icon-cell:nth-child(n+2):nth-last-child(n+2),
 table.md-table:not(.md-row-select) th.md-column.icon-column:nth-child(n+2):nth-last-child(n+2) {
   padding-right:14px;
@@ -118,6 +114,15 @@ tr[row-href] td > a {
 table.md-table td.md-cell > *, table.md-table th.md-column > * {
   padding-right: 56px;
 }
+
+table.md-table td.md-cell.td-actions-cell:last-of-type, table.md-table th.md-column.th-actions:last-of-type {
+  padding-right: 0px;
+}
+
+table.md-table td.md-cell.td-actions-cell > *, table.md-table th.md-column.th-actions > * {
+  padding-right: 8px;
+}
+
 
 table.md-table:not(.md-row-select) td.md-cell:nth-child(n+2):nth-last-child(n+2), table.md-table:not(.md-row-select) th.md-column:nth-child(n+2):nth-last-child(n+2) {
   padding-right: 0px;

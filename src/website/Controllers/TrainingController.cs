@@ -1,7 +1,4 @@
-﻿/*
- * Copyright 2009-2015 Matthew Cosand
- */
-namespace Kcsara.Database.Web.Controllers
+﻿namespace Kcsara.Database.Web.Controllers
 {
   using System;
   using System.Collections.Generic;
@@ -10,23 +7,15 @@ namespace Kcsara.Database.Web.Controllers
   using System.Globalization;
   using System.IO;
   using System.Linq;
-  using System.Text.RegularExpressions;
   using System.Web.Mvc;
-  using System.Xml;
-  using Kcsar.Database;
   using Kcsar.Database.Model;
   using Kcsara.Database.Web.Model;
+  using Sar.Database.Services;
   using ApiModels = Kcsara.Database.Web.api.Models;
 
   public partial class TrainingController : SarEventController<Training, TrainingRoster>
   {
-    public TrainingController(IKcsarContext db, IAppSettings settings) : base(db, settings) { }
-
-    public override ActionResult Index()
-    {
-      ViewData["showESAR"] = !string.IsNullOrWhiteSpace(ConfigurationManager.AppSettings["showKCESAR"]);
-      return base.Index();
-    }
+    public TrainingController(IKcsarContext db, IAppSettings settings, ITrainingsService svc) : base(db, settings, svc) { }
 
     [AuthorizeWithLog(Roles = "cdb.users")]
     public ActionResult ReportStatus()
@@ -56,20 +45,6 @@ namespace Kcsara.Database.Web.Controllers
       }
 
       return View(model);
-    }
-
-    protected override void DeleteDependentObjects(Training evt)
-    {
-      base.DeleteDependentObjects(evt);
-      foreach (var roster in this.db.TrainingRosters.Include("TrainingAwards").Where(f => f.Training.Id == evt.Id))
-      {
-        List<TrainingAward> copy = new List<TrainingAward>(roster.TrainingAwards);
-        foreach (var award in copy)
-        {
-          this.db.TrainingAward.Remove(award);
-        }
-        this.db.TrainingRosters.Remove(roster);
-      }
     }
 
     #region Training Awards

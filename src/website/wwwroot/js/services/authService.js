@@ -106,13 +106,13 @@
       notifyChange({ action: 'expiring', remaining: remaining });
     })
     mgr.events.addAccessTokenExpired(function () {
+      $window.sessionStorage.setItem('oidc:returnState', JSON.stringify({ name: $state.next.name, p: $state.toParams }));
       mgr.removeUser().then(function () {
         currentUser.user = null;
         notifyChange({ action: 'expired' });
       })
     });
     mgr.events.addUserSignedOut(function () {
-      $window.sessionStorage.setItem('oidc:returnState', JSON.stringify({ name: $state.next.name, p: $state.toParams }));
       currentUser.user = null;
     });
 

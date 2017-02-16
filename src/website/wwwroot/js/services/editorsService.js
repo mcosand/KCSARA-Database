@@ -1,7 +1,7 @@
 ﻿angular.module('sar-database')
 
 .provider('editorsService', function EditorsServiceProvider() {
-  function defaultNameResolver(item) { return item.name }
+  function defaultgetName(item) { return item.name }
 
   this.$get = ['$mdDialog', '$mdToast', '$q', function EditorsServiceFactory($mdDialog, $mdToast, $q) {
     return {
@@ -23,7 +23,7 @@
         })
       },
       doDelete: function doDelete(ev, itemType, item, more) {
-        var namer = (more || {}).nameResolver || defaultNameResolver;
+        var namer = (more || {}).getName || defaultgetName;
 
         var confirm = $mdDialog.confirm()
                                 .title('Delete ' + itemType)
@@ -39,7 +39,7 @@
         });
       },
       doEditDialog: function doEditDialog(ev, templateUrl, itemType, item, more) {
-        var namer = (more || {}).nameResolver || defaultNameResolver;
+        var namer = (more || {}).getName || defaultgetName;
         var fromServer = item.fromServer;
         item = item.clone(); // clone doesn't seem to keep .fromServer, which affects .save()
         item.fromServer = fromServer;

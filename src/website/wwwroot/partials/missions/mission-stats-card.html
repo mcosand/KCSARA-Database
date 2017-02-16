@@ -1,0 +1,30 @@
+﻿<md-card flex-gt-md="50">
+  <md-card-content layout="row" layout-align="center stretch" ng-cloak layout-wrap>
+    <div layout="column" flex="50" flex-xs="100" class="left-separator-gt-xs">
+      <div style="text-align:center" class="caption">Career Total</div>
+      <div layout="row" layout-align="space-around">
+        <div layout="column" layout-align="start center" style="padding:5px; text-align:center">
+          <div style="font-size:24pt">{{stats.total.count}}</div>
+          <div>Missions</div>
+        </div>
+        <div layout="column" layout-align="start center" style="padding:5px; text-align:center">
+          <div style="font-size:24pt">{{stats.total.hours.toFixed(2)}}</div>
+          <div>Hours</div>
+        </div>
+      </div>
+    </div>
+    <div layout="column" flex="50" flex-xs="100" class="left-separator-gt-xs">
+      <div style="text-align:center" class="caption">Last 12 Months</div>
+      <div layout="row" layout-align="space-around">
+        <div layout="column" layout-align="start center" style="padding:5px; text-align:center">
+          <div style="font-size:24pt">{{stats.recent.count}}</div>
+          <div>Missions</div>
+        </div>
+        <div layout="column" layout-align="start center" style="padding:5px; text-align:center">
+          <div style="font-size:24pt">{{stats.recent.hours.toFixed(2)}}</div>
+          <div>Hours</div>
+        </div>
+      </div>
+    </div>
+  </md-card-content>
+</md-card>

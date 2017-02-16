@@ -1,8 +1,4 @@
-﻿/*
- * Copyright 2008-2014 Matthew Cosand
- */
-
-namespace Kcsara.Database.Web.Controllers
+﻿namespace Kcsara.Database.Web.Controllers
 {
   using System;
   using System.Collections.Generic;
@@ -15,17 +11,12 @@ namespace Kcsara.Database.Web.Controllers
   using System.Web.Mvc;
   using Kcsar.Database.Model;
   using Kcsara.Database.Web.Model;
+  using Sar.Database.Services;
   using ApiModels = Kcsara.Database.Web.api.Models;
 
   public partial class MissionsController : SarEventController<Mission, MissionRoster>
   {
-    public MissionsController(IKcsarContext db, IAppSettings settings) : base(db, settings) { }
-
-    [AuthorizeWithLog]
-    public override ActionResult Index()
-    {
-      return List(null);
-    }
+    public MissionsController(IKcsarContext db, IAppSettings settings, IMissionsService svc) : base(db, settings, svc) { }
 
     #region Subjects
     /// <summary>
@@ -849,78 +840,7 @@ namespace Kcsara.Database.Web.Controllers
       ViewData["MissionType"] = new MultiSelectList(ConfigurationManager.AppSettings["EnumMissionType"].Split(','), (evt.MissionType ?? "").Split(','));
       return base.InternalEdit(evt);
     }
-
-    [AuthorizeWithLog(Roles = "cdb.users")]
-    public override ActionResult List(string id)
-    {
-      int year;
-      bool useDate = true;
-      if ((id ?? "").Equals("all", StringComparison.OrdinalIgnoreCase))
-      {
-        useDate = false;
-      }
-      year = int.TryParse(id, out year) ? year : DateTime.Today.Year;
-
-      Guid? unit = null;
-      if (!string.IsNullOrEmpty(Request.Params["unit"]))
-      {
-        unit = new Guid(Request.Params["unit"]);
-      }
-
-      IEnumerable<EventSummaryView> model;
-      DateTime eon = new DateTime(1940, 1, 1);
-      var yearsData = this.db.Missions.Where(f => f.StartTime > eon).Select(f => f.StartTime.Year).Distinct().OrderByDescending(f => f).ToArray();
-      ViewData["years"] = yearsData;
-      if (yearsData.Length > 0)
-      {
-        ViewData["minYear"] = this.db.Missions.Where(f => f.StartTime > eon).Min(f => f.StartTime).Year;
-        ViewData["maxYear"] = this.db.Missions.Max(f => f.StartTime).Year;
-      }
-      else
-      {
-        ViewData["minYear"] = DateTime.Now.Year;
-        ViewData["maxYear"] = DateTime.Now.Year;
-      }
-
-      IQueryable<Mission> source = this.db.Missions;
-      if (unit.HasValue)
-      {
-        source = source.Where(f => f.Roster.Any(g => g.Unit.Id == unit.Value));
-      }
-
-      if (useDate)
-      {
-        DateTime left = new DateTime(year, 1, 1);
-        DateTime right = new DateTime(year + 1, 1, 1);
-        source = source.Where(f => f.StartTime > left && f.StartTime < right);
-        ViewData["year"] = year;
-      }
-
-      DateTime recent = DateTime.Now.AddHours(-12);
-      model = (from m in source
-               join mr in this.db.MissionRosters on m.Id equals mr.Mission.Id into Joined
-               from mr in Joined.DefaultIfEmpty()
-               select m).Distinct().Select(
-                m => new EventSummaryView
-                {
-                  Id = m.Id,
-                  Title = m.Title,
-                  Number = m.StateNumber,
-                  StartTime = m.StartTime,
-                  Persons = m.Roster.Select(f => f.Person.Id).Distinct().Count(),
-                  Hours = m.Roster.Sum(f => SqlFunctions.DateDiff("minute", f.TimeIn, f.TimeOut)) / 60.0,
-                  Miles = m.Roster.Sum(f => f.Miles),
-                  IsActive = (m.StopTime == null || m.StopTime > recent)
-                }).OrderByDescending(f => f.StartTime).ToArray();
-
-
-      ViewData["unit"] = UnitsController.GetUnitSelectList(this.db, unit);
-
-      ViewData["filtered"] = unit.HasValue;
-
-      return View("List", model);
-    }
-
+    
     /// <summary>
     /// 
     /// </summary>

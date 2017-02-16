@@ -1,7 +1,4 @@
-﻿/*
- * Copyright 2009-2014 Matthew Cosand
- */
-namespace Kcsara.Database.Web.Controllers
+﻿namespace Kcsara.Database.Web.Controllers
 {
   using Kcsar.Database.Model;
   using Kcsara.Database.Web.Model;
@@ -14,25 +11,22 @@ namespace Kcsara.Database.Web.Controllers
   using System.Text.RegularExpressions;
   using System.Web.Mvc;
   using System.Data.Entity.Validation;
+  using Sar.Database.Services;
 
   public abstract class SarEventController<E, R> : BaseController, IEventController
     where R : class, IRosterEntry<E, R>, new()
     where E : class, IRosterEvent<E, R>, new()
   {
-    public SarEventController(IKcsarContext db, IAppSettings settings) : base(db, settings) { }
+    private readonly IEventsService _svc;
 
-    [AuthorizeWithLog]
-    public virtual ActionResult Index()
+    protected SarEventController(IKcsarContext db, IAppSettings settings, IEventsService svc) : base(db, settings)
     {
-      return View("Index");
+      _svc = svc;
     }
 
-    [AuthorizeWithLog(Roles = "cdb.users")]
-    public virtual ActionResult List(string id)
+    public virtual ActionResult List()
     {
-      IEnumerable<E> list = (from e in GetEventSource() orderby e.StartTime descending select e);
-      ApplyListFilter(ref list);
-      return View("List", list);
+      return Redirect($"~/{EventType.ToLowerInvariant()}s");
     }
 
     protected virtual void ApplyListFilter(ref IEnumerable<E> query)
@@ -40,7 +34,6 @@ namespace Kcsara.Database.Web.Controllers
 
     }
 
-    #region Event CRUD
     [AcceptVerbs("GET")]
     [AuthorizeWithLog(Roles = "cdb.users")]
     public ActionResult Create()
@@ -127,6 +120,7 @@ namespace Kcsara.Database.Web.Controllers
       {
         TryUpdateModel(evt, new string[] { "Title", "County", "Location", "StateNumber" }, fields.ToValueProvider());
 
+        int oldYear = evt.StartTime.Year;
         DateTime newTime;
         if (string.IsNullOrEmpty(fields["StartTime"]))
         {
@@ -173,7 +167,9 @@ namespace Kcsara.Database.Web.Controllers
         }
 
         this.db.SaveChanges();
-
+        _svc.InvalidateCache(evt.StartTime.Year);
+        if (oldYear != evt.StartTime.Year) _svc.InvalidateCache(oldYear);
+        
         return successResult;
       }
       catch (InvalidOperationException)
@@ -216,45 +212,6 @@ namespace Kcsara.Database.Web.Controllers
       }
 
       return false;
-    }
-
-    [AcceptVerbs(HttpVerbs.Get)]
-    [AuthorizeWithLog(Roles = "cdb.users")]
-    public ActionResult Delete(Guid id)
-    {
-      E evt = this.GetEvent(id);
-
-      if (!this.CanDoAction(SarEventActions.DeleteEvent, evt))
-      {
-        return this.CreateLoginRedirect();
-      }
-
-      return View(evt);
-    }
-
-    [AcceptVerbs(HttpVerbs.Post)]
-    [AuthorizeWithLog(Roles = "cdb.users")]
-    public ActionResult Delete(Guid id, FormCollection fields)
-    {
-      E evt = this.GetEvent(id);
-
-      if (!this.CanDoAction(SarEventActions.DeleteEvent, evt))
-      {
-        return this.CreateLoginRedirect();
-      }
-
-      DeleteDependentObjects(evt);
-
-      RemoveEvent(evt);
-      this.db.SaveChanges();
-
-      return RedirectToAction("ClosePopup");
-    }
-    #endregion
-
-    protected virtual void DeleteDependentObjects(E evt)
-    {
-
     }
 
     protected abstract string EventType { get; }

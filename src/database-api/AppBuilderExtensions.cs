@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.IdentityModel.Tokens;
@@ -6,8 +7,10 @@ using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Controllers;
 using System.Web.Http.Dispatcher;
 using System.Web.Http.ExceptionHandling;
+using System.Web.Http.Routing;
 using IdentityServer3.AccessTokenValidation;
 using log4net;
 using Microsoft.Owin.Security.OAuth;
@@ -43,7 +46,7 @@ namespace Kcsara.Database.Api
       // I think this is the guts of .UseNinjectMiddleware but there may be bugs here.
       config.DependencyResolver = new OwinNinjectDependencyResolver(kernel);
 
-      config.MapHttpAttributeRoutes();
+      config.MapHttpAttributeRoutes(new InheritanceDirectRouteProvider());
 
       config.Filters.Add(new AuthorizeAttribute());
       config.Services.Replace(
@@ -106,6 +109,23 @@ namespace Kcsara.Database.Api
 
         return Task.FromResult<object>(null);
       }
+    }
+  }
+
+  class InheritanceDirectRouteProvider : DefaultDirectRouteProvider
+  {
+    protected override IReadOnlyList<IDirectRouteFactory> GetControllerRouteFactories(HttpControllerDescriptor controllerDescriptor)
+    {
+      // Inherit route attributes decorated on base class controller
+      // GOTCHA: RoutePrefixAttribute doesn't show up here, even though we were expecting it to.
+      //  Am keeping this here anyways, but am implementing an ugly fix by overriding GetRoutePrefix
+      return controllerDescriptor.GetCustomAttributes<IDirectRouteFactory>(true);
+    }
+
+    protected override IReadOnlyList<IDirectRouteFactory> GetActionRouteFactories(HttpActionDescriptor actionDescriptor)
+    {
+      // Inherit route attributes decorated on base class controller's actions
+      return actionDescriptor.GetCustomAttributes<IDirectRouteFactory>(true);
     }
   }
 }

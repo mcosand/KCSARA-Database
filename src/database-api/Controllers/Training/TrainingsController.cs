@@ -5,10 +5,10 @@ using Sar.Database.Services;
 
 namespace Kcsara.Database.Api.Controllers
 {
-  [Route("trainings")]
+  [RoutePrefix("trainings")]
   public class TrainingsController : EventsController
   {
-    public TrainingsController(ITrainingsService trainings, IAuthorizationService authz) : base(trainings, authz)
+    public TrainingsController(ITrainingsService trainings, IAuthorizationService authz) : base("Training", trainings, authz)
     {
     }
   }

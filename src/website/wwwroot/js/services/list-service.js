@@ -27,10 +27,40 @@
         if (!opts.lazy) loader.getList()
         return loader
       },
+      pagedEventsLoader: function(pagesService, listService, opts) {
+        opts = opts || {}
+        opts.order = opts.order || '-event.start'
+        var loader = {
+          years: [],
+          list: [],
+          loading: false,
+          query: {
+            order: opts.order
+          },
+          getPages: function () {
+            loader.loading = pagesService.getList().then(function (pages) {
+              loader.years = []
+              for (var i = 1; i < pages.length; i++) { loader.years.push(pages[i].year) }
+              loader.showYear = pages[1].year
+              return loader.getYear()
+            })
+          },
+          getYear: function () {
+            loader.loading = listService.getList(loader.showYear === 'all' ? null : { year: loader.showYear }).then(function (data) {
+              loader.list = data
+            })
+            return loader.loading
+          }
+        }
+        if (opts.miles) loader.showMiles = true
+        if (opts.persons) loader.showPersons = true
+        if (opts.showDelete) loader.showDelete = true
+        if (!opts.lazy) loader.getPages();       
+        return loader;
+      },
       eventsLoader: function eventsLoader(restangularList, opts) {
         opts = opts || {}
         opts.order = opts.order || '-event.start'
-
         opts.transform = function (data, loader) {
           loader.list = data;
           loader.years = [];
@@ -60,6 +90,7 @@
         var list = service.loader(restangularList, opts)
         if (opts.miles) list.showMiles = true
         if (opts.persons) list.showPersons = true
+        if (opts.showDelete) loader.showDelete = true
 
         list.filterList = function (item) {
           var start = item.event.start;

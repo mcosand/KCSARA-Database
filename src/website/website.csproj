@@ -566,6 +566,7 @@
     <Content Include="wwwroot\partials\members\missions.html" />
     <Content Include="wwwroot\partials\event-list.html" />
     <Content Include="wwwroot\partials\missions\list.html" />
+    <Content Include="wwwroot\partials\missions\mission-stats-card.html" />
     <Content Include="wwwroot\partials\training\course-list.html" />
     <Content Include="wwwroot\partials\training\course-detail.html" />
     <Content Include="wwwroot\partials\training\list.html" />
@@ -803,7 +804,6 @@
     <Content Include="Views\Members\ReconcileEmergencyWorkers.aspx" />
     <Content Include="Views\Members\_Application.ascx" />
     <Content Include="Views\Members\_MemberMedical.ascx" />
-    <Content Include="Views\Missions\Delete.aspx" />
     <Content Include="Views\Missions\DeleteLog.aspx" />
     <Content Include="Views\Missions\DeleteSubject.aspx" />
     <Content Include="Views\Missions\Details.aspx" />
@@ -817,7 +817,6 @@
     <Content Include="Views\Missions\EditSummary.aspx" />
     <Content Include="Views\Missions\Geography.aspx" />
     <Content Include="Views\Missions\History.aspx" />
-    <Content Include="Views\Missions\List.aspx" />
     <Content Include="Views\Missions\Log.aspx" />
     <Content Include="Views\Missions\Mission.ascx" />
     <Content Include="Views\Missions\PendingDocuments.aspx" />
@@ -848,12 +847,9 @@
     <Content Include="Views\Shared\UploadSupportingDoc.aspx" />
     <Content Include="Views\Training\AwardDetails.aspx" />
     <Content Include="Views\Training\CourseHours.aspx" />
-    <Content Include="Views\Training\Delete.aspx" />
     <Content Include="Views\Training\Documents.aspx" />
     <Content Include="Views\Training\Edit.aspx" />
     <Content Include="Views\Training\Eligible.aspx" />
-    <Content Include="Views\Training\Index.aspx" />
-    <Content Include="Views\Training\List.aspx" />
     <Content Include="Views\Training\ReportStatus.aspx" />
     <Content Include="Views\Training\Roster.aspx" />
     <Content Include="Views\Training\RosterAddedHeader.ascx" />

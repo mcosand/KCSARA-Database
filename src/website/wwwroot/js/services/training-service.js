@@ -4,6 +4,7 @@
   this.$get = ['$rootScope', '$http', 'Restangular', 'authService', function TrainingServiceFactory($rootScope,$http, Restangular) {
     var result = {
       trainings: Restangular.service('trainings'),
+      years: Restangular.service('years', Restangular.all('trainings')),
       courses: Restangular.service('training/courses'),
       createCourse: function () { return Restangular.restangularizeElement(null, { category: 'other' }, '/training/courses') },
       courseStats: function (courseId) {

@@ -3,10 +3,10 @@ using Sar.Database.Services;
 
 namespace Kcsara.Database.Api.Controllers
 {
-  [Route("missions")]
+  [RoutePrefix("missions")]
   public class MissionsController : EventsController
   {
-    public MissionsController(IMissionsService missions, IAuthorizationService authz) : base(missions, authz)
+    public MissionsController(IMissionsService missions, IAuthorizationService authz) : base("Mission", missions, authz)
     {
     }
   }

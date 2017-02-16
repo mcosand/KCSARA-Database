@@ -11,7 +11,7 @@
         owner.wasPrimary = owner.isPrimary
         return Editors
           .doEditDialog(ev, '/wwwroot/partials/animals/edit-owner.html', 'owner', owner, {
-            nameResolver: function (item) { return item.member.name },
+            getName: function (item) { return item.member.name },
             getPhotoUrl: function (member) {
               var user = $rootScope.$currentUser.user;
               if (user && user.access_token)

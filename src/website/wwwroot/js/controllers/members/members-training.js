@@ -10,7 +10,7 @@
         transform: function (data) {
             return data.reduce(function (accum, item) {
               accum[item.course.name] = item; return accum;
-            })
+            }, {})
       }}),
       showRecord: function showRecord($event, recordId) {
         $event.preventDefault();

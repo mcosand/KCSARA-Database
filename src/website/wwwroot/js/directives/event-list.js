@@ -2,13 +2,13 @@
 .directive('eventList', [function () {
   return {
     restrict: 'E',
+    transclude: true,
     scope: {
       list: '=',
       eventType: '@',
-      linkTemplate: '@'
+      linkTemplate: '@',
+      actions: '='
     },
     templateUrl: '/wwwroot/partials/event-list.html'
-//    link: function (scope, element) {
-//    }
   };
 }])

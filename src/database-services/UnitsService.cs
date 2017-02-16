@@ -14,20 +14,6 @@ using DB = Kcsar.Database.Model;
 
 namespace Sar.Database.Services
 {
-  public interface IUnitsService
-  {
-    Task<ListPermissionWrapper<Unit>> List();
-    Task<ListPermissionWrapper<UnitMembership>> ListMemberships(Expression<Func<UnitMembership, bool>> predicate, bool canCreate);
-    Task<UnitMembership> CreateMembership(UnitMembership membership);
-    Task<ListPermissionWrapper<UnitStatusType>> ListStatusTypes(Guid? unitId = null);
-    Task<ItemPermissionWrapper<Unit>> Get(Guid id);
-    Task DeleteStatusType(Guid statusTypeId);
-    Task<UnitStatusType> SaveStatusType(UnitStatusType statusType);
-    Task<UnitReportInfo[]> ListReports(Guid unitId);
-    Task<Unit> Save(Unit unit);
-    Task Delete(Guid unitId);
-  }
-
   public class UnitsService : IUnitsService
   {
     private readonly Func<DB.IKcsarContext> _dbFactory;
@@ -267,5 +253,19 @@ namespace Sar.Database.Services
         return reportProvider != null ? reportProvider.ListReports() : new UnitReportInfo[0];
       }
     }
+  }
+
+  public interface IUnitsService
+  {
+    Task<ListPermissionWrapper<Unit>> List();
+    Task<ListPermissionWrapper<UnitMembership>> ListMemberships(Expression<Func<UnitMembership, bool>> predicate, bool canCreate);
+    Task<UnitMembership> CreateMembership(UnitMembership membership);
+    Task<ListPermissionWrapper<UnitStatusType>> ListStatusTypes(Guid? unitId = null);
+    Task<ItemPermissionWrapper<Unit>> Get(Guid id);
+    Task DeleteStatusType(Guid statusTypeId);
+    Task<UnitStatusType> SaveStatusType(UnitStatusType statusType);
+    Task<UnitReportInfo[]> ListReports(Guid unitId);
+    Task<Unit> Save(Unit unit);
+    Task Delete(Guid unitId);
   }
 }

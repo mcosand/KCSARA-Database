@@ -1,3 +1,14 @@
-﻿<md-content ng-controller="MissionsCtrl">
-  <event-list list="missions" event-type="Mission" link-template="/missions/roster/%id%" />
+﻿<md-content ng-controller="MissionsCtrl as ctrl">
+  <md-card>
+    <md-card-header>
+      <md-card-header-text layout="row">
+        <div class="md-title">Mission List</div>
+        <div flex></div>
+        <md-button class="md-icon-button md-primary" aria-label="Add Mission" ng-if="ctrl.missions.list._c" target="_self" ng-href="/missions/create">
+          <md-icon>add_circle</md-icon>
+        </md-button>
+      </md-card-header-text>
+    </md-card-header>
+    <event-list list="ctrl.missions" event-type="Mission" link-template="/missions/roster/%id%" actions="ctrl.actions" />
+  </md-card>
 </md-content>

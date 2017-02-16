@@ -1,3 +1,14 @@
-﻿<md-content ng-controller="TrainingsCtrl">
-  <event-list list="trainings" event-type="Training" link-template="/trainings/roster/%id%" />
+﻿<md-content ng-controller="TrainingsCtrl as ctrl">
+  <md-card>
+    <md-card-header>
+      <md-card-header-text layout="row">
+        <div class="md-title">Training List</div>
+        <div flex></div>
+        <md-button class="md-icon-button md-primary" aria-label="Add Training" ng-if="ctrl.trainings.list._c" target="_self" ng-href="/trainings/create">
+          <md-icon>add_circle</md-icon>
+        </md-button>
+      </md-card-header-text>
+    </md-card-header>
+    <event-list list="ctrl.trainings" event-type="Training" link-template="/trainings/roster/%id%" actions="ctrl.actions"/>
+  </md-card>
 </md-content>

@@ -22,7 +22,8 @@
     , 'unitsDetail': { url: '/units/detail/:id', templateUrl: '/wwwroot/partials/units/detail.html', resolve: resolveUnitTitle }
     , 'unitsRoster': { url: '/units/roster/:id', templateUrl: '/wwwroot/partials/units/roster.html', resolve: resolveUnitTitle }
     , 'training': { url: '/training', templateUrl: '/wwwroot/partials/training/index.html', resolve: { $title: function() { return 'Training' }}}
-    , 'trainings': { url: '/trainings', templateUrl: '/wwwroot/partials/training/list.html', resolve: { $title: function() { return 'Trainings '}}}
+    , 'trainings': { url: '/trainings', templateUrl: '/wwwroot/partials/training/list.html', resolve: { $title: function () { return 'Trainings ' } } }
+    , 'trainings_create': {url: '/trainings/create', externalUrl: '/training/create' }
     , 'training_courselist': { url: '/training/courses', templateUrl: '/wwwroot/partials/training/course-list.html', resolve: { $title: function () { return 'Course List' } } }
     , 'training_coursedetail': { url: '/training/courses/:id', templateUrl: '/wwwroot/partials/training/course-detail.html', resolve: { $title: function () { return 'Course Detail' } } }
     , 'training_courseroster': { url: '/training/courses/:id/roster', templateUrl: '/wwwroot/partials/training/course-roster.html', resolve: { $title: function () { return 'Course Detail' } } }
@@ -47,8 +48,14 @@
 
   angular.module('sar-database')
   .config(function ($provide) {
-    $provide.decorator('$state', function ($delegate, $rootScope) {
+    $provide.decorator('$state', function ($delegate, $rootScope, $window) {
       $rootScope.$on('$stateChangeStart', function (event, state, params) {
+        if (state.externalUrl) {
+          event.preventDefault();
+          $window.open(state.externalUrl, '_self');
+          return
+        }
+
         $delegate.next = state;
         $delegate.toParams = params;
       });
@@ -62,7 +69,11 @@
       $locationProvider.html5Mode(true)
       for (var r in routes) {
         var opts = routes[r];
-
+        if (opts.redirect) {
+          console.log('setting up')
+          $urlRouterProvider.when(opts.url, function () { console.log('doing it'); window.location.href = opts.redirect })
+          continue;
+        }
         opts.resolve = opts.resolve || {};
         opts.resolve._userLoaded = (opts.data && opts.data.allowAnonymous)
                                         ? resolveUserLoaded
