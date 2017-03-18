@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
@@ -171,6 +172,7 @@ namespace Sar.Database.Services
       {
         var status = await db.UnitStatusTypes.FirstOrDefaultAsync(f => f.Unit.Id == membership.Unit.Id && f.StatusName == membership.Status);
         if (status == null) throw new ArgumentException("status " + membership.Status + " is unknown");
+
         var membershipRow = new DB.UnitMembership
         {
           UnitId = membership.Unit.Id,
@@ -184,9 +186,26 @@ namespace Sar.Database.Services
           Status = status
         };
         db.UnitMemberships.Add(membershipRow);
+
+        await FixupMembershipRows(membership, db, rows => rows.Add(membershipRow));
+
         await db.SaveChangesAsync();
 
         return (await ListMemberships(f => f.Id == membershipRow.Id, false)).Items.Select(f => f.Item).Single();
+      }
+    }
+
+    private static async Task FixupMembershipRows(UnitMembership membership, DB.IKcsarContext db, Action<List<DB.UnitMembership>> modifier)
+    {
+      var rows = await db.UnitMemberships.Where(f => f.PersonId == membership.Member.Id).ToListAsync();
+      modifier(rows);
+      rows = rows.OrderBy(f => f.UnitId).ThenBy(f => f.Activated).ToList();
+      for (int i = 0; i < rows.Count - 1; i++)
+      {
+        if (rows[i].UnitId == rows[i + 1].UnitId)
+        {
+          rows[i].EndTime = rows[i + 1].Activated;
+        }
       }
     }
 
