@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using Sar.Auth.Data;
+using Sar.Database.Model;
 using Sar.Database.Model.Accounts;
 using Sar.Database.Services;
 using Serilog;
@@ -95,6 +98,20 @@ namespace Sar.Database.Web.Auth.Services
             }
             cacheTime = DateTime.UtcNow.AddMinutes(5);
           }
+        }
+      }
+    }
+
+    public async Task AddAccount(string role, Guid accountId)
+    {
+      using (var db = _dbFactory())
+      {
+        var account = await db.Accounts.Include(f => f.Roles).FirstOrDefaultAsync(f => f.Id == accountId);
+        account.Roles.Add(await db.Roles.SingleOrDefaultAsync(f => f.Id == role));
+        await db.SaveChangesAsync();
+        lock (cacheLock)
+        {
+          cacheTime = DateTime.MinValue;
         }
       }
     }

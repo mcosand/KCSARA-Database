@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.Entity;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Sar.Auth.Data;
 using Sar.Database.Data;
@@ -47,23 +48,25 @@ namespace Sar.Database.Web.Auth.Services
       return GetUser(sub);
     }
 
+    private Expression<Func<AccountRow, Account>> projection = f => new Account
+    {
+      Id = f.Id,
+      Username = f.Username,
+      FirstName = f.FirstName,
+      LastName = f.LastName,
+      Email = f.Email,
+      LastLogin = f.LastLogin,
+      HasExternalLogins = f.ExternalLogins.Any(),
+      LockDate = f.LockReason != null ? f.Locked : null,
+      LockReason = f.LockReason,
+      MemberId = f.MemberId
+    };
+
     public async Task<Account> GetUser(Guid id)
     {
       using (var db = _dbFactory())
       {
-        return await db.Accounts.Where(f => f.Id == id).Select(f => new Account
-        {
-          Id = f.Id,
-          Username = f.Username,
-          FirstName = f.FirstName,
-          LastName = f.LastName,
-          Email = f.Email,
-          LastLogin = f.LastLogin,
-          HasExternalLogins = f.ExternalLogins.Any(),
-          LockDate = f.LockReason != null ? f.Locked : null,
-          LockReason = f.LockReason,
-          MemberId = f.MemberId
-        }).FirstOrDefaultAsync();
+        return await db.Accounts.Where(f => f.Id == id).Select(projection).FirstOrDefaultAsync();
       }
     }
 
@@ -72,19 +75,7 @@ namespace Sar.Database.Web.Auth.Services
     {
       using (var db = _dbFactory())
       {
-        var list = await db.Accounts.OrderBy(f => f.LastName).ThenBy(f => f.FirstName).Select(f => new Account
-        {
-          Id = f.Id,
-          FirstName = f.FirstName,
-          LastName = f.LastName,
-          Email = f.Email,
-          Username = f.Username,
-          LastLogin = f.LastLogin,
-          HasExternalLogins = f.ExternalLogins.Any(),
-          LockDate = f.LockReason != null ? f.Locked : null,
-          LockReason = f.LockReason,
-          MemberId = f.MemberId
-        }).ToListAsync();
+        var list = await db.Accounts.OrderBy(f => f.LastName).ThenBy(f => f.FirstName).Select(projection).ToListAsync();
 
 
         return new ListPermissionWrapper<Account>
@@ -214,6 +205,20 @@ namespace Sar.Database.Web.Auth.Services
         resetRow.Account.PasswordDate = DateTime.UtcNow;
         resetRow.Account.ResetTokens.Clear();
         await db.SaveChangesAsync();
+      }
+    }
+
+    public async Task<ListPermissionWrapper<Account>> AccountsInRole(string roleId)
+    {
+      using (var db = _dbFactory())
+      {
+        var list = await db.Roles.Where(f => f.Id == roleId).SelectMany(f => f.Accounts).Select(projection).ToListAsync();
+
+        return new ListPermissionWrapper<Account>
+        {
+          C = _authz.CanCreate<Account>(),
+          Items = list.Where(f => _authz.Authorize(f.Id, "Read:Account")).Select(f => _authz.Wrap(f))
+        };
       }
     }
   }

@@ -18,5 +18,6 @@ namespace Sar.Database.Services
     Task SetPassword(Guid id, string newPassword);
     Task ResetPassword(Guid id, string resetUriTemplate);
     Task FinishResetPassword(string code, string newPassword);
+    Task<ListPermissionWrapper<Account>> AccountsInRole(string roleId);
   }
 }

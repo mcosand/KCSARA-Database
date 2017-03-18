@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Sar.Database.Model.Accounts;
 
 namespace Sar.Database.Services
@@ -8,5 +9,6 @@ namespace Sar.Database.Services
   {
     List<string> ListAllRolesForAccount(Guid accountId);
     List<Role> ListRolesForAccount(Guid accountId);
+    Task AddAccount(string role, Guid accountId);
   }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Results;
@@ -41,6 +42,31 @@ namespace Kcsara.Database.Api.Controllers.Units
       Guid accountId = await ResolveAccount(id);
       await _authz.EnsureAsync(accountId, "Read:Account");
       return await _accounts.Get(accountId);
+    }
+
+    [HttpGet]
+    [Route("members/{memberId}/accounts")]
+    public async Task<ListPermissionWrapper<Account>> ListForMember(Guid memberId)
+    {
+      await _authz.EnsureAsync(null, "Read:Account");
+      await _authz.EnsureAsync(memberId, "Read:Member");
+      var list = await _accounts.List();
+
+      return new ListPermissionWrapper<Account>
+      {
+        C = list.C,
+        Items = list.Items.Where(f => f.Item.MemberId == memberId)
+      };
+    }
+
+    [HttpGet]
+    [Route("roles/{roleId}/accounts")]
+    public async Task<ListPermissionWrapper<Account>> ListForRole(string roleId)
+    {
+      await _authz.EnsureAsync(null, "Read:Account");
+      await _authz.EnsureAsync(roleId, "Read:Role");
+
+      return await _accounts.AccountsInRole(roleId);
     }
 
     [HttpPost]
@@ -104,6 +130,15 @@ namespace Kcsara.Database.Api.Controllers.Units
       Guid accountId = await ResolveAccount(id);
       await _authz.EnsureAsync(accountId, "Read:Account");
       return _roles.ListRolesForAccount(accountId);
+    }
+
+    [HttpPost]
+    [Route("accounts/{id}/roles/{role}")]
+    public async Task AddRole(string id, string role)
+    {
+      Guid accountId = await ResolveAccount(id);
+      await _authz.EnsureAsync(role, "Write:Role");
+      await _roles.AddAccount(role, accountId);
     }
 
     private async Task<Guid?> ResolveAccountPassive(string id, bool throwNotFound = false)
