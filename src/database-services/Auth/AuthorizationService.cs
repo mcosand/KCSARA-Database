@@ -92,6 +92,12 @@ namespace Sar.Database.Services
         }
 
       }
+
+      if (m.Groups[3].Value.StartsWith("Training"))
+      {
+        if (roles.Any(f => Equals(f, "cdb.trainingeditors"))) return true;
+      }
+
       if (m.Groups[3].Value == "Account")
       {
         if (m.Groups[1].Value == "Read")
