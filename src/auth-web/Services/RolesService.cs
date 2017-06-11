@@ -42,6 +42,7 @@ namespace Sar.Database.Web.Auth.Services
           roles,
           directRoleList);
       }
+      _log.Information("ListAllRolesForAccount {accountId} {roles}", accountId, string.Join(",", roles));
       return roles;
     }
 
@@ -67,9 +68,11 @@ namespace Sar.Database.Web.Auth.Services
                  .SelectMany(f => f.Roles).Select(f => f.Id).ToList();
         lock (cacheLock)
         {
-          return part
+          var list = part
                  .Select(f => cache[f])
                  .ToList();
+          _log.Information("ListRolesForAccount {accountId} {roles}", accountId, string.Join(",", list));
+          return list;
         }
       }
     }
@@ -78,24 +81,32 @@ namespace Sar.Database.Web.Auth.Services
     {
       if (cacheTime < DateTime.UtcNow)
       {
+        var newCache = new Dictionary<string, Role>();
+        var newAccountToRoles = new Dictionary<Guid, string[]>();
+        _log.Information("Rebuilding roles cache");
+        using (var db = _dbFactory())
+        {
+          newCache = db.Roles.ToDictionary(
+            f => f.Id,
+            f => new Role { Id = f.Id, Name = f.Name, Description = f.Description }
+          );
+
+          foreach (var link in db.Roles.SelectMany(role => role.Children, (parent, child) => new { P = parent.Id, C = child.Id }))
+          {
+            newCache[link.P].Includes.Add(newCache[link.C]);
+          }
+
+          newAccountToRoles = db.Accounts.Include(f => f.Roles).ToDictionary(f => f.Id, f => f.Roles.Select(g => g.Id).ToArray());
+        }
+
+
         lock (cacheLock)
         {
           if (cacheTime < DateTime.UtcNow)
           {
-            using (var db = _dbFactory())
-            {
-              cache = db.Roles.ToDictionary(
-                f => f.Id,
-                f => new Role { Id = f.Id, Name = f.Name, Description = f.Description }
-              );
-
-              foreach (var link in db.Roles.SelectMany(role => role.Children, (parent, child) => new { P = parent.Id, C = child.Id }))
-              {
-                cache[link.P].Includes.Add(cache[link.C]);
-              }
-
-              accountToRolesCache = db.Accounts.ToDictionary(f => f.Id, f => f.Roles.Select(g => g.Id).ToArray());
-            }
+            _log.Information("Replacing roles cache");
+            cache = newCache;
+            accountToRolesCache = newAccountToRoles;
             cacheTime = DateTime.UtcNow.AddMinutes(5);
           }
         }

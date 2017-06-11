@@ -69,7 +69,7 @@ namespace Kcsar.Database.Model
 
         bool mustHave = m.IsTrainingRequired(course);
         bool keepCurrent = m.ShouldKeepCourseCurrent(course);
-        ComputedTrainingAward award = awards.Where(f => f.Course.Id == course.Id).FirstOrDefault();
+        ComputedTrainingAward award = awards.Where(f => f.CourseId == course.Id).FirstOrDefault();
         if (award == null)
         {
           // No record - member has not completed the training
