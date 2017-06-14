@@ -42,7 +42,7 @@
       required: Lists.loader(restMember.all('requiredtraining'), { transform: function(data) {
             return data.reduce(function (accum, item) {
               accum[item.course.name] = item; return accum;
-            })
+            }, {})
       }}),
       recent: Lists.loader(restMember.all('trainingrecords'), { limit: 15, order: '-completed' }),
       showRecord: function showRecord($event, recordId) {
