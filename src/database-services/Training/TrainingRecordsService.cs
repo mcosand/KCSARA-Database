@@ -364,6 +364,7 @@ namespace Sar.Database.Services
         updater.Update(f => f.Member, await db.Members.FirstOrDefaultAsync(f => f.Id == record.Member.Id));
         updater.Update(f => f.Course, course);
         updater.Update(f => f.Completed, record.Completed);
+        updater.Update(f => f.metadata, record.Comments);
 
         int? courseMonths = updater.Instance.Course.ValidMonths;
         DateTimeOffset? expiration;
