@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using IdentityServer3.Core.Models;
@@ -45,10 +46,22 @@ namespace Sar.Database.Web.Auth.Services
             } }
         });
 
+        string introspectionSecret = ConfigurationManager.AppSettings["auth:introspection:secret"];
+        if (!string.IsNullOrWhiteSpace(introspectionSecret))
+        {
+          var scope = scopes.FirstOrDefault(f => f.Name == "introspection");
+          if (scope != null)
+          {
+            scopes.Remove(scope);
+          }
+          scope = new Scope { Name = "introspection", Type = ScopeType.Resource, AllowUnrestrictedIntrospection = true, ScopeSecrets = new List<Secret> { new Secret(introspectionSecret.Sha256()) } };
+          scopes.Add(scope);
+        }
+
         var dbApiScope = scopes.FirstOrDefault(f => f.Name == "database-api");
         if (dbApiScope == null)
         {
-          dbApiScope = new Scope { Name = "database-api", Type = ScopeType.Resource };
+          dbApiScope = new Scope { Name = "database-api", Type = ScopeType.Resource, Claims = new List<ScopeClaim> { new ScopeClaim(MemberIdClaim) } };
           scopes.Add(dbApiScope);
         }
 
