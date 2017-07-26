@@ -75,7 +75,7 @@ namespace Kcsara.Database.Api.Controllers
 
     [HttpPost]
     [Route("members")]
-    public async Task<MemberInfo> Provision(ProvisionMemberInfo body)
+    public async Task<MemberInfo> Provision(MemberInfo body)
     {
       if (!((ClaimsPrincipal)User).Claims.Any(f => f.Type == "scope" && f.Value == "db-w-members"))
       {
