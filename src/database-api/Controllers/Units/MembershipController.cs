@@ -51,6 +51,22 @@ namespace Kcsara.Database.Api.Controllers.Units
       return await _units.ListMemberships(predicate, true);
     }
 
+    [HttpGet]
+    [AnyHostCorsPolicy]
+    [Route("units/{unitId}/memberships/byStatus/{statusName}")]
+    public async Task<ListPermissionWrapper<UnitMembership>> ListForUnit(Guid unitId, string statusName, bool history = false)
+    {
+      DateTimeOffset now = DateTimeOffset.UtcNow;
+
+      await _authz.EnsureAsync(unitId, "Read:UnitMembership@UnitId");
+
+      Expression<Func<UnitMembership, bool>> predicate = history
+        ? (Expression<Func<UnitMembership, bool>>)(f => f.Unit.Id == unitId && f.Status == statusName)
+        : (f => f.Unit.Id == unitId && f.IsActive && (f.End == null || f.End > now) && f.Status == statusName);
+
+      return await _units.ListMemberships(predicate, true);
+    }
+
     [HttpPost]
     [Route("members/{memberId}/memberships")]
     public async Task<UnitMembership> CreateForMember(Guid memberId, [FromBody] UnitMembership membership)

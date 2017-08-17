@@ -127,7 +127,9 @@ namespace Sar.Database.Services
     {
       using (var db = _dbFactory())
       {
-        var query = db.UnitMemberships.Select(f => new UnitMembership
+        var query = db.UnitMemberships
+          .OrderBy(f => f.Person.LastName).ThenBy(f => f.Person.FirstName).ThenBy(f => f.Unit.DisplayName)
+          .Select(f => new UnitMembership
         {
           Id = f.Id,
           Unit = new NameIdPair
@@ -153,7 +155,7 @@ namespace Sar.Database.Services
           query = query.Where(predicate);
         }
 
-        var list = await query.OrderBy(f => f.Member.Name).ThenBy(f => f.Unit.Name).ToListAsync();
+        var list = await query.ToListAsync();
         return new ListPermissionWrapper<UnitMembership>
         {
           C = canCreate,
