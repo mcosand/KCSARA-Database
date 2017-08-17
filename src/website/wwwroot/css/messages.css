@@ -1,4 +1,4 @@
-﻿table.md-table td.md-cell.exp_Expired {
+﻿table.md-table td.md-cell.exp_Expired, table.md-table td.md-cell.exp_Missing {
   color: palevioletred;
   font-weight: bold;
 }
