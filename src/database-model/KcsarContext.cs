@@ -465,7 +465,11 @@ namespace Kcsar.Database.Model
                 throw new InvalidOperationException("Unknown rule type: " + rule.Id);
               }
 
-              if (sources.All(f => awards.ContainsKey(f.Value)))
+              Func<ComputedTrainingAward, TrainingRule, bool> ruleAppliesTest = (a, r) => { return true; };
+              if (rule.OfferedFrom.HasValue) ruleAppliesTest = (a, r) => { return a.Completed >= r.OfferedFrom.Value; };
+              if (rule.OfferedUntil.HasValue) ruleAppliesTest = (a, r) => { return a.Completed < r.OfferedUntil.Value; };
+              if (rule.OfferedFrom.HasValue && rule.OfferedUntil.HasValue) ruleAppliesTest = (a, r) => { return a.Completed >= r.OfferedFrom.Value && a.Completed < r.OfferedUntil.Value; };
+              if (sources.All(f => awards.Any(a => a.Key == f.Value && ruleAppliesTest(a.Value, rule))))
               {
                 DateTimeOffset? completed = sources.Max(f => awards[f.Value].Completed);
                 DateTimeOffset? expiry = null;
