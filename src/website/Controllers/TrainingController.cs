@@ -136,7 +136,7 @@ namespace Kcsara.Database.Web.Controllers
         string[] fields = rule.RuleText.Split('>');
         if (!fields[0].StartsWith("Mission"))
         {
-          Guid?[] sourceCourses = fields[0].Split('+').Select(f => f.ToGuid()).ToArray();
+          Tuple<Guid?,bool>[] sourceCourses = fields[0].Split('+').Select(f => f.StartsWith("!") ? new Tuple<Guid?,bool>(f.Substring(1).ToGuid(), true) : new Tuple<Guid?,bool>(f.ToGuid(), false)).ToArray();
 
           if (sourceCourses.Any(f => f == null))
           {
@@ -144,7 +144,10 @@ namespace Kcsara.Database.Web.Controllers
             continue;
           }
 
-          line += string.Join(", ", sourceCourses.Select(f => courses.ContainsKey(f.Value) ? courses[f.Value].DisplayName : f.ToString())) + " => ";
+          line += string.Join(", ", sourceCourses.Select(f => 
+            (courses.ContainsKey(f.Item1.Value) ? courses[f.Item1.Value].DisplayName : f.ToString())
+            + (f.Item2 ? "[Strict]" : "")
+            )) + " => ";
         }
         else
         {
@@ -181,6 +184,14 @@ namespace Kcsara.Database.Web.Controllers
             }
             line += "[" + validFor + "]";
           }
+        }
+        if (rule.OfferedFrom.HasValue)
+        {
+          line += $"[from {rule.OfferedFrom.Value.ToString("d")}]";
+        }
+        if (rule.OfferedUntil.HasValue)
+        {
+          line += $"[until {rule.OfferedUntil.Value.ToString("d")}]";
         }
         lines.Add(line);
       }

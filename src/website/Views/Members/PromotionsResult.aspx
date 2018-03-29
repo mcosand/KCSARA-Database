@@ -48,7 +48,7 @@
           Color = colors[i % colors.Length]
         });        
       }
-      var p = (List<Dictionary<DateTime, Tuple<int,string>>>)ViewData["promotes"];
+      var p = (List<Dictionary<DateTimeOffset, Tuple<int,string>>>)ViewData["promotes"];
       for (int i = 0; i < p.Count; i++)
       {
         foreach (var pair in p[i])
@@ -57,7 +57,7 @@
           
           //int j = chart.Series[offset + 1].Points.Count;
           DataPoint pt = new DataPoint() { Label = pair.Value.Item2.Substring(5) };
-          pt.SetValueXY(pair.Key, pair.Value.Item1);
+          pt.SetValueXY(pair.Key.LocalDateTime, pair.Value.Item1);
           chart.Series[offset + i].Points.Add(pt);
           //chart.Series[offset + i].Points.AddXY(pair.Key, pair.Value.Item1);
          // chart.Series[offset + i].Points[j].Label = pair.Value.Item2;

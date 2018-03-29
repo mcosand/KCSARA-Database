@@ -458,24 +458,20 @@ namespace Kcsar.Database.Model
               //    System.Diagnostics.Debug.WriteLineIf(m.LastName == "Kedan", string.Format("Applying rule using {0}, {1}", courses[sourceCourse.Value].DisplayName, awards[sourceCourse.Value].Completed));
               //    RewardTraining(m, courses, awards, rule, awards[sourceCourse.Value].Completed, awards[sourceCourse.Value].Expiry, fields[1]);
               //}
-              Guid?[] sources = fields[0].Split('+').Select(f => f.ToGuid()).ToArray();
+              Tuple<Guid?,bool>[] sources = fields[0].Split('+').Select(f => f.StartsWith("!") ? new Tuple<Guid?,bool>(f.Substring(1).ToGuid(), true) : new Tuple<Guid?, bool>(f.ToGuid(), false)).ToArray();
 
               if (sources.Any(f => f == null))
               {
                 throw new InvalidOperationException("Unknown rule type: " + rule.Id);
               }
 
-              Func<ComputedTrainingAward, TrainingRule, bool> ruleAppliesTest = (a, r) => { return true; };
-              if (rule.OfferedFrom.HasValue) ruleAppliesTest = (a, r) => { return a.Completed >= r.OfferedFrom.Value; };
-              if (rule.OfferedUntil.HasValue) ruleAppliesTest = (a, r) => { return a.Completed < r.OfferedUntil.Value; };
-              if (rule.OfferedFrom.HasValue && rule.OfferedUntil.HasValue) ruleAppliesTest = (a, r) => { return a.Completed >= r.OfferedFrom.Value && a.Completed < r.OfferedUntil.Value; };
-              if (sources.All(f => awards.Any(a => a.Key == f.Value && ruleAppliesTest(a.Value, rule))))
+              if (sources.All(f => awards.Any(a => a.Key == f.Item1.Value && !(a.Value.RuleId.HasValue && f.Item2))))
               {
-                DateTimeOffset? completed = sources.Max(f => awards[f.Value].Completed);
+                DateTimeOffset? completed = sources.Max(f => awards[f.Item1.Value].Completed);
                 DateTimeOffset? expiry = null;
-                if (sources.Any(f => awards[f.Value].Expiry != null))
+                if (sources.Any(f => awards[f.Item1.Value].Expiry != null))
                 {
-                  expiry = sources.Min(f => awards[f.Value].Expiry ?? DateTimeOffset.MaxValue);
+                  expiry = sources.Min(f => awards[f.Item1.Value].Expiry ?? DateTimeOffset.MaxValue);
                 }
                 awardInLoop |= RewardTraining(m, courses, awards, rule, completed, expiry, fields[1]);
               }
