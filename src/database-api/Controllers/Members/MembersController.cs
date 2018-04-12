@@ -1,16 +1,19 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Sar;
+using Sar.Database.Model;
 using Sar.Database.Model.Members;
 using Sar.Database.Services;
 
@@ -121,7 +124,7 @@ namespace Kcsara.Database.Api.Controllers
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
@@ -150,6 +153,63 @@ namespace Kcsara.Database.Api.Controllers
       await _authz.EnsureAsync(null, "Read:Member");
 
       return await _members.ByEmail(id);
+    }
+
+    [HttpGet]
+    [AllowAnonymous]
+    [Route("auth-support/byemail/{id}")]
+    public async Task<IEnumerable<ApiAuthMember>> ByEmailForAuth(string id)
+    {
+      VerifyKey();
+      return (await _members.GetAuthSiteMembers(m => m.PrimaryEmail == id)).Select(ToAuthMember);
+    }
+
+    [HttpGet]
+    [AllowAnonymous]
+    [Route("auth-support/byphone/{id}")]
+    public async Task<IEnumerable<ApiAuthMember>> ByPhoneForAuth(string id)
+    {
+      VerifyKey();
+
+      return (await _members.GetAuthSiteMembers(m => m.PrimaryPhone == id)).Select(ToAuthMember);
+    }
+
+    [HttpGet]
+    [AllowAnonymous]
+    [Route("auth-support/{id}")]
+    public async Task<ApiAuthMember> GetMemberForAuth(Guid id)
+    {
+      VerifyKey();
+      return (await _members.GetAuthSiteMembers(m => m.Id == id)).Select(ToAuthMember).SingleOrDefault();
+    }
+
+    private ApiAuthMember ToAuthMember(AuthSiteMember serviceModel)
+    {
+      return new ApiAuthMember
+      {
+        Id = serviceModel.Id,
+        Firstname = serviceModel.Firstname,
+        Lastname = serviceModel.Lastname,
+        PrimaryEmail = serviceModel.PrimaryEmail,
+        PrimaryPhone = serviceModel.PrimaryPhone,
+        Units = serviceModel.Units.Select(f => new NameIdPair { Id = f.Id, Name = f.Name }).ToList()
+      };
+    }
+
+    private void VerifyKey()
+    {
+      var value = Request.Headers.Where(f => f.Key == "X-Auth-Service-Key").Select(f => f.Value).FirstOrDefault()?.FirstOrDefault();
+      if (!string.IsNullOrWhiteSpace(value) && value != ConfigurationManager.AppSettings["auth-site-key"]) throw new HttpResponseException(HttpStatusCode.Forbidden);
+    }
+
+    public class ApiAuthMember
+    {
+      public Guid Id { get; set; }
+      public string Firstname { get; set; }
+      public string Lastname { get; set; }
+      public string PrimaryEmail { get; set; }
+      public string PrimaryPhone { get; set; }
+      public List<NameIdPair> Units { get; set; }
     }
   }
 }

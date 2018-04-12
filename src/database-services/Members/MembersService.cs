@@ -32,7 +32,7 @@ namespace Sar.Database.Services
     Task<AttendanceStatistics<NameIdPair>> GetMissionStatistics(Guid animalId);
     Task<List<EventAttendance>> GetTrainingList(Guid animalId);
     Task<AttendanceStatistics<NameIdPair>> GetTrainingStatistics(Guid animalId);
-
+    Task<IEnumerable<AuthSiteMember>> GetAuthSiteMembers(Expression<Func<AuthSiteMember, bool>> predicate);
   }
 
   public class MembersService : IMembersService
@@ -420,5 +420,33 @@ namespace Sar.Database.Services
       DateTimeOffset dbWhen = when.Value;
       return db.Members.Where(f => f.Memberships.Any(g => g.Status.IsActive && (g.EndTime == null || g.EndTime > dbWhen)));
     }
+
+    public async Task<IEnumerable<AuthSiteMember>> GetAuthSiteMembers(Expression<Func<AuthSiteMember, bool>> predicate)
+    {
+      using (var db = _dbFactory())
+      {
+        return await db.Members.Select(f => new AuthSiteMember
+        {
+          Id = f.Id,
+          Firstname = f.FirstName,
+          Lastname = f.LastName,
+          PrimaryEmail = f.ContactNumbers.Where(g => g.Type == "email").OrderBy(g => g.Priority).Select(g => g.Value).FirstOrDefault(),
+          PrimaryPhone = f.ContactNumbers.Where(g => g.Type == "phone" && g.Subtype == "cell").OrderBy(g => g.Priority).Select(g => g.Value).FirstOrDefault(),
+          Units = f.Memberships.Where(g => g.Status.IsActive && g.EndTime == null).Select(g => new NameIdPair { Name = g.Unit.DisplayName, Id = g.UnitId }).Distinct().ToList()
+        })
+        .Where(predicate)
+        .ToListAsync();
+      }
+    }
+  }
+
+  public class AuthSiteMember
+  {
+    public Guid Id { get; set; }
+    public string Firstname { get; set; }
+    public string Lastname { get; set; }
+    public string PrimaryEmail { get; set; }
+    public string PrimaryPhone { get; set; }
+    public List<NameIdPair> Units { get; set; }
   }
 }
