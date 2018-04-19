@@ -11,7 +11,11 @@
     <thead>
       <tr>
         <th>DEM</th>
-        <th>Date</th>
+        <th>Location</th>
+        <th>County</th>
+        <th>Mission Type</th>
+        <th>Started</th>
+        <th>Completed</th>
         <th>
           Title
         </th><th>Units</th>
@@ -24,7 +28,11 @@
          %>
         <tr>
           <td><%: m.Number %></td>
-          <td><%: m.StartTime.ToShortDateString() %></td>
+          <td><%: m.Location %></td>
+          <td><%: m.County %></td>
+          <td><%: m.MissionType %></td>
+          <td><%: m.StartTime.ToString("yyyy-MM-dd HH:mm") %></td>
+          <td><%: m.StopTime?.ToString("yyyy-MM-dd HH:mm") %></td>
           <td><%: m.IsTurnaround ? "[" : "" %><%: Html.ActionLink<MissionsController>(x => x.Roster(m.Id), m.Title) %><%: m.IsTurnaround ? "]" : "" %></td>
           <td><%: string.Join(", ", m.Units) %></td>
           <td class="r"><%: m.Persons %></td>

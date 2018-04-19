@@ -69,5 +69,17 @@ namespace Kcsara.Database.Web.Model
 
         [DataMember]
         public int NotSignedOut { get; set; }
+
+        [DataMember]
+        public string Location { get; set; }
+
+        [DataMember]
+        public string County { get; set; }
+
+        [DataMember]
+        public DateTime? StopTime { get; set; }
+
+        [DataMember]
+        public string MissionType { get; set; }
     }
 }
