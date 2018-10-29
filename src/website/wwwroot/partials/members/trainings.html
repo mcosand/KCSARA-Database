@@ -22,7 +22,7 @@
           </tr>
         </thead>
         <tbody md-body>
-          <tr md-row md-auto-select ng-repeat="s in trainings.list | filter: trainings.filterList | orderBy: trainings.query.order" row-href="/trainings/roster/{{s.event.id}}" row-href-ext class="clickable">
+          <tr md-row md-auto-select ng-repeat="s in trainings.list | filter: trainings.filterList | orderBy: trainings.query.order" row-href="/training/roster/{{s.event.id}}" row-href-ext class="clickable">
             <td md-cell style="white-space:nowrap">{{s.event.stateNumber}}</td>
             <td md-cell style="white-space:nowrap">{{s.event.start | simpleDate}}</td>
             <td md-cell><strong md-colors="{color:'primary'}">{{s.event.name}}</strong></a></td>
@@ -40,7 +40,7 @@
       </table>
     </md-table-container>
     <md-list flex hide-gt-xs>
-      <md-list-item class="md-3-line" ng-repeat="s in trainings.list | filter: trainings.filterList" ng-href="/trainings/roster/{{s.event.id}}">
+      <md-list-item class="md-3-line" ng-repeat="s in trainings.list | filter: trainings.filterList" ng-href="/training/roster/{{s.event.id}}" target="_self">
         <div class="md-list-item-text">
           <p>{{s.event.start | simpleDate}} {{s.event.stateNumber}}</p>
           <h3 md-colors="{color:'primary'}">{{s.event.name}}</h3>
