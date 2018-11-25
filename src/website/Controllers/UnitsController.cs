@@ -241,10 +241,10 @@
           wrap.SetCellValue(string.Join("\n", member.Addresses.Select(f => f.City).ToArray()), idx, c++);
           wrap.SetCellValue(string.Join("\n", member.Addresses.Select(f => f.State).ToArray()), idx, c++);
           wrap.SetCellValue(string.Join("\n", member.Addresses.Select(f => f.Zip).ToArray()), idx, c++);
-          wrap.SetCellValue(string.Join("\n", member.ContactNumbers.Where(f => f.Type == "phone" && f.Subtype == "home").Select(f => f.Value).ToArray()), idx, c++);
-          wrap.SetCellValue(string.Join("\n", member.ContactNumbers.Where(f => f.Type == "phone" && f.Subtype == "cell").Select(f => f.Value).ToArray()), idx, c++);
-          wrap.SetCellValue(string.Join("\n", member.ContactNumbers.Where(f => f.Type == "email").Select(f => f.Value).ToArray()), idx, c++);
-          wrap.SetCellValue(string.Join("\n", member.ContactNumbers.Where(f => f.Type == "hamcall").Select(f => f.Value).ToArray()), idx, c++);
+          wrap.SetCellValue(string.Join("\n", member.ContactNumbers.Where(f => f.Type == "phone" && f.Subtype == "home").OrderBy(f => f.Priority).Select(f => f.Value).ToArray()), idx, c++);
+          wrap.SetCellValue(string.Join("\n", member.ContactNumbers.Where(f => f.Type == "phone" && f.Subtype == "cell").OrderBy(f => f.Priority).Select(f => f.Value).ToArray()), idx, c++);
+          wrap.SetCellValue(string.Join("\n", member.ContactNumbers.Where(f => f.Type == "email").OrderBy(f => f.Priority).Select(f => f.Value).ToArray()), idx, c++);
+          wrap.SetCellValue(string.Join("\n", member.ContactNumbers.Where(f => f.Type == "hamcall").OrderBy(f => f.Priority).Select(f => f.Value).ToArray()), idx, c++);
           wrap.SetCellValue(member.WacLevel.ToString(), idx, c++);
           wrap.SetCellValue(membership.Status.StatusName, idx, c++);
 
