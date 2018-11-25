@@ -196,7 +196,7 @@
     }
 
     [AuthorizeWithLog]
-    public ActionResult DownloadRoster(Guid? id, bool? includeHidden)
+    public ActionResult DownloadRoster(Guid? id, bool? includeHidden, bool? includeId)
     {
       // The method almost supports id=null as downloading the KCSARA roster
       // It doesn't do a distinct(person), so people in multiple units are recorded more than once.
@@ -256,6 +256,11 @@
             wrap.SetCellValue(member.Gender.ToString(), idx, c++);
           }
 
+          if (includeId ?? false)
+          {
+            wrap.SetCellValue("ID", 0, c);
+            wrap.SetCellValue(member.Id.ToString(), idx, c++);
+          }
           idx++;
         }
 
