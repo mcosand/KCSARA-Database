@@ -170,8 +170,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnyHostCorsPolicyAttribute.cs" />
-    <Compile Include="Controllers\Accounts\AccountsController.cs" />
-    <Compile Include="Controllers\Accounts\RolesController.cs" />
     <Compile Include="Controllers\Animals\AnimalsController.cs" />
     <Compile Include="Controllers\Members\MemberTrainingController.cs" />
     <Compile Include="Controllers\Members\MemberMissionsController.cs" />

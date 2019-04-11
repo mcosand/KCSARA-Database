@@ -32,16 +32,14 @@ namespace Sar.Database.Services
   public class UnitsService : IUnitsService
   {
     private readonly Func<DB.IKcsarContext> _dbFactory;
-    private readonly IUsersService _users;
     private readonly ILog _log;
     private readonly IHost _host;
     private readonly IExtensionProvider _extensions;
     private readonly IAuthorizationService _authz;
 
-    public UnitsService(Func<DB.IKcsarContext> dbFactory, IUsersService users, IExtensionProvider extensions, IAuthorizationService authz, IHost host, ILog log)
+    public UnitsService(Func<DB.IKcsarContext> dbFactory, IExtensionProvider extensions, IAuthorizationService authz, IHost host, ILog log)
     {
       _dbFactory = dbFactory;
-      _users = users;
       _extensions = extensions;
       _authz = authz;
       _log = log;

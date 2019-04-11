@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.Configuration;
 using System.IdentityModel.Tokens;
-using System.Security.Claims;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Dispatcher;
@@ -18,13 +15,11 @@ using Ninject.Web.WebApi.OwinHost;
 using Owin;
 using Sar.Web;
 
-using AppFunc = System.Func<System.Collections.Generic.IDictionary<string, object>, System.Threading.Tasks.Task>;
-
 namespace Kcsara.Database.Api
 {
   public static class AppBuilderExtensions
   {
-    public static IAppBuilder UseDatabaseApi(this IAppBuilder app, IKernel kernel, X509Certificate2 signingCert)
+    public static IAppBuilder UseDatabaseApi(this IAppBuilder app, IKernel kernel)
     {
       NameValueCollection configStrings = ConfigurationManager.AppSettings;
 
@@ -34,7 +29,6 @@ namespace Kcsara.Database.Api
       {
         Authority = configStrings["auth:authority"],
         IssuerName = configStrings["auth:authority"],
-        SigningCertificate = signingCert,
         TokenProvider = new QueryStringOAuthBearerProvider("access_token")
       };
 
@@ -62,21 +56,7 @@ namespace Kcsara.Database.Api
 
       config.Services.Replace(typeof(IHttpControllerTypeResolver), new NamespaceControllerTypeResolver("Kcsara.Database.Api.Controllers"));
 
-      var userService = kernel.Get<Sar.Database.Services.IUsersService>();
       app.UseIdentityServerBearerTokenAuthentication(tokenAuthOptions);
-      app.Use(new Func<AppFunc, AppFunc>(next => (async env =>
-      {
-        var identity = new Microsoft.Owin.OwinContext(env)?.Authentication?.User?.Identity as ClaimsIdentity;
-        var subClaim = identity?.FindFirst("sub")?.Value;
-        Guid sub;
-        if (!string.IsNullOrWhiteSpace(subClaim) && Guid.TryParse(subClaim, out sub))
-        {
-          var user = await userService.GetUser(sub);
-          identity.AddClaim(new Claim("name", user.Name));
-        }
-
-        await next.Invoke(env);
-      })));
       app.UseWebApi(config);
 
       return app;
@@ -99,7 +79,8 @@ namespace Kcsara.Database.Api
         if (!string.IsNullOrWhiteSpace(headerValue) && headerValue.StartsWith("Bearer "))
         {
           context.Token = headerValue.Substring(7);
-        } else if (!string.IsNullOrEmpty(queryValue))
+        }
+        else if (!string.IsNullOrEmpty(queryValue))
         {
           context.Token = queryValue;
         }

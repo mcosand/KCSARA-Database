@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using IdentityModel.Client;
 using Kcsara.Database.Api;
 using log4net;
-using Microsoft.AspNet.Identity;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
@@ -17,7 +16,7 @@ using Microsoft.Owin.Security.OpenIdConnect;
 using Ninject;
 using Owin;
 using Sar;
-using Sar.Database.Web.Auth;
+using Sar.Database.Services;
 using Sar.Web;
 
 [assembly: OwinStartup(typeof(Kcsara.Database.Web.Startup))]
@@ -33,14 +32,11 @@ namespace Kcsara.Database.Web
     {
       var config = kernel.Get<IHost>();
 
-      var signingCertificate = Cert.Load(config.GetConfig("cert:key"), kernel.Get<ILog>().Warn);
-      app.Map("/auth", authApp => authApp.UseAuthServer(kernel, signingCertificate));
-      app.Map("/api2", apiApp => apiApp.UseDatabaseApi(kernel, signingCertificate));
+      app.Map("/api2", apiApp => apiApp.UseDatabaseApi(kernel));
 
       app.UseCookieAuthentication(new CookieAuthenticationOptions
       {
-        AuthenticationType = "Cookies",
-        ExpireTimeSpan = TimeSpan.FromSeconds(AuthConstants.TokenLifetime)
+        AuthenticationType = "Cookies"
       });
 
       NameValueCollection configStrings = ConfigurationManager.AppSettings;
@@ -51,7 +47,7 @@ namespace Kcsara.Database.Web
         ClientId = configStrings["auth:clientId"],
         RedirectUri = configStrings["auth:redirect"].Trim('/') + "/",
         ResponseType = "code id_token token",
-        Scope = "openid email profile database-api kcsara-profile",
+        Scope = "openid email profile",
         PostLogoutRedirectUri = configStrings["auth:redirect"].Trim('/') + "/",
         TokenValidationParameters = new TokenValidationParameters
         {
@@ -92,6 +88,14 @@ namespace Kcsara.Database.Web
             // create new identity
             var id = new ClaimsIdentity(n.AuthenticationTicket.Identity.AuthenticationType);
             id.AddClaims(userInfoResponse.GetClaimsIdentity().Claims);
+
+            var accountId = new Guid(id.FindFirst("sub").Value);
+
+            var rolesService = kernel.Get<IRolesService>();
+            foreach (var role in rolesService.ListAllRolesForAccount(accountId))
+            {
+              id.AddClaim(new Claim("role", role));
+            }
 
             id.AddClaim(new Claim("access_token", tokenResponse.AccessToken));
             id.AddClaim(new Claim("expires_at", DateTime.Now.AddSeconds(tokenResponse.ExpiresIn).ToLocalTime().ToString()));

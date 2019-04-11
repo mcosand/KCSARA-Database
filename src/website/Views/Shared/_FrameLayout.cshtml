@@ -39,7 +39,7 @@
                   {
                     <li><a href="~/Members/Detail/@ViewData["MemberId"]"><i class="fa fa-fw fa-home text-primary"></i>My Page</a></li>
                   }
-                  <li><a href="~/Account/Detail/@User.Identity.Name"><i class="fa fa-fw fa-keyboard-o text-primary"></i>My Account</a></li>
+                  <li><a href="@ViewBag.AccountPage"><i class="fa fa-fw fa-keyboard-o text-primary"></i>My Account</a></li>
                   <li><a href="~/Account/Logout"><i class="fa fa-fw fa-sign-out text-primary"></i>Logout</a></li>
                 </ul>
               </li>

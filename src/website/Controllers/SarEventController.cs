@@ -32,7 +32,7 @@ namespace Kcsara.Database.Web.Controllers
     {
       IEnumerable<E> list = (from e in GetEventSource() orderby e.StartTime descending select e);
       ApplyListFilter(ref list);
-      return View("List", list);
+      return View("List", list.ToList());
     }
 
     protected virtual void ApplyListFilter(ref IEnumerable<E> query)

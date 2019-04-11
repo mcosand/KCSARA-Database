@@ -903,10 +903,6 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\auth-web\auth-web.csproj">
-      <Project>{f6be5572-5e76-435f-b8f3-fc3b3eaf2da7}</Project>
-      <Name>auth-web</Name>
-    </ProjectReference>
     <ProjectReference Include="..\database-api\database-api.csproj">
       <Project>{0E98B7B5-73A5-44D0-BD64-C6313A84991E}</Project>
       <Name>database-api</Name>

@@ -18,6 +18,8 @@ namespace Kcsara.Database.Web
   using Ninject;
   using Ninject.Web.Common;
   using Sar;
+  using Sar.Database.Services;
+  using Sar.Database.Services.Auth;
   using Sar.Database.Web;
   using Sar.WebApi;
 
@@ -98,13 +100,12 @@ namespace Kcsara.Database.Web
       kernel.Bind<Func<IPrincipal>>().ToConstant((Func<IPrincipal>)(() => Thread.CurrentPrincipal));
       kernel.Bind<IAppSettings>().To<AppSettings>();
       kernel.Bind<IReportsService>().To<ReportsService>();
+      kernel.Bind<IRolesService>().To<RolesService>().InSingletonScope();
 
       var host = new SystemWebHost();
       kernel.Bind<IHost>().ToConstant(host);
       kernel.Bind<IWebApiHost>().ToConstant(host);
       kernel.Load(new Services.DIModule());
-
-      kernel.Load(new Sar.Database.Web.Auth.DIModule());
       kernel.Load(new Kcsara.Database.Api.DIModule());
       kernel.Load(new Sar.Database.Services.DIModule());
     }

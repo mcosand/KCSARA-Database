@@ -57,6 +57,7 @@
         {
           ViewData["MemberId"] = member.Id;
           ViewBag.LoginUserName = member.FullName;
+          ViewBag.AccountPage = ConfigurationManager.AppSettings["auth:authority"].Trim('/') + "/Manage/Index";
         }
       }
 
