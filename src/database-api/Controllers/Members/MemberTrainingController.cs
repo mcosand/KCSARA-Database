@@ -39,6 +39,7 @@ namespace Kcsara.Database.Api.Controllers.Members
 
     [HttpGet]
     [Route("members/{memberId}/trainings")]
+    [AnyHostCorsPolicy]
     public async Task<List<EventAttendance>> ListMissions(Guid memberId)
     {
       await _authz.EnsureAsync(memberId, "Read:Member");

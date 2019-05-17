@@ -45,6 +45,7 @@ namespace Kcsara.Database.Api.Controllers.Units
       /// <returns></returns>
       [HttpGet]
       [Route("search")]
+      [AnyHostCorsPolicy]
       public async Task<SearchResult[]> Search(string q, string t = null, int limit = 10)
       {
         var searchTypes = (t ?? allTypes).Split(',').Select(f => (SearchResultType)Enum.Parse(typeof(SearchResultType), f)).ToArray();
