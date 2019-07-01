@@ -64,6 +64,8 @@ namespace Sar.Database.Services
           member.First = row.FirstName;
           member.Last = row.LastName;
           member.BackgroundKnown = row.BackgroundDate.HasValue;
+          member.WorkerNumber = row.DEM;
+          member.WacLevel = (WacLevel)((int)row.WacLevel);
         })).ToArray();
         if (list.Length == 0) return null;
 
