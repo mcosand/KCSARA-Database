@@ -197,15 +197,21 @@ namespace Kcsar.Database.Model
       {
         if (entry.IsRelationship)
         {
-          IModelObject obj1 = oc.GetObjectByKey((EntityKey)entry.OriginalValues[0]) as IModelObject;
-          IModelObject obj2 = oc.GetObjectByKey((EntityKey)entry.OriginalValues[1]) as IModelObject;
-          if (obj1 == null || obj2 == null)
+          try
           {
-            continue;
-          }
+            IModelObject obj1 = oc.GetObjectByKey((EntityKey)entry.OriginalValues[0]) as IModelObject;
+            IModelObject obj2 = oc.GetObjectByKey((EntityKey)entry.OriginalValues[1]) as IModelObject;
+            if (obj1 == null || obj2 == null)
+            {
+              continue;
+            }
 
-          string key = string.Format("{0}{1}", obj1.Id, obj2.Id);
-          updatedRelations.Add(key, obj1);
+            string key = string.Format("{0}{1}", obj1.Id, obj2.Id);
+            updatedRelations.Add(key, obj1);
+          } catch (ObjectNotFoundException)
+          {
+            // eat it
+          }
         }
         else
         {
