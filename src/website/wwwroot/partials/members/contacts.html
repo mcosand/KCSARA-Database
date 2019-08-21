@@ -9,11 +9,11 @@
           <md-progress-circular md-mode="indeterminate" md-diameter="40" class="md-accent" ng-if="contacts.loading"></md-progress-circular>
           <md-list flex>
             <md-list-item class="md-1-line" ng-repeat="c in contacts.list">
-              <md-icon class="md-avatar-icon">{{c.type === 'im' ? 'chat' : c.type === 'hamcall' ? 'wifi_tethering' : c.type === 'email' ? 'email' : c.subType === 'cell' ? 'phone_android' : 'call'}}</md-icon>
+              <md-icon class="md-avatar-icon">{{c.type === 'im' ? 'chat' : (c.type === 'hamcall' || c.type === 'inreach') ? 'wifi_tethering' : c.type === 'email' ? 'email' : c.subType === 'cell' ? 'phone_android' : 'call'}}</md-icon>
               <div class="md-list-item-text" flex>
                 <p>{{c.value}}</p>
               </div>
-              <md-button ng-if="c.type === 'email'" class="md-icon-button md-secondary md-primary" aria-label="Send Email" target="_self" ng-href="{{'mailto:' + c.value}}"><md-icon>email</md-icon></md-button>
+              <md-button ng-if="c.type === 'email' || c.type ==='inreach'" class="md-icon-button md-secondary md-primary" aria-label="Send Email" target="_self" ng-href="{{'mailto:' + c.value}}"><md-icon>email</md-icon></md-button>
               <md-button ng-if="c.type === 'phone' && c.subType === 'cell'" class="md-icon-button md-secondary md-primary" aria-label="Send Text" target="_self" ng-href="{{'sms:' + c.value}}"><md-icon>sms</md-icon></md-button>
               <md-button ng-if="c.type === 'phone'" class="md-icon-button md-secondary md-primary" aria-label="Call" target="_self" ng-href="{{'tel:' + c.value}}"><md-icon>call</md-icon></md-button>
             </md-list-item>

@@ -1,8 +1,4 @@
-﻿
-/*
- * Copyright 2009-2014 Matthew Cosand
- */
-namespace Kcsar.Database.Model
+﻿namespace Kcsar.Database.Model
 {
   using System;
   using System.Collections.Generic;
@@ -24,7 +20,7 @@ namespace Kcsar.Database.Model
     [ForeignKey("PersonId")]
     public virtual Member Person { get; set; }
 
-    public static readonly string[] AllowedTypes = new string[] { "email", "phone", "hamcall", "im" };
+    public static readonly string[] AllowedTypes = new string[] { "email", "phone", "hamcall", "im", "inreach" };
 
     public static bool TryParse(string type, string subtype, string input, bool strict, out string result)
     {
@@ -65,13 +61,14 @@ namespace Kcsar.Database.Model
         }
         return true;
       }
-      else if (type.ToLower() == "email")
+      else if (type.ToLower() == "email" || type.ToLower() == "inreach")
       {
         // Pattern from http://www.regular-expressions.info/email.html
         string pattern = @"^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$";
 
         return Regex.IsMatch(input, pattern, RegexOptions.IgnoreCase);
       }
+
 
       return true;
     }
@@ -91,6 +88,7 @@ namespace Kcsar.Database.Model
           subType.ValueLabel = "Address";
           break;
         case "email":
+        case "inreach":
           subType.ValueLabel = "Address";
           break;
         case "hamcall":
