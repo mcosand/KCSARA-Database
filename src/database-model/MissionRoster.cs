@@ -38,7 +38,12 @@ namespace Kcsar.Database.Model
     public virtual Member Person { get; set; }
 
     [Required]
+    [ForeignKey("UnitId")]
     public virtual SarUnit Unit { get; set; }
+
+    [Column("Unit_Id")]
+    public Guid UnitId { get; set; }
+
     public virtual ICollection<AnimalMission> Animals { get; set; }
     public double? OvertimeHours { get; set; }
 

@@ -14,6 +14,7 @@ namespace Kcsar.Database.Model
   {
     public DateTime LastChanged { get; set; }
     public string ChangedBy { get; set; }
+    [Key]
     public Guid Id { get; set; }
 
     public ModelObject()

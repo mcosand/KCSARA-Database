@@ -124,6 +124,7 @@ namespace Kcsara.Database.Web.Controllers
     public ActionResult Rules()
     {
       Dictionary<Guid, TrainingCourse> courses = (from c in this.db.TrainingCourses select c).ToDictionary(x => x.Id);
+      Dictionary<Guid, SarUnit> units = (from u in db.Units select u).ToDictionary(x => x.Id);
 
       List<TrainingRule> rules = (from r in this.db.TrainingRules select r).ToList();
       string text = "Rules for Training equivalencies\n=========================\n[]'s after course indicate howmany months" +
@@ -192,6 +193,10 @@ namespace Kcsara.Database.Web.Controllers
         if (rule.OfferedUntil.HasValue)
         {
           line += $"[until {rule.OfferedUntil.Value.ToString("d")}]";
+        }
+        if (rule.UnitId.HasValue)
+        {
+          line += $"[{units[rule.UnitId.Value].DisplayName} only]";
         }
         lines.Add(line);
       }

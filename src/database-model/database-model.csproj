@@ -125,6 +125,10 @@
     <Compile Include="Migrations\201702021705392_AddressType.Designer.cs">
       <DependentUpon>201702021705392_AddressType.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201909142001156_UnitSpecificRules.cs" />
+    <Compile Include="Migrations\201909142001156_UnitSpecificRules.Designer.cs">
+      <DependentUpon>201909142001156_UnitSpecificRules.cs</DependentUpon>
+    </Compile>
     <Compile Include="SqlServerTypes\Loader.cs" />
     <Compile Include="Training\ComputedTrainingAward.cs" />
     <Compile Include="ContactInfoSubType.cs" />
@@ -331,6 +335,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201702021705392_AddressType.resx">
       <DependentUpon>201702021705392_AddressType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201909142001156_UnitSpecificRules.resx">
+      <DependentUpon>201909142001156_UnitSpecificRules.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

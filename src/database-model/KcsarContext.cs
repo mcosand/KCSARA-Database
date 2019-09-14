@@ -431,6 +431,10 @@ namespace Kcsar.Database.Model
               {
                 missions = missions.Where(x => x.Mission.MissionType.Contains(missionType));
               }
+              if (rule.UnitId != null)
+              {
+                missions = missions.Where(f => f.UnitId == rule.UnitId && !f.Mission.MissionType.Contains("Turnaround"));
+              }
               missions = missions.OrderByDescending(x => x.TimeIn);
 
               double sum = 0;
