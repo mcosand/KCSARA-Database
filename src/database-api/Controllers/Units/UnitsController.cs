@@ -21,6 +21,7 @@ namespace Kcsara.Database.Api.Controllers.Units
     }
 
     [HttpGet]
+    [AnyHostCorsPolicy]
     [Route("units")]
     public async Task<ListPermissionWrapper<Unit>> List()
     {
@@ -29,6 +30,7 @@ namespace Kcsara.Database.Api.Controllers.Units
     }
 
     [HttpGet]
+    [AnyHostCorsPolicy]
     [Route("units/{id}")]
     public async Task<ItemPermissionWrapper<Unit>> Get(Guid id)
     {
@@ -37,6 +39,7 @@ namespace Kcsara.Database.Api.Controllers.Units
     }
 
     [HttpPost]
+    [AnyHostCorsPolicy]
     [ValidateModelState]
     [Route("units")]
     public async Task<Unit> CreateNew([FromBody]Unit unit)
@@ -53,6 +56,7 @@ namespace Kcsara.Database.Api.Controllers.Units
     }
 
     [HttpPut]
+    [AnyHostCorsPolicy]
     [ValidateModelState]
     [Route("units/{unitId}")]
     public async Task<Unit> Save(Guid unitId, [FromBody]Unit unit)
@@ -68,6 +72,7 @@ namespace Kcsara.Database.Api.Controllers.Units
     }
 
     [HttpDelete]
+    [AnyHostCorsPolicy]
     [Route("units/{unitId}")]
     public async Task Delete(Guid unitId)
     {
@@ -77,6 +82,7 @@ namespace Kcsara.Database.Api.Controllers.Units
     }
 
     [HttpGet]
+    [AnyHostCorsPolicy]
     [Route("units/{unitId}/reports")]
     public async Task<UnitReportInfo[]> ListReports(Guid unitId)
     {

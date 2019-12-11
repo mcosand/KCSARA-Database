@@ -25,6 +25,7 @@ namespace Kcsara.Database.Api.Controllers.Units
     }
     
     [HttpGet]
+    [AnyHostCorsPolicy]
     [Route("units/statustypes")]
     public async Task<ListPermissionWrapper<UnitStatusType>> List()
     {
@@ -34,6 +35,7 @@ namespace Kcsara.Database.Api.Controllers.Units
     }
 
     [HttpGet]
+    [AnyHostCorsPolicy]
     [Route("units/{unitId}/statustypes")]
     public async Task<ListPermissionWrapper<UnitStatusType>> ListForUnit(Guid unitId)
     {
@@ -43,6 +45,7 @@ namespace Kcsara.Database.Api.Controllers.Units
     }
 
     [HttpPost]
+    [AnyHostCorsPolicy]
     [ValidateModelState]
     [Route("units/{unitId}/statusTypes")]
     public async Task<UnitStatusType> CreateNew(Guid unitId, [FromBody]UnitStatusType statusType)
@@ -64,6 +67,7 @@ namespace Kcsara.Database.Api.Controllers.Units
     }
 
     [HttpPut]
+    [AnyHostCorsPolicy]
     [ValidateModelState]
     [Route("units/{unitId}/statusTypes/{statusTypeId}")]
     public async Task<UnitStatusType> Save(Guid unitId, Guid statusTypeId, [FromBody]UnitStatusType statusType)
@@ -80,6 +84,7 @@ namespace Kcsara.Database.Api.Controllers.Units
     }
 
     [HttpDelete]
+    [AnyHostCorsPolicy]
     [Route("units/{unitId}/statusTypes/{statusTypeId}")]
     public async Task Delete(Guid unitId, Guid statusTypeId)
     {

@@ -67,6 +67,33 @@ namespace Kcsara.Database.Api.Controllers
     }
 
     [HttpGet]
+    [AnyHostCorsPolicy]
+    [Route("members/{memberId}/photodata")]
+    public async Task<object> MemberPhotoData(Guid memberId)
+    {
+      await _authz.EnsureAsync(memberId, "Read:Member");
+      var member = await _members.GetMember(memberId);
+
+      string filename = "content\\images\\nophoto.jpg";
+      if (!string.IsNullOrWhiteSpace(member?.Photo) && _host.FileExists("content\\auth\\members\\" + member.Photo))
+      {
+        filename = "content\\auth\\members\\" + member.Photo;
+      }
+
+      object result;
+      using (var stream = _host.OpenFile(filename))
+      {
+        using (var ms = new MemoryStream())
+        {
+          stream.CopyTo(ms);
+          result = new { Data = "data:image/jpeg;base64," + Convert.ToBase64String(ms.ToArray()) };
+        }
+      }
+
+      return result;
+    }
+
+    [HttpGet]
     [Route("members/{memberId}/emergencycontacts/count")]
     [AnyHostCorsPolicy]
     public async Task<object> EmergencyContactStatus(Guid memberId)
