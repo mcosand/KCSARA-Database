@@ -52,7 +52,7 @@
     return new Date(input);
   }
 
-  RestangularProvider.setBaseUrl('/api2');
+  RestangularProvider.setBaseUrl('https://kcsara-api2.azurewebsites.net');
   RestangularProvider.addResponseInterceptor(function (data, operation, what, url, response, deferred) {
     var extractedData;
     // Many lists come back as an object with permissions and the actual list instide.
@@ -116,7 +116,7 @@
       if (currentUser.loggingIn) {
         return $q.reject();
       }
-      if (config.url.indexOf('/api') == 0 && currentUser.user && currentUser.user.access_token) {
+      if (currentUser.user && currentUser.user.access_token) {
         config.headers['Authorization'] = 'Bearer ' + currentUser.user.access_token;
       }
       return config;
