@@ -6,7 +6,7 @@
       courses: Restangular.service('training/courses'),
       createCourse: function () { return Restangular.restangularizeElement(null, { category: 'other' }, '/training/courses') },
       courseStats: function (courseId) {
-        return $http.get('/api2/training/courses/' + courseId + '/stats').then(function (msg) {
+        return $http.get('https://kcsara-api2.azurewebsites.net/training/courses/' + courseId + '/stats').then(function (msg) {
           return msg.data;
         });
       }

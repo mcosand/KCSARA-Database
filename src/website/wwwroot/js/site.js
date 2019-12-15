@@ -236,9 +236,7 @@
             ]
         },
         { name: "Units", type: 'link', icon: 'group', url: window.appRoot + 'units' },
-        { name: "Animals", type: 'link', icon: 'pets', url: window.appRoot + 'animals' },
-        { name: 'Admin Menu', type: 'heading' },
-        { name: 'My Account', type: 'link', url: window.appRoot + "accounts/me" }
+        { name: "Animals", type: 'link', icon: 'pets', url: window.appRoot + 'animals' }
       ],
       selectSection: function (section) {
         menu.openedSection = section;
@@ -282,7 +280,7 @@
 
           return $http({
             method: 'GET',
-            url: window.appRoot + 'api2/search?q=' + encodeURIComponent(text)
+            url: 'https://kcsara-api2.azurewebsites.net/search?q=' + encodeURIComponent(text)
           }).then(function successCallback(response) {
             return response.data;
           }, function errorCallback(response) {

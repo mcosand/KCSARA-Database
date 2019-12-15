@@ -26,7 +26,7 @@
 
                 return $http({
                   method: 'GET',
-                  url: window.appRoot + 'api2/search?t=Member&q=' + encodeURIComponent(text)
+                  url: 'https://kcsara-api2.azurewebsites.net/search?t=Member&q=' + encodeURIComponent(text)
                 }).then(function successCallback(response) {
                   return response.data.map(function (item) { return item.summary });
                 }, function errorCallback(response) {
