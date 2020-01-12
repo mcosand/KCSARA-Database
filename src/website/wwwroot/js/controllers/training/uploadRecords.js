@@ -8,7 +8,7 @@
       if (file && !file.$error) {
         $scope.uploading = true;
         $scope.progress = Upload.upload({
-          url: window.appRoot + 'api2/trainingrecords/ParseKcsaraCsv',
+          url: 'https://kcsara-api2.azurewebsites.net/ParseKcsaraCsv',
           data: {
             file: file
           }
@@ -43,7 +43,7 @@
           $scope.working = item;
           return $http({
             method: 'POST',
-            url: window.appRoot + 'api2/trainingrecords',
+            url: 'https://kcsara-api2.azurewebsites.net/trainingrecords',
             data: { member: me.member, course: { id: me.course.id, name: me.course.name }, completed: me.completed, comments: me.link }
           })
           .then(function (resp) {

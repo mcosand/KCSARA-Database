@@ -101,6 +101,7 @@ namespace Kcsara.Database.Web
       kernel.Bind<IAppSettings>().To<AppSettings>();
       kernel.Bind<IReportsService>().To<ReportsService>();
       kernel.Bind<IRolesService>().To<RolesService>().InSingletonScope();
+      kernel.Bind<IBlobStorage>().ToConstant(new AzureBlobStorage(ConfigurationManager.AppSettings["blobConnectionString"], ConfigurationManager.AppSettings["blobContainer"])).InSingletonScope();
 
       var host = new SystemWebHost();
       kernel.Bind<IHost>().ToConstant(host);

@@ -20,14 +20,22 @@
   using IO = System.IO;
   using Kcsara.Database.Web.Services;
   using System.Data.Entity.Validation;
+    using System.Threading.Tasks;
+    using Sar;
+    using Sar.Database.Services;
 
-  public class MembersController : BaseController
+    public class MembersController : BaseController
   {
-    public MembersController(IKcsarContext db, IAppSettings settings) : base(db, settings) { }
+    public MembersController(IKcsarContext db, IAppSettings settings, IBlobStorage blobs, IHost host) : base(db, settings) {
+      this.blobs = blobs;
+      this.host = host;
+    }
 
     /// <summary>Vdir-relative directory to the meber's photo store. Includes trailing-slash.</summary>
     public const string PhotosStoreRelativePath = "~/Content/auth/members/";
     public const string StandInPhotoFile = "none.jpg";
+    private readonly IBlobStorage blobs;
+    private readonly IHost host;
 
     [AuthorizeWithLog]
     //        [FilterTypes(FilterTypes.ActiveOnly | FilterTypes.Time | FilterTypes.Unit)]
@@ -451,6 +459,38 @@
       return View(m);
     }
 
+    [AcceptVerbs(HttpVerbs.Get)]
+    [Authorize]
+    public async Task<ActionResult> Photo(Guid id)
+    {
+      var member = GetMember(id);
+      if (!string.IsNullOrWhiteSpace(member?.PhotoFile))
+      {
+        string filename = "members/" + member.PhotoFile;
+        try
+        {
+          var ms = new MemoryStream();
+          
+          DateTime now = DateTime.UtcNow;
+          await blobs.Download(filename, ms);
+          now = DateTime.UtcNow;
+          ms.Position = 0;
+          return File(ms, "image/jpeg");
+        }
+        catch (Exception)
+        {
+          // do nothing
+        }
+      }
+
+      return File("~/content/auth/members/none.jpg", "image/jpeg");
+    }
+
+    private object StreamToData(MemoryStream ms)
+    {
+      return new { Data = "data:image/jpeg;base64," + Convert.ToBase64String(ms.ToArray()) };
+    }
+
     [AcceptVerbs(HttpVerbs.Post)]
     [AuthorizeWithLog]
     public ActionResult PhotoCommit(FormCollection fields)
@@ -620,130 +660,130 @@
       return new ContentResult { Content = "Ready >", ContentType = "text/plain" };
     }
 
-    [AcceptVerbs(HttpVerbs.Post)]
-    [AuthorizeWithLog]
-    public ActionResult CardData(FormCollection columns)
-    {
-      if (!Permissions.IsUser) return this.CreateLoginRedirect();
+    //[AcceptVerbs(HttpVerbs.Post)]
+    //[AuthorizeWithLog]
+    //public ActionResult CardData(FormCollection columns)
+    //{
+    //  if (!Permissions.IsUser) return this.CreateLoginRedirect();
 
-      var members = (from m in this.db.Members.Include("Memberships.Unit").Include("Memberships.Status")
-          .Include("ComputedAwards").Include("ComputedAwards.Course").Include("ComputedAwards.Rule")
-                     select m).OrderBy(f => f.LastName).ThenBy(f => f.FirstName);
+    //  var members = (from m in this.db.Members.Include("Memberships.Unit").Include("Memberships.Status")
+    //      .Include("ComputedAwards").Include("ComputedAwards.Course").Include("ComputedAwards.Rule")
+    //                 select m).OrderBy(f => f.LastName).ThenBy(f => f.FirstName);
 
-      MD5 md5 = new MD5CryptoServiceProvider();
-      StringBuilder sb = new StringBuilder();
-      sb.AppendLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-      sb.AppendLine("<CardData>");
-      sb.AppendLine("<Version>1</Version>");
-      sb.AppendLine("<Data>");
-      foreach (Member member in members)
-      {
-        UnitMembership[] units = member.GetActiveUnits();
-        if (units.Length == 0)
-        {
-          continue;
-        }
+    //  MD5 md5 = new MD5CryptoServiceProvider();
+    //  StringBuilder sb = new StringBuilder();
+    //  sb.AppendLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+    //  sb.AppendLine("<CardData>");
+    //  sb.AppendLine("<Version>1</Version>");
+    //  sb.AppendLine("<Data>");
+    //  foreach (Member member in members)
+    //  {
+    //    UnitMembership[] units = member.GetActiveUnits();
+    //    if (units.Length == 0)
+    //    {
+    //      continue;
+    //    }
 
-        sb.Append(string.Format("<Member First=\"{0}\" Last=\"{1}\" DEM=\"{2}\" Type=\"{3}\"", member.FirstName.ToXmlAttr(), member.LastName.ToXmlAttr(), member.DEM.ToXmlAttr(), member.WacLevel));
+    //    sb.Append(string.Format("<Member First=\"{0}\" Last=\"{1}\" DEM=\"{2}\" Type=\"{3}\"", member.FirstName.ToXmlAttr(), member.LastName.ToXmlAttr(), member.DEM.ToXmlAttr(), member.WacLevel));
 
-        if (!string.IsNullOrEmpty(member.PhotoFile))
-        {
-          string virtualPathPhoto = MembersController.GetPhotoOrFillInPath(member.PhotoFile);
-          string photoFile = Server.MapPath(virtualPathPhoto);
-          if (IO.File.Exists(photoFile))
-          {
-            byte[] photoData = IO.File.ReadAllBytes(photoFile);
+    //    if (!string.IsNullOrEmpty(member.PhotoFile))
+    //    {
+    //      string virtualPathPhoto = MembersController.GetPhotoOrFillInPath(member.PhotoFile);
+    //      string photoFile = Server.MapPath(virtualPathPhoto);
+    //      if (IO.File.Exists(photoFile))
+    //      {
+    //        byte[] photoData = IO.File.ReadAllBytes(photoFile);
 
-            string photoUrl = new Uri(Request.Url, VirtualPathUtility.ToAbsolute(virtualPathPhoto)).AbsoluteUri;
-            sb.AppendFormat(" Photo=\"{0}\" PhotoMd5=\"{1}\"", photoUrl, BitConverter.ToString(md5.ComputeHash(photoData)).Replace("-", ""));
-          }
-        }
+    //        string photoUrl = new Uri(Request.Url, VirtualPathUtility.ToAbsolute(virtualPathPhoto)).AbsoluteUri;
+    //        sb.AppendFormat(" Photo=\"{0}\" PhotoMd5=\"{1}\"", photoUrl, BitConverter.ToString(md5.ComputeHash(photoData)).Replace("-", ""));
+    //      }
+    //    }
 
-        foreach (string column in columns.Keys)
-        {
-          string[] defn = columns[column].Split(':');
-          if (defn.Length < 2)
-          {
-            continue;
-          }
+    //    foreach (string column in columns.Keys)
+    //    {
+    //      string[] defn = columns[column].Split(':');
+    //      if (defn.Length < 2)
+    //      {
+    //        continue;
+    //      }
 
-          Guid id = new Guid(defn[1]);
-          if (defn[0].ToLowerInvariant().EndsWith("course"))
-          {
-            if (member.ComputedAwards.Where(f => ((f.Course.Id == id) && (f.Expiry == null || f.Expiry > DateTime.Now))).Count() > 0)
-            {
-              sb.AppendFormat(" {0}=\"1\"", column);
-            }
-          }
-          else if (defn[0].ToLowerInvariant().EndsWith("unit"))
-          {
-            if (units.Where(f => f.Unit.Id == id).Count() > 0)
-            {
-              sb.AppendFormat(" {0}=\"1\"", column);
-            }
-          }
-        }
+    //      Guid id = new Guid(defn[1]);
+    //      if (defn[0].ToLowerInvariant().EndsWith("course"))
+    //      {
+    //        if (member.ComputedAwards.Where(f => ((f.Course.Id == id) && (f.Expiry == null || f.Expiry > DateTime.Now))).Count() > 0)
+    //        {
+    //          sb.AppendFormat(" {0}=\"1\"", column);
+    //        }
+    //      }
+    //      else if (defn[0].ToLowerInvariant().EndsWith("unit"))
+    //      {
+    //        if (units.Where(f => f.Unit.Id == id).Count() > 0)
+    //        {
+    //          sb.AppendFormat(" {0}=\"1\"", column);
+    //        }
+    //      }
+    //    }
 
-        sb.AppendLine("/>");
-      }
+    //    sb.AppendLine("/>");
+    //  }
 
-      var links = (from ol in this.db.AnimalOwners.Include("Animal").Include("Owner").Include("Owner.Memberships.Unit").Include("Owner.Memberships.Status") where ol.IsPrimary && ol.Ending == null orderby ol.Animal.Id select ol);
-      Guid lastAnimalId = Guid.Empty;
-      foreach (AnimalOwner ownerLink in links)
-      {
-        Animal animal = ownerLink.Animal;
-        if (animal.Id == lastAnimalId)
-        {
-          continue;
-        }
-        lastAnimalId = animal.Id;
+    //  var links = (from ol in this.db.AnimalOwners.Include("Animal").Include("Owner").Include("Owner.Memberships.Unit").Include("Owner.Memberships.Status") where ol.IsPrimary && ol.Ending == null orderby ol.Animal.Id select ol);
+    //  Guid lastAnimalId = Guid.Empty;
+    //  foreach (AnimalOwner ownerLink in links)
+    //  {
+    //    Animal animal = ownerLink.Animal;
+    //    if (animal.Id == lastAnimalId)
+    //    {
+    //      continue;
+    //    }
+    //    lastAnimalId = animal.Id;
 
-        Member owner = ownerLink.Owner;
-        UnitMembership[] units = owner.GetActiveUnits();
-        if (units.Length == 0)
-        {
-          continue;
-        }
+    //    Member owner = ownerLink.Owner;
+    //    UnitMembership[] units = owner.GetActiveUnits();
+    //    if (units.Length == 0)
+    //    {
+    //      continue;
+    //    }
 
-        sb.Append(string.Format("<Animal First=\"{0}\" Last=\"{1}\" DEM=\"{2}\" Type=\"{3}\"", animal.Name, owner.LastName, animal.DemSuffix, WacLevel.Field));
+    //    sb.Append(string.Format("<Animal First=\"{0}\" Last=\"{1}\" DEM=\"{2}\" Type=\"{3}\"", animal.Name, owner.LastName, animal.DemSuffix, WacLevel.Field));
 
-        //if (!string.IsNullOrEmpty(animal.PhotoFile))
-        //{
-        //    string virtualPathPhoto = AnimalsController.GetPhotoOrFillInPath(animal.PhotoFile);
-        //    string photoFile = Server.MapPath(virtualPathPhoto);
-        //    if (IO.File.Exists(photoFile))
-        //    {
-        //        byte[] photoData = IO.File.ReadAllBytes(photoFile);
+    //    //if (!string.IsNullOrEmpty(animal.PhotoFile))
+    //    //{
+    //    //    string virtualPathPhoto = AnimalsController.GetPhotoOrFillInPath(animal.PhotoFile);
+    //    //    string photoFile = Server.MapPath(virtualPathPhoto);
+    //    //    if (IO.File.Exists(photoFile))
+    //    //    {
+    //    //        byte[] photoData = IO.File.ReadAllBytes(photoFile);
 
-        //        string photoUrl = new Uri(Request.Url, VirtualPathUtility.ToAbsolute(virtualPathPhoto)).AbsoluteUri;
-        //        sb.AppendFormat(" Photo=\"{0}\" PhotoMd5=\"{1}\"", photoUrl, BitConverter.ToString(md5.ComputeHash(photoData)).Replace("-", ""));
-        //    }
-        //}
+    //    //        string photoUrl = new Uri(Request.Url, VirtualPathUtility.ToAbsolute(virtualPathPhoto)).AbsoluteUri;
+    //    //        sb.AppendFormat(" Photo=\"{0}\" PhotoMd5=\"{1}\"", photoUrl, BitConverter.ToString(md5.ComputeHash(photoData)).Replace("-", ""));
+    //    //    }
+    //    //}
 
-        foreach (string column in columns.Keys)
-        {
-          string[] defn = columns[column].Split(':');
-          if (defn.Length < 2)
-          {
-            continue;
-          }
+    //    foreach (string column in columns.Keys)
+    //    {
+    //      string[] defn = columns[column].Split(':');
+    //      if (defn.Length < 2)
+    //      {
+    //        continue;
+    //      }
 
-          Guid id = new Guid(defn[1]);
-          if (defn[0].ToLowerInvariant().EndsWith("unit"))
-          {
-            if (units.Where(f => f.Unit.Id == id).Count() > 0)
-            {
-              sb.AppendFormat(" {0}=\"1\"", column);
-            }
-          }
-        }
+    //      Guid id = new Guid(defn[1]);
+    //      if (defn[0].ToLowerInvariant().EndsWith("unit"))
+    //      {
+    //        if (units.Where(f => f.Unit.Id == id).Count() > 0)
+    //        {
+    //          sb.AppendFormat(" {0}=\"1\"", column);
+    //        }
+    //      }
+    //    }
 
-        sb.AppendLine("/>");
-      }
-      sb.AppendLine("</Data>");
-      sb.AppendLine("</CardData>");
-      return new ContentResult { ContentType = "text/xml", Content = sb.ToString() };
-    }
+    //    sb.AppendLine("/>");
+    //  }
+    //  sb.AppendLine("</Data>");
+    //  sb.AppendLine("</CardData>");
+    //  return new ContentResult { ContentType = "text/xml", Content = sb.ToString() };
+    //}
 
 
     public static IEnumerable<Member> FilterPersonal(IEnumerable<Member> members)
@@ -1739,29 +1779,29 @@
       return Content(text + "<table>" + string.Join("", promotions.Select(f => string.Format("<tr><td>{0}</td><td>{1}</td><td>{2}</td></tr>", f.DEM, f.LastName, f.FirstName))) + "</table>", "text/html");
     }
 
-    public DataActionResult RecentPhotos(DateTime since)
-    {
-      if (!User.IsInRole("cdb.users")) return GetLoginError();
+    //public DataActionResult RecentPhotos(DateTime since)
+    //{
+    //  if (!User.IsInRole("cdb.users")) return GetLoginError();
 
-      List<RecentDocumentsView> result = new List<RecentDocumentsView>();
-      var results = (from u in db.Members where u.LastChanged >= since select new { u.FirstName, u.LastName, u.PhotoFile });
+    //  List<RecentDocumentsView> result = new List<RecentDocumentsView>();
+    //  var results = (from u in db.Members where u.LastChanged >= since select new { u.FirstName, u.LastName, u.PhotoFile });
 
-      foreach (var row in results)
-      {
-        if (row.PhotoFile == null) continue;
-        string photoPath = GetPhotoOrFillInPath(row.PhotoFile);
-        FileInfo fInfo = new FileInfo(Server.MapPath(photoPath));
-        if (fInfo.LastWriteTime >= since)
-        {
-          result.Add(new RecentDocumentsView
-          {
-            Filename = string.Format("{0}, {1}_Photo{2}", row.LastName, row.FirstName, Path.GetExtension(row.PhotoFile)),
-            DownloadUrl = Url.Content(photoPath)
-          });
-        }
-      }
+    //  foreach (var row in results)
+    //  {
+    //    if (row.PhotoFile == null) continue;
+    //    string photoPath = GetPhotoOrFillInPath(row.PhotoFile);
+    //    FileInfo fInfo = new FileInfo(Server.MapPath(photoPath));
+    //    if (fInfo.LastWriteTime >= since)
+    //    {
+    //      result.Add(new RecentDocumentsView
+    //      {
+    //        Filename = string.Format("{0}, {1}_Photo{2}", row.LastName, row.FirstName, Path.GetExtension(row.PhotoFile)),
+    //        DownloadUrl = Url.Content(photoPath)
+    //      });
+    //    }
+    //  }
 
-      return Data(result.OrderBy(f => f.Filename).ToArray());
-    }
+    //  return Data(result.OrderBy(f => f.Filename).ToArray());
+    //}
   }
 }

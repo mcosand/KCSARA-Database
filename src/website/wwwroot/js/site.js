@@ -53,6 +53,7 @@
   }
 
   RestangularProvider.setBaseUrl('https://kcsara-api2.azurewebsites.net');
+  //RestangularProvider.setBaseUrl('http://localhost:5000');
   RestangularProvider.addResponseInterceptor(function (data, operation, what, url, response, deferred) {
     var extractedData;
     // Many lists come back as an object with permissions and the actual list instide.
@@ -261,7 +262,7 @@
       myPhotoUrl: function () {
         var user = $rootScope.$currentUser.user;
         if (user && user.profile.memberId && user.access_token)
-          return '/api2/members/' + user.profile.memberId + '/photo?access_token='+ user.access_token
+          return 'https://kcsara-api2.azurewebsites.net/members/' + user.profile.memberId + '/photo'
         return '/content/images/nophoto.jpg'
       },
       mainNavOpen: false,
@@ -281,6 +282,7 @@
           return $http({
             method: 'GET',
             url: 'https://kcsara-api2.azurewebsites.net/search?q=' + encodeURIComponent(text)
+            //url: 'http://localhost:5000/search?q=' + encodeURIComponent(text)
           }).then(function successCallback(response) {
             return response.data;
           }, function errorCallback(response) {

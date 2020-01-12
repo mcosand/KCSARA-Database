@@ -2,7 +2,7 @@
   <md-card flex-md="60" flex-gt-md="40">
     <md-card-title>
       <md-card-title-media>
-        <img ng-if="member.id" class="md-media-lg-card-media badge-photo" ng-src="{{'/api2/members/' + member.id  + '/photo?access_token='+ ($currentUser.user || {}).access_token}}"></img>
+        <img ng-if="member.id" class="md-media-lg-card-media badge-photo" no-cache="true" ajax="{{'https://kcsara-api2.azurewebsites.net/members/' + member.id + '/photo'}}" />
       </md-card-title-media>
       <md-card-title-text style="margin-top:-8px">
         <div class="md-headline">{{member.name}}</div>

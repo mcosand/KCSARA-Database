@@ -92,7 +92,7 @@
                 md-whiteframe="4">
       <md-content layout="column" layout-align="start stretch">
         <md-list-item class="md-2-line" ng-click="null" ng-show="$currentUser.user">
-          <img ng-src="{{myPhotoUrl()}}" class="md-avatar" alt="{{$currentUser.user.profile.name}}" />
+          <img ajax="{{myPhotoUrl()}}" class="md-avatar" alt="{{$currentUser.user.profile.name}}" />
           <div class="md-list-item-text" layout="column">
             <h3>{{ $currentUser.user.profile.name }}</h3>
             <p>{{ $currentUser.user.profile.email }}</p>
@@ -121,7 +121,7 @@
           <md-item-template>
             <div layout="row" layout-align="start center" style="padding-top:5px; padding-bottom:5px;" flex>
               <div ng-show="item.type == 'Mission'" class="search-img" ng-style="{'background-color': 'pink' }"></div>
-              <div ng-show="item.type == 'Member'" class="search-img" ng-style="{'background-image': 'url(&quot;/api2/members/' + item.summary.id + '/photo?access_token='+ ($currentUser.user || {}).access_token + '&quot;)', opacity: item.summary.units.length ? 1.0 : 0.7 }"></div>
+              <div ng-show="item.type == 'Member'" background-image="ajax" ajax="https://kcsara-api2.azurewebsites.net/members/{{item.summary.id}}/photo" class="search-img" ng-style="{ opacity: item.summary.units.length ? 1.0 : 0.7 }"></div>
               <div style="line-height:1em" flex>
                 <strong>{{item.summary.name}}</strong>
                 <div ng-show="item.type == 'Mission'">

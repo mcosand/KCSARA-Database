@@ -10,7 +10,7 @@
   <div id="card" style="padding: 2px; width: 25em; border: solid 1px black; ">
     <div class="wac_<%= m.WacLevel %>" style="font-weight:bold; text-align:center; text-transform:uppercase; margin-bottom:.3em"><%= (bool)ViewData["isApplicant"] ? "Applicant" : m.WacLevel.ToString() %></div>
     <div style="margin:.2em .2em 0 0; position:relative;">
-      <div style="float:left;"><%= Html.Image(this.ResolveUrl(MembersController.GetPhotoOrFillInPath(m.PhotoFile)), "Badge Photo", new{style="border:2px solid black; height:12em; width:9em;"}) %></div>
+      <div style="float:left;"><%= Html.Image("/members/photo/" + m.Id, "Badge Photo", new{style="border:2px solid black; height:12em; width:9em;"}) %></div>
       <div style="float:left; white-space:nowrap; margin-left:.4em; height:12em;">
         <div id="cardname" style="font-weight:bold; font-size:1.2em;"><%= m.FirstName + " " + m.LastName %></div>
 <!--        <table>
