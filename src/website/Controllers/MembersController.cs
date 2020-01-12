@@ -493,7 +493,7 @@
 
     [AcceptVerbs(HttpVerbs.Post)]
     [AuthorizeWithLog]
-    public ActionResult PhotoCommit(FormCollection fields)
+    public async Task<ActionResult> PhotoCommit(FormCollection fields)
     {
       List<string> errors = new List<string>();
 
@@ -521,7 +521,12 @@
           if (keepImages.Contains(m.Id.ToString().ToLowerInvariant()))
           {
             string newFileName = string.Format("{0}{1}.jpg", string.Join("", m.LastName.Split(badChars)), Guid.NewGuid());
-            images[m.Id].Save(IO.Path.Combine(storePath, newFileName), ImageFormat.Jpeg);
+            using (var ms = new MemoryStream())
+            {
+              images[m.Id].Save(ms, ImageFormat.Jpeg);
+              ms.Position = 0;
+              await blobs.Upload("members/" + newFileName, ms);
+            }
             m.PhotoFile = newFileName;
           }
         }

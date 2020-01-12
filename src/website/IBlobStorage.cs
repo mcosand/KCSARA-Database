@@ -8,6 +8,7 @@ namespace Sar.Database.Services
   public interface IBlobStorage
   {
     Task Download(string path, Stream target);
+    Task Upload(string path, Stream ms);
   }
 
   public class AzureBlobStorage : IBlobStorage
@@ -31,6 +32,12 @@ namespace Sar.Database.Services
       BlobClient blobClient = GetClient(path);
       BlobDownloadInfo download = await blobClient.DownloadAsync();
       await download.Content.CopyToAsync(target);
+    }
+
+    public async Task Upload(string path, Stream source)
+    {
+      BlobClient blobClient = GetClient(path);
+      await blobClient.UploadAsync(source);
     }
 
     private BlobClient GetClient(string path)

@@ -11,7 +11,7 @@
   <tbody>
   <% foreach (Member m in Model) { %>
   <tr>
-    <td><%= Html.Image(this.ResolveUrl(MembersController.GetPhotoOrFillInPath(m.PhotoFile)), "Badge Photo", new{style="border:2px solid black; height:6em; width:4.5em;"}) %></td>
+    <td><%= Html.Image("/members/photo/" + m.Id, "Badge Photo", new{style="border:2px solid black; height:6em; width:4.5em;"}) %></td>
     <td><%= m.FullName %></td>
     <td><input type="file" id="f<%= m.Id %>" name="f<%= m.Id %>" /></td>
   </tr>
