@@ -8,7 +8,7 @@
       if (file && !file.$error) {
         $scope.uploading = true;
         $scope.progress = Upload.upload({
-          url: 'https://kcsara-api2.azurewebsites.net/ParseKcsaraCsv',
+          url: 'https://kcsara-api2.azurewebsites.net/trainingrecords/ParseKcsaraCsv',
           data: {
             file: file
           }
