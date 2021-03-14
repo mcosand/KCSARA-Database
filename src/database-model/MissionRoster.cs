@@ -19,6 +19,8 @@ namespace Kcsar.Database.Model
     public const string ROLE_UNIT_LEAD = "OL";
     public static readonly string[] RoleTypes = new string[] { ROLE_FIELD, ROLE_UNIT_LEAD, ROLE_BASE, ROLE_IN_TOWN, ROLE_NO_ROLE };
 
+    public long? D4HId { get; set; }
+
     public string InternalRole { get; set; }
     public DateTime? TimeIn { get; set; }
     public DateTime? TimeOut { get; set; }

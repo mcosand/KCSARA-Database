@@ -129,6 +129,14 @@
     <Compile Include="Migrations\201909142001156_UnitSpecificRules.Designer.cs">
       <DependentUpon>201909142001156_UnitSpecificRules.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202103141930245_d4hIds.cs" />
+    <Compile Include="Migrations\202103141930245_d4hIds.Designer.cs">
+      <DependentUpon>202103141930245_d4hIds.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202103142231420_d4hIdsLong.cs" />
+    <Compile Include="Migrations\202103142231420_d4hIdsLong.Designer.cs">
+      <DependentUpon>202103142231420_d4hIdsLong.cs</DependentUpon>
+    </Compile>
     <Compile Include="SqlServerTypes\Loader.cs" />
     <Compile Include="Training\ComputedTrainingAward.cs" />
     <Compile Include="ContactInfoSubType.cs" />
@@ -338,6 +346,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201909142001156_UnitSpecificRules.resx">
       <DependentUpon>201909142001156_UnitSpecificRules.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202103141930245_d4hIds.resx">
+      <DependentUpon>202103141930245_d4hIds.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202103142231420_d4hIdsLong.resx">
+      <DependentUpon>202103142231420_d4hIdsLong.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

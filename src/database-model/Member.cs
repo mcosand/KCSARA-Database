@@ -9,11 +9,12 @@ namespace Kcsar.Database.Model
   using System.ComponentModel.DataAnnotations;
   using System.ComponentModel.DataAnnotations.Schema;
   using System.Linq;
-  using System.Runtime.Serialization;
   using System.Threading;
 
   public class Member : ModelObject
   {
+    public long? D4HId { get; set; }
+
     [MaxLength(50)]
     public string DEM { get; set; }
     public string LastName { get; set; }

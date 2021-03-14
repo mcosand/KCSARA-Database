@@ -8,6 +8,8 @@
 
   public class TrainingAward : ModelObject, ITrainingAward
   {
+    public long D4HId { get; set; }
+
     [Required]
     public DateTimeOffset Completed { get; set; }
     public DateTimeOffset? Expiry { get; set; }

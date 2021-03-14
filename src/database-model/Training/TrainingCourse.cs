@@ -9,6 +9,8 @@
   [Table("TrainingCourses")]
   public class TrainingCourse : ModelObject
   {
+    public long D4HId { get; set; }
+
     [Required]
     public string DisplayName { get; set; }
     public string FullName { get; set; }

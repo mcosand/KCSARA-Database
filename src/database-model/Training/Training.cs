@@ -12,6 +12,8 @@ namespace Kcsar.Database.Model
 
   public class Training : ModelObject, IRosterEvent<Training, TrainingRoster>
   {
+    public long? D4HId { get; set; }
+
     [Required]
     public string Title { get; set; }
     public string County { get; set; }

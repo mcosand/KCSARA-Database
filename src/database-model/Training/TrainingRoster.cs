@@ -7,6 +7,7 @@
 
   public class TrainingRoster : ModelObject, IRosterEntry<Training, TrainingRoster>
   {
+    public long? D4HId { get; set; }
     public DateTime? TimeIn { get; set; }
     public DateTime? TimeOut { get; set; }
     public int? Miles { get; set; }

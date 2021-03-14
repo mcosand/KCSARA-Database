@@ -12,6 +12,7 @@ namespace Kcsar.Database.Model
 
   public class Mission : ModelObject, IRosterEvent<Mission, MissionRoster>
   {
+    public long? D4HId { get; set; }
     public string Title { get; set; }
     public string County { get; set; }
     public string StateNumber { get; set; }
